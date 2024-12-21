@@ -1,9 +1,6 @@
 using Godot;
 using System;
 
-using Godot;
-using System;
-
 public partial class Article : Node
 {
     private ArticleAction _articleAction = null;

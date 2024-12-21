@@ -11,13 +11,18 @@ config_version=5
 [application]
 
 config/name="AutoCrawler"
+run/main_scene="res://Assets/battle_field.tscn"
 config/features=PackedStringArray("4.3", "C#", "Forward Plus")
 config/icon="res://Assets/Textures/icon.svg"
 
 [autoload]
 
-TurnManager="*res://TurnManager.cs"
+CheatManager="*res://CheatManager.cs"
 
 [dotnet]
 
 project/assembly_name="AutoCrawler"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/behaviortree/plugin.cfg")

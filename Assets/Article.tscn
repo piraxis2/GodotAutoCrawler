@@ -1,3 +1,10 @@
-[gd_scene format=3 uid="uid://buga57mo7n6ab"]
+[gd_scene load_steps=2 format=3 uid="uid://buga57mo7n6ab"]
+
+[ext_resource type="Script" path="res://Assets/Article.cs" id="1_coqd6"]
 
 [node name="Article" type="Node"]
+script = ExtResource("1_coqd6")
+
+[node name="Race" type="Node" parent="."]
+
+[node name="Skill" type="Node" parent="."]
