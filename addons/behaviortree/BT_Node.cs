@@ -2,6 +2,7 @@
 using Godot;
 using System;
 
+[GlobalClass]
 public abstract partial class BT_Node : Node
 {
     public enum BT_Status { Success, Failure, Running }
@@ -10,5 +11,4 @@ public abstract partial class BT_Node : Node
     {
         return BT_Status.Failure;
     }
-    
 }

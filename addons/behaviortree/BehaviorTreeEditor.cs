@@ -1,18 +1,23 @@
 #if TOOLS
 using Godot;
 using System;
+using AutoCrawler.addons.behaviortree;
 
 [Tool]
 public partial class BehaviorTreeEditor : EditorPlugin
 {
+	private BehaviorInspectorPlugin _inspectorPlugin;
+	
 	public override void _EnterTree()
 	{
-		// Initialization of the plugin goes here.
+		_inspectorPlugin = new BehaviorInspectorPlugin();
+		AddInspectorPlugin(_inspectorPlugin);
 	}
 
 	public override void _ExitTree()
 	{
-		// Clean-up of the plugin goes here.
+
+		RemoveInspectorPlugin(_inspectorPlugin);
 	}
 }
 #endif

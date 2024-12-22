@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bt67s8hrtttoc"]
-
-[ext_resource type="Script" path="res://addons/behaviortree/BT_Sequence.cs" id="1_nvsve"]
-
-[node name="BT_Sequence" type="Node"]
-script = ExtResource("1_nvsve")

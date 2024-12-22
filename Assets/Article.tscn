@@ -1,9 +1,9 @@
 [gd_scene load_steps=2 format=3 uid="uid://buga57mo7n6ab"]
 
-[ext_resource type="Script" path="res://Assets/Article.cs" id="1_coqd6"]
+[ext_resource type="Script" path="res://Assets/Script/Article/Article.cs" id="1_4t0o4"]
 
 [node name="Article" type="Node"]
-script = ExtResource("1_coqd6")
+script = ExtResource("1_4t0o4")
 
 [node name="Race" type="Node" parent="."]
 

@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://b1hnowlct333f"]
-
-[ext_resource type="Script" path="res://addons/behaviortree/BT_Selector.cs" id="1_b00al"]
-
-[node name="BT_Selector" type="Node"]
-script = ExtResource("1_b00al")
