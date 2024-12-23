@@ -7,7 +7,7 @@ public partial class BehaviorInspectorPlugin : EditorInspectorPlugin
 {
     public override bool _CanHandle(GodotObject @object)
     {
-        return @object.GetType() == typeof(BT_Node);
+        return @object is BT_Node;
     }
 
 

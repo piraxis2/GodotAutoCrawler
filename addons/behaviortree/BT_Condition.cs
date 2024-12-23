@@ -1,7 +1,7 @@
 ﻿namespace AutoCrawler.addons.behaviortree;
 using Godot;
 
-[GlobalClass]
+[GlobalClass, Tool]
 public abstract partial class BT_Condition: BT_Node
 {
     public override BT_Status Tick(float delta, Node owner)

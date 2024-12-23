@@ -2,7 +2,7 @@
 using Godot;
 namespace AutoCrawler.addons.behaviortree;
 
-[GlobalClass]
+[GlobalClass, Tool]
 public abstract partial class BT_Composite : BT_Node
 {
     protected System.Collections.Generic.List<BT_Node> Children = new System.Collections.Generic.List<BT_Node>();

@@ -1,7 +1,7 @@
 #if TOOLS
 using Godot;
-using System;
-using AutoCrawler.addons.behaviortree;
+
+namespace AutoCrawler.addons.behaviortree;
 
 [Tool]
 public partial class BehaviorTreeEditor : EditorPlugin

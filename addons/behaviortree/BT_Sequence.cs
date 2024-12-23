@@ -2,8 +2,7 @@
 
 namespace AutoCrawler.addons.behaviortree;
 
-
-[GlobalClass]
+[GlobalClass, Tool]
 public partial class BT_Sequence: BT_Composite
 {
     public override BT_Status Tick(float delta, Node owner)
