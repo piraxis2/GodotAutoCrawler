@@ -4,7 +4,7 @@ using Godot;
 [GlobalClass, Tool]
 public abstract partial class BT_Condition: BT_Node
 {
-    public override BT_Status Tick(float delta, Node owner)
+    public override BT_Status OnBehave(float delta, Node owner)
     {
         return CheckCondition(delta, owner);
     }

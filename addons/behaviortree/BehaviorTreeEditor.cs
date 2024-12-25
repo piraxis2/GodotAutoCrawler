@@ -16,7 +16,6 @@ public partial class BehaviorTreeEditor : EditorPlugin
 
 	public override void _ExitTree()
 	{
-
 		RemoveInspectorPlugin(_inspectorPlugin);
 	}
 }

@@ -5,13 +5,14 @@ namespace AutoCrawler.addons.behaviortree;
 [GlobalClass, Tool]
 public partial class BT_Sequence: BT_Composite
 {
-    public override BT_Status Tick(float delta, Node owner)
+    public override BT_Status OnBehave(float delta, Node owner)
     {
         foreach (BT_Node node in Children)
         {
-            BT_Status status = node.Tick(delta, owner);
-            if (status != BT_Status.Success)
-                return status;
+            BT_Status status = node.OnBehave(delta, owner);
+            if (status is BT_Status.Success or BT_Status.Running) continue;
+            
+            return status;
         }
         return BT_Status.Success;
     }

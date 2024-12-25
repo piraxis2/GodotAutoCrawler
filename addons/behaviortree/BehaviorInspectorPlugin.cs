@@ -10,18 +10,10 @@ public partial class BehaviorInspectorPlugin : EditorInspectorPlugin
         return @object is BT_Node;
     }
 
-
-    public override void _ParseCategory(GodotObject @object, string category)
+    public override void _ParseBegin(GodotObject @object)
     {
-        GD.Print("Parsing category");
-        
-        var tempButton = new Button();
-        tempButton.Text = "Behavior Tree";
-        tempButton.Pressed += () =>
-        {
-            GD.Print("Button pressed");
-        };
-        AddCustomControl(tempButton);
+        GD.Print("Parsing begin");
+        AddPropertyEditor("CustomCategory", new EditorPropertyButton());
     }
 }
 
@@ -32,13 +24,15 @@ public partial class EditorPropertyButton : EditorProperty
 
     public EditorPropertyButton()
     {
+        SetLabel("Behavior Tree");
         AddChild(_button);
         AddFocusable(_button);
-       _button.Pressed += OnButtonPressed; 
+        _button.Text = "Load Behavior Tree";
+        _button.Pressed += OnButtonPressed; 
     }
     private void OnButtonPressed()
     {
-        GD.Print("Button pressed");
+        
     }
 }
 #endif
