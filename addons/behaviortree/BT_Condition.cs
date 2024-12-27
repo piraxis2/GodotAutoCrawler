@@ -4,10 +4,10 @@ using Godot;
 [GlobalClass, Tool]
 public abstract partial class BT_Condition: BT_Node
 {
-    public override BT_Status OnBehave(float delta, Node owner)
+    public override BT_Status OnBehave(double delta, Node owner)
     {
         return CheckCondition(delta, owner);
     }
     
-    protected abstract BT_Status CheckCondition(float delta, Node owner);
+    protected abstract BT_Status CheckCondition(double delta, Node owner);
 }

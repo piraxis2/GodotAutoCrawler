@@ -19,13 +19,17 @@ public abstract partial class BT_Composite : BT_Node
         foreach (BT_Node child in Children)
         {
             if (child.Name == name)
+            {
                 return child;
+            }
 
             if (child is BT_Composite node)
             {
                 BT_Node found = node.FindNode(name);
                 if (found != null)
+                {
                     return found;
+                }
             }
         }
 
@@ -36,17 +40,24 @@ public abstract partial class BT_Composite : BT_Node
     {
         System.Collections.Generic.List<BT_Node> foundNodes = new System.Collections.Generic.List<BT_Node>();
         if (GetType() == type)
+        {
             foundNodes.Add(this);
+        }
+
         foreach (BT_Node child in Children)
         {
             if (child.GetType() == type)
+            {
                 foundNodes.Add(child);
+            }
 
             if (child is BT_Composite compositeChild)
             {
                 System.Collections.Generic.List<BT_Node> foundChildren = compositeChild.FindNodeByType(type);
                 if (foundChildren.Count > 0)
+                {
                     foundNodes.AddRange(foundChildren);
+                }
             }
         }
 
