@@ -7,9 +7,13 @@ public abstract partial class BT_Composite : BT_Node
 {
     protected System.Collections.Generic.List<BT_Node> Children = new System.Collections.Generic.List<BT_Node>();
 
-    public void AddNode(BT_Node node)
+    public override void OnChildEnteredTree(Node child)
     {
-        Children.Add(node);
+        base.OnChildEnteredTree(child);
+        if (child is BT_Node node)
+        {
+            Children.Add(node);
+        }
     }
 
     public BT_Node FindNode(string name)

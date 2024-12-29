@@ -10,7 +10,7 @@ public partial class BT_Selector : BT_Composite
         foreach (BT_Node node in Children)
         {
             BT_Status status = node.OnBehave(delta, owner);
-            if (status is BT_Status.Failure or BT_Status.Running) continue;
+            if (status is BT_Status.Failure) continue;
 
             return status;
         }
