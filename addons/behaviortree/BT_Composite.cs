@@ -1,11 +1,44 @@
 ﻿using System;
 using Godot;
+using Godot.Collections;
+using Array = Godot.Collections.Array;
+
 namespace AutoCrawler.addons.behaviortree;
 
 [GlobalClass, Tool]
 public abstract partial class BT_Composite : BT_Node
 {
-    protected System.Collections.Generic.List<BT_Node> Children = new System.Collections.Generic.List<BT_Node>();
+    
+    public Array<BT_Node> Children
+    {
+        get => _children;
+        set
+        {
+            foreach (BT_Node child in _children)
+            {
+                RemoveChild(child);
+            }
+            _children = value;
+            foreach (BT_Node child in _children)
+            {
+                AddChild(child);
+            }
+        }
+    }
+    private Array<BT_Node> _children = new Array<BT_Node>();
+
+    public override void _Ready()
+    {
+        base._Ready();
+        foreach (var node1 in GetChildren())
+        {
+            var child = (BT_Node)node1;
+            if (child is BT_Node node)
+            {
+                Children.Add(node);
+            }
+        }
+    }
 
     public override void OnChildEnteredTree(Node child)
     {
@@ -40,9 +73,9 @@ public abstract partial class BT_Composite : BT_Node
         return null;
     }
 
-    public System.Collections.Generic.List<BT_Node> FindNodeByType(Type type)
+    public Array<BT_Node> FindNodeByType(Type type)
     {
-        System.Collections.Generic.List<BT_Node> foundNodes = new System.Collections.Generic.List<BT_Node>();
+        Array<BT_Node> foundNodes = new Array<BT_Node>();
         if (GetType() == type)
         {
             foundNodes.Add(this);
@@ -57,7 +90,7 @@ public abstract partial class BT_Composite : BT_Node
 
             if (child is BT_Composite compositeChild)
             {
-                System.Collections.Generic.List<BT_Node> foundChildren = compositeChild.FindNodeByType(type);
+                Array<BT_Node> foundChildren = compositeChild.FindNodeByType(type);
                 if (foundChildren.Count > 0)
                 {
                     foundNodes.AddRange(foundChildren);
