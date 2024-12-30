@@ -33,9 +33,9 @@ public abstract partial class BT_Composite : BT_Node
         foreach (var node1 in GetChildren())
         {
             var child = (BT_Node)node1;
-            if (child is BT_Node node)
+            if (child != null)
             {
-                Children.Add(node);
+                Children.Add(child);
             }
         }
     }

@@ -30,6 +30,7 @@ public partial class BehaviorInspectorPlugin : EditorInspectorPlugin
     
     private void OnButtonPressed()
     {
+        _node.GetRoot();
     }
 }
 

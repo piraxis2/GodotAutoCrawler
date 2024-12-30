@@ -1,6 +1,8 @@
-﻿namespace AutoCrawler.addons.behaviortree;
+﻿
+namespace AutoCrawler.addons.behaviortree;
 using Godot;
 using System;
+using System.Diagnostics;
 
 
 [GlobalClass, Tool]
@@ -21,7 +23,22 @@ public abstract partial class BT_Node : Node
             throw new InvalidOperationException("BT_Node 노드에는 BT_Node 노드만 추가할 수 있습니다.");
         }
     }
-    public virtual BT_Status OnBehave(double delta, Node owner)
+    
+    public BT_Status Behave(double delta, Node owner)
+    {
+#if TOOLS
+        Stopwatch stopwatch = Stopwatch.StartNew();
+#endif
+
+        BT_Status status = OnBehave(delta, owner);
+
+#if TOOLS
+        stopwatch.Stop();
+        GD.Print("Behave time: ", stopwatch.ElapsedMilliseconds);
+#endif
+        return status;
+    }
+    protected virtual BT_Status OnBehave(double delta, Node owner)
     {
         return BT_Status.Failure;
     }

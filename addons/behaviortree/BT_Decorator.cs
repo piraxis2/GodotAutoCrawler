@@ -23,7 +23,7 @@ public abstract partial class BT_Decorator : BT_Node
         }
     }
 
-    public override BT_Status OnBehave(double delta, Node owner)
+    protected override BT_Status OnBehave(double delta, Node owner)
     {
         if (Child == null)
         {

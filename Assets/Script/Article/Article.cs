@@ -9,7 +9,7 @@ public partial class Article : Node
     private BT_Selector _btRoot;
     public void TurnPlay(double delta)
     {
-        _btRoot.OnBehave(delta, this);
+        _btRoot.Behave(delta, this);
     } 
 
 }

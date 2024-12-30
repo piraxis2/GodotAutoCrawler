@@ -6,7 +6,7 @@ using Godot;
 [GlobalClass, Tool]
 public abstract partial class BT_Action : BT_Node
 {
-    public override BT_Status OnBehave(double delta, Node owner)
+    protected override BT_Status OnBehave(double delta, Node owner)
     {
         return PerformAction(delta, owner);
     }
