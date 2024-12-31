@@ -1,36 +1,41 @@
 ﻿
-namespace AutoCrawler.addons.behaviortree;
-using Godot;
 using System;
 using System.Diagnostics;
+using Godot;
 
+namespace AutoCrawler.addons.behaviortree.node;
 
 [GlobalClass, Tool]
-public abstract partial class BT_Node : Node
+public abstract partial class BehaviorTree_Node : Node
 {
-    public enum BT_Status { Success, Failure, Running }
-    
+    public enum BtStatus { Success, Failure, Running }
+
+    public BehaviorTree Tree { get; internal set; }
+
     public override void _Ready()
     {
         Connect("child_entered_tree", new Callable(this, nameof(OnChildEnteredTree)));
+        Connect("child_exiting_tree", new Callable(this, nameof(OnChildExitingTree)));
     }
     
     public virtual void OnChildEnteredTree(Node child)
     {
-        if (child is not BT_Node)
+        if (child is not BehaviorTree_Node)
         {
             RemoveChild(child);
             throw new InvalidOperationException("BT_Node 노드에는 BT_Node 노드만 추가할 수 있습니다.");
         }
     }
+
+    public virtual void OnChildExitingTree(Node child) {}
     
-    public BT_Status Behave(double delta, Node owner)
+    public BtStatus Behave(double delta, Node owner)
     {
 #if TOOLS
         Stopwatch stopwatch = Stopwatch.StartNew();
 #endif
 
-        BT_Status status = OnBehave(delta, owner);
+        BtStatus status = OnBehave(delta, owner);
 
 #if TOOLS
         stopwatch.Stop();
@@ -38,18 +43,13 @@ public abstract partial class BT_Node : Node
 #endif
         return status;
     }
-    protected virtual BT_Status OnBehave(double delta, Node owner)
+    protected virtual BtStatus OnBehave(double delta, Node owner)
     {
-        return BT_Status.Failure;
+        return BtStatus.Failure;
     }
 
-    public BT_Node GetRoot()
+    public BehaviorTree_Node GetRoot()
     {
-        BT_Node node = this;
-        while (node.GetParent() is BT_Node)
-        {
-            node = (BT_Node)node.GetParent();
-        }
-        return node;
+        return Tree.Root;
     }
 }

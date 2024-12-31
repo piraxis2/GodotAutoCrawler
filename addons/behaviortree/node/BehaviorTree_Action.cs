@@ -1,17 +1,17 @@
 ﻿using System;
-
-namespace AutoCrawler.addons.behaviortree;
 using Godot;
 
+namespace AutoCrawler.addons.behaviortree.node;
+
 [GlobalClass, Tool]
-public abstract partial class BT_Action : BT_Node
+public abstract partial class BehaviorTree_Action : BehaviorTree_Node
 {
-    protected override BT_Status OnBehave(double delta, Node owner)
+    protected override BtStatus OnBehave(double delta, Node owner)
     {
         return PerformAction(delta, owner);
     }
 
-    protected abstract BT_Status PerformAction(double delta, Node owner);
+    protected abstract BtStatus PerformAction(double delta, Node owner);
 
     public override void OnChildEnteredTree(Node child)
     {

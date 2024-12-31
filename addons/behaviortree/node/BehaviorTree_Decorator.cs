@@ -1,20 +1,19 @@
-﻿namespace AutoCrawler.addons.behaviortree;
-
-
-using System;
+﻿using System;
 using Godot;
 
+namespace AutoCrawler.addons.behaviortree.node;
+
 [GlobalClass, Tool]
-public abstract partial class BT_Decorator : BT_Node
+public abstract partial class BehaviorTree_Decorator : BehaviorTree_Node
 {
-    public BT_Node Child { get; private set; }
+    public BehaviorTree_Node Child { get; private set; }
 
     public override void OnChildEnteredTree(Node child)
     {
         base.OnChildEnteredTree(child);
         if (Child == null)
         {
-            Child = child as BT_Node;
+            Child = child as BehaviorTree_Node;
         }
         else
         {
@@ -23,7 +22,15 @@ public abstract partial class BT_Decorator : BT_Node
         }
     }
 
-    protected override BT_Status OnBehave(double delta, Node owner)
+    public override void OnChildExitingTree(Node child)
+    {
+        if (child is BehaviorTree_Node)
+        {
+            Child = null;
+        }
+    }
+
+    protected override BtStatus OnBehave(double delta, Node owner)
     {
         if (Child == null)
         {
@@ -32,5 +39,5 @@ public abstract partial class BT_Decorator : BT_Node
         return Decorate(Child);
     }
 
-    protected abstract BT_Status Decorate(BT_Node node);
+    protected abstract BtStatus Decorate(BehaviorTree_Node node);
 }

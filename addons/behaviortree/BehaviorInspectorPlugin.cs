@@ -1,4 +1,5 @@
 ﻿#if TOOLS
+using AutoCrawler.addons.behaviortree.node;
 using Godot;
 
 namespace AutoCrawler.addons.behaviortree;
@@ -6,7 +7,7 @@ namespace AutoCrawler.addons.behaviortree;
 public partial class BehaviorInspectorPlugin : EditorInspectorPlugin
 {
     
-    private BT_Node _node;
+    private node.BehaviorTree_Node _node;
     private BehaviorTreeEditor _editor;
     private Button _button;
     
@@ -16,12 +17,16 @@ public partial class BehaviorInspectorPlugin : EditorInspectorPlugin
     }
     public override bool _CanHandle(GodotObject @object)
     {
-        return @object is BT_Node;
+        if (@object is BehaviorTree_Node node)
+        {
+            return node.Tree != null;
+        }
+        return false;
     }
 
     public override void _ParseBegin(GodotObject @object)
     {
-        _node = @object as BT_Node;
+        _node = @object as node.BehaviorTree_Node;
         _button = new Button();
         _button.Text = "Open Behavior Tree Editor";
         _button.Pressed += OnButtonPressed;
@@ -30,9 +35,7 @@ public partial class BehaviorInspectorPlugin : EditorInspectorPlugin
     
     private void OnButtonPressed()
     {
-        _node.GetRoot();
+        _editor.ShowDebuggerWindow(_node.Tree);
     }
 }
-
-
 #endif
