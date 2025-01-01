@@ -1,5 +1,4 @@
-﻿using System;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
 
 namespace AutoCrawler.addons.behaviortree.node;
@@ -26,30 +25,21 @@ public abstract partial class BehaviorTree_Composite : BehaviorTree_Node
     }
     private Array<BehaviorTree_Node> _children = new Array<BehaviorTree_Node>();
 
-    public override void _Ready()
+    public override Array<BehaviorTree_Node> GetTreeChildren()
     {
-        base._Ready();
-        foreach (var node1 in GetChildren())
-        {
-            if (node1 is BehaviorTree_Node child)
-            {
-                Children.Add(child);
-            }
-        }
+        return Children;
     }
 
-    public override void OnChildEnteredTree(Node child)
+    public override void BehaviorChildEnteredTree(Node child)
     {
-        base.OnChildEnteredTree(child);
         if (child is BehaviorTree_Node node)
         {
             Children.Add(node);
         }
     }
 
-    public override void OnChildExitingTree(Node child)
+    public override void BehaviorChildExitingTree(Node child)
     {
-        base.OnChildExitingTree(child);
         if (child is BehaviorTree_Node btChild)
         {
             _children.Remove(btChild);
@@ -80,7 +70,7 @@ public abstract partial class BehaviorTree_Composite : BehaviorTree_Node
         return null;
     }
 
-    public Array<BehaviorTree_Node> FindNodeByType(Type type)
+    public Array<BehaviorTree_Node> FindNodeByType(System.Type type)
     {
         Array<BehaviorTree_Node> foundNodes = new Array<BehaviorTree_Node>();
         if (GetType() == type)

@@ -1,16 +1,24 @@
-﻿using System;
-using Godot;
+﻿using Godot;
+using Godot.Collections;
 
 namespace AutoCrawler.addons.behaviortree.node;
 
 [GlobalClass, Tool]
 public abstract partial class BehaviorTree_Decorator : BehaviorTree_Node
 {
-    public BehaviorTree_Node Child { get; private set; }
+    private BehaviorTree_Node Child { get; set; }
 
-    public override void OnChildEnteredTree(Node child)
+    public override Array<BehaviorTree_Node> GetTreeChildren()
     {
-        base.OnChildEnteredTree(child);
+        if (Child != null)
+        {
+            return new Array<BehaviorTree_Node> { Child };
+        }
+        return new Array<BehaviorTree_Node>();
+    }
+    
+    public override void BehaviorChildEnteredTree(Node child)
+    {
         if (Child == null)
         {
             Child = child as BehaviorTree_Node;
@@ -18,11 +26,11 @@ public abstract partial class BehaviorTree_Decorator : BehaviorTree_Node
         else
         {
             RemoveChild(child);
-            throw new InvalidOperationException("BT_Decorator 노드에는 자식 노드를 하나만 추가할 수 있습니다.");
+            GD.PushWarning("BT_Decorator 노드에는 자식 노드를 하나만 추가할 수 있습니다.");
         }
     }
 
-    public override void OnChildExitingTree(Node child)
+    public override void BehaviorChildExitingTree(Node child)
     {
         if (child is BehaviorTree_Node)
         {
@@ -34,7 +42,7 @@ public abstract partial class BehaviorTree_Decorator : BehaviorTree_Node
     {
         if (Child == null)
         {
-            throw new InvalidOperationException("BT_Decorator 노드에 자식 노드가 설정되지 않았습니다.");
+            throw new System.InvalidOperationException("BT_Decorator 노드에 자식 노드가 설정되지 않았습니다.");
         }
         return Decorate(Child);
     }

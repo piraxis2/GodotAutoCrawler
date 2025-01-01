@@ -1,4 +1,6 @@
-﻿namespace AutoCrawler.addons.behaviortree;
+﻿using AutoCrawler.addons.behaviortree.node;
+
+namespace AutoCrawler.addons.behaviortree;
 
 public static class Constants
 {

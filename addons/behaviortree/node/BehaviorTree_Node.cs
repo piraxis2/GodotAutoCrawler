@@ -1,33 +1,71 @@
-﻿
-using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Godot;
+using Godot.Collections;
 
 namespace AutoCrawler.addons.behaviortree.node;
 
 [GlobalClass, Tool]
 public abstract partial class BehaviorTree_Node : Node
 {
+
     public enum BtStatus { Success, Failure, Running }
 
     public BehaviorTree Tree { get; internal set; }
 
-    public override void _Ready()
+#if TOOLS
+    public delegate void OnLogChangedEventHandler(Util.BehaviorLog log);
+    public event OnLogChangedEventHandler OnLogChanged; 
+    
+#endif
+
+    public abstract Array<BehaviorTree_Node> GetTreeChildren();
+
+    public override sealed void _Ready()
     {
         Connect("child_entered_tree", new Callable(this, nameof(OnChildEnteredTree)));
         Connect("child_exiting_tree", new Callable(this, nameof(OnChildExitingTree)));
-    }
-    
-    public virtual void OnChildEnteredTree(Node child)
-    {
-        if (child is not BehaviorTree_Node)
-        {
-            RemoveChild(child);
-            throw new InvalidOperationException("BT_Node 노드에는 BT_Node 노드만 추가할 수 있습니다.");
-        }
+        Connect("child_order_changed", new Callable(this, nameof(OnChildOrderChanged)));
+        OnReady();
     }
 
-    public virtual void OnChildExitingTree(Node child) {}
+    protected virtual void OnReady(){}
+
+    public void OnChildEnteredTree(Node child)
+    {
+        if (Tree == null)
+        {
+            GD.PushWarning("BehaviorTree_Node 노드는 BehaviorTree 노드에 추가되어야 합니다.");
+            return;
+        }
+        
+        if (child is not BehaviorTree_Node behaviorTreeNode)
+        {
+            RemoveChild(child);
+            GD.PushWarning("BehaviorTree_Node 노드에는 BehaviorTree_Node 노드만 추가할 수 있습니다.");
+            return;
+        }
+
+        behaviorTreeNode.Tree = Tree;
+        BehaviorChildEnteredTree(child);
+    }
+
+    public void OnChildExitingTree(Node child)
+    {
+        if (child is not BehaviorTree_Node behaviorTreeNode)
+        {
+            return;
+        }
+        behaviorTreeNode.Tree = null;
+        BehaviorChildExitingTree(child);
+    }
+    
+    public void OnChildOrderChanged()
+    {
+        Tree?.OnUpdate();
+    }
+
+    public virtual void BehaviorChildEnteredTree(Node child) {}
+    public virtual void BehaviorChildExitingTree(Node child) {}
     
     public BtStatus Behave(double delta, Node owner)
     {
@@ -39,7 +77,10 @@ public abstract partial class BehaviorTree_Node : Node
 
 #if TOOLS
         stopwatch.Stop();
-        GD.Print("Behave time: ", stopwatch.ElapsedMilliseconds);
+        Util.BehaviorLog behaviorLog = new Util.BehaviorLog();
+        behaviorLog.Time = stopwatch.ElapsedMilliseconds;
+        behaviorLog.Status = status;
+        OnLogChanged?.Invoke(behaviorLog);
 #endif
         return status;
     }

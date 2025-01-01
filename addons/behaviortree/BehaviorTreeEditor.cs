@@ -1,6 +1,5 @@
 #if TOOLS
 using AutoCrawler.addons.behaviortree.debugger;
-using AutoCrawler.addons.behaviortree.node;
 using Godot;
 
 namespace AutoCrawler.addons.behaviortree;
@@ -30,8 +29,17 @@ public partial class BehaviorTreeEditor : EditorPlugin
 			_debuggerWindow.CloseRequested += () => _debuggerWindow = null;
 			EditorInterface.Singleton.GetBaseControl().AddChild(_debuggerWindow);
 		}
-		_debuggerWindow?.AddTab(tree);
-		_debuggerWindow?.Show();
+
+		if (_debuggerWindow != null)
+		{
+			_debuggerWindow.AddTab(tree);
+			_debuggerWindow.Show();
+		}
+		else
+		{
+			throw new System.InvalidOperationException("DebuggerWindow가 null입니다.");
+		}
+
 	}
 }
 #endif

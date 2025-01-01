@@ -1,5 +1,4 @@
 ﻿#if TOOLS
-using AutoCrawler.addons.behaviortree.node;
 using Godot;
 
 namespace AutoCrawler.addons.behaviortree.debugger;
@@ -30,7 +29,9 @@ public partial class DebuggerWindow: Window
 
     public void AddTab(BehaviorTree tree)
     {
-        _tabContainer.AddChild(new DebuggerTree(tree));
+        var debuggerTree = new DebuggerTree(tree);
+        debuggerTree.SetName(tree.ArticleName);
+        _tabContainer.AddChild(debuggerTree);
     }
 }
 #endif

@@ -9,7 +9,14 @@ public partial class Article : Node
     private BehaviorTree _behaviorTreeRoot;
     public void TurnPlay(double delta)
     {
-        _behaviorTreeRoot.Behave(delta, this);
+        if (_behaviorTreeRoot != null)
+        {
+            _behaviorTreeRoot.Behave(delta, this);
+        }
+        else
+        {
+            throw new System.InvalidOperationException("BehaviorTree 루트 노드가 설정되지 않았습니다.");
+        }
     } 
 
 }
