@@ -10,7 +10,7 @@ public partial class CheatManager : Node
 		Node currentScene = GetTree().CurrentScene;
 
 		// TileMapLayer 노드 찾기
-		BattleFieldTileMapLayer tileMapLayer = currentScene.GetNode<BattleFieldTileMapLayer>("TileMapContainer/TileMapLayer");
+		BattleFieldTileMapLayer tileMapLayer = currentScene.GetNode<BattleFieldTileMapLayer>("TurnHelper/TileMapLayer");
 		if (tileMapLayer != null)
 		{
 			if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)

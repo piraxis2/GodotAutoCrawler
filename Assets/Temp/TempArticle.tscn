@@ -1,11 +1,9 @@
-[gd_scene load_steps=51 format=3 uid="uid://7qr8a8xdx07i"]
+[gd_scene load_steps=49 format=3 uid="uid://7qr8a8xdx07i"]
 
-[ext_resource type="Script" path="res://Assets/Script/Article/Article.cs" id="1_awnf6"]
 [ext_resource type="Texture2D" uid="uid://d0u23bchmqvqd" path="res://Assets/Textures/Soldier.png" id="1_gjesk"]
+[ext_resource type="Script" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_ia8mn"]
 [ext_resource type="Script" path="res://addons/behaviortree/BehaviorTree.cs" id="2_3b37h"]
 [ext_resource type="Script" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="3_5phss"]
-[ext_resource type="Script" path="res://Assets/Script/Article/BT/Action/BehaviorTree_AutoCrwaler_Move.cs" id="5_dl5vs"]
-[ext_resource type="Script" path="res://addons/behaviortree/node/BehaviorTree_Sequence.cs" id="6_g17qa"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_l1mya"]
 atlas = ExtResource("1_gjesk")
@@ -346,9 +344,8 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Character" type="Node2D" node_paths=PackedStringArray("_behaviorTreeRoot")]
-script = ExtResource("1_awnf6")
-_behaviorTreeRoot = NodePath("BehaviorTree")
+[node name="Character" type="Node2D"]
+script = ExtResource("1_ia8mn")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
@@ -362,15 +359,3 @@ script = ExtResource("2_3b37h")
 
 [node name="BehaviorTree_Selector" type="Node" parent="BehaviorTree"]
 script = ExtResource("3_5phss")
-
-[node name="BehaviorTree_AutoCrwaler_Move" type="Node" parent="BehaviorTree/BehaviorTree_Selector"]
-script = ExtResource("5_dl5vs")
-
-[node name="BehaviorTree_Sequence" type="Node" parent="BehaviorTree/BehaviorTree_Selector"]
-script = ExtResource("6_g17qa")
-
-[node name="BehaviorTree_Sequence" type="Node" parent="BehaviorTree/BehaviorTree_Selector/BehaviorTree_Sequence"]
-script = ExtResource("6_g17qa")
-
-[node name="BehaviorTree_AutoCrwaler_Move" type="Node" parent="BehaviorTree/BehaviorTree_Selector/BehaviorTree_Sequence/BehaviorTree_Sequence"]
-script = ExtResource("5_dl5vs")

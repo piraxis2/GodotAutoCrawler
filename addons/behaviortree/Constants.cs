@@ -8,4 +8,5 @@ public static class Constants
     {
         public const int NotificationChildAdded = 10;
     }
+    public enum BtStatus { Success, Failure, Running }
 }

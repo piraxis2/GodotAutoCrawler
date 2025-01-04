@@ -1,23 +1,23 @@
 ﻿#if TOOLS
-using AutoCrawler.addons.behaviortree.node;
 using Godot;
-
 namespace AutoCrawler.addons.behaviortree;
 
+[Tool]
 public partial class BehaviorInspectorPlugin : EditorInspectorPlugin
 {
     
     private node.BehaviorTree_Node _node;
-    private BehaviorTreeEditor _editor;
+    private BehaviorTreeEditor _editor = null;
     private Button _button;
-    
+
+    public BehaviorInspectorPlugin() {}
     public BehaviorInspectorPlugin(BehaviorTreeEditor editor)
     {
         _editor = editor; 
     }
     public override bool _CanHandle(GodotObject @object)
     {
-        if (@object is BehaviorTree_Node node)
+        if (@object is node.BehaviorTree_Node node)
         {
             return node.Tree != null;
         }

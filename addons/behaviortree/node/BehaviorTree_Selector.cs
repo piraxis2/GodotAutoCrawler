@@ -5,16 +5,16 @@ namespace AutoCrawler.addons.behaviortree.node;
 [GlobalClass, Tool]
 public partial class BehaviorTree_Selector : BehaviorTree_Composite
 {
-    protected override BtStatus OnBehave(double delta, Node owner)
+    protected override Constants.BtStatus OnBehave(double delta, Node owner)
     {
-        foreach (BehaviorTree_Node node in Children)
+        foreach (BehaviorTree_Node node in GetTreeChildren())
         {
-            BtStatus status = node.Behave(delta, owner);
-            if (status is BtStatus.Failure) continue;
+            Constants.BtStatus status = node.Behave(delta, owner);
+            if (status is Constants.BtStatus.Failure) continue;
 
             return status;
         }
-        return BtStatus.Failure;
+        return Constants.BtStatus.Failure;
     }
         
 }
