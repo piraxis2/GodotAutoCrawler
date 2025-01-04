@@ -4,5 +4,5 @@ namespace AutoCrawler.Assets.Script.Article.Interface;
 
 public interface IStackable
 {
-    public Article UpperArticle { get; set; }
+    public ArticleBase UpperArticleBase { get; set; }
 }

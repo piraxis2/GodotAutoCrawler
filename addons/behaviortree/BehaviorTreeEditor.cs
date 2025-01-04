@@ -19,6 +19,11 @@ public partial class BehaviorTreeEditor : EditorPlugin
 	public override void _ExitTree()
 	{
 		RemoveInspectorPlugin(_inspectorPlugin);
+		if (_debuggerWindow != null)
+		{
+			_debuggerWindow.QueueFree();
+			_debuggerWindow = null;
+		}
 	}
 	
 	public void ShowDebuggerWindow(BehaviorTree tree)
@@ -26,7 +31,11 @@ public partial class BehaviorTreeEditor : EditorPlugin
 		if (_debuggerWindow == null)
 		{
 			_debuggerWindow = GD.Load<PackedScene>("res://addons/behaviortree/debugger/DebuggerWindow.tscn").Instantiate<DebuggerWindow>();
-			_debuggerWindow.CloseRequested += () => _debuggerWindow = null;
+			_debuggerWindow.CloseRequested += () =>
+			{
+				_debuggerWindow.QueueFree();
+				_debuggerWindow = null;
+			};
 			EditorInterface.Singleton.GetBaseControl().AddChild(_debuggerWindow);
 		}
 

@@ -1,5 +1,5 @@
-﻿using Godot;
-using Godot.Collections;
+﻿using System.Collections.Generic;
+using Godot;
 
 namespace AutoCrawler.addons.behaviortree.node;
 
@@ -8,44 +8,44 @@ public abstract partial class BehaviorTree_Decorator : BehaviorTree_Node
 {
     private BehaviorTree_Node Child { get; set; }
 
-    public override Array<BehaviorTree_Node> GetTreeChildren()
+    public override List<BehaviorTree_Node> GetTreeChildren()
     {
         if (Child != null)
         {
-            return new Array<BehaviorTree_Node> { Child };
+            return new List<BehaviorTree_Node> { Child };
         }
-        return new Array<BehaviorTree_Node>();
+
+        return new List<BehaviorTree_Node>();
     }
     
-    public override void BehaviorChildEnteredTree(Node child)
+    protected override void OnTreeChanged()
     {
-        if (Child == null)
+        Child = null;
+        foreach (var child in GetChildren())
         {
-            Child = child as BehaviorTree_Node;
-        }
-        else
-        {
-            RemoveChild(child);
-            GD.PushWarning("BT_Decorator 노드에는 자식 노드를 하나만 추가할 수 있습니다.");
+            if (Child == null)
+            {
+                if (child is BehaviorTree_Node node)
+                {
+                    Child = node;
+                }
+            }
+            else
+            {
+                RemoveChild(child);
+            }
         }
     }
 
-    public override void BehaviorChildExitingTree(Node child)
-    {
-        if (child is BehaviorTree_Node)
-        {
-            Child = null;
-        }
-    }
-
-    protected override BtStatus OnBehave(double delta, Node owner)
+    protected override Constants.BtStatus OnBehave(double delta, Node owner)
     {
         if (Child == null)
         {
             throw new System.InvalidOperationException("BT_Decorator 노드에 자식 노드가 설정되지 않았습니다.");
         }
-        return Decorate(Child);
+
+        return Decorate(Child, delta, owner);
     }
 
-    protected abstract BtStatus Decorate(BehaviorTree_Node node);
+    protected abstract Constants.BtStatus Decorate(BehaviorTree_Node child, double delta, Node owner);
 }
