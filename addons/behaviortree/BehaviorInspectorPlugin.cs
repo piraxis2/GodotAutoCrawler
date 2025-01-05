@@ -35,6 +35,7 @@ public partial class BehaviorInspectorPlugin : EditorInspectorPlugin
     
     private void OnButtonPressed()
     {
+        _node.Tree.GenerateMermaidGraph();
         _editor.ShowDebuggerWindow(_node.Tree);
     }
 }
