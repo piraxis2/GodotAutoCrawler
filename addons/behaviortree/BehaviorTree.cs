@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using AutoCrawler.addons.behaviortree.node;
 using AutoCrawler.Assets.Script.Article;
@@ -16,6 +18,7 @@ public partial class BehaviorTree : Node
     public delegate void OnUpdateTreeEventHandler(BehaviorTree tree);
     
     public string ArticleName => GetParent()?.Name;
+    private bool _isUpdateRequested = false;
 
     public override void _Ready()
     {
@@ -25,10 +28,7 @@ public partial class BehaviorTree : Node
 
     private void OnChildOrderChanged()
     {
-        if (IsInsideTree())
-        {
-            SetTree(Root);
-        }
+        OnUpdate();
     }
 
     private void SetTree(BehaviorTree_Node node)
@@ -49,11 +49,20 @@ public partial class BehaviorTree : Node
     {
         return Root.Behave(delta, owner);
     }
-    
-    public void OnUpdate()
+
+    public void UpdateRequest()
     {
-        GD.Print($"OnUpdateTree : {Name}");
+        if (_isUpdateRequested) return;
+        _isUpdateRequested = true;
+        CallDeferred(nameof(OnUpdate));
+    }
+    private void OnUpdate()
+    {
+        _isUpdateRequested = false;
+        if (!IsInsideTree()) return;
+        SetTree(Root);
         EmitSignal("OnUpdateTree", this);
+        GD.Print($"OnUpdateTree : {Name}");
     }
 
     public void OnLeafNodeExecuted(BehaviorTree_Node leafNode, Constants.BtStatus status)
@@ -68,7 +77,7 @@ public partial class BehaviorTree : Node
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("graph TD");
         GenerateMermaidGraph(Root, sb);
-
+        DisplayServer.Singleton.ClipboardSet(sb.ToString());
         return sb.ToString();
     }
 
@@ -80,4 +89,11 @@ public partial class BehaviorTree : Node
             GenerateMermaidGraph(child, sb);
         }
     }
+    
+    public List<BehaviorTree_Node> FindNodeByType(Type type)
+    {
+        return Root.FindNodeByType(type);
+    }
+    
+    
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Godot;
 
@@ -22,25 +23,20 @@ public abstract partial class BehaviorTree_Node : Node
 
     public abstract List<BehaviorTree_Node> GetTreeChildren();
 
-    public override sealed void _Ready()
+    public sealed override void _Ready()
     {
         ChildOrderChanged += OnChildOrderChanged;
         OnTreeChanged();
         OnReady();
-        OnInit();
     }
 
     protected virtual void OnReady(){}
-
-    protected virtual void OnInit()
-    {
-        _elapsedTime = 0;
-    }
+    protected virtual void OnInit(Node owner){}
 
     private void OnChildOrderChanged()
     {
         OnTreeChanged();
-        Tree?.OnUpdate();
+        Tree?.UpdateRequest();
     }
 
     protected abstract void OnTreeChanged();
@@ -49,7 +45,8 @@ public abstract partial class BehaviorTree_Node : Node
     {
         if (_status is Constants.BtStatus.Success or Constants.BtStatus.Failure)
         {
-            OnInit();
+            OnInit(owner);
+            _elapsedTime = 0;
         }
         _elapsedTime = (long)(_elapsedTime + delta);
         _status = OnBehave(delta, owner);
@@ -72,5 +69,20 @@ public abstract partial class BehaviorTree_Node : Node
     private bool IsLeafNode()
     {
         return GetTreeChildren().Count == 0;
+    }
+    
+    public List<BehaviorTree_Node> FindNodeByType(Type type)
+    {
+        List<BehaviorTree_Node> nodes = new List<BehaviorTree_Node>();
+        if (GetType() == type)
+        {
+            nodes.Add(this);
+        }
+        foreach (BehaviorTree_Node node in GetTreeChildren())
+        {
+            nodes.AddRange(node.FindNodeByType(type));
+        }
+
+        return nodes.Count > 0 ? nodes : null;
     }
 }

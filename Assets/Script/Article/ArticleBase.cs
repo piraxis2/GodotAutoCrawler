@@ -3,7 +3,7 @@ using Godot;
 
 namespace AutoCrawler.Assets.Script.Article;
 
-public partial class ArticleBase : Node
+public partial class ArticleBase : Node2D
 {
 
 }
