@@ -360,15 +360,12 @@ speed_scale = 2.0
 [node name="BehaviorTree" type="Node" parent="."]
 script = ExtResource("2_3b37h")
 
-[node name="BehaviorTree_Selector" type="Node" parent="BehaviorTree"]
+[node name="BehaviorTree_Selector_Root" type="Node" parent="BehaviorTree"]
 script = ExtResource("3_5phss")
 
-[node name="BehaviorTree_Selector" type="Node" parent="BehaviorTree/BehaviorTree_Selector"]
-script = ExtResource("3_5phss")
-
-[node name="BehaviorTree_FIndOpponent" type="Node" parent="BehaviorTree/BehaviorTree_Selector/BehaviorTree_Selector"]
+[node name="BehaviorTree_FIndOpponent" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("5_67uxt")
 
-[node name="BehaviorTree_TurnAction" type="Node" parent="BehaviorTree/BehaviorTree_Selector/BehaviorTree_Selector/BehaviorTree_FIndOpponent"]
+[node name="BehaviorTree_TurnAction_Move" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
 script = ExtResource("6_c3jtj")
 _actionScript = ExtResource("7_ooixa")

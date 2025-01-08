@@ -14,6 +14,4 @@ public static class Util
             Time = 0;
         }
     }
-    
-    
 }

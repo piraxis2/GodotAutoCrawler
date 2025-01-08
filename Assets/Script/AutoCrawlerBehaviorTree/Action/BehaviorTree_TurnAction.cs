@@ -29,11 +29,18 @@ public partial class BehaviorTree_TurnAction : BehaviorTree_Action
             {
                 article.CurrentTurnAction = _turnAction;
                 if (actionStatus == TurnActionBase.ActionState.Running)
+                {
                     return Constants.BtStatus.Running;
+                }
             }
             return Constants.BtStatus.Success;
         }
         return Constants.BtStatus.Failure;
     }
-    
+
+    public override void _ExitTree()
+    {
+        base._ExitTree();
+        _turnAction?.Free();
+    }
 }

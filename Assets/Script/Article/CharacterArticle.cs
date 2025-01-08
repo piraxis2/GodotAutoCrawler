@@ -24,6 +24,7 @@ public partial class CharacterArticle : ArticleBase, ITurnAffected<ArticleBase>
     {
         get
         {
+            //todo BehaviorTree_Skill에 스킬에 대한 자세한 정보가 안담길 수 있음  
             var skills = BehaviorTree.FindNodeByType(typeof(BehaviorTree_Skill));
             return skills?.OfType<BehaviorTree_Skill>()
                 .Select(skill => skill.StrikingDistance)

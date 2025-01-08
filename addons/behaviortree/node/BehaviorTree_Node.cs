@@ -35,7 +35,7 @@ public abstract partial class BehaviorTree_Node : Node
 
     private void OnChildOrderChanged()
     {
-        OnTreeChanged();
+        CallDeferred(nameof(OnTreeChanged));
         Tree?.UpdateRequest();
     }
 
