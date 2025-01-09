@@ -10,27 +10,20 @@ namespace AutoCrawler.Assets.Script;
 
 public partial class TurnHelper : Node
 {
-    private static TurnHelper _instance;
-    public static TurnHelper Instance => _instance ??= GlobalUtil.Singleton.GetNode<TurnHelper>("../BattleField/TurnHelper");
-    
     private readonly List<ITurnAffected<ArticleBase>> _turnAffectedArticleList = new();
     private ITurnAffected<ArticleBase> _currentTurnArticle;
 
     public override void _Ready()
     {
         Node articleContainer = GetNode("../Articles");
-        string[] categories = { "Neutral", "Opponent", "Ally" };
 
-        foreach (string category in categories)
+        var articles = (Array<Node>)articleContainer.Call("getAllArticles");
+        foreach (Node article in articles)
         {
-            var articles = (Array<Node>)articleContainer.Call("getArticle", category);
-            foreach (Node article in articles)
+            ArticleBase articleBase = (ArticleBase)article;
+            if (articleBase is ITurnAffected<ArticleBase> turnAffectedArticle)
             {
-                ArticleBase articleBase = (ArticleBase)article;
-                if (articleBase is ITurnAffected<ArticleBase> turnAffectedArticle)
-                {
-                    _turnAffectedArticleList.Add(turnAffectedArticle);
-                }
+                _turnAffectedArticleList.Add(turnAffectedArticle);
             }
         }
        

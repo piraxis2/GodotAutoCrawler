@@ -5,7 +5,6 @@ namespace AutoCrawler.Assets.Script.Article;
 public partial class ArticleBase : Node2D
 {
 
-    [Export] public Vector2I TempTilePosition;
     [Signal]
     public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
 
@@ -29,6 +28,5 @@ public partial class ArticleBase : Node2D
     public override void _Ready()
     {
         base._Ready();
-        TilePosition = TempTilePosition;
     }
 }

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using AutoCrawler.Assets.Script.Article;
 using Godot;
+using Godot.Collections;
 
 namespace AutoCrawler.Assets.Script;
 
@@ -8,9 +10,16 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-        var userRect = GetUsedRect();
-        var tilemapSize = userRect.End - userRect.Position;
-        var tileSize = GetTileSet().TileSize;
+		Node articleContainer = GetNode("../Articles");
+        var articles = (Array<Node>)articleContainer.Call("getAllArticles");
+        foreach (var node in articles)
+        {
+	        if (node is ArticleBase article)
+	        {
+		        article.GlobalPosition = MapToLocal(LocalToMap(article.GlobalPosition));
+	        }
+        }
+		
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

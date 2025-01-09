@@ -8,7 +8,6 @@
   <ItemGroup>
     <Folder Include="Assets\Script\Article\Status\" />
     <Folder Include="Assets\Script\AutoCrawlerBehaviorTree\Interface\" />
-    <Folder Include="Assets\Script\TurnAction\Skill\" />
     <Folder Include="Assets\Script\Util\" />
   </ItemGroup>
 </Project>
