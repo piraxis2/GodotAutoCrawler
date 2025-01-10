@@ -4,6 +4,7 @@ using AutoCrawler.addons.behaviortree;
 using AutoCrawler.Assets.Script.Article.Interface;
 using AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Action;
 using AutoCrawler.Assets.Script.TurnAction;
+using AutoCrawler.Assets.Script.TurnAction.Skill;
 
 namespace AutoCrawler.Assets.Script.Article;
 
@@ -24,10 +25,13 @@ public partial class CharacterArticle : ArticleBase, ITurnAffected<ArticleBase>
     {
         get
         {
-            var skills = BehaviorTree.FindNodeByType(typeof(BehaviorTree_Skill));
-            return skills?.OfType<BehaviorTree_Skill>()
-                .Select(skill => skill.StrikingDistance)
-                .DefaultIfEmpty(0)
+            if (BehaviorTree == null) throw new NullReferenceException("BehaviorTree is null");
+
+            var skills = BehaviorTree.FindNodeByType(typeof(BehaviorTree_TurnAction));
+            return skills?.OfType<BehaviorTree_TurnAction>()
+                .Select(x => x.TurnAction)
+                .OfType<ISkill<TurnActionBase>>()
+                .Select(x => x.Distance)
                 .Min() ?? 1;
         }
     }

@@ -12,28 +12,38 @@ public partial class BehaviorTree_TurnAction : BehaviorTree_Action
 {
     [Export] CSharpScript _actionScript;
 
-    private TurnActionBase _turnAction;
+    public TurnActionBase TurnAction { get; private set; }
 
 
     protected override Constants.BtStatus PerformAction(double delta, Node owner)
     {
         if (owner is ITurnAffected<ArticleBase> article)
         {
-            _turnAction ??= (TurnActionBase)_actionScript?.New();
+            if (TurnAction == null) return Constants.BtStatus.Failure;
             
-            if (_turnAction == null) return Constants.BtStatus.Failure;
-            
-            _turnAction.Init();
-            TurnActionBase.ActionState actionStatus = _turnAction.Action(delta, article as ArticleBase);
+            TurnAction.Init();
+            TurnActionBase.ActionState actionStatus = TurnAction.Action(delta, article as ArticleBase);
             if (actionStatus is TurnActionBase.ActionState.Executed or TurnActionBase.ActionState.Running)
             {
-                article.CurrentTurnAction = _turnAction;
+                article.CurrentTurnAction = TurnAction;
                 if (actionStatus == TurnActionBase.ActionState.Running)
+                {
                     return Constants.BtStatus.Running;
+                }
             }
             return Constants.BtStatus.Success;
         }
         return Constants.BtStatus.Failure;
     }
-    
+
+    public override void _EnterTree()
+    {
+        TurnAction ??= (TurnActionBase)_actionScript?.New();
+    }
+
+    public override void _ExitTree()
+    {
+        base._ExitTree();
+        TurnAction?.Free();
+    }
 }

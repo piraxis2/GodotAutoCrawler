@@ -13,11 +13,11 @@ public abstract partial class TurnActionBase : GodotObject
         End
     }
 
-    private int _cost = 1;
+    protected int MasterCost = 1;
     
     private int _usedCost = 0;
 
-    public int Cost => _cost - _usedCost;
+    public int Cost => MasterCost - _usedCost;
 
     public void Init()
     {

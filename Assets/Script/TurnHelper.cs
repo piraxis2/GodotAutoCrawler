@@ -4,43 +4,30 @@ using AutoCrawler.Assets.Script.Article;
 using AutoCrawler.Assets.Script.Article.Interface;
 using AutoCrawler.Assets.Script.Util;
 using Godot;
+using Godot.Collections;
 
 namespace AutoCrawler.Assets.Script;
 
 public partial class TurnHelper : Node
 {
-    private static TurnHelper _instance = null;
-    public static TurnHelper Instance => _instance ??= GlobalUtil.Singleton.GetNode<TurnHelper>("/root/GlobalUtil");
-    
-    private readonly Dictionary<Node, ArticleBase> _articleMap = new();
     private readonly List<ITurnAffected<ArticleBase>> _turnAffectedArticleList = new();
     private ITurnAffected<ArticleBase> _currentTurnArticle;
 
     public override void _Ready()
     {
-        Node articleContainer = GetNodeOrNull<Node>("Articles");
-        if (articleContainer != null)
-        {
-            foreach (Node child in articleContainer.GetChildren())
-            {
-                foreach (Node article in child.GetChildren())
-                {
-                    if (article is ArticleBase articleNode)
-                    {
-                        if (articleNode is ITurnAffected<ArticleBase> turnAffected)
-                        {
-                            _turnAffectedArticleList.Add(turnAffected);
-                        }
+        Node articleContainer = GetNode("../Articles");
 
-                        _articleMap.Add(child, articleNode);
-                    }
-                }
+        var articles = (Array<Node>)articleContainer.Call("getAllArticles");
+        foreach (Node article in articles)
+        {
+            ArticleBase articleBase = (ArticleBase)article;
+            if (articleBase is ITurnAffected<ArticleBase> turnAffectedArticle)
+            {
+                _turnAffectedArticleList.Add(turnAffectedArticle);
             }
         }
-        else
-        {
-            throw new System.NullReferenceException("Articles node is not found");
-        }
+       
+        _turnAffectedArticleList.Sort((a, b) => a.Priority.CompareTo(b.Priority));
 
         _currentTurnArticle = GetNextTurnArticle();
     }
@@ -62,7 +49,8 @@ public partial class TurnHelper : Node
     
     private ITurnAffected<ArticleBase> GetNextTurnArticle()
     {
-        if (_currentTurnArticle == null) return _turnAffectedArticleList[0];
+        if (_turnAffectedArticleList.Count == 0) return null;
+        if (_currentTurnArticle == null ) return _turnAffectedArticleList[0];
         
         int currentIndex = _turnAffectedArticleList.IndexOf(_currentTurnArticle);
         currentIndex = (currentIndex + 1) % _turnAffectedArticleList.Count;
