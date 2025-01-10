@@ -355,6 +355,7 @@ sprite_frames = SubResource("SpriteFrames_ovkpk")
 animation = &"RangeAttack"
 frame_progress = 0.413131
 speed_scale = 2.0
+offset = Vector2(0, -6)
 
 [node name="BehaviorTree" type="Node" parent="."]
 script = ExtResource("2_3b37h")

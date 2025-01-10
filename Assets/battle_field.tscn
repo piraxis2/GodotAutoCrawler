@@ -127,13 +127,12 @@ script = ExtResource("3_2x00d")
 [node name="Ally" type="Node" parent="Articles"]
 
 [node name="Character" parent="Articles/Ally" instance=ExtResource("3_djr5r")]
-position = Vector2(-96, 11)
-TempTilePosition = Vector2i(1, 14)
+position = Vector2(-144, 40)
 
 [node name="Opponent" type="Node" parent="Articles"]
 
 [node name="Character" parent="Articles/Opponent" instance=ExtResource("3_djr5r")]
-position = Vector2(16, 51)
+position = Vector2(96, -64)
 
 [node name="TurnHelper" type="Node" parent="."]
 script = ExtResource("1_25g81")

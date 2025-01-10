@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using AutoCrawler.Assets.Script.Article;
 using Godot;
 using Godot.Collections;
@@ -16,18 +15,11 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
         {
 	        if (node is ArticleBase article)
 	        {
-		        article.GlobalPosition = MapToLocal(LocalToMap(article.GlobalPosition));
+		        var position = LocalToMap(article.GlobalPosition);
+		        article.GlobalPosition = MapToLocal(position);
 	        }
         }
-		
 	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-		
-	}
-
 
 	public void UpdateAStar(ref AStarGrid2D aStar2D)
 	{
