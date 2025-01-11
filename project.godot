@@ -15,10 +15,6 @@ run/main_scene="res://Assets/battle_field.tscn"
 config/features=PackedStringArray("4.3", "C#", "Forward Plus")
 config/icon="res://Assets/Textures/icon.svg"
 
-[autoload]
-
-GlobalUtil="*res://Assets/Script/Util/GlobalUtil.cs"
-
 [dotnet]
 
 project/assembly_name="AutoCrawler"
