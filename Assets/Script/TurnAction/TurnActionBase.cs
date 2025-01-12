@@ -19,13 +19,13 @@ public abstract partial class TurnActionBase : GodotObject
 
     public int Cost => MasterCost - _usedCost;
 
-    public void Init()
+    public void Init(Node owner)
     {
         _usedCost = 0;
-        OnInit();
+        OnInit(owner);
     }
 
-    protected virtual void OnInit(){}
+    protected virtual void OnInit(Node owner){}
 
     public ActionState Action(double delta, ArticleBase owner)
     {

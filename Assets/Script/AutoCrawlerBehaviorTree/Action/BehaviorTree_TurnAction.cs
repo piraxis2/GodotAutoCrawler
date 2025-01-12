@@ -19,9 +19,10 @@ public partial class BehaviorTree_TurnAction : BehaviorTree_Action
     {
         if (owner is ITurnAffected<ArticleBase> article)
         {
+            TurnAction ??= (TurnActionBase)_actionScript?.New();
             if (TurnAction == null) return Constants.BtStatus.Failure;
             
-            TurnAction.Init();
+            TurnAction.Init(this);
             TurnActionBase.ActionState actionStatus = TurnAction.Action(delta, article as ArticleBase);
             if (actionStatus is TurnActionBase.ActionState.Executed or TurnActionBase.ActionState.Running)
             {
@@ -36,14 +37,10 @@ public partial class BehaviorTree_TurnAction : BehaviorTree_Action
         return Constants.BtStatus.Failure;
     }
 
-    public override void _EnterTree()
-    {
-        TurnAction ??= (TurnActionBase)_actionScript?.New();
-    }
-
     public override void _ExitTree()
     {
         base._ExitTree();
         TurnAction?.Free();
+        TurnAction = null;
     }
 }

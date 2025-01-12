@@ -10,6 +10,7 @@ public partial class BattleFieldScene : Node2D
         {
             var t when t == typeof(BattleFieldTileMapLayer) => GetNode<T>("TileMapLayer"),
             var t when t == typeof(TurnHelper) => GetNode<T>("TurnHelper"),
+            var t when t == typeof(ArticlesContainer) => GetNode<T>("Articles"),
             _ => null
         };
     }

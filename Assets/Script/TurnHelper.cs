@@ -12,18 +12,19 @@ public partial class TurnHelper : Node
 {
     private readonly List<ITurnAffected<ArticleBase>> _turnAffectedArticleList = new();
     private ITurnAffected<ArticleBase> _currentTurnArticle;
+    [Export] double _speed = 1;
 
     public override void _Ready()
     {
-        Node articleContainer = GetNode("../Articles");
-
-        var articles = (Array<Node>)articleContainer.Call("getAllArticles");
-        foreach (Node article in articles)
+        ArticlesContainer articlesContainer = GlobalUtil.GetBattleField(this)?.GetBattleFieldCoreNode<ArticlesContainer>();
+        foreach (var (key, value) in articlesContainer?.Articles!)
         {
-            ArticleBase articleBase = (ArticleBase)article;
-            if (articleBase is ITurnAffected<ArticleBase> turnAffectedArticle)
+            foreach (var articleBase in value)
             {
-                _turnAffectedArticleList.Add(turnAffectedArticle);
+                if (articleBase is ITurnAffected<ArticleBase> turnAffectedArticle)
+                {
+                    _turnAffectedArticleList.Add(turnAffectedArticle);
+                }
             }
         }
        
@@ -32,15 +33,15 @@ public partial class TurnHelper : Node
         _currentTurnArticle = GetNextTurnArticle();
     }
 
-    public override void _Process(double delta)
+    public override void _PhysicsProcess(double delta)
     {
         if (_currentTurnArticle == null)
         {
             // Game Over
             return;
         }
-        
-        Constants.BtStatus status = _currentTurnArticle.TurnPlay(delta);
+
+        Constants.BtStatus status = _currentTurnArticle.TurnPlay(delta * _speed);
         if(status is Constants.BtStatus.Success or Constants.BtStatus.Failure)
         {
             _currentTurnArticle = GetNextTurnArticle();

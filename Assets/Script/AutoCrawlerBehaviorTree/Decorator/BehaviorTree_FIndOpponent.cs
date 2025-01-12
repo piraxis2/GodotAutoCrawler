@@ -19,14 +19,27 @@ public partial class BehaviorTree_FIndOpponent: BehaviorTree_Decorator
     
     protected override Constants.BtStatus Decorate(BehaviorTree_Node child, double delta, Node owner)
     {
-        if (owner is CharacterArticle characterArticle)
+        return !IsOpponentInAttackRange(owner as CharacterArticle) ? child.Behave(delta, owner) : Constants.BtStatus.Failure;
+    }
+
+    private bool IsOpponentInAttackRange(CharacterArticle characterArticle)
+    {
+        if (characterArticle == null)
         {
-            foreach (var attackRangePosition in characterArticle.AttackRangePositions)
+            return false;
+        }
+
+        foreach (var position in characterArticle.CalculatedAttackRange)
+        {
+            var article = _tileMapLayer.GetArticle(position);
+            if (article != null)
             {
-                // _tileMapLayer.GetArticle(attackRangePosition)
+                if (characterArticle.IsOpponent(article))
+                {
+                    return true;        
+                }
             }
         }
-        
-        return child.Behave(delta, owner);
+        return false;
     }
 }
