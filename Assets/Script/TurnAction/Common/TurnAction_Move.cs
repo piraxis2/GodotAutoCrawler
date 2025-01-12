@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoCrawler.Assets.Script.Article;
 using AutoCrawler.Assets.Script.Util;
@@ -6,11 +7,12 @@ using Godot;
 
 namespace AutoCrawler.Assets.Script.TurnAction.Common;
 
+[GlobalClass, Tool]
 public partial class TurnAction_Move : TurnActionBase
 {
     private AStarGrid2D _aStar2D;
     private Vector2I? _targetPosition;
-    private Tween _tween;
+    private Tween _moveTween;
     private double _elapsedTime;
 
 
@@ -54,23 +56,24 @@ public partial class TurnAction_Move : TurnActionBase
         return path.Count > 1 ? path[1] : null;
     }
 
-    private ActionState GetEnd()
+    private ActionState ActionExecuted()
     {
         _targetPosition = null;
-        _tween?.Kill();
-        _tween = null;
+        _moveTween?.Kill();
+        _moveTween = null;
         _elapsedTime = 0;
-        return ActionState.End;
+        return ActionState.Executed;
     }
 
     protected override ActionState ActionExecute(double delta, ArticleBase owner)
     {
-        if (_tween != null)
+        if (_moveTween != null)
         {
-            if (!_tween.CustomStep(_elapsedTime))
+            if (!_moveTween.CustomStep(_elapsedTime))
             {
                 owner.TilePosition = _targetPosition!.Value;
-                return GetEnd();
+                owner.AnimatedSprite2D.Play("Idle");
+                return ActionExecuted();
             }
             
             _elapsedTime += delta;
@@ -78,18 +81,22 @@ public partial class TurnAction_Move : TurnActionBase
         }
         
         var tileMapLayer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
-        
-        if (tileMapLayer == null) return GetEnd();
+
+        if (tileMapLayer == null)
+        {
+            throw new NullReferenceException("TileMapLayer is null");
+        }
 
         _targetPosition ??= FindTarget(owner, tileMapLayer);
         
-        if (_targetPosition == null) return GetEnd();
+        if (_targetPosition == null) return ActionExecuted();
         
         Vector2 to = tileMapLayer.ToGlobal(tileMapLayer.MapToLocal(_targetPosition.Value));
 
-        _tween = owner.CreateTween();
-        _tween.TweenProperty(owner, "global_position", to, 1f);
-        _tween.Pause();
+        _moveTween = owner.CreateTween();
+        _moveTween.TweenProperty(owner, "global_position", to, 1f);
+        _moveTween.Pause();
+        owner.AnimatedSprite2D.Play("Walk");
         
         return ActionState.Running;
     }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://7qr8a8xdx07i"]
+[gd_scene load_steps=53 format=3 uid="uid://7qr8a8xdx07i"]
 
 [ext_resource type="Texture2D" uid="uid://d0u23bchmqvqd" path="res://Assets/Textures/Soldier.png" id="1_gjesk"]
 [ext_resource type="Script" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_ia8mn"]
@@ -181,6 +181,7 @@ atlas = ExtResource("1_gjesk")
 region = Rect2(725, 125, 50, 50)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ovkpk"]
+resource_local_to_scene = true
 animations = [{
 "frames": [{
 "duration": 1.0,
@@ -347,14 +348,18 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Character" type="Node2D"]
+[sub_resource type="Resource" id="Resource_m4p7f"]
+script = ExtResource("7_um6le")
+
+[node name="Character" type="Node2D" node_paths=PackedStringArray("_animatedSprite2D")]
 script = ExtResource("1_ia8mn")
+_animatedSprite2D = NodePath("AnimatedSprite2D")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_ovkpk")
-animation = &"RangeAttack"
-frame_progress = 0.413131
+animation = &"Attack"
+frame_progress = 0.333327
 speed_scale = 2.0
 offset = Vector2(0, -6)
 
@@ -369,4 +374,4 @@ script = ExtResource("5_67uxt")
 
 [node name="BehaviorTree_TurnAction" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
 script = ExtResource("6_c8oug")
-_actionScript = ExtResource("7_um6le")
+TurnAction = SubResource("Resource_m4p7f")
