@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://Assets/Script/TurnHelper.cs" id="1_25g81"]
 [ext_resource type="Texture2D" uid="uid://bk0bo4lm7w2ck" path="res://Assets/Textures/isometric-sandbox-sheet.png" id="1_xbpsd"]
 [ext_resource type="Script" path="res://Assets/Script/BattleFieldTileMapLayer.cs" id="2_0g2jr"]
-[ext_resource type="Script" path="res://Assets/Script/Article/articlesHelper.gd" id="3_2x00d"]
+[ext_resource type="Script" path="res://Assets/Script/ArticlesContainer.cs" id="2_q3ikk"]
 [ext_resource type="PackedScene" uid="uid://7qr8a8xdx07i" path="res://Assets/Temp/TempArticle.tscn" id="3_djr5r"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fla71"]
@@ -122,14 +122,14 @@ script = ExtResource("1_8td0i")
 [node name="LevelGenerator" type="Node" parent="."]
 
 [node name="Articles" type="Node" parent="."]
-script = ExtResource("3_2x00d")
+script = ExtResource("2_q3ikk")
 
 [node name="Neutral" type="Node" parent="Articles"]
 
 [node name="Ally" type="Node" parent="Articles"]
 
 [node name="Character" parent="Articles/Ally" instance=ExtResource("3_djr5r")]
-position = Vector2(-144, 40)
+position = Vector2(-80, 56)
 
 [node name="Opponent" type="Node" parent="Articles"]
 
@@ -146,3 +146,4 @@ tile_set = SubResource("TileSet_fkgbs")
 script = ExtResource("2_0g2jr")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)

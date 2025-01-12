@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using AutoCrawler.Assets.Script.Article;
+using AutoCrawler.Assets.Script.Util;
 using Godot;
 namespace AutoCrawler.Assets.Script;
 
@@ -15,14 +15,20 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 	}
 	public override void _Ready()
 	{
-		Node articleContainer = GetNode("../Articles");
-        var articles = (Godot.Collections.Array<Node>)articleContainer.Call("getAllArticles");
-        foreach (var node in articles)
+        ArticlesContainer articlesContainer = GlobalUtil.GetBattleField(this)?.GetBattleFieldCoreNode<ArticlesContainer>();
+        if (articlesContainer == null) return;
+        
+        foreach (var (key, value) in articlesContainer.Articles!)
         {
-	        if (node is not ArticleBase article) continue;
-
-	        article.OnMove += OnArticleMove;
-	        _placedArticles.Add(article.TilePosition, article);
+	        foreach (var article in value)
+	        {
+		        var position = LocalToMap(ToLocal(article.GlobalPosition));
+		        article.GlobalPosition = ToGlobal(MapToLocal(position));
+		        article.TilePosition = position;
+		        article.OnMove += OnArticleMove;
+		        _placedArticles[article.TilePosition] = article;
+		        GD.Print($"{position}\n{article.GlobalPosition}\n{article.Position}");
+	        }
         }
 	}
 
@@ -30,14 +36,7 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 	{
 		if (from == to) return;
 
-		try
-		{
-			_placedArticles.Remove(from);
-		}
-		catch (Exception e)
-		{
-			GD.PrintErr(e);
-		}
+		_placedArticles[from] = null;	
 		_placedArticles[to] = article;
 	}
 
@@ -49,6 +48,7 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 			aStar2D.Region = GetUsedRect();
 			aStar2D.CellSize = GetTileSet().TileSize;
 			aStar2D.DiagonalMode = AStarGrid2D.DiagonalModeEnum.Never;
+			aStar2D.Update();
 		}
 
 		aStar2D.FillSolidRegion(aStar2D.Region, false);
@@ -60,6 +60,4 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 		
 		aStar2D.Update();
 	}
-	
-
 }
