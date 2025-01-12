@@ -17,7 +17,7 @@ config/icon="res://Assets/Textures/icon.svg"
 
 [autoload]
 
-GlobalUtil="*res://Assets/Script/Util/GlobalUtil.cs"
+CheatManager="*res://Assets/Script/CheatManager.cs"
 
 [dotnet]
 

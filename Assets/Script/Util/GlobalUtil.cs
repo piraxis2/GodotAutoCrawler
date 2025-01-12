@@ -1,13 +1,13 @@
 using Godot;
+using AutoCrawler.Assets.Script;
 
 namespace AutoCrawler.Assets.Script.Util;
 
-public partial class GlobalUtil : Node
+public static class GlobalUtil
 {
-    public static GlobalUtil Singleton { get; private set; }
-
-    public override void _EnterTree()
+    public static BattleFieldScene GetBattleField(Node targetNode)
     {
-        Singleton ??= this;
+        var battleFieldScene = targetNode.GetTree().CurrentScene as BattleFieldScene;
+        return battleFieldScene;
     }
 }

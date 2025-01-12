@@ -1,3 +1,4 @@
+using AutoCrawler.Assets.Script.Article.Interface;
 using Godot;
 
 namespace AutoCrawler.Assets.Script.Article;
@@ -16,7 +17,7 @@ public partial class ArticleBase : Node2D
         get => _tilePosition;
         set
         {
-            if (!_isUnInitialized && _tilePosition == value) return;
+            if (!_isUnInitialized && _tilePosition == value && this is IFixed<ArticleBase>) return;
             
             Vector2I oldPosition = _tilePosition;
             _tilePosition = value;
@@ -24,9 +25,13 @@ public partial class ArticleBase : Node2D
             EmitSignal("OnMove", oldPosition, value, this);
         }
     }
-    
-    public override void _Ready()
+
+    public bool IsOpponent(ArticleBase article)
     {
-        base._Ready();
+        if (article == null)
+        {
+            return false;
+        }
+        return article.GetParent().Name != "Neutral" && article.GetParent().Name != GetParent().Name;
     }
 }

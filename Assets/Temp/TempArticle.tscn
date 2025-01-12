@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=3 uid="uid://7qr8a8xdx07i"]
+[gd_scene load_steps=52 format=3 uid="uid://7qr8a8xdx07i"]
 
 [ext_resource type="Texture2D" uid="uid://d0u23bchmqvqd" path="res://Assets/Textures/Soldier.png" id="1_gjesk"]
 [ext_resource type="Script" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_ia8mn"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="3_5phss"]
 [ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="5_67uxt"]
 [ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="6_c8oug"]
+[ext_resource type="Script" path="res://Assets/Script/TurnAction/Common/TurnAction_Move.cs" id="7_um6le"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_l1mya"]
 atlas = ExtResource("1_gjesk")
@@ -368,3 +369,4 @@ script = ExtResource("5_67uxt")
 
 [node name="BehaviorTree_TurnAction" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
 script = ExtResource("6_c8oug")
+_actionScript = ExtResource("7_um6le")
