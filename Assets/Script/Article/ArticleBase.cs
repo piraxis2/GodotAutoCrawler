@@ -5,6 +5,9 @@ namespace AutoCrawler.Assets.Script.Article;
 
 public partial class ArticleBase : Node2D
 {
+    [Export] 
+    private AnimatedSprite2D _animatedSprite2D;
+    public AnimatedSprite2D AnimatedSprite2D => _animatedSprite2D;
 
     [Signal]
     public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);

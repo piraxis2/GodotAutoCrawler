@@ -10,16 +10,13 @@ namespace AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Action;
 [GlobalClass, Tool]
 public partial class BehaviorTree_TurnAction : BehaviorTree_Action
 {
-    [Export] CSharpScript _actionScript;
-
+    [Export]
     public TurnActionBase TurnAction { get; private set; }
-
 
     protected override Constants.BtStatus PerformAction(double delta, Node owner)
     {
         if (owner is ITurnAffected<ArticleBase> article)
         {
-            TurnAction ??= (TurnActionBase)_actionScript?.New();
             if (TurnAction == null) return Constants.BtStatus.Failure;
             
             TurnAction.Init(this);
@@ -35,12 +32,5 @@ public partial class BehaviorTree_TurnAction : BehaviorTree_Action
             return Constants.BtStatus.Success;
         }
         return Constants.BtStatus.Failure;
-    }
-
-    public override void _ExitTree()
-    {
-        base._ExitTree();
-        TurnAction?.Free();
-        TurnAction = null;
     }
 }

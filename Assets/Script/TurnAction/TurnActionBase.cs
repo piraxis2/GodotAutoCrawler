@@ -4,7 +4,8 @@ using Godot;
 
 namespace AutoCrawler.Assets.Script.TurnAction;
 
-public abstract partial class TurnActionBase : GodotObject 
+[GlobalClass, Tool]
+public abstract partial class TurnActionBase : Resource 
 {
     public enum ActionState
     {
