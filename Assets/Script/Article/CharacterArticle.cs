@@ -12,37 +12,29 @@ namespace AutoCrawler.Assets.Script.Article;
 
 public partial class CharacterArticle : ArticleBase, ITurnAffected<ArticleBase>
 {
+    public TurnActionBase CurrentTurnAction { get; set; }
     private BehaviorTree _behaviorTree;
-    private TurnActionBase _currentTurnAction;
-
-    public TurnActionBase CurrentTurnAction
-    {
-        get => _currentTurnAction;
-        set => _currentTurnAction = value;
-    }
-
     public BehaviorTree BehaviorTree => _behaviorTree ??= GetNode<BehaviorTree>("BehaviorTree");
     public int Priority { get; set; }
 
-    public int MaxStrikingDistance
+    private int? _maxStrikingDistance;
+    private int MaxStrikingDistance
     {
         get
         {
+            if (_maxStrikingDistance.HasValue) return _maxStrikingDistance.Value;
+
             if (BehaviorTree == null) throw new NullReferenceException("BehaviorTree is null");
 
-            var actions = BehaviorTree.FindNodeByType(typeof(BehaviorTree_TurnAction));
-            int maxDistance = 1;
-            foreach (BehaviorTree_TurnAction action in actions)
-            {
-                if (action.TurnAction is ISkill<TurnActionBase> skillBase)
-                {
-                    if (maxDistance < skillBase.Distance)
-                    {
-                        maxDistance = skillBase.Distance;
-                    }
-                }
-            }
-            return maxDistance;
+            int maxDistance = BehaviorTree.FindNodeByType(typeof(BehaviorTree_TurnAction))
+                .OfType<BehaviorTree_TurnAction>()
+                .Where(action => action.TurnAction is ISkill<TurnActionBase>)
+                .Select(action => ((ISkill<TurnActionBase>)action.TurnAction).Distance)
+                .DefaultIfEmpty(1)
+                .Max();
+
+            _maxStrikingDistance = maxDistance;
+            return _maxStrikingDistance.Value;
         }
     }
 
@@ -69,12 +61,9 @@ public partial class CharacterArticle : ArticleBase, ITurnAffected<ArticleBase>
 
                 for (int i = 1; i < MaxStrikingDistance; i++)
                 {
-                    foreach (var area in strikingArea.ToList())
+                    foreach (var area in strikingArea.ToList().Where(area => completedArea.Add(area)))
                     {
-                        if (completedArea.Add(area))
-                        {
-                            strikingArea.UnionWith(GetAdjacentTiles(area));
-                        }
+                        strikingArea.UnionWith(GetAdjacentTiles(area));
                     }
                 }
 
@@ -94,7 +83,7 @@ public partial class CharacterArticle : ArticleBase, ITurnAffected<ArticleBase>
         {
             TurnActionBase.ActionState actionState = CurrentTurnAction.Action(delta, this);
 
-            if (actionState == TurnActionBase.ActionState.End) _currentTurnAction = null;
+            if (actionState == TurnActionBase.ActionState.End) CurrentTurnAction = null;
 
             return actionState == TurnActionBase.ActionState.Running ? Constants.BtStatus.Running : Constants.BtStatus.Success;
         }
