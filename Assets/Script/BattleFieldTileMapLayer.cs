@@ -27,7 +27,6 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 		        article.TilePosition = position;
 		        article.OnMove += OnArticleMove;
 		        _placedArticles[article.TilePosition] = article;
-		        GD.Print($"{position}\n{article.GlobalPosition}\n{article.Position}");
 	        }
         }
 	}

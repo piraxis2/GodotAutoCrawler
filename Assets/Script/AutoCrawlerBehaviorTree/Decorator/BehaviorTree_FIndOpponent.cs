@@ -22,19 +22,19 @@ public partial class BehaviorTree_FIndOpponent: BehaviorTree_Decorator
         return !IsOpponentInAttackRange(owner as CharacterArticle) ? child.Behave(delta, owner) : Constants.BtStatus.Failure;
     }
 
-    private bool IsOpponentInAttackRange(CharacterArticle characterArticle)
+    private bool IsOpponentInAttackRange(CharacterArticle ownerCharacterArticle)
     {
-        if (characterArticle == null)
+        if (ownerCharacterArticle == null)
         {
             return false;
         }
 
-        foreach (var position in characterArticle.CalculatedAttackRange)
+        foreach (var position in ownerCharacterArticle.CalculatedAttackRange)
         {
             var article = _tileMapLayer.GetArticle(position);
             if (article != null)
             {
-                if (characterArticle.IsOpponent(article))
+                if (ownerCharacterArticle.IsOpponent(article))
                 {
                     return true;        
                 }

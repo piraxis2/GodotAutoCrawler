@@ -358,8 +358,7 @@ _animatedSprite2D = NodePath("AnimatedSprite2D")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_ovkpk")
-animation = &"Attack"
-frame_progress = 0.333327
+animation = &"RangeAttack"
 speed_scale = 2.0
 offset = Vector2(0, -6)
 

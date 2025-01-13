@@ -6,8 +6,6 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Assets\Script\Article\Status\" />
-    <Folder Include="Assets\Script\AutoCrawlerBehaviorTree\Interface\" />
     <Folder Include="Assets\Script\Util\" />
   </ItemGroup>
 </Project>

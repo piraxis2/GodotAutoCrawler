@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoCrawler.addons.behaviortree;
 using AutoCrawler.Assets.Script.Article.Interface;
+using AutoCrawler.Assets.Script.Article.Status.Affect;
 using AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Action;
 using AutoCrawler.Assets.Script.TurnAction;
 using AutoCrawler.Assets.Script.TurnAction.Skill;
@@ -10,11 +11,12 @@ using Godot;
 
 namespace AutoCrawler.Assets.Script.Article;
 
-public partial class CharacterArticle : ArticleBase, ITurnAffected<ArticleBase>
+public partial class CharacterArticle : ArticleBase, ITurnAffectedArticle<ArticleBase>
 {
     public TurnActionBase CurrentTurnAction { get; set; }
     private BehaviorTree _behaviorTree;
     public BehaviorTree BehaviorTree => _behaviorTree ??= GetNode<BehaviorTree>("BehaviorTree");
+
     public int Priority { get; set; }
 
     private int? _maxStrikingDistance;
@@ -78,6 +80,8 @@ public partial class CharacterArticle : ArticleBase, ITurnAffected<ArticleBase>
     public Constants.BtStatus TurnPlay(double delta)
     {
         if (BehaviorTree == null) throw new NullReferenceException("BehaviorTree is null");
+        
+        ArticleStatus.ApplyAffectingStatuses();
 
         if (CurrentTurnAction != null)
         {
@@ -90,4 +94,5 @@ public partial class CharacterArticle : ArticleBase, ITurnAffected<ArticleBase>
 
         return BehaviorTree.Behave(delta, this);
     }
+
 }

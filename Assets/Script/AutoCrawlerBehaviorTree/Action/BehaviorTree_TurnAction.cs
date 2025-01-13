@@ -15,7 +15,7 @@ public partial class BehaviorTree_TurnAction : BehaviorTree_Action
 
     protected override Constants.BtStatus PerformAction(double delta, Node owner)
     {
-        if (owner is ITurnAffected<ArticleBase> article)
+        if (owner is ITurnAffectedArticle<ArticleBase> article)
         {
             if (TurnAction == null) return Constants.BtStatus.Failure;
             

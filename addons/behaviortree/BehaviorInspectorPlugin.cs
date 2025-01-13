@@ -26,11 +26,11 @@ public partial class BehaviorInspectorPlugin : EditorInspectorPlugin
 
     public override void _ParseBegin(GodotObject @object)
     {
-        _node = @object as node.BehaviorTree_Node;
-        _button = new Button();
-        _button.Text = "Open Behavior Tree Editor";
-        _button.Pressed += OnButtonPressed;
-        AddCustomControl(_button);
+        // _node = @object as node.BehaviorTree_Node;
+        // _button = new Button();
+        // _button.Text = "Open Behavior Tree Editor";
+        // _button.Pressed += OnButtonPressed;
+        // AddCustomControl(_button);
     }
     
     private void OnButtonPressed()
