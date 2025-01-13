@@ -11,7 +11,7 @@ public partial class Health : StatusElement
     private int _currentHealth;
     private ArticleBase _owner;
 
-    private int CurrentHealth
+    public int CurrentHealth
     {
         get => _currentHealth;
         set

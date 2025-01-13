@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using AutoCrawler.Assets.Script.Article.Status.Element;
 
 namespace AutoCrawler.Assets.Script.Article.Status.Affect;
 
 public abstract class StatusAffect  
 {
     public Action OnAffectedEnd { get; set; }
+    //어디에 적용되는지
     public abstract HashSet<Type> AffectedType { get; }
-    public int UniqId { get; set; } = 0;
-    protected int MasterCost => 0;
+    public uint UniqId { get; set; } = 0;
+    //코스트
+    protected virtual int MasterCost => 1;
     private int _usedCost = 0;
-    private int Cost => MasterCost - _usedCost;
+    public int Cost => MasterCost - _usedCost;
 
-    public void Apply(ArticleStatus articleStatus)
+    public void Apply(ArticleStatus recipient)
     {
-        foreach (var statusElement in articleStatus.StatusElementsDictionary.Values)
+        foreach (var statusElement in recipient.StatusElementsDictionary.Values)
         {
-            if (AffectedType.Contains(statusElement.GetType()))
-            {
-                OnApply(statusElement.GetType(), articleStatus);
-            }
+            OnApply(statusElement, recipient);
         }
         _usedCost++;
         if (Cost <= 0) OnAffectedEnd.Invoke();
     }
 
-    protected abstract void OnApply(Type type, ArticleStatus articleStatus);
+    protected abstract void OnApply<T>(T type, ArticleStatus recipient) where T : StatusElement;
 }

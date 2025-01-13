@@ -6,14 +6,12 @@ using Godot.Collections;
 
 namespace AutoCrawler.Assets.Script.Article.Status;
 
-[GlobalClass, Tool]
 public partial class ArticleStatus : Resource
 {
-    [Export] private Array<StatusElement> StatusElements { get; set; } = new Array<StatusElement>();
-
+    [Export] private Array<StatusElement> StatusElements { get; set; } = new();
     public System.Collections.Generic.Dictionary<Type, StatusElement> StatusElementsDictionary { get; } = new();
-    private int _affectStatusUniqId = 0;
-    private System.Collections.Generic.Dictionary<int, StatusAffect> AffectingStatusesDictionary { get; set; } = new();
+    private uint _affectStatusUniqId;
+    private System.Collections.Generic.Dictionary<uint, StatusAffect> AffectingStatusesDictionary { get; set; } = new();
 
     public ArticleBase Owner { get; private set; }
     public void InitStatus(ArticleBase owner)
@@ -21,19 +19,24 @@ public partial class ArticleStatus : Resource
         Owner = owner;
         foreach (var stat in StatusElements)
         {
-            stat.Init(owner);
-            StatusElementsDictionary.Add(stat.GetType(), stat);
+            if (stat.Duplicate(true) is not StatusElement duplicatedStat) continue;
+            duplicatedStat.Init(owner);
+            StatusElementsDictionary.Add(duplicatedStat.GetType(), duplicatedStat);
         }
     }
-
-    public void AddAffectStatus(StatusAffect statusAffect)
+    
+    public void ApplyAffectStatus(StatusAffect statusAffect)
     {
-        statusAffect.UniqId = _affectStatusUniqId++;
-        statusAffect.OnAffectedEnd += () => RemoveAffectStatus(statusAffect);
-        AffectingStatusesDictionary.Add(statusAffect.UniqId, statusAffect);
+        if (statusAffect.Cost > 1)
+        {
+            statusAffect.UniqId = _affectStatusUniqId++;
+            statusAffect.OnAffectedEnd += () => RemoveAffectStatus(statusAffect);
+            AffectingStatusesDictionary.Add(statusAffect.UniqId, statusAffect);
+        }
+        statusAffect.Apply(this);
     }
 
-    public void RemoveAffectStatus(StatusAffect statusAffect)
+    private void RemoveAffectStatus(StatusAffect statusAffect)
     {
         AffectingStatusesDictionary.Remove(statusAffect.UniqId);
     }

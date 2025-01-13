@@ -32,6 +32,7 @@ public partial class TurnAction_Move : TurnActionBase
         var opponentList = articlesContainer.GetOpponentArticles(owner);
         if (opponentList.Count == 0) return null;
 
+        // 대상 캐릭터의 주변으로 이동할 준비를 한다.
         List<Vector2I> targetPointList = new();
         foreach (var opponent in opponentList)
         {
@@ -48,6 +49,7 @@ public partial class TurnAction_Move : TurnActionBase
 
         if (targetPointList.Count == 0) return null;
 
+        // 가장 가까운 타겟을 찾는다.
         targetPointList.Sort((a, b) => (a - characterArticle.TilePosition).LengthSquared().CompareTo((b - characterArticle.TilePosition).LengthSquared()));
         var path = _aStar2D.GetIdPath(characterArticle.TilePosition, targetPointList[0], true);
 

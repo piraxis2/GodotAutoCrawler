@@ -6,16 +6,15 @@ namespace AutoCrawler.Assets.Script.Article;
 
 public abstract partial class ArticleBase : Node2D
 {
-    [Export] protected ArticleStatus ArticleStatus { get; set; }
+    [Export]
+    public ArticleStatus ArticleStatus = new();
     [Export] private AnimatedSprite2D _animatedSprite2D;
     public AnimatedSprite2D AnimatedSprite2D => _animatedSprite2D;
+    [Signal] public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
 
-    [Signal]
-    public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
 
     private Vector2I _tilePosition;
     private bool _isUnInitialized = true;
-
     public Vector2I TilePosition
     {
         get => _tilePosition;
@@ -43,4 +42,6 @@ public abstract partial class ArticleBase : Node2D
         
         return article.GetParent().Name != "Neutral" && article.GetParent().Name != GetParent().Name;
     }
+
+
 }

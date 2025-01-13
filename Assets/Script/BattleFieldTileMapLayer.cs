@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using AutoCrawler.Assets.Script.Article;
 using AutoCrawler.Assets.Script.Util;
 using Godot;
@@ -12,6 +13,11 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 	public ArticleBase GetArticle(Vector2I position)
 	{
 		return _placedArticles.GetValueOrDefault(position);
+	}
+
+	public List<ArticleBase> GetArticles(List<Vector2I> calculatedAttackRange)
+	{
+		return calculatedAttackRange.Select(GetArticle).Where(article => article != null).ToList();
 	}
 	public override void _Ready()
 	{
@@ -59,4 +65,6 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 		
 		aStar2D.Update();
 	}
+
+	
 }

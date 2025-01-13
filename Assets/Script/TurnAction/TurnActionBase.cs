@@ -14,7 +14,7 @@ public abstract partial class TurnActionBase : Resource
         End
     }
 
-    protected int MasterCost = 1;
+    protected virtual int MasterCost => 1;
     
     private int _usedCost = 0;
 
