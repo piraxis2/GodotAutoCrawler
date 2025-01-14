@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=3 uid="uid://kpkog4h221oy"]
+[gd_scene load_steps=75 format=3 uid="uid://kpkog4h221oy"]
 
 [ext_resource type="Script" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_vmxim"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Health.cs" id="2_dji33"]
@@ -15,21 +15,28 @@
 [ext_resource type="Script" path="res://Assets/Script/TurnAction/Common/TurnAction_Attack.cs" id="13_te07w"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
+resource_local_to_scene = true
 script = ExtResource("2_dji33")
 MaxHealth = 10
 
 [sub_resource type="Resource" id="Resource_f6flg"]
+resource_local_to_scene = true
 script = ExtResource("3_odkgl")
 
 [sub_resource type="Resource" id="Resource_pne82"]
+resource_local_to_scene = true
 script = ExtResource("4_5lb2u")
 
 [sub_resource type="Resource" id="Resource_2fwi5"]
+resource_local_to_scene = true
 script = ExtResource("5_fg3n2")
 
 [sub_resource type="Resource" id="Resource_7e21v"]
+resource_local_to_scene = true
 script = ExtResource("6_10kml")
 StatusElements = [SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5")]
+
+[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_fwt52"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_l1mya"]
 atlas = ExtResource("7_xpkrf")
@@ -371,6 +378,119 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="Animation" id="Animation_mq3xd"]
+resource_name = "Attack"
+length = 0.6
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"Attack"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+
+[sub_resource type="Animation" id="Animation_sx0su"]
+resource_name = "Attack2"
+length = 0.6
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"Attack2"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5]
+}
+
+[sub_resource type="Animation" id="Animation_rsai2"]
+resource_name = "Damaged"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"Damaged"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+
+[sub_resource type="Animation" id="Animation_1dujo"]
+resource_name = "Die"
+length = 0.4
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"Die"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
+}
+
 [sub_resource type="Animation" id="Animation_p1pnt"]
 resource_name = "Idle"
 length = 0.6
@@ -427,9 +547,9 @@ tracks/1/keys = {
 "values": [0]
 }
 
-[sub_resource type="Animation" id="Animation_mq3xd"]
-resource_name = "Attack"
-length = 0.6
+[sub_resource type="Animation" id="Animation_23ffv"]
+resource_name = "RangeAttack"
+length = 0.9
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -441,7 +561,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [&"Attack"]
+"values": [&"RangeAttack"]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -450,10 +570,10 @@ tracks/1/path = NodePath(".:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": [0, 1, 2, 3, 4, 5]
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8]
 }
 
 [sub_resource type="Animation" id="Animation_0audv"]
@@ -488,8 +608,12 @@ tracks/1/keys = {
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_hfvbi"]
 _data = {
 "Attack": SubResource("Animation_mq3xd"),
+"Attack2": SubResource("Animation_sx0su"),
+"Damaged": SubResource("Animation_rsai2"),
+"Die": SubResource("Animation_1dujo"),
 "Idle": SubResource("Animation_p1pnt"),
 "RESET": SubResource("Animation_vx7s0"),
+"RangeAttack": SubResource("Animation_23ffv"),
 "Walk": SubResource("Animation_0audv")
 }
 
@@ -499,12 +623,14 @@ script = ExtResource("12_1aidy")
 [sub_resource type="Resource" id="Resource_dynre"]
 script = ExtResource("13_te07w")
 
-[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_fwt52"]
-
-[node name="Character" type="Node2D" node_paths=PackedStringArray("_animatedSprite2D")]
+[node name="Character" type="Node2D" node_paths=PackedStringArray("_animationPlayer")]
 script = ExtResource("1_vmxim")
 ArticleStatus = SubResource("Resource_7e21v")
-_animatedSprite2D = NodePath("AnimatedSprite2D")
+_animationPlayer = NodePath("AnimatedSprite2D/AnimationPlayer")
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeBlendSpace2D_fwt52")
+parameters/blend_position = Vector2(-0.00198412, 0.0163934)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
@@ -534,7 +660,3 @@ TurnAction = SubResource("Resource_m4p7f")
 [node name="BehaviorTree_TurnAction" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("11_o5kv7")
 TurnAction = SubResource("Resource_dynre")
-
-[node name="AnimationTree" type="AnimationTree" parent="."]
-tree_root = SubResource("AnimationNodeBlendSpace2D_fwt52")
-parameters/blend_position = Vector2(-0.00198412, 0.0163934)

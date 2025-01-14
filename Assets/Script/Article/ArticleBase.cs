@@ -8,8 +8,8 @@ public abstract partial class ArticleBase : Node2D
 {
     [Export]
     public ArticleStatus ArticleStatus = new();
-    [Export] private AnimatedSprite2D _animatedSprite2D;
-    public AnimatedSprite2D AnimatedSprite2D => _animatedSprite2D;
+    [Export] private AnimationPlayer _animationPlayer;
+    public AnimationPlayer AnimationPlayer => _animationPlayer;
     [Signal] public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
 
 

@@ -19,11 +19,14 @@ public abstract class Damage : StatusAffect
     protected abstract int CalculatedDamage(ArticleStatus recipient);
     protected override void OnApply<T>(T type, ArticleStatus recipient)
     {
-        if (!AffectedType.Contains(typeof(T))) return;
+        var gType = type.GetType();
+        if (!AffectedType.Contains((gType))) return;
 
-        if (recipient.StatusElementsDictionary[typeof(T)] is Health health)
-        {
-            health.CurrentHealth -= CalculatedDamage(recipient) * (IsCritical ? 2 : 1);
-        }
+        if (recipient.StatusElementsDictionary[gType] is not Health health) return;
+        
+        int damage = CalculatedDamage(recipient) * (IsCritical ? 2 : 1);
+        var damageFloater = recipient.Owner.GetNode("/root/DamageFloater");
+        damageFloater.Call("display", damage, recipient.Owner.GlobalPosition, IsCritical);
+        health.CurrentHealth -= damage;
     }
 }

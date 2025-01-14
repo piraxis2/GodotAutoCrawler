@@ -49,14 +49,30 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
     }
     protected override void OnInit(Node owner)
     {
+        _isAnimationRunning = false;
     }
 
+    //temp
+    private bool _isAnimationRunning;
     protected override ActionState ActionExecute(double delta, ArticleBase owner)
     {
+        if (owner.AnimationPlayer.CurrentAnimation == "Attack")
+        {
+            return ActionState.Running;
+        }
+
+        if (_isAnimationRunning)
+        {
+            owner.AnimationPlayer.Play("Idle"); 
+            return ActionState.Executed;
+        }
+        
         List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
         var tileMapLayer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
         List<ArticleBase> targetList = tileMapLayer?.GetArticles(calculatedAttackRange);
         targetList?.FirstOrDefault(target => target.IsOpponent(owner))?.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, 10));
-        return ActionState.Executed;
+        owner.AnimationPlayer.Play("Attack");
+        _isAnimationRunning = true;
+        return ActionState.Running;
     }
 }

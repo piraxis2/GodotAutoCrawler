@@ -74,7 +74,7 @@ public partial class TurnAction_Move : TurnActionBase
             if (!_moveTween.CustomStep(_elapsedTime))
             {
                 owner.TilePosition = _targetPosition!.Value;
-                owner.AnimatedSprite2D.Play("Idle");
+                owner.AnimationPlayer.Play("Idle");
                 return ActionExecuted();
             }
             
@@ -98,7 +98,7 @@ public partial class TurnAction_Move : TurnActionBase
         _moveTween = owner.CreateTween();
         _moveTween.TweenProperty(owner, "global_position", to, 1f);
         _moveTween.Pause();
-        owner.AnimatedSprite2D.Play("Walk");
+        owner.AnimationPlayer.Play("Walk");
         
         return ActionState.Running;
     }
