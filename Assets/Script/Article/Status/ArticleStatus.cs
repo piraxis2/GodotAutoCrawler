@@ -36,9 +36,12 @@ public partial class ArticleStatus : Resource
         statusAffect.Apply(this);
     }
 
-    private void RemoveAffectStatus(StatusAffect statusAffect)
+    public void RemoveAffectStatus(StatusAffect statusAffect)
     {
-        AffectingStatusesDictionary.Remove(statusAffect.UniqId);
+        if (AffectingStatusesDictionary.ContainsKey(statusAffect.UniqId))
+        {
+            AffectingStatusesDictionary.Remove(statusAffect.UniqId);
+        }
     }
 
     public void ApplyAffectingStatuses()

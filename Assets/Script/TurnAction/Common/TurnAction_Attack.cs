@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AutoCrawler.Assets.Script.Article;
-using AutoCrawler.Assets.Script.Article.Interface;
 using AutoCrawler.Assets.Script.Article.Status.Affect;
 using AutoCrawler.Assets.Script.TurnAction.Skill;
 using AutoCrawler.Assets.Script.Util;
@@ -13,6 +12,7 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
 {
     public int Distance { get; } = 1;
     public int Range { get; } = 1;
+    
     
     private HashSet<Vector2I> _attackRangePositions;
     public HashSet<Vector2I> AttackRangePositions
@@ -57,7 +57,6 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
         var tileMapLayer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
         List<ArticleBase> targetList = tileMapLayer?.GetArticles(calculatedAttackRange);
         targetList?.FirstOrDefault(target => target.IsOpponent(owner))?.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, 10));
-        owner.AnimatedSprite2D.Play("Attack");
         return ActionState.Executed;
     }
 }

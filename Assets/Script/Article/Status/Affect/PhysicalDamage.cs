@@ -24,7 +24,7 @@ public class PhysicalDamage : Damage
 
     protected override int CalculatedDamage(ArticleStatus recipient)
     {
-        int damage = _damage - ((recipient.StatusElementsDictionary[typeof(Defense)] as Defense)?.Value ?? 0);
-        return damage / (2 + _strength + 25);
+        int defenseValue = (recipient.StatusElementsDictionary[typeof(Defense)] as Defense)?.Value ?? 0;
+        return (_damage - defenseValue) / 2 + _strength + 25;
     }
 }

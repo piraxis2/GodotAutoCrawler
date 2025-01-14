@@ -6,8 +6,9 @@ namespace AutoCrawler.Assets.Script.Article.Status.Affect;
 
 public abstract class StatusAffect  
 {
-    public Action OnAffectedEnd { get; set; }
     //어디에 적용되는지
+    public delegate void OnAffectedEndEventHandler();
+    public event OnAffectedEndEventHandler OnAffectedEnd;
     public abstract HashSet<Type> AffectedType { get; }
     public uint UniqId { get; set; } = 0;
     //코스트
@@ -22,7 +23,7 @@ public abstract class StatusAffect
             OnApply(statusElement, recipient);
         }
         _usedCost++;
-        if (Cost <= 0) OnAffectedEnd.Invoke();
+        if (Cost <= 0) OnAffectedEnd?.Invoke();
     }
 
     protected abstract void OnApply<T>(T type, ArticleStatus recipient) where T : StatusElement;
