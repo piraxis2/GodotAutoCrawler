@@ -160,7 +160,7 @@ script = ExtResource("2_q3ikk")
 [node name="Ally" type="Node" parent="Articles"]
 
 [node name="Character" parent="Articles/Ally" instance=ExtResource("4_viutb")]
-position = Vector2(-32, -16)
+position = Vector2(-144, 24)
 ArticleStatus = SubResource("Resource_o7e7t")
 
 [node name="Opponent" type="Node" parent="Articles"]

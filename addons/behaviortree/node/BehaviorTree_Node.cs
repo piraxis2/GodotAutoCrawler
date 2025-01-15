@@ -80,7 +80,11 @@ public abstract partial class BehaviorTree_Node : Node
         }
         foreach (BehaviorTree_Node node in GetTreeChildren())
         {
-            nodes.AddRange(node.FindNodeByType(type));
+            var behaviorTreeNodes = node.FindNodeByType(type);
+            if (behaviorTreeNodes != null)
+            {
+                nodes.AddRange(behaviorTreeNodes);
+            }
         }
 
         return nodes.Count > 0 ? nodes : null;

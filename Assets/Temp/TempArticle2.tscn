@@ -1,4 +1,4 @@
-[gd_scene load_steps=75 format=3 uid="uid://kpkog4h221oy"]
+[gd_scene load_steps=74 format=3 uid="uid://kpkog4h221oy"]
 
 [ext_resource type="Script" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_vmxim"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Health.cs" id="2_dji33"]
@@ -10,8 +10,8 @@
 [ext_resource type="Script" path="res://addons/behaviortree/BehaviorTree.cs" id="8_00d73"]
 [ext_resource type="Script" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="9_vu6c8"]
 [ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="10_qbpj0"]
+[ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_Move.cs" id="11_ls8w7"]
 [ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="11_o5kv7"]
-[ext_resource type="Script" path="res://Assets/Script/TurnAction/Common/TurnAction_Move.cs" id="12_1aidy"]
 [ext_resource type="Script" path="res://Assets/Script/TurnAction/Common/TurnAction_Attack.cs" id="13_te07w"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
@@ -617,10 +617,6 @@ _data = {
 "Walk": SubResource("Animation_0audv")
 }
 
-[sub_resource type="Resource" id="Resource_m4p7f"]
-resource_local_to_scene = true
-script = ExtResource("12_1aidy")
-
 [sub_resource type="Resource" id="Resource_dynre"]
 resource_local_to_scene = true
 script = ExtResource("13_te07w")
@@ -655,9 +651,8 @@ script = ExtResource("9_vu6c8")
 [node name="BehaviorTree_FIndOpponent" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("10_qbpj0")
 
-[node name="BehaviorTree_TurnAction" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
-script = ExtResource("11_o5kv7")
-TurnAction = SubResource("Resource_m4p7f")
+[node name="BehaviorTree_Move" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
+script = ExtResource("11_ls8w7")
 
 [node name="BehaviorTree_TurnAction" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("11_o5kv7")
