@@ -1,26 +1,26 @@
 using AutoCrawler.Assets.Script.Article.Interface;
+using AutoCrawler.Assets.Script.Article.Status;
 using Godot;
 
 namespace AutoCrawler.Assets.Script.Article;
 
-public partial class ArticleBase : Node2D
+public abstract partial class ArticleBase : Node2D
 {
-    [Export] 
-    private AnimatedSprite2D _animatedSprite2D;
-    public AnimatedSprite2D AnimatedSprite2D => _animatedSprite2D;
+    [Export]
+    public ArticleStatus ArticleStatus = new();
+    [Export] private AnimationPlayer _animationPlayer;
+    public AnimationPlayer AnimationPlayer => _animationPlayer;
+    [Signal] public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
 
-    [Signal]
-    public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
 
     private Vector2I _tilePosition;
     private bool _isUnInitialized = true;
-
     public Vector2I TilePosition
     {
         get => _tilePosition;
         set
         {
-            if (!_isUnInitialized && _tilePosition == value && this is IFixed<ArticleBase>) return;
+            if (!_isUnInitialized && _tilePosition == value && this is IFixedArticle<ArticleBase>) return;
             
             Vector2I oldPosition = _tilePosition;
             _tilePosition = value;
@@ -29,12 +29,19 @@ public partial class ArticleBase : Node2D
         }
     }
 
+    public override sealed void _Ready()
+    {
+        ArticleStatus.InitStatus(this);
+    }
+
     public bool IsOpponent(ArticleBase article)
     {
-        if (article == null)
-        {
-            return false;
-        }
+        if (article == null) return false;
+
+        if (this is not ITurnAffectedArticle<ArticleBase> || article is not ITurnAffectedArticle<ArticleBase>) return false;
+        
         return article.GetParent().Name != "Neutral" && article.GetParent().Name != GetParent().Name;
     }
+
+
 }

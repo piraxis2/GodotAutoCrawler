@@ -32,6 +32,7 @@ public partial class TurnAction_Move : TurnActionBase
         var opponentList = articlesContainer.GetOpponentArticles(owner);
         if (opponentList.Count == 0) return null;
 
+        // 대상 캐릭터의 주변으로 이동할 준비를 한다.
         List<Vector2I> targetPointList = new();
         foreach (var opponent in opponentList)
         {
@@ -48,6 +49,7 @@ public partial class TurnAction_Move : TurnActionBase
 
         if (targetPointList.Count == 0) return null;
 
+        // 가장 가까운 타겟을 찾는다.
         targetPointList.Sort((a, b) => (a - characterArticle.TilePosition).LengthSquared().CompareTo((b - characterArticle.TilePosition).LengthSquared()));
         var path = _aStar2D.GetIdPath(characterArticle.TilePosition, targetPointList[0], true);
 
@@ -72,7 +74,7 @@ public partial class TurnAction_Move : TurnActionBase
             if (!_moveTween.CustomStep(_elapsedTime))
             {
                 owner.TilePosition = _targetPosition!.Value;
-                owner.AnimatedSprite2D.Play("Idle");
+                owner.AnimationPlayer.Play("Idle");
                 return ActionExecuted();
             }
             
@@ -96,7 +98,7 @@ public partial class TurnAction_Move : TurnActionBase
         _moveTween = owner.CreateTween();
         _moveTween.TweenProperty(owner, "global_position", to, 1f);
         _moveTween.Pause();
-        owner.AnimatedSprite2D.Play("Walk");
+        owner.AnimationPlayer.Play("Walk");
         
         return ActionState.Running;
     }

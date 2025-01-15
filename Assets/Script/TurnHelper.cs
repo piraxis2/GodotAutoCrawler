@@ -10,8 +10,8 @@ namespace AutoCrawler.Assets.Script;
 
 public partial class TurnHelper : Node
 {
-    private readonly List<ITurnAffected<ArticleBase>> _turnAffectedArticleList = new();
-    private ITurnAffected<ArticleBase> _currentTurnArticle;
+    private readonly List<ITurnAffectedArticle<ArticleBase>> _turnAffectedArticleList = new();
+    private ITurnAffectedArticle<ArticleBase> _currentTurnArticle;
     [Export] double _speed = 1;
 
     public override void _Ready()
@@ -21,7 +21,7 @@ public partial class TurnHelper : Node
         {
             foreach (var articleBase in value)
             {
-                if (articleBase is ITurnAffected<ArticleBase> turnAffectedArticle)
+                if (articleBase is ITurnAffectedArticle<ArticleBase> turnAffectedArticle)
                 {
                     _turnAffectedArticleList.Add(turnAffectedArticle);
                 }
@@ -42,13 +42,13 @@ public partial class TurnHelper : Node
         }
 
         Constants.BtStatus status = _currentTurnArticle.TurnPlay(delta * _speed);
-        if(status is Constants.BtStatus.Success or Constants.BtStatus.Failure)
+        if (status is Constants.BtStatus.Success or Constants.BtStatus.Failure)
         {
             _currentTurnArticle = GetNextTurnArticle();
         }
     }
     
-    private ITurnAffected<ArticleBase> GetNextTurnArticle()
+    private ITurnAffectedArticle<ArticleBase> GetNextTurnArticle()
     {
         if (_turnAffectedArticleList.Count == 0) return null;
         if (_currentTurnArticle == null ) return _turnAffectedArticleList[0];
