@@ -48,8 +48,7 @@ public partial class DebuggerTree: Tree
     
     private void MakeTree(BehaviorTree_Node node, TreeItem parent)
     {
-        List<BehaviorTree_Node> children = node.GetTreeChildren();
-        foreach (var child in children)
+        foreach (var child in node.TreeChildren)
         {
             var item = parent.CreateChild();
             item.SetText(0, child.GetType().Name);

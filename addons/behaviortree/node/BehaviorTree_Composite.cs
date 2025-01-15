@@ -8,10 +8,7 @@ public abstract partial class BehaviorTree_Composite : BehaviorTree_Node
 {
     private List<BehaviorTree_Node> _children = new List<BehaviorTree_Node>();
 
-    public override List<BehaviorTree_Node> GetTreeChildren()
-    {
-        return _children;
-    }
+    public override List<BehaviorTree_Node> TreeChildren => _children;
 
     protected override void OnTreeChanged()
     {

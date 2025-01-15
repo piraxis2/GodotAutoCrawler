@@ -21,7 +21,7 @@ public abstract partial class BehaviorTree_Node : Node
     
 #endif
 
-    public abstract List<BehaviorTree_Node> GetTreeChildren();
+    public abstract List<BehaviorTree_Node> TreeChildren { get; }
 
     public sealed override void _Ready()
     {
@@ -68,7 +68,7 @@ public abstract partial class BehaviorTree_Node : Node
     
     private bool IsLeafNode()
     {
-        return GetTreeChildren().Count == 0;
+        return TreeChildren.Count == 0;
     }
     
     public List<BehaviorTree_Node> FindNodeByType(Type type)
@@ -78,7 +78,7 @@ public abstract partial class BehaviorTree_Node : Node
         {
             nodes.Add(this);
         }
-        foreach (BehaviorTree_Node node in GetTreeChildren())
+        foreach (BehaviorTree_Node node in TreeChildren)
         {
             var behaviorTreeNodes = node.FindNodeByType(type);
             if (behaviorTreeNodes != null)
