@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using AutoCrawler.addons.behaviortree;
-using AutoCrawler.Assets.Script.Article.Status.Affect;
+﻿using AutoCrawler.addons.behaviortree;
 using AutoCrawler.Assets.Script.TurnAction;
 
 namespace AutoCrawler.Assets.Script.Article.Interface;
@@ -11,6 +9,6 @@ public interface ITurnAffectedArticle<T> where T : ArticleBase
     public TurnActionBase CurrentTurnAction { get; set; }
     protected BehaviorTree BehaviorTree { get; }
     public Constants.BtStatus TurnPlay(double delta);
-    
+
 
 }
