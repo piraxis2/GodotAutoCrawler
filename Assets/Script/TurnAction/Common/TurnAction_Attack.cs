@@ -63,14 +63,14 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
 
         if (_isAnimationRunning)
         {
+            List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
+            var tileMapLayer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
+            List<ArticleBase> targetList = tileMapLayer?.GetArticles(calculatedAttackRange);
+            targetList?.FirstOrDefault(target => target.IsOpponent(owner))?.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, 10));
             owner.AnimationPlayer.Play("Idle"); 
             return ActionState.Executed;
         }
         
-        List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
-        var tileMapLayer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
-        List<ArticleBase> targetList = tileMapLayer?.GetArticles(calculatedAttackRange);
-        targetList?.FirstOrDefault(target => target.IsOpponent(owner))?.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, 10));
         owner.AnimationPlayer.Play("Attack");
         _isAnimationRunning = true;
         return ActionState.Running;
