@@ -5,10 +5,12 @@ namespace AutoCrawler.Assets.Script;
 
 public partial class CheatManager : Node
 {
+	private Node _consoleWindow = null;
 	public override void _Input(InputEvent @event)
 	{
 		// 현재 씬 가져오기
 
+		
 		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
 		{
 			BattleFieldScene battleFieldScene = GlobalUtil.GetBattleField(this);
@@ -21,11 +23,13 @@ public partial class CheatManager : Node
 			}
 		}
 
-		if (@event is InputEventKey { Keycode: Key.Quoteleft, Pressed: true }) 
-		{
-			// 콘솔 열기
-			// Console.Open();
-			GD.Print("hi");
-		}
+		// if (@event is InputEventKey { Keycode: Key.Quoteleft, Pressed: true })
+		// {
+		// 	if (_consoleWindow == null)
+		// 	{
+		// 		_consoleWindow = GD.Load<PackedScene>("res://addons/devconsole/UI/consoleWindow.tscn").Instantiate();
+		// 		GetTree().Root.AddChild(_consoleWindow);
+		// 	}
+		// }
 	}
 }
