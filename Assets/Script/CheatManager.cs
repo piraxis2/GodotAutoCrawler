@@ -8,16 +8,24 @@ public partial class CheatManager : Node
 	public override void _Input(InputEvent @event)
 	{
 		// 현재 씬 가져오기
-		BattleFieldScene battleFieldScene = GlobalUtil.GetBattleField(this);
-		var tileMapLayer = battleFieldScene?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
-		if (tileMapLayer != null)
+
+		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
 		{
-			if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
+			BattleFieldScene battleFieldScene = GlobalUtil.GetBattleField(this);
+			var tileMapLayer = battleFieldScene?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
+			if (tileMapLayer != null)
 			{
 				Vector2 mousePosition = mouseEvent.Position;
-				Vector2I tilePosition = tileMapLayer.LocalToMap(mousePosition);
-				GD.Print($"Tile clicked at: {tilePosition}, {mousePosition}");
+				Vector2I tilePosition = tileMapLayer.LocalToMap(tileMapLayer.ToLocal(mousePosition));
+				GD.Print($"Tile clicked at: {tilePosition}");
 			}
+		}
+
+		if (@event is InputEventKey { Keycode: Key.Quoteleft, Pressed: true }) 
+		{
+			// 콘솔 열기
+			// Console.Open();
+			GD.Print("hi");
 		}
 	}
 }
