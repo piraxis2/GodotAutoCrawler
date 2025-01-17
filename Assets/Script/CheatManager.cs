@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using AutoCrawler.Assets.Script.Util;
 using Godot;
 
@@ -11,7 +12,7 @@ public partial class CheatManager : Node
 		// 현재 씬 가져오기
 
 		
-		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
+		if (@event is InputEventMouseButton { Pressed: true } mouseEvent)
 		{
 			BattleFieldScene battleFieldScene = GlobalUtil.GetBattleField(this);
 			var tileMapLayer = battleFieldScene?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();

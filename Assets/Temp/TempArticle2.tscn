@@ -1,10 +1,11 @@
-[gd_scene load_steps=74 format=3 uid="uid://kpkog4h221oy"]
+[gd_scene load_steps=76 format=3 uid="uid://kpkog4h221oy"]
 
 [ext_resource type="Script" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_vmxim"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Health.cs" id="2_dji33"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Strength.cs" id="3_odkgl"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Defense.cs" id="4_5lb2u"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Luck.cs" id="5_fg3n2"]
+[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="6_5yrpy"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="6_10kml"]
 [ext_resource type="Texture2D" uid="uid://d0u23bchmqvqd" path="res://Assets/Textures/Soldier.png" id="7_xpkrf"]
 [ext_resource type="Script" path="res://addons/behaviortree/BehaviorTree.cs" id="8_00d73"]
@@ -31,10 +32,14 @@ script = ExtResource("4_5lb2u")
 resource_local_to_scene = true
 script = ExtResource("5_fg3n2")
 
+[sub_resource type="Resource" id="Resource_7tk6w"]
+script = ExtResource("6_5yrpy")
+Value = 1
+
 [sub_resource type="Resource" id="Resource_7e21v"]
 resource_local_to_scene = true
 script = ExtResource("6_10kml")
-StatusElements = [SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5")]
+StatusElements = [SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5"), SubResource("Resource_7tk6w")]
 
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_fwt52"]
 

@@ -16,6 +16,8 @@ public partial class Health : StatusElement
         get => _currentHealth;
         set
         {
+            if (_currentHealth == value) return;
+            
             int oldHealth = _currentHealth;
             _currentHealth = value;
             EmitSignal("OnHealthChanged", oldHealth, value);

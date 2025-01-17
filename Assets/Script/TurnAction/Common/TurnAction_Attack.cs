@@ -12,8 +12,7 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
 {
     public int Distance { get; } = 1;
     public int Range { get; } = 1;
-    
-    
+
     private HashSet<Vector2I> _attackRangePositions;
     public HashSet<Vector2I> AttackRangePositions
     {
@@ -21,57 +20,47 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
         {
             if (_attackRangePositions == null)
             {
-                HashSet<Vector2I> GetAdjacentTiles(Vector2I position)
+                _attackRangePositions = new HashSet<Vector2I> { Vector2I.Zero };
+                for (int i = 0; i < Distance; i++)
                 {
-                    return new HashSet<Vector2I>
+                    _attackRangePositions.UnionWith(_attackRangePositions.SelectMany(p => new[]
                     {
-                        position + Vector2I.Right, // 동
-                        position + Vector2I.Left, // 서
-                        position + Vector2I.Down, // 남
-                        position + Vector2I.Up, // 북
-                    };
+                        p + Vector2I.Right,
+                        p + Vector2I.Left,
+                        p + Vector2I.Down,
+                        p + Vector2I.Up
+                    }).ToList());
                 }
-
-                HashSet<Vector2I> strikingArea = new(GetAdjacentTiles(Vector2I.Zero));
-                HashSet<Vector2I> completedArea = new() { Vector2I.Zero };
-
-                for (int i = 1; i < Distance; i++)
-                {
-                    foreach (var area in strikingArea.ToList().Where(area => completedArea.Add(area)))
-                    {
-                        strikingArea.UnionWith(GetAdjacentTiles(area));
-                    }
-                }
-                _attackRangePositions = strikingArea;
             }
             return _attackRangePositions;
         }
     }
+
     protected override void OnInit(Node owner)
     {
         _isAnimationRunning = false;
     }
 
-    //temp
     private bool _isAnimationRunning;
     protected override ActionState ActionExecute(double delta, ArticleBase owner)
     {
-        if (owner.AnimationPlayer.CurrentAnimation == "Attack")
+        if (owner.AnimationPlayer.CurrentAnimation == "Attack" && owner.AnimationPlayer.CurrentAnimationPosition < owner.AnimationPlayer.CurrentAnimationLength)
         {
+            owner.AnimationPlayer.Seek(owner.AnimationPlayer.CurrentAnimationPosition + delta);
             return ActionState.Running;
         }
 
         if (_isAnimationRunning)
         {
             List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
-            var tileMapLayer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
-            List<ArticleBase> targetList = tileMapLayer?.GetArticles(calculatedAttackRange);
-            targetList?.FirstOrDefault(target => target.IsOpponent(owner))?.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, 10));
-            owner.AnimationPlayer.Play("Idle"); 
+            BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
+            ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t.IsOpponent(owner));
+            target?.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, 10));
+            owner.AnimationPlayer.Play("Idle");
             return ActionState.Executed;
         }
-        
-        owner.AnimationPlayer.Play("Attack");
+
+        owner.AnimationPlayer.Play("Attack", -1, 0);
         _isAnimationRunning = true;
         return ActionState.Running;
     }

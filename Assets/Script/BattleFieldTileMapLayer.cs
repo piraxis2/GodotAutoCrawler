@@ -60,6 +60,7 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 
 		foreach (var (position, article) in _placedArticles)
 		{
+			if (article == null) continue;
 			aStar2D.SetPointSolid(position);
 		}
 		

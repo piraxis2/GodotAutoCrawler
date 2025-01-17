@@ -19,9 +19,7 @@ public partial class ArticleStatus : Resource
         Owner = owner;
         foreach (var stat in StatusElements)
         {
-            if (stat.Duplicate(true) is not StatusElement duplicatedStat) continue;
-            duplicatedStat.Init(owner);
-            StatusElementsDictionary.Add(duplicatedStat.GetType(), duplicatedStat);
+            StatusElementsDictionary.Add(stat.GetType(), stat);
         }
     }
     

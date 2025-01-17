@@ -1,18 +1,21 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AutoCrawler.addons.behaviortree;
 using AutoCrawler.addons.behaviortree.node;
 using AutoCrawler.Assets.Script.Article;
+using AutoCrawler.Assets.Script.Article.Status.Element;
 using AutoCrawler.Assets.Script.Util;
 using Godot;
 
 namespace AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Action;
 
 [GlobalClass, Tool]
-public partial class BehaviorTree_Move : BehaviorTree_Action
+public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 {
     private AStarGrid2D _aStar2D;
+    private Queue<Vector2I> _path;
     private Vector2I? _targetPosition;
     private Tween _moveTween;
     private double _elapsedTime;
@@ -21,7 +24,7 @@ public partial class BehaviorTree_Move : BehaviorTree_Action
     {
     }
 
-    private Vector2I? FindTarget(ArticleBase owner, BattleFieldTileMapLayer tileMapLayer)
+    private Queue<Vector2I> GetPath(ArticleBase owner, BattleFieldTileMapLayer tileMapLayer)
     {
         tileMapLayer.UpdateAStar(ref _aStar2D);
 
@@ -49,59 +52,32 @@ public partial class BehaviorTree_Move : BehaviorTree_Action
         }
 
         if (targetPointList.Count == 0) return null;
+        
+        targetPointList.Sort((a, b) => (a - owner.TilePosition).LengthSquared().CompareTo((b - owner.TilePosition).LengthSquared()));
+        var path = _aStar2D.GetIdPath(owner.TilePosition, targetPointList[0], true);
 
-        // 가장 가까운 타겟을 찾는다.
-        targetPointList.Sort((a, b) => (a - characterArticle.TilePosition).LengthSquared().CompareTo((b - characterArticle.TilePosition).LengthSquared()));
-        var path = _aStar2D.GetIdPath(characterArticle.TilePosition, targetPointList[0], true);
+        owner.ArticleStatus.StatusElementsDictionary.TryGetValue(typeof(Mobility), out var mobility);
+        int mobilityValue = (mobility as Mobility)?.Value ?? 1;
+
 
         if (path.Count < 2) return null;
+        
+        Queue<Vector2I> queue = new Queue<Vector2I>();
+        foreach (var pathPosition in path.Slice(0, mobilityValue))
+        {
+            queue.Enqueue(pathPosition);
+        }
 
-        return path.Count > 1 ? path[1] : null;
+        return queue;
     }
 
-    private Constants.BtStatus ActionExecuted()
-    {
-        _targetPosition = null;
-        _moveTween?.Kill();
-        _moveTween = null;
-        _elapsedTime = 0;
-        return Constants.BtStatus.Success;
-    }
+
     protected override Constants.BtStatus PerformAction(double delta, Node owner)
     {
         if (owner is not ArticleBase article) return Constants.BtStatus.Failure;
         
-        if (_moveTween != null)
-        {
-            if (!_moveTween.CustomStep(_elapsedTime))
-            {
-                article.TilePosition = _targetPosition!.Value;
-                article.AnimationPlayer.Play("Idle");
-                return ActionExecuted();
-            }
-            
-            _elapsedTime += delta;
-            return Constants.BtStatus.Running;
-        }
-        
-        var tileMapLayer = GlobalUtil.GetBattleField(article)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
+        // if (_path == null)
 
-        if (tileMapLayer == null)
-        {
-            throw new NullReferenceException("TileMapLayer is null");
-        }
-
-        _targetPosition ??= FindTarget(article, tileMapLayer);
-        
-        if (_targetPosition == null) return ActionExecuted();
-        
-        Vector2 to = tileMapLayer.ToGlobal(tileMapLayer.MapToLocal(_targetPosition.Value));
-
-        _moveTween = article.CreateTween();
-        _moveTween.TweenProperty(article, "global_position", to, 1f);
-        _moveTween.Pause();
-        article.AnimationPlayer.Play("Walk");
-
-        return Constants.BtStatus.Running;
+        return Constants.BtStatus.Failure;
     }
 }

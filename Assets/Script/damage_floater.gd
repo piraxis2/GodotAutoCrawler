@@ -19,11 +19,13 @@ func display(damage: int, position: Vector2, is_critical: bool):
 	number.label_settings.font_size = 10
 	number.label_settings.outline_color = "#000"
 	number.label_settings.outline_size = 2
+	number.visible = false
 	
+	add_child(number)
 	
-	call_deferred("add_child", number)
+	number.set_deferred("visible", true);
 	
-	await number.resized
+	await number.visible
 	number.pivot_offset = Vector2(number.size / 2)
 	
 	var tween = get_tree().create_tween()
@@ -34,7 +36,3 @@ func display(damage: int, position: Vector2, is_critical: bool):
 	await tween.finished
 	tween.kill();
 	number.queue_free()
-	
-	
-	
-		
