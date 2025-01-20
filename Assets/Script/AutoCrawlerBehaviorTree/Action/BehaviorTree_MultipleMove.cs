@@ -19,7 +19,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 
     protected override void OnInit(Node owner) { }
 
-    private Queue<Vector2I> FindPath(ArticleBase owner, BattleFieldTileMapLayer tileMapLayer)
+    private List<Vector2I> FindPath(ArticleBase owner, BattleFieldTileMapLayer tileMapLayer)
     {
         tileMapLayer.UpdateAStar(ref _aStar2D);
 
@@ -50,9 +50,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
         owner.ArticleStatus.StatusElementsDictionary.TryGetValue(typeof(Mobility), out var mobility);
         int mobilityValue = ((mobility as Mobility)?.Value ?? 2) + 1;
 
-        if (path.Count < 2) return null;
-
-        return new Queue<Vector2I>(path.Take(mobilityValue));
+        return path.Count < 2 ? null : new List<Vector2I>(path.Take(mobilityValue));
     }
 
     private Constants.BtStatus ActionExecuted()

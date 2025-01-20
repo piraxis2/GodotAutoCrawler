@@ -203,6 +203,7 @@ ArticleStatus = SubResource("Resource_rykcs")
 
 [node name="TurnHelper" type="Node" parent="."]
 script = ExtResource("1_25g81")
+Speed = 10.0
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 position = Vector2(16, -104)
