@@ -11,8 +11,8 @@
 [ext_resource type="Script" path="res://addons/behaviortree/BehaviorTree.cs" id="8_00d73"]
 [ext_resource type="Script" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="9_vu6c8"]
 [ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="10_qbpj0"]
-[ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_Move.cs" id="11_ls8w7"]
 [ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="11_o5kv7"]
+[ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="12_jhhxj"]
 [ext_resource type="Script" path="res://Assets/Script/TurnAction/Common/TurnAction_Attack.cs" id="13_te07w"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
@@ -33,8 +33,9 @@ resource_local_to_scene = true
 script = ExtResource("5_fg3n2")
 
 [sub_resource type="Resource" id="Resource_7tk6w"]
+resource_local_to_scene = true
 script = ExtResource("6_5yrpy")
-Value = 1
+Value = 2
 
 [sub_resource type="Resource" id="Resource_7e21v"]
 resource_local_to_scene = true
@@ -656,8 +657,8 @@ script = ExtResource("9_vu6c8")
 [node name="BehaviorTree_FIndOpponent" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("10_qbpj0")
 
-[node name="BehaviorTree_Move" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
-script = ExtResource("11_ls8w7")
+[node name="BehaviorTree_MultipleMove" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
+script = ExtResource("12_jhhxj")
 
 [node name="BehaviorTree_TurnAction" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("11_o5kv7")

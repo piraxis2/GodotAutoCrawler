@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=4 uid="uid://dv7r53qteumxi"]
+[gd_scene load_steps=27 format=4 uid="uid://dv7r53qteumxi"]
 
 [ext_resource type="Script" path="res://Assets/Script/BattleFieldScene.cs" id="1_8td0i"]
 [ext_resource type="Script" path="res://Assets/Script/TurnHelper.cs" id="1_25g81"]
@@ -11,29 +11,61 @@
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Defense.cs" id="6_ep4vv"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Luck.cs" id="7_56f8w"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_jm7tw"]
+[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="8_ry6v4"]
 
-[sub_resource type="Resource" id="Resource_hwnjf"]
+[sub_resource type="Resource" id="Resource_whcma"]
+resource_local_to_scene = true
 script = ExtResource("4_72njd")
 MaxHealth = 10
 
-[sub_resource type="Resource" id="Resource_f6flg"]
+[sub_resource type="Resource" id="Resource_j6sm0"]
+resource_local_to_scene = true
 script = ExtResource("5_rst3o")
 
-[sub_resource type="Resource" id="Resource_pne82"]
+[sub_resource type="Resource" id="Resource_fttdh"]
+resource_local_to_scene = true
 script = ExtResource("6_ep4vv")
 
-[sub_resource type="Resource" id="Resource_2fwi5"]
+[sub_resource type="Resource" id="Resource_8f88b"]
+resource_local_to_scene = true
 script = ExtResource("7_56f8w")
 
-[sub_resource type="Resource" id="Resource_o7e7t"]
+[sub_resource type="Resource" id="Resource_h1kac"]
 resource_local_to_scene = true
-script = ExtResource("8_jm7tw")
-StatusElements = [SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5")]
+script = ExtResource("8_ry6v4")
+Value = 4
 
-[sub_resource type="Resource" id="Resource_b8wrq"]
+[sub_resource type="Resource" id="Resource_5ivcy"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
-StatusElements = [SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5")]
+StatusElements = [SubResource("Resource_whcma"), SubResource("Resource_j6sm0"), SubResource("Resource_fttdh"), SubResource("Resource_8f88b"), SubResource("Resource_h1kac")]
+
+[sub_resource type="Resource" id="Resource_7qxie"]
+resource_local_to_scene = true
+script = ExtResource("4_72njd")
+MaxHealth = 10
+
+[sub_resource type="Resource" id="Resource_yi4gr"]
+resource_local_to_scene = true
+script = ExtResource("5_rst3o")
+
+[sub_resource type="Resource" id="Resource_w4mhn"]
+resource_local_to_scene = true
+script = ExtResource("6_ep4vv")
+
+[sub_resource type="Resource" id="Resource_5cn4l"]
+resource_local_to_scene = true
+script = ExtResource("7_56f8w")
+
+[sub_resource type="Resource" id="Resource_valm4"]
+resource_local_to_scene = true
+script = ExtResource("8_ry6v4")
+Value = 2
+
+[sub_resource type="Resource" id="Resource_rykcs"]
+resource_local_to_scene = true
+script = ExtResource("8_jm7tw")
+StatusElements = [SubResource("Resource_7qxie"), SubResource("Resource_yi4gr"), SubResource("Resource_w4mhn"), SubResource("Resource_5cn4l"), SubResource("Resource_valm4")]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fla71"]
 texture = ExtResource("1_xbpsd")
@@ -161,12 +193,13 @@ script = ExtResource("2_q3ikk")
 
 [node name="Character" parent="Articles/Ally" instance=ExtResource("4_viutb")]
 position = Vector2(-144, 24)
-ArticleStatus = SubResource("Resource_o7e7t")
+ArticleStatus = SubResource("Resource_5ivcy")
 
 [node name="Opponent" type="Node" parent="Articles"]
 
 [node name="Character" parent="Articles/Opponent" instance=ExtResource("4_viutb")]
-ArticleStatus = SubResource("Resource_b8wrq")
+position = Vector2(144, -40)
+ArticleStatus = SubResource("Resource_rykcs")
 
 [node name="TurnHelper" type="Node" parent="."]
 script = ExtResource("1_25g81")
