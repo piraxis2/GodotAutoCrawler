@@ -83,7 +83,7 @@ public partial class BehaviorTree : Node
 
     private void GenerateMermaidGraph(BehaviorTree_Node node, StringBuilder sb)
     {
-        foreach (var child in node.GetTreeChildren())
+        foreach (var child in node.TreeChildren)
         {
             sb.AppendLine($"{node.Name} --> {child.Name}");
             GenerateMermaidGraph(child, sb);

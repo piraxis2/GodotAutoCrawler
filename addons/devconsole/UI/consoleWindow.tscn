@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3 uid="uid://cwf5iid2n5uhx"]
+
+[ext_resource type="Script" path="res://addons/devconsole/consoleTextLabel.gd" id="1_376f1"]
+[ext_resource type="Script" path="res://addons/devconsole/UI/console_window.gd" id="1_y4o7j"]
+
+[node name="Window" type="Window" node_paths=PackedStringArray("console_text_label", "console_input")]
+position = Vector2i(0, 36)
+size = Vector2i(500, 500)
+script = ExtResource("1_y4o7j")
+console_text_label = NodePath("Control/VBoxContainer/RichTextLabel")
+console_input = NodePath("Control/VBoxContainer/LineEdit")
+
+[node name="Control" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "1234567890
+1023450000
+"
+fit_content = true
+scroll_following = true
+script = ExtResource("1_376f1")
+
+[node name="LineEdit" type="LineEdit" parent="Control/VBoxContainer"]
+layout_mode = 2
+text = "123"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]

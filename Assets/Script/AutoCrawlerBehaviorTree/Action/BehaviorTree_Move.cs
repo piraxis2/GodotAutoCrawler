@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoCrawler.addons.behaviortree;
+using AutoCrawler.addons.behaviortree.node;
 using AutoCrawler.Assets.Script.Article;
 using AutoCrawler.Assets.Script.Util;
 using Godot;
 
-namespace AutoCrawler.Assets.Script.TurnAction.Common;
+namespace AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Action;
 
 [GlobalClass, Tool]
-public partial class TurnAction_Move : TurnActionBase
+public partial class BehaviorTree_Move : BehaviorTree_Action
 {
     private AStarGrid2D _aStar2D;
     private Vector2I? _targetPosition;
     private Tween _moveTween;
     private double _elapsedTime;
-
 
     protected override void OnInit(Node owner)
     {
@@ -58,48 +59,49 @@ public partial class TurnAction_Move : TurnActionBase
         return path.Count > 1 ? path[1] : null;
     }
 
-    private ActionState ActionExecuted()
+    private Constants.BtStatus ActionExecuted()
     {
         _targetPosition = null;
         _moveTween?.Kill();
         _moveTween = null;
         _elapsedTime = 0;
-        return ActionState.Executed;
+        return Constants.BtStatus.Success;
     }
-
-    protected override ActionState ActionExecute(double delta, ArticleBase owner)
+    protected override Constants.BtStatus PerformAction(double delta, Node owner)
     {
+        if (owner is not ArticleBase article) return Constants.BtStatus.Failure;
+        
         if (_moveTween != null)
         {
             if (!_moveTween.CustomStep(_elapsedTime))
             {
-                owner.TilePosition = _targetPosition!.Value;
-                owner.AnimationPlayer.Play("Idle");
+                article.TilePosition = _targetPosition!.Value;
+                article.AnimationPlayer.Play("Idle");
                 return ActionExecuted();
             }
             
             _elapsedTime += delta;
-            return ActionState.Running;
+            return Constants.BtStatus.Running;
         }
         
-        var tileMapLayer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
+        var tileMapLayer = GlobalUtil.GetBattleField(article)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
 
         if (tileMapLayer == null)
         {
             throw new NullReferenceException("TileMapLayer is null");
         }
 
-        _targetPosition ??= FindTarget(owner, tileMapLayer);
+        _targetPosition ??= FindTarget(article, tileMapLayer);
         
         if (_targetPosition == null) return ActionExecuted();
         
         Vector2 to = tileMapLayer.ToGlobal(tileMapLayer.MapToLocal(_targetPosition.Value));
 
-        _moveTween = owner.CreateTween();
-        _moveTween.TweenProperty(owner, "global_position", to, 1f);
+        _moveTween = article.CreateTween();
+        _moveTween.TweenProperty(article, "global_position", to, 1f);
         _moveTween.Pause();
-        owner.AnimationPlayer.Play("Walk");
-        
-        return ActionState.Running;
+        article.AnimationPlayer.Play("Walk");
+
+        return Constants.BtStatus.Running;
     }
 }

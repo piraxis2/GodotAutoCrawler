@@ -17,7 +17,13 @@ config/icon="res://Assets/Textures/icon.svg"
 
 [autoload]
 
-DamageFloater="*res://damage_floater.gd"
+DamageFloater="*res://Assets/Script/damage_floater.gd"
+CheatManager="*res://Assets/Script/CheatManager.cs"
+GdsCheatManager="*res://Assets/Script/gds_cheat_manager.gd"
+
+[display]
+
+window/subwindows/embed_subwindows=false
 
 [dotnet]
 
@@ -25,4 +31,4 @@ project/assembly_name="AutoCrawler"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/behaviortree/plugin.cfg")
+enabled=PackedStringArray("res://addons/behaviortree/plugin.cfg", "res://addons/devconsole/plugin.cfg")

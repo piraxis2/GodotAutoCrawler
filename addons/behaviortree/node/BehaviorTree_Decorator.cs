@@ -8,16 +8,8 @@ public abstract partial class BehaviorTree_Decorator : BehaviorTree_Node
 {
     private BehaviorTree_Node Child { get; set; }
 
-    public override List<BehaviorTree_Node> GetTreeChildren()
-    {
-        if (Child != null)
-        {
-            return new List<BehaviorTree_Node> { Child };
-        }
+    public override List<BehaviorTree_Node> TreeChildren => Child != null ? new List<BehaviorTree_Node> { Child } : new List<BehaviorTree_Node>();
 
-        return new List<BehaviorTree_Node>();
-    }
-    
     protected override void OnTreeChanged()
     {
         Child = null;

@@ -1,17 +1,18 @@
-[gd_scene load_steps=75 format=3 uid="uid://kpkog4h221oy"]
+[gd_scene load_steps=76 format=3 uid="uid://kpkog4h221oy"]
 
 [ext_resource type="Script" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_vmxim"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Health.cs" id="2_dji33"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Strength.cs" id="3_odkgl"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Defense.cs" id="4_5lb2u"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Luck.cs" id="5_fg3n2"]
+[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="6_5yrpy"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="6_10kml"]
 [ext_resource type="Texture2D" uid="uid://d0u23bchmqvqd" path="res://Assets/Textures/Soldier.png" id="7_xpkrf"]
 [ext_resource type="Script" path="res://addons/behaviortree/BehaviorTree.cs" id="8_00d73"]
 [ext_resource type="Script" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="9_vu6c8"]
 [ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="10_qbpj0"]
 [ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="11_o5kv7"]
-[ext_resource type="Script" path="res://Assets/Script/TurnAction/Common/TurnAction_Move.cs" id="12_1aidy"]
+[ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="12_jhhxj"]
 [ext_resource type="Script" path="res://Assets/Script/TurnAction/Common/TurnAction_Attack.cs" id="13_te07w"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
@@ -31,10 +32,15 @@ script = ExtResource("4_5lb2u")
 resource_local_to_scene = true
 script = ExtResource("5_fg3n2")
 
+[sub_resource type="Resource" id="Resource_7tk6w"]
+resource_local_to_scene = true
+script = ExtResource("6_5yrpy")
+Value = 2
+
 [sub_resource type="Resource" id="Resource_7e21v"]
 resource_local_to_scene = true
 script = ExtResource("6_10kml")
-StatusElements = [SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5")]
+StatusElements = [SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5"), SubResource("Resource_7tk6w")]
 
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_fwt52"]
 
@@ -617,10 +623,8 @@ _data = {
 "Walk": SubResource("Animation_0audv")
 }
 
-[sub_resource type="Resource" id="Resource_m4p7f"]
-script = ExtResource("12_1aidy")
-
 [sub_resource type="Resource" id="Resource_dynre"]
+resource_local_to_scene = true
 script = ExtResource("13_te07w")
 
 [node name="Character" type="Node2D" node_paths=PackedStringArray("_animationPlayer")]
@@ -653,9 +657,8 @@ script = ExtResource("9_vu6c8")
 [node name="BehaviorTree_FIndOpponent" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("10_qbpj0")
 
-[node name="BehaviorTree_TurnAction" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
-script = ExtResource("11_o5kv7")
-TurnAction = SubResource("Resource_m4p7f")
+[node name="BehaviorTree_MultipleMove" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
+script = ExtResource("12_jhhxj")
 
 [node name="BehaviorTree_TurnAction" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("11_o5kv7")
