@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System;
+using Godot;
 
 namespace AutoCrawler.Assets.Script.Article.Status.Element;
 
@@ -19,14 +20,20 @@ public partial class Health : StatusElement
             if (_currentHealth == value) return;
             
             int oldHealth = _currentHealth;
-            _currentHealth = value;
-            EmitSignal("OnHealthChanged", oldHealth, value);
+
+            _currentHealth = Math.Clamp(value, 0, MaxHealth);
+            EmitSignal("OnHealthChanged", oldHealth, _currentHealth);
+            _owner.HealthBar?.Call("_set_health", _currentHealth);
+            GD.Print($"name : {_owner.Name} Health Changed : {_currentHealth}");
+            
+            if (_currentHealth <= 0) _owner.Dead();
         }
     }
 
     public override void Init(ArticleBase owner)
     {
         _owner = owner;
-        CurrentHealth = MaxHealth;
+        _currentHealth = MaxHealth;
+        _owner.HealthBar?.Call("init_health", MaxHealth);
     }
 }

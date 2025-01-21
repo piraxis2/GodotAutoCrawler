@@ -10,6 +10,7 @@ public abstract partial class ArticleBase : Node2D
     public ArticleStatus ArticleStatus = new();
     [Export] private AnimationPlayer _animationPlayer;
     public AnimationPlayer AnimationPlayer => _animationPlayer;
+    public ProgressBar HealthBar;
     [Signal] public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
 
 
@@ -31,6 +32,7 @@ public abstract partial class ArticleBase : Node2D
 
     public override sealed void _Ready()
     {
+        HealthBar = GetNode<ProgressBar>("HealthBar");
         ArticleStatus.InitStatus(this);
     }
 
@@ -44,4 +46,8 @@ public abstract partial class ArticleBase : Node2D
     }
 
 
+    public void Dead()
+    {
+        // QueueFree();
+    }
 }

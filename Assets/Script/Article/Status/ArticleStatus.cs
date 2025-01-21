@@ -20,6 +20,7 @@ public partial class ArticleStatus : Resource
         foreach (var stat in StatusElements)
         {
             StatusElementsDictionary.Add(stat.GetType(), stat);
+            stat.Init(owner);
         }
     }
     

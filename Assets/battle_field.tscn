@@ -16,7 +16,7 @@
 [sub_resource type="Resource" id="Resource_whcma"]
 resource_local_to_scene = true
 script = ExtResource("4_72njd")
-MaxHealth = 10
+MaxHealth = 300
 
 [sub_resource type="Resource" id="Resource_j6sm0"]
 resource_local_to_scene = true
@@ -43,7 +43,7 @@ StatusElements = [SubResource("Resource_whcma"), SubResource("Resource_j6sm0"), 
 [sub_resource type="Resource" id="Resource_7qxie"]
 resource_local_to_scene = true
 script = ExtResource("4_72njd")
-MaxHealth = 10
+MaxHealth = 300
 
 [sub_resource type="Resource" id="Resource_yi4gr"]
 resource_local_to_scene = true
@@ -191,19 +191,19 @@ script = ExtResource("2_q3ikk")
 
 [node name="Ally" type="Node" parent="Articles"]
 
-[node name="Character" parent="Articles/Ally" instance=ExtResource("4_viutb")]
+[node name="A" parent="Articles/Ally" instance=ExtResource("4_viutb")]
 position = Vector2(-144, 24)
 ArticleStatus = SubResource("Resource_5ivcy")
 
 [node name="Opponent" type="Node" parent="Articles"]
 
-[node name="Character" parent="Articles/Opponent" instance=ExtResource("4_viutb")]
+[node name="B" parent="Articles/Opponent" instance=ExtResource("4_viutb")]
 position = Vector2(144, -40)
 ArticleStatus = SubResource("Resource_rykcs")
 
 [node name="TurnHelper" type="Node" parent="."]
 script = ExtResource("1_25g81")
-Speed = 10.0
+Speed = 5.0
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 position = Vector2(16, -104)
