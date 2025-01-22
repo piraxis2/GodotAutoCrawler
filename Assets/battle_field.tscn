@@ -201,6 +201,10 @@ ArticleStatus = SubResource("Resource_5ivcy")
 position = Vector2(144, -40)
 ArticleStatus = SubResource("Resource_rykcs")
 
+[node name="B2" parent="Articles/Opponent" instance=ExtResource("4_viutb")]
+position = Vector2(80, -72)
+ArticleStatus = SubResource("Resource_rykcs")
+
 [node name="TurnHelper" type="Node" parent="."]
 script = ExtResource("1_25g81")
 Speed = 5.0

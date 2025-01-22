@@ -1,5 +1,7 @@
+using System.Threading.Tasks;
 using AutoCrawler.Assets.Script.Article.Interface;
 using AutoCrawler.Assets.Script.Article.Status;
+using AutoCrawler.Assets.Script.Article.Status.Element;
 using Godot;
 
 namespace AutoCrawler.Assets.Script.Article;
@@ -8,10 +10,24 @@ public abstract partial class ArticleBase : Node2D
 {
     [Export]
     public ArticleStatus ArticleStatus = new();
+
+    public bool IsAlive
+    {
+        get
+        {
+            if (ArticleStatus.StatusElementsDictionary[typeof(Health)] is Health health)
+            {
+                return health.CurrentHealth > 0;
+            }
+            return true;
+        }
+    } 
+        
     [Export] private AnimationPlayer _animationPlayer;
     public AnimationPlayer AnimationPlayer => _animationPlayer;
     public ProgressBar HealthBar;
     [Signal] public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
+    [Signal] public delegate void OnDeadEventHandler();
 
 
     private Vector2I _tilePosition;
@@ -30,24 +46,34 @@ public abstract partial class ArticleBase : Node2D
         }
     }
 
-    public override sealed void _Ready()
+    public sealed override void _Ready()
     {
         HealthBar = GetNode<ProgressBar>("HealthBar");
         ArticleStatus.InitStatus(this);
+        AnimationPlayer.Connect("animation_finished", new Callable(this, nameof(OnAnimationFinished)));
     }
 
     public bool IsOpponent(ArticleBase article)
     {
-        if (article == null) return false;
+        if (article is not { IsAlive: true }) return false;
 
         if (this is not ITurnAffectedArticle<ArticleBase> || article is not ITurnAffectedArticle<ArticleBase>) return false;
         
         return article.GetParent().Name != "Neutral" && article.GetParent().Name != GetParent().Name;
     }
 
+    
+    private void OnAnimationFinished(string animName)
+    {
+        if (animName == "Dead")
+        {
+            QueueFree();
+        }
+    }
 
     public void Dead()
     {
-        // QueueFree();
+        AnimationPlayer.Play("Dead");
+        EmitSignal("OnDead");
     }
 }

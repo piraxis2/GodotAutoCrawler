@@ -13,6 +13,8 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
     public int Distance { get; } = 1;
     public int Range { get; } = 1;
 
+    private bool _isAnimationRunning;
+
     private HashSet<Vector2I> _attackRangePositions;
     public HashSet<Vector2I> AttackRangePositions
     {
@@ -29,19 +31,15 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
                         p + Vector2I.Left,
                         p + Vector2I.Down,
                         p + Vector2I.Up
-                    }).ToList());
+                    }));
                 }
             }
             return _attackRangePositions;
         }
     }
 
-    protected override void OnInit(Node owner)
-    {
-        _isAnimationRunning = false;
-    }
+    protected override void OnInit(Node owner) => _isAnimationRunning = false;
 
-    private bool _isAnimationRunning;
     protected override ActionState ActionExecute(double delta, ArticleBase owner)
     {
         if (owner.AnimationPlayer.CurrentAnimation == "Attack" && owner.AnimationPlayer.CurrentAnimationPosition < owner.AnimationPlayer.CurrentAnimationLength)
@@ -54,9 +52,12 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
         {
             List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
             BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
-            ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t.IsOpponent(owner));
-            target?.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, 10));
+            ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(owner));
             owner.AnimationPlayer.Play("Idle");
+            if (target is { IsAlive: true })
+            {
+                target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, 10));
+            }
             return ActionState.Executed;
         }
 

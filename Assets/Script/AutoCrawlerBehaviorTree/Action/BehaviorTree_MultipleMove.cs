@@ -87,7 +87,9 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 
         _moveTweenQueue.Clear();
 
-        foreach (var pathNode in FindPath(article, tileMapLayer))
+        var path = FindPath(article, tileMapLayer);
+        if (path == null) return ActionExecuted();
+        foreach (var pathNode in path)
         {
             var tween = article.CreateTween();
             tween.TweenProperty(article, "global_position", tileMapLayer.ToGlobal(tileMapLayer.MapToLocal(pathNode)), 1f);

@@ -21,12 +21,10 @@ public partial class Health : StatusElement
             
             int oldHealth = _currentHealth;
 
+            if (value <= 0) _owner.Dead();
             _currentHealth = Math.Clamp(value, 0, MaxHealth);
             EmitSignal("OnHealthChanged", oldHealth, _currentHealth);
             _owner.HealthBar?.Call("_set_health", _currentHealth);
-            GD.Print($"name : {_owner.Name} Health Changed : {_currentHealth}");
-            
-            if (_currentHealth <= 0) _owner.Dead();
         }
     }
 
