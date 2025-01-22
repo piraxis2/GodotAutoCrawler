@@ -31,7 +31,7 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
                         p + Vector2I.Left,
                         p + Vector2I.Down,
                         p + Vector2I.Up
-                    }));
+                    }).ToList());
                 }
             }
             return _attackRangePositions;
