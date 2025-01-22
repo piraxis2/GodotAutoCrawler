@@ -34,5 +34,5 @@ func init_health(_health):
 	
 
 func _damage_bar_affect(_health) -> void:
-	await get_tree().create_timer(0.25).timeout
+	await get_tree().create_timer(0.4).timeout
 	damage_bar.value = _health

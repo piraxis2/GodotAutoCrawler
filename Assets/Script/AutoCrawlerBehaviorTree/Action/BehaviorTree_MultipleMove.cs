@@ -23,7 +23,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
     {
         tileMapLayer.UpdateAStar(ref _aStar2D);
 
-        if (owner is not CharacterArticle characterArticle) return null;
+        if (owner is not CharacterArticle) return null;
 
         var articlesContainer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<ArticlesContainer>();
         if (articlesContainer == null) return null;
