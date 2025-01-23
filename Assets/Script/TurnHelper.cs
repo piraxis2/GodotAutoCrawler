@@ -15,7 +15,7 @@ public partial class TurnHelper : Node
 
     private ArticlesContainer _articlesContainer;
 
-    private ArticlesContainer ArticlesContainer => _articlesContainer ??= GlobalUtil.GetBattleField(this)?.GetBattleFieldCoreNode<ArticlesContainer>();
+    private ArticlesContainer ArticlesContainer => _articlesContainer ??= GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(this);
 
     public bool IsGameOver => _turnAffectedArticleList.Count <= 1 || _currentTurnArticle == null || ArticlesContainer.Articles["Opponent"].Count == 0 || ArticlesContainer.Articles["Ally"].Count == 0;
 
@@ -38,7 +38,6 @@ public partial class TurnHelper : Node
                     articleBase.OnDead += () =>
                     {
                         _turnAffectedArticleList.Remove(turnAffectedArticle);
-                        ArticlesContainer?.Articles[articleBase.GetParent().Name]?.Remove(articleBase);
                     };
                 }
             }
@@ -53,7 +52,7 @@ public partial class TurnHelper : Node
     {
         if (IsGameOver)
         {
-            // Game Over
+            GetTree().ReloadCurrentScene();
             return;
         }
 

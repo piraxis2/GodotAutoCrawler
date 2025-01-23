@@ -10,4 +10,10 @@ public static class GlobalUtil
         var battleFieldScene = targetNode.GetTree().CurrentScene as BattleFieldScene;
         return battleFieldScene;
     }
+    
+    public static T GetBattleFieldCoreNode<T>(Node targetNode) where T : Node
+    {
+        var battleFieldScene = GetBattleField(targetNode);
+        return battleFieldScene?.GetBattleFieldCoreNode<T>();
+    }
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=4 uid="uid://dv7r53qteumxi"]
+[gd_scene load_steps=28 format=4 uid="uid://dv7r53qteumxi"]
 
 [ext_resource type="Script" path="res://Assets/Script/BattleFieldScene.cs" id="1_8td0i"]
 [ext_resource type="Script" path="res://Assets/Script/TurnHelper.cs" id="1_25g81"]
@@ -63,6 +63,11 @@ script = ExtResource("8_ry6v4")
 Value = 2
 
 [sub_resource type="Resource" id="Resource_rykcs"]
+resource_local_to_scene = true
+script = ExtResource("8_jm7tw")
+StatusElements = [SubResource("Resource_7qxie"), SubResource("Resource_yi4gr"), SubResource("Resource_w4mhn"), SubResource("Resource_5cn4l"), SubResource("Resource_valm4")]
+
+[sub_resource type="Resource" id="Resource_jqt37"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
 StatusElements = [SubResource("Resource_7qxie"), SubResource("Resource_yi4gr"), SubResource("Resource_w4mhn"), SubResource("Resource_5cn4l"), SubResource("Resource_valm4")]
@@ -203,7 +208,7 @@ ArticleStatus = SubResource("Resource_rykcs")
 
 [node name="B2" parent="Articles/Opponent" instance=ExtResource("4_viutb")]
 position = Vector2(80, -72)
-ArticleStatus = SubResource("Resource_rykcs")
+ArticleStatus = SubResource("Resource_jqt37")
 
 [node name="TurnHelper" type="Node" parent="."]
 script = ExtResource("1_25g81")

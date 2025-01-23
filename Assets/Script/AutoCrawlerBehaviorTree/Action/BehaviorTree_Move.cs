@@ -27,7 +27,7 @@ public partial class BehaviorTree_Move : BehaviorTree_Action
 
         if (owner is not CharacterArticle characterArticle) return null;
 
-        var articlesContainer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<ArticlesContainer>();
+        var articlesContainer = GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(owner);
         if (articlesContainer == null) return null;
 
         var opponentList = articlesContainer.GetOpponentArticles(owner);
@@ -84,7 +84,7 @@ public partial class BehaviorTree_Move : BehaviorTree_Action
             return Constants.BtStatus.Running;
         }
         
-        var tileMapLayer = GlobalUtil.GetBattleField(article)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
+        var tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(article);
 
         if (tileMapLayer == null)
         {

@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using AutoCrawler.Assets.Script.Article.Status.Element;
+using Godot;
 
 namespace AutoCrawler.Assets.Script.Article.Status.Affect;
 
 public abstract class Damage : StatusAffect
 {
-    public static T CreateDamage<T>(ArticleStatus giver, int skillValue) where T : Damage, new()
+    public static T CreateDamage<T>(ArticleStatus giver, int minDamage, int maxDamage) where T : Damage, new()
     {
         var damage = new T();
-        damage.Init(giver, skillValue);
+        damage.Init(giver, minDamage, maxDamage);
         return damage;
     }
     
     public override HashSet<Type> AffectedType => new() { typeof(Health) };
     protected abstract bool IsCritical { get; }
-    protected virtual void Init(ArticleStatus giver, int skillValue){}
+    protected abstract void Init(ArticleStatus giver, int minDamage, int maxDamage);
     protected abstract int CalculatedDamage(ArticleStatus recipient);
     protected override void OnApply<T>(T type, ArticleStatus recipient)
     {
