@@ -8,10 +8,8 @@ public partial class Health : StatusElement
 {
     [Signal]
     public delegate void OnHealthChangedEventHandler(int oldHealth, int newHealth);
-    [Export] private int MaxHealth { get; set; } = 10;
+    [Export] public int MaxHealth { get; set; } = 10;
     private int _currentHealth;
-    private ArticleBase _owner;
-
     public int CurrentHealth
     {
         get => _currentHealth;
@@ -21,17 +19,16 @@ public partial class Health : StatusElement
             
             int oldHealth = _currentHealth;
 
-            if (value <= 0) _owner.Dead();
+            if (value <= 0) Owner.Dead();
             _currentHealth = Math.Clamp(value, 0, MaxHealth);
             EmitSignal("OnHealthChanged", oldHealth, _currentHealth);
-            _owner.HealthBar?.Call("_set_health", _currentHealth);
+            Owner.HealthBar?.Call("_set_health", _currentHealth);
         }
     }
 
-    public override void Init(ArticleBase owner)
+    protected override void OnInit(ArticleBase owner)
     {
-        _owner = owner;
         _currentHealth = MaxHealth;
-        _owner.HealthBar?.Call("init_health", MaxHealth);
+        Owner.HealthBar?.Call("init_health", MaxHealth);
     }
 }

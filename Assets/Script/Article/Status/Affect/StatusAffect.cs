@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoCrawler.Assets.Script.Article.Status.Element;
 
 namespace AutoCrawler.Assets.Script.Article.Status.Affect;
@@ -10,7 +11,6 @@ public abstract class StatusAffect
     public delegate void OnAffectedEndEventHandler();
     public event OnAffectedEndEventHandler OnAffectedEnd;
     public abstract HashSet<Type> AffectedType { get; }
-    public uint UniqId { get; set; } = 0;
     //코스트
     protected virtual int MasterCost => 1;
     private int _usedCost = 0;
@@ -18,13 +18,40 @@ public abstract class StatusAffect
 
     public void Apply(ArticleStatus recipient)
     {
-        foreach (var statusElement in recipient.StatusElementsDictionary.Values)
+        foreach (var statusElement in recipient.StatusElementsDictionary.Values.Where(statusElement => AffectedType.Contains(statusElement.GetType())))
         {
-            OnApply(statusElement, recipient);
+            if (this is IAffectedImmediately immediately)
+            {
+                immediately.ApplyImmediately(statusElement, recipient);
+            }
+            
+            if (this is IAffectedOnlyMyTurn onlyMyTurn)
+            {
+                onlyMyTurn.ApplyOnlyMyTurn(statusElement, recipient);
+            }
+
+            if (this is IAffectedUntilTheEnd applyUntilTheEnd&& _usedCost == 0)
+            {
+                applyUntilTheEnd.ApplyAffect(statusElement, recipient);
+            }
         }
+        
         _usedCost++;
-        if (Cost <= 0) OnAffectedEnd?.Invoke();
+        if (Cost > 0) return;
+        
+        AffectedEnd(recipient);
     }
 
-    protected abstract void OnApply<T>(T type, ArticleStatus recipient) where T : StatusElement;
+    private void AffectedEnd(ArticleStatus recipient)
+    {
+        foreach (var statusElement in recipient.StatusElementsDictionary.Values.Where(statusElement => AffectedType.Contains(statusElement.GetType())))
+        {
+            if (this is IAffectedUntilTheEnd applyUntilTheEnd)
+            {
+                applyUntilTheEnd.UnapplyAffect(statusElement, recipient);
+            }
+        }
+        OnAffectedEnd?.Invoke();
+    }
+
 }
