@@ -1,5 +1,7 @@
 # 프로젝트 설명
 
+![Image](https://github.com/user-attachments/assets/703b98a0-920b-4957-86b8-05c38c8b34c0)
+
 이 프로젝트는 Godot .Net과 GDscript로 만들어 졌습니다.
 
 완전히 자동으로 작동하는 텍틱컬 RPG 구현을 위한 기반 시스템입니다.
