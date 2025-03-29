@@ -1,5 +1,7 @@
 # 프로젝트 설명
 
+이 프로젝트는 Godot .Net과 GDscript로 만들어 졌습니다.
+
 완전히 자동으로 작동하는 텍틱컬 RPG 구현을 위한 기반 시스템입니다.
 
 이 프로젝트는 `StatusAffect`와 `BehaviorTree`를 사용하여 게임 내 캐릭터의 행동과 상태를 관리합니다. `StatusAffect`는 캐릭터의 상태에 영향을 주는 요소를 정의하고, `BehaviorTree`는 캐릭터의 행동을 결정하는 트리 구조를 제공합니다.
