@@ -52,13 +52,53 @@
 
 ### StatusAffect 예제
 
+`StatusAffect`는 `ArticleStatus` 클래스에서 적용됩니다. `ApplyAffectStatus` 메서드를 통해 상태 효과가 적용되며, `IAffectedImmediately` 인터페이스를 구현한 경우 즉시 적용되고, 그렇지 않은 경우 `AffectingStatusesList`에 추가되어 나중에 적용됩니다.
+
+다음은 `StatusAffect`가 적용되는 과정입니다:
+
+1. `ApplyAffectStatus` 메서드가 호출됩니다.
+2. `statusAffect`가 `IAffectedImmediately` 인터페이스를 구현하지 않은 경우:
+   - `OnAffectedEnd` 이벤트에 `RemoveAffectStatus` 메서드를 등록합니다.
+   - `AffectingStatusesList`에 `statusAffect`를 추가합니다.
+3. `statusAffect`가 `IAffectedImmediately` 인터페이스를 구현한 경우:
+   - `statusAffect.Apply(this)`를 호출하여 즉시 상태 효과를 적용합니다.
+
+다음은 `ApplyAffectStatus` 메서드의 코드입니다:
+
 ```csharp
+public void ApplyAffectStatus(StatusAffect statusAffect)
+{
+    if (statusAffect is not IAffectedImmediately)
+    {
+        statusAffect.OnAffectedEnd += () => RemoveAffectStatus(statusAffect);
+        AffectingStatusesList.Add(statusAffect);
+    }
+
+    if (statusAffect is IAffectedImmediately)
+    {
+        statusAffect.Apply(this);
+    }
+}
+```
+
+`StatusAffect`가 적용되는 예시는 `PhysicalDamage` 클래스에서 볼 수 있습니다. `PhysicalDamage`는 `Damage` 클래스를 상속하며, `ApplyImmediately` 메서드를 통해 즉시 적용됩니다.
+
+다음은 `PhysicalDamage` 클래스의 코드입니다:
+
+```csharp
+using AutoCrawler.Assets.Script.Article.Status.Element;
+using Godot;
+
+namespace AutoCrawler.Assets.Script.Article.Status.Affect;
+
 public class PhysicalDamage : Damage
 {
     private int _minDamage;
     private int _maxDamage;
     private int _strength = 1;
     private bool _isCritical;
+
+    public PhysicalDamage() {}
 
     protected override bool IsCritical => _isCritical;
 
@@ -68,7 +108,7 @@ public class PhysicalDamage : Damage
         _maxDamage = maxDamage;
         _strength = (giver.StatusElementsDictionary[typeof(Strength)] as Strength)?.Value ?? _strength;
         int luckValue = (giver.StatusElementsDictionary[typeof(Luck)] as Luck)?.Value ?? 0;
-        _isCritical = GD.RandRange(0, 100) < (luckValue / 10) + 5;
+        _isCritical = GD.RandRange(0, (double)100) < ((double)luckValue / 10) + 5; 
     }
 
     protected override int CalculatedDamage(ArticleStatus recipient)
@@ -76,10 +116,13 @@ public class PhysicalDamage : Damage
         int defenseValue = (recipient.StatusElementsDictionary[typeof(Defense)] as Defense)?.Value ?? 0;
         int calculatedMinDamage = (_minDamage - defenseValue) / 2 + _strength + 25;
         int calculatedMaxDamage = (_maxDamage - defenseValue) / 2 + _strength + 25;
-        return GD.RandRange(calculatedMinDamage, calculatedMaxDamage);
+        return GD.RandRange(calculatedMinDamage, calculatedMaxDamage); 
     }
 }
 ```
+
+이와 같이 `StatusAffect`는 `ArticleStatus` 클래스에서 관리되며, `ApplyAffectStatus` 메서드를 통해 적용됩니다.
+
 
 ### BehaviorTree 예제
 
