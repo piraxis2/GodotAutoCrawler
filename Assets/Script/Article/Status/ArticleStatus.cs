@@ -11,7 +11,7 @@ public partial class ArticleStatus : Resource
     [Export] private Array<StatusElement> StatusElements { get; set; } = new();
     public System.Collections.Generic.Dictionary<Type, StatusElement> StatusElementsDictionary { get; } = new();
     private uint _affectStatusUniqId;
-    private System.Collections.Generic.Dictionary<uint, StatusAffect> AffectingStatusesDictionary { get; set; } = new();
+    private System.Collections.Generic.List<StatusAffect> AffectingStatusesList { get; set; } = new();
 
     public ArticleBase Owner { get; private set; }
     public void InitStatus(ArticleBase owner)
@@ -20,31 +20,32 @@ public partial class ArticleStatus : Resource
         foreach (var stat in StatusElements)
         {
             StatusElementsDictionary.Add(stat.GetType(), stat);
+            stat.Init(owner);
         }
     }
     
     public void ApplyAffectStatus(StatusAffect statusAffect)
     {
-        if (statusAffect.Cost > 1)
+        if (statusAffect is not IAffectedImmediately)
         {
-            statusAffect.UniqId = _affectStatusUniqId++;
             statusAffect.OnAffectedEnd += () => RemoveAffectStatus(statusAffect);
-            AffectingStatusesDictionary.Add(statusAffect.UniqId, statusAffect);
+            AffectingStatusesList.Add(statusAffect);
         }
-        statusAffect.Apply(this);
+
+        if (statusAffect is IAffectedImmediately)
+        {
+            statusAffect.Apply(this);
+        }
     }
 
-    public void RemoveAffectStatus(StatusAffect statusAffect)
+    private void RemoveAffectStatus(StatusAffect statusAffect)
     {
-        if (AffectingStatusesDictionary.ContainsKey(statusAffect.UniqId))
-        {
-            AffectingStatusesDictionary.Remove(statusAffect.UniqId);
-        }
+        AffectingStatusesList.Remove(statusAffect);
     }
 
     public void ApplyAffectingStatuses()
     {
-        foreach (var affectStatus in AffectingStatusesDictionary.Values)
+        foreach (var affectStatus in AffectingStatusesList)
         {
             affectStatus.Apply(this);
         }

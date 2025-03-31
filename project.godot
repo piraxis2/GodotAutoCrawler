@@ -17,9 +17,9 @@ config/icon="res://Assets/Textures/icon.svg"
 
 [autoload]
 
-DamageFloater="*res://Assets/Script/damage_floater.gd"
+DamageFloater="*res://Assets/Script/gds/damage_floater.gd"
 CheatManager="*res://Assets/Script/CheatManager.cs"
-GdsCheatManager="*res://Assets/Script/gds_cheat_manager.gd"
+GdsCheatManager="*res://Assets/Script/gds/gds_cheat_manager.gd"
 
 [display]
 

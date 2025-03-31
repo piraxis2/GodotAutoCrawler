@@ -13,6 +13,12 @@ public partial class TurnHelper : Node
     private readonly List<ITurnAffectedArticle<ArticleBase>> _turnAffectedArticleList = new();
     private ITurnAffectedArticle<ArticleBase> _currentTurnArticle;
 
+    private ArticlesContainer _articlesContainer;
+
+    private ArticlesContainer ArticlesContainer => _articlesContainer ??= GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(this);
+
+    public bool IsGameOver => _turnAffectedArticleList.Count <= 1 || _currentTurnArticle == null || ArticlesContainer.Articles["Opponent"].Count == 0 || ArticlesContainer.Articles["Ally"].Count == 0;
+
     [Export]
     public float Speed
     {
@@ -22,14 +28,17 @@ public partial class TurnHelper : Node
 
     public override void _Ready()
     {
-        ArticlesContainer articlesContainer = GlobalUtil.GetBattleField(this)?.GetBattleFieldCoreNode<ArticlesContainer>();
-        foreach (var (key, value) in articlesContainer?.Articles!)
+        foreach (var (key, value) in ArticlesContainer?.Articles!)
         {
             foreach (var articleBase in value)
             {
                 if (articleBase is ITurnAffectedArticle<ArticleBase> turnAffectedArticle)
                 {
                     _turnAffectedArticleList.Add(turnAffectedArticle);
+                    articleBase.OnDead += () =>
+                    {
+                        _turnAffectedArticleList.Remove(turnAffectedArticle);
+                    };
                 }
             }
         }
@@ -41,12 +50,18 @@ public partial class TurnHelper : Node
 
     public override void _PhysicsProcess(double delta)
     {
-        if (_currentTurnArticle == null)
+        if (IsGameOver)
         {
-            // Game Over
+            GetTree().ReloadCurrentScene();
             return;
         }
 
+        if (_currentTurnArticle is ArticleBase { IsAlive: false })
+        {
+            _currentTurnArticle = GetNextTurnArticle();
+            return;
+        }
+        
         Constants.BtStatus status = _currentTurnArticle.TurnPlay(delta * Speed);
         if (status is Constants.BtStatus.Success or Constants.BtStatus.Failure)
         {

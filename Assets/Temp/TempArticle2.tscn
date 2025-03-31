@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=3 uid="uid://kpkog4h221oy"]
+[gd_scene load_steps=77 format=3 uid="uid://kpkog4h221oy"]
 
 [ext_resource type="Script" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_vmxim"]
 [ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Health.cs" id="2_dji33"]
@@ -14,11 +14,12 @@
 [ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="11_o5kv7"]
 [ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="12_jhhxj"]
 [ext_resource type="Script" path="res://Assets/Script/TurnAction/Common/TurnAction_Attack.cs" id="13_te07w"]
+[ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/healthbar.tscn" id="15_p4g11"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
 resource_local_to_scene = true
 script = ExtResource("2_dji33")
-MaxHealth = 10
+MaxHealth = 1000
 
 [sub_resource type="Resource" id="Resource_f6flg"]
 resource_local_to_scene = true
@@ -469,9 +470,8 @@ tracks/1/keys = {
 }
 
 [sub_resource type="Animation" id="Animation_1dujo"]
-resource_name = "Die"
+resource_name = "Dead"
 length = 0.4
-loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -616,7 +616,7 @@ _data = {
 "Attack": SubResource("Animation_mq3xd"),
 "Attack2": SubResource("Animation_sx0su"),
 "Damaged": SubResource("Animation_rsai2"),
-"Die": SubResource("Animation_1dujo"),
+"Dead": SubResource("Animation_1dujo"),
 "Idle": SubResource("Animation_p1pnt"),
 "RESET": SubResource("Animation_vx7s0"),
 "RangeAttack": SubResource("Animation_23ffv"),
@@ -626,6 +626,8 @@ _data = {
 [sub_resource type="Resource" id="Resource_dynre"]
 resource_local_to_scene = true
 script = ExtResource("13_te07w")
+minDamage = 1
+maxDamage = 10
 
 [node name="Character" type="Node2D" node_paths=PackedStringArray("_animationPlayer")]
 script = ExtResource("1_vmxim")
@@ -663,3 +665,7 @@ script = ExtResource("12_jhhxj")
 [node name="BehaviorTree_TurnAction" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("11_o5kv7")
 TurnAction = SubResource("Resource_dynre")
+
+[node name="HealthBar" parent="." instance=ExtResource("15_p4g11")]
+offset_top = -20.0
+offset_bottom = -18.0

@@ -19,13 +19,13 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 
     protected override void OnInit(Node owner) { }
 
-    private Queue<Vector2I> FindPath(ArticleBase owner, BattleFieldTileMapLayer tileMapLayer)
+    private List<Vector2I> FindPath(ArticleBase owner, BattleFieldTileMapLayer tileMapLayer)
     {
         tileMapLayer.UpdateAStar(ref _aStar2D);
 
-        if (owner is not CharacterArticle characterArticle) return null;
+        if (owner is not CharacterArticle) return null;
 
-        var articlesContainer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<ArticlesContainer>();
+        var articlesContainer = GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(owner);
         if (articlesContainer == null) return null;
 
         var opponentList = articlesContainer.GetOpponentArticles(owner);
@@ -50,9 +50,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
         owner.ArticleStatus.StatusElementsDictionary.TryGetValue(typeof(Mobility), out var mobility);
         int mobilityValue = ((mobility as Mobility)?.Value ?? 2) + 1;
 
-        if (path.Count < 2) return null;
-
-        return new Queue<Vector2I>(path.Take(mobilityValue));
+        return path.Count < 2 ? null : new List<Vector2I>(path.Take(mobilityValue));
     }
 
     private Constants.BtStatus ActionExecuted()
@@ -84,12 +82,14 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
             return Constants.BtStatus.Running;
         }
 
-        var tileMapLayer = GlobalUtil.GetBattleField(article)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
+        var tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(article);
         if (tileMapLayer == null) throw new NullReferenceException("TileMapLayer is null");
 
         _moveTweenQueue.Clear();
 
-        foreach (var pathNode in FindPath(article, tileMapLayer))
+        var path = FindPath(article, tileMapLayer);
+        if (path == null) return ActionExecuted();
+        foreach (var pathNode in path)
         {
             var tween = article.CreateTween();
             tween.TweenProperty(article, "global_position", tileMapLayer.ToGlobal(tileMapLayer.MapToLocal(pathNode)), 1f);

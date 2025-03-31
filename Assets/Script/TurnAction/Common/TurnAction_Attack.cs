@@ -10,8 +10,14 @@ namespace AutoCrawler.Assets.Script.TurnAction.Common;
 [GlobalClass, Tool]
 public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
 {
+    [Export] private int minDamage = 10;
+    [Export] private int maxDamage = 20;
+    
     public int Distance { get; } = 1;
     public int Range { get; } = 1;
+
+    private bool _isAnimationRunning;
+    
 
     private HashSet<Vector2I> _attackRangePositions;
     public HashSet<Vector2I> AttackRangePositions
@@ -36,12 +42,8 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
         }
     }
 
-    protected override void OnInit(Node owner)
-    {
-        _isAnimationRunning = false;
-    }
+    protected override void OnInit(Node owner) => _isAnimationRunning = false;
 
-    private bool _isAnimationRunning;
     protected override ActionState ActionExecute(double delta, ArticleBase owner)
     {
         if (owner.AnimationPlayer.CurrentAnimation == "Attack" && owner.AnimationPlayer.CurrentAnimationPosition < owner.AnimationPlayer.CurrentAnimationLength)
@@ -53,10 +55,13 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
         if (_isAnimationRunning)
         {
             List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
-            BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleField(owner)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
-            ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t.IsOpponent(owner));
-            target?.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, 10));
+            BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
+            ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(owner));
             owner.AnimationPlayer.Play("Idle");
+            if (target is { IsAlive: true })
+            {
+                target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, minDamage, maxDamage));
+            }
             return ActionState.Executed;
         }
 

@@ -21,7 +21,7 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 	}
 	public override void _Ready()
 	{
-        ArticlesContainer articlesContainer = GlobalUtil.GetBattleField(this)?.GetBattleFieldCoreNode<ArticlesContainer>();
+        ArticlesContainer articlesContainer = GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(this);
         if (articlesContainer == null) return;
         
         foreach (var (key, value) in articlesContainer.Articles!)

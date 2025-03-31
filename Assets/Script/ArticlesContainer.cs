@@ -18,9 +18,10 @@ public partial class ArticlesContainer : Node
 
     public override void _Ready()
     {
-        foreach (Node child in GetChildren())
+        foreach (ArticleBase article in GetChildren().SelectMany(child => child.GetChildren().OfType<ArticleBase>()))
         {
-            _articles[child.Name].AddRange(child.GetChildren().ToList().ConvertAll(node => (ArticleBase)node));
+            article.OnDead += () => { _articles[article.GetParent().Name].Remove(article); };
+            _articles[article.GetParent().Name].Add(article);
         }
     }
 

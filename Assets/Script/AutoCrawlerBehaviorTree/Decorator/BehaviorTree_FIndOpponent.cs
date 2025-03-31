@@ -14,7 +14,7 @@ public partial class BehaviorTree_FIndOpponent: BehaviorTree_Decorator
     BattleFieldTileMapLayer _tileMapLayer;
     protected override void OnReady()
     {
-        _tileMapLayer = GlobalUtil.GetBattleField(this)?.GetBattleFieldCoreNode<BattleFieldTileMapLayer>();
+        _tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(this);
     }
     
     protected override Constants.BtStatus Decorate(BehaviorTree_Node child, double delta, Node owner)
