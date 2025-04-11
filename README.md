@@ -1,6 +1,6 @@
 ![Image](https://github.com/user-attachments/assets/703b98a0-920b-4957-86b8-05c38c8b34c0)
 
-# AutoCrawler 프로젝트
+# AutoCrawler
 
 AutoCrawler는 완전히 자동으로 작동하는 텍틱컬 RPG 구현을 위한 기반 시스템입니다. 
 다양한 상태 효과, AI 행동 트리, 전투 유닛, 턴 관리 시스템 등을 포함하고 있습니다. 
