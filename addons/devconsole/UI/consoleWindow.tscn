@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cwf5iid2n5uhx"]
 
-[ext_resource type="Script" path="res://addons/devconsole/consoleTextLabel.gd" id="1_376f1"]
-[ext_resource type="Script" path="res://addons/devconsole/UI/console_window.gd" id="1_y4o7j"]
+[ext_resource type="Script" uid="uid://lkg8120eahyh" path="res://addons/devconsole/consoleTextLabel.gd" id="1_376f1"]
+[ext_resource type="Script" uid="uid://cef3576l0x43j" path="res://addons/devconsole/UI/console_window.gd" id="1_y4o7j"]
 
 [node name="Window" type="Window" node_paths=PackedStringArray("console_text_label", "console_input")]
 position = Vector2i(0, 36)
