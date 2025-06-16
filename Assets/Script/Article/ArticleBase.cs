@@ -51,13 +51,14 @@ public abstract partial class ArticleBase : Node2D
         HealthBar = GetNode<ProgressBar>("HealthBar");
         ArticleStatus.InitStatus(this);
         AnimationPlayer.Connect("animation_finished", new Callable(this, nameof(OnAnimationFinished)));
+        AnimationPlayer.Play("Idle");
     }
 
     public bool IsOpponent(ArticleBase article)
     {
         if (article is not { IsAlive: true }) return false;
 
-        if (this is not ITurnAffectedArticle<ArticleBase> || article is not ITurnAffectedArticle<ArticleBase>) return false;
+        // if (this is not ITurnAffectedArticle<ArticleBase> || article is not ITurnAffectedArticle<ArticleBase>) return false;
         
         return article.GetParent().Name != "Neutral" && article.GetParent().Name != GetParent().Name;
     }

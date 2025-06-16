@@ -47,7 +47,7 @@ public partial class BehaviorTree : Node
 
     public Constants.BtStatus Behave(double delta, Node owner)
     {
-        return Root.Behave(delta, owner);
+        return Root?.Behave(delta, owner) ?? Constants.BtStatus.Failure;
     }
 
     public void UpdateRequest()

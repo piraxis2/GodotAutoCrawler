@@ -6,7 +6,6 @@ namespace AutoCrawler.Assets.Script;
 
 public partial class CheatManager : Node
 {
-	private Node _consoleWindow = null;
 	public override void _Input(InputEvent @event)
 	{
 		// 현재 씬 가져오기

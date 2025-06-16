@@ -1,6 +1,6 @@
 extends Node
 
-var _consoleWindow: Window
+var _consoleWindow: Window 
 
 func _ready() -> void:
 	pass
@@ -11,7 +11,9 @@ func _input(event: InputEvent) -> void:
 			_consoleWindow = load("res://addons/devconsole/UI/consoleWindow.tscn").instantiate()
 			get_tree().root.add_child(_consoleWindow)
 			_consoleWindow.connect("close_requested", Callable(self, "_on_close_requested"))
-
-
+			
+			
 func _on_close_requested() -> void:
+	if _consoleWindow:
+		_consoleWindow.queue_free()
 	_consoleWindow = null
