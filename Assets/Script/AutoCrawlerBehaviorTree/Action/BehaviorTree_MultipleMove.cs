@@ -10,6 +10,7 @@ using Godot;
 
 namespace AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Action;
 
+
 [GlobalClass, Tool]
 public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 {
@@ -19,6 +20,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 
     protected override void OnInit(Node owner) { }
 
+    private Line2D _line2D;
     private List<Vector2I> FindPath(ArticleBase owner, BattleFieldTileMapLayer tileMapLayer)
     {
         tileMapLayer.UpdateAStar(ref _aStar2D);
@@ -50,7 +52,23 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
         owner.ArticleStatus.StatusElementsDictionary.TryGetValue(typeof(Mobility), out var mobility);
         int mobilityValue = ((mobility as Mobility)?.Value ?? 2) + 1;
 
-        return path.Count < 2 ? null : new List<Vector2I>(path.Take(mobilityValue));
+
+        var pathResult = path.Count < 2 ? null : new List<Vector2I>(path.Take(mobilityValue));
+        _line2D?.QueueFree();
+        
+        if (pathResult != null)
+        {
+            _line2D = new Line2D
+            {
+                Points = pathResult.Select(elem => tileMapLayer.ToGlobal(tileMapLayer.MapToLocal(elem))).ToArray(),
+                DefaultColor = Colors.Red,
+                Width = 1.0f
+            };
+
+            GlobalUtil.GetBattleField(owner).AddChild(_line2D);
+        }
+
+        return pathResult;
     }
 
     private Constants.BtStatus ActionExecuted()
@@ -68,8 +86,9 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
         {
             if (!_moveTweenQueue.Peek().Value.CustomStep(_elapsedTime))
             {
-                _moveTweenQueue.Peek().Value.Kill();
-                article.TilePosition = _moveTweenQueue.Dequeue().Key;
+                var moveTween = _moveTweenQueue.Dequeue();
+                moveTween.Value.Kill();
+                article.TilePosition = moveTween.Key;
                 _elapsedTime = 0;
 
                 if (_moveTweenQueue.Count == 0)

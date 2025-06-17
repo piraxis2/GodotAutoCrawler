@@ -1,17 +1,19 @@
-[gd_scene load_steps=28 format=4 uid="uid://dv7r53qteumxi"]
+[gd_scene load_steps=47 format=4 uid="uid://dv7r53qteumxi"]
 
-[ext_resource type="Script" path="res://Assets/Script/BattleFieldScene.cs" id="1_8td0i"]
-[ext_resource type="Script" path="res://Assets/Script/TurnHelper.cs" id="1_25g81"]
+[ext_resource type="Script" uid="uid://doh5xcdvrrn7g" path="res://Assets/Script/BattleFieldScene.cs" id="1_8td0i"]
+[ext_resource type="Script" uid="uid://bofxi10iwp1bf" path="res://Assets/Script/TurnHelper.cs" id="1_25g81"]
 [ext_resource type="Texture2D" uid="uid://bk0bo4lm7w2ck" path="res://Assets/Textures/isometric-sandbox-sheet.png" id="1_xbpsd"]
-[ext_resource type="Script" path="res://Assets/Script/BattleFieldTileMapLayer.cs" id="2_0g2jr"]
-[ext_resource type="Script" path="res://Assets/Script/ArticlesContainer.cs" id="2_q3ikk"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Health.cs" id="4_72njd"]
+[ext_resource type="Script" uid="uid://dr75a3n4tydq3" path="res://Assets/Script/BattleFieldTileMapLayer.cs" id="2_0g2jr"]
+[ext_resource type="Script" uid="uid://cdvlslcfcln4t" path="res://Assets/Script/ArticlesContainer.cs" id="2_q3ikk"]
+[ext_resource type="Script" uid="uid://nhx4lou1hoy4" path="res://Assets/Script/Article/Status/Element/Health.cs" id="4_72njd"]
 [ext_resource type="PackedScene" uid="uid://kpkog4h221oy" path="res://Assets/Temp/TempArticle2.tscn" id="4_viutb"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Strength.cs" id="5_rst3o"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Defense.cs" id="6_ep4vv"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Luck.cs" id="7_56f8w"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_jm7tw"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="8_ry6v4"]
+[ext_resource type="Script" uid="uid://dt641onuentr8" path="res://Assets/Script/Article/Status/Element/StatusElement.cs" id="4_xn4rr"]
+[ext_resource type="Script" uid="uid://bmr3t8odnuo7b" path="res://Assets/Script/Article/Status/Element/Strength.cs" id="5_rst3o"]
+[ext_resource type="Script" uid="uid://do5ouq5ee4i4c" path="res://Assets/Script/Article/Status/Element/Defense.cs" id="6_ep4vv"]
+[ext_resource type="Script" uid="uid://jhjvup735lqt" path="res://Assets/Script/Article/Status/Element/Luck.cs" id="7_56f8w"]
+[ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_jm7tw"]
+[ext_resource type="Script" uid="uid://527wle2alee2" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="8_ry6v4"]
+[ext_resource type="PackedScene" uid="uid://bvf5eww4h7tp2" path="res://Assets/Temp/Puppet.tscn" id="11_hv0hd"]
 
 [sub_resource type="Resource" id="Resource_whcma"]
 resource_local_to_scene = true
@@ -38,39 +40,115 @@ Value = 4
 [sub_resource type="Resource" id="Resource_5ivcy"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
-StatusElements = [SubResource("Resource_whcma"), SubResource("Resource_j6sm0"), SubResource("Resource_fttdh"), SubResource("Resource_8f88b"), SubResource("Resource_h1kac")]
+StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_whcma"), SubResource("Resource_j6sm0"), SubResource("Resource_fttdh"), SubResource("Resource_8f88b"), SubResource("Resource_h1kac")])
 
-[sub_resource type="Resource" id="Resource_7qxie"]
+[sub_resource type="Resource" id="Resource_jq4tx"]
 resource_local_to_scene = true
 script = ExtResource("4_72njd")
-MaxHealth = 300
+MaxHealth = 100
 
-[sub_resource type="Resource" id="Resource_yi4gr"]
+[sub_resource type="Resource" id="Resource_3bkig"]
 resource_local_to_scene = true
 script = ExtResource("5_rst3o")
 
-[sub_resource type="Resource" id="Resource_w4mhn"]
+[sub_resource type="Resource" id="Resource_4m0c6"]
 resource_local_to_scene = true
 script = ExtResource("6_ep4vv")
 
-[sub_resource type="Resource" id="Resource_5cn4l"]
+[sub_resource type="Resource" id="Resource_enjqk"]
 resource_local_to_scene = true
 script = ExtResource("7_56f8w")
 
-[sub_resource type="Resource" id="Resource_valm4"]
+[sub_resource type="Resource" id="Resource_fajhp"]
 resource_local_to_scene = true
 script = ExtResource("8_ry6v4")
 Value = 2
 
-[sub_resource type="Resource" id="Resource_rykcs"]
+[sub_resource type="Resource" id="Resource_dewjv"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
-StatusElements = [SubResource("Resource_7qxie"), SubResource("Resource_yi4gr"), SubResource("Resource_w4mhn"), SubResource("Resource_5cn4l"), SubResource("Resource_valm4")]
+StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_jq4tx"), SubResource("Resource_3bkig"), SubResource("Resource_4m0c6"), SubResource("Resource_enjqk"), SubResource("Resource_fajhp")])
 
-[sub_resource type="Resource" id="Resource_jqt37"]
+[sub_resource type="Resource" id="Resource_hv0hd"]
+resource_local_to_scene = true
+script = ExtResource("4_72njd")
+MaxHealth = 100
+
+[sub_resource type="Resource" id="Resource_dxsyy"]
+resource_local_to_scene = true
+script = ExtResource("5_rst3o")
+
+[sub_resource type="Resource" id="Resource_icvma"]
+resource_local_to_scene = true
+script = ExtResource("6_ep4vv")
+
+[sub_resource type="Resource" id="Resource_lo22a"]
+resource_local_to_scene = true
+script = ExtResource("7_56f8w")
+
+[sub_resource type="Resource" id="Resource_26pw6"]
+resource_local_to_scene = true
+script = ExtResource("8_ry6v4")
+Value = 2
+
+[sub_resource type="Resource" id="Resource_vdgyl"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
-StatusElements = [SubResource("Resource_7qxie"), SubResource("Resource_yi4gr"), SubResource("Resource_w4mhn"), SubResource("Resource_5cn4l"), SubResource("Resource_valm4")]
+StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_hv0hd"), SubResource("Resource_dxsyy"), SubResource("Resource_icvma"), SubResource("Resource_lo22a"), SubResource("Resource_26pw6")])
+
+[sub_resource type="Resource" id="Resource_kmlyk"]
+resource_local_to_scene = true
+script = ExtResource("4_72njd")
+MaxHealth = 100
+
+[sub_resource type="Resource" id="Resource_7lwu5"]
+resource_local_to_scene = true
+script = ExtResource("5_rst3o")
+
+[sub_resource type="Resource" id="Resource_qnp2s"]
+resource_local_to_scene = true
+script = ExtResource("6_ep4vv")
+
+[sub_resource type="Resource" id="Resource_erjmy"]
+resource_local_to_scene = true
+script = ExtResource("7_56f8w")
+
+[sub_resource type="Resource" id="Resource_uddro"]
+resource_local_to_scene = true
+script = ExtResource("8_ry6v4")
+Value = 2
+
+[sub_resource type="Resource" id="Resource_jw18j"]
+resource_local_to_scene = true
+script = ExtResource("8_jm7tw")
+StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_kmlyk"), SubResource("Resource_7lwu5"), SubResource("Resource_qnp2s"), SubResource("Resource_erjmy"), SubResource("Resource_uddro")])
+
+[sub_resource type="Resource" id="Resource_0ovk8"]
+resource_local_to_scene = true
+script = ExtResource("4_72njd")
+MaxHealth = 100
+
+[sub_resource type="Resource" id="Resource_4kslh"]
+resource_local_to_scene = true
+script = ExtResource("5_rst3o")
+
+[sub_resource type="Resource" id="Resource_b4tol"]
+resource_local_to_scene = true
+script = ExtResource("6_ep4vv")
+
+[sub_resource type="Resource" id="Resource_rpkph"]
+resource_local_to_scene = true
+script = ExtResource("7_56f8w")
+
+[sub_resource type="Resource" id="Resource_5ik5c"]
+resource_local_to_scene = true
+script = ExtResource("8_ry6v4")
+Value = 2
+
+[sub_resource type="Resource" id="Resource_81x2m"]
+resource_local_to_scene = true
+script = ExtResource("8_jm7tw")
+StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_0ovk8"), SubResource("Resource_4kslh"), SubResource("Resource_b4tol"), SubResource("Resource_rpkph"), SubResource("Resource_5ik5c")])
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fla71"]
 texture = ExtResource("1_xbpsd")
@@ -202,17 +280,23 @@ ArticleStatus = SubResource("Resource_5ivcy")
 
 [node name="Opponent" type="Node" parent="Articles"]
 
-[node name="B" parent="Articles/Opponent" instance=ExtResource("4_viutb")]
-position = Vector2(144, -40)
-ArticleStatus = SubResource("Resource_rykcs")
+[node name="Character" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
+position = Vector2(96, -48)
+ArticleStatus = SubResource("Resource_dewjv")
 
-[node name="B2" parent="Articles/Opponent" instance=ExtResource("4_viutb")]
-position = Vector2(80, -72)
-ArticleStatus = SubResource("Resource_jqt37")
+[node name="Character2" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
+ArticleStatus = SubResource("Resource_vdgyl")
+
+[node name="Character3" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
+position = Vector2(16, -7)
+ArticleStatus = SubResource("Resource_jw18j")
+
+[node name="Character4" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
+position = Vector2(32, -18)
+ArticleStatus = SubResource("Resource_81x2m")
 
 [node name="TurnHelper" type="Node" parent="."]
 script = ExtResource("1_25g81")
-Speed = 5.0
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 position = Vector2(16, -104)

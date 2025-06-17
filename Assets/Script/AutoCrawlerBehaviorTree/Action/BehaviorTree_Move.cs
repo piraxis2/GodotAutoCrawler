@@ -67,38 +67,35 @@ public partial class BehaviorTree_Move : BehaviorTree_Action
         _elapsedTime = 0;
         return Constants.BtStatus.Success;
     }
+
     protected override Constants.BtStatus PerformAction(double delta, Node owner)
     {
         if (owner is not ArticleBase article) return Constants.BtStatus.Failure;
-        
+
         if (_moveTween != null)
         {
             if (!_moveTween.CustomStep(_elapsedTime))
             {
-                article.TilePosition = _targetPosition!.Value;
+                article.TilePosition = _targetPosition ?? article.TilePosition;
                 article.AnimationPlayer.Play("Idle");
                 return ActionExecuted();
             }
-            
+
             _elapsedTime += delta;
             return Constants.BtStatus.Running;
         }
-        
-        var tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(article);
 
-        if (tileMapLayer == null)
-        {
-            throw new NullReferenceException("TileMapLayer is null");
-        }
+        var tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(article)
+                           ?? throw new NullReferenceException("TileMapLayer is null");
 
         _targetPosition ??= FindTarget(article, tileMapLayer);
-        
+
         if (_targetPosition == null) return ActionExecuted();
-        
-        Vector2 to = tileMapLayer.ToGlobal(tileMapLayer.MapToLocal(_targetPosition.Value));
+
+        var targetGlobalPosition = tileMapLayer.ToGlobal(tileMapLayer.MapToLocal(_targetPosition.Value));
 
         _moveTween = article.CreateTween();
-        _moveTween.TweenProperty(article, "global_position", to, 1f);
+        _moveTween.TweenProperty(article, "global_position", targetGlobalPosition, 1f);
         _moveTween.Pause();
         article.AnimationPlayer.Play("Walk");
 

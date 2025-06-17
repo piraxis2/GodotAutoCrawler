@@ -26,15 +26,11 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
-text = "1234567890
-1023450000
-"
 fit_content = true
 scroll_following = true
 script = ExtResource("1_376f1")
 
 [node name="LineEdit" type="LineEdit" parent="Control/VBoxContainer"]
 layout_mode = 2
-text = "123"
 
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]

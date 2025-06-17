@@ -1,19 +1,20 @@
-[gd_scene load_steps=77 format=3 uid="uid://kpkog4h221oy"]
+[gd_scene load_steps=78 format=3 uid="uid://kpkog4h221oy"]
 
-[ext_resource type="Script" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_vmxim"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Health.cs" id="2_dji33"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Strength.cs" id="3_odkgl"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Defense.cs" id="4_5lb2u"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Luck.cs" id="5_fg3n2"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="6_5yrpy"]
-[ext_resource type="Script" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="6_10kml"]
+[ext_resource type="Script" uid="uid://dfo7fcc4ivngo" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_vmxim"]
+[ext_resource type="Script" uid="uid://nhx4lou1hoy4" path="res://Assets/Script/Article/Status/Element/Health.cs" id="2_dji33"]
+[ext_resource type="Script" uid="uid://dt641onuentr8" path="res://Assets/Script/Article/Status/Element/StatusElement.cs" id="2_l55mq"]
+[ext_resource type="Script" uid="uid://bmr3t8odnuo7b" path="res://Assets/Script/Article/Status/Element/Strength.cs" id="3_odkgl"]
+[ext_resource type="Script" uid="uid://do5ouq5ee4i4c" path="res://Assets/Script/Article/Status/Element/Defense.cs" id="4_5lb2u"]
+[ext_resource type="Script" uid="uid://jhjvup735lqt" path="res://Assets/Script/Article/Status/Element/Luck.cs" id="5_fg3n2"]
+[ext_resource type="Script" uid="uid://527wle2alee2" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="6_5yrpy"]
+[ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="6_10kml"]
 [ext_resource type="Texture2D" uid="uid://d0u23bchmqvqd" path="res://Assets/Textures/Soldier.png" id="7_xpkrf"]
-[ext_resource type="Script" path="res://addons/behaviortree/BehaviorTree.cs" id="8_00d73"]
-[ext_resource type="Script" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="9_vu6c8"]
-[ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="10_qbpj0"]
-[ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="11_o5kv7"]
-[ext_resource type="Script" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="12_jhhxj"]
-[ext_resource type="Script" path="res://Assets/Script/TurnAction/Common/TurnAction_Attack.cs" id="13_te07w"]
+[ext_resource type="Script" uid="uid://cwlvijl5y02o1" path="res://addons/behaviortree/BehaviorTree.cs" id="8_00d73"]
+[ext_resource type="Script" uid="uid://cfc212lal43iq" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="9_vu6c8"]
+[ext_resource type="Script" uid="uid://ciweyygvsxr1c" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="10_qbpj0"]
+[ext_resource type="Script" uid="uid://bwx0oup5d1dc" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="11_o5kv7"]
+[ext_resource type="Script" uid="uid://c7js0inhhipcp" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="12_jhhxj"]
+[ext_resource type="Script" uid="uid://cchkqd5koibl1" path="res://Assets/Script/TurnAction/Common/TurnAction_Attack.cs" id="13_te07w"]
 [ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/healthbar.tscn" id="15_p4g11"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
@@ -41,7 +42,7 @@ Value = 2
 [sub_resource type="Resource" id="Resource_7e21v"]
 resource_local_to_scene = true
 script = ExtResource("6_10kml")
-StatusElements = [SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5"), SubResource("Resource_7tk6w")]
+StatusElements = Array[ExtResource("2_l55mq")]([SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5"), SubResource("Resource_7tk6w")])
 
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_fwt52"]
 
@@ -613,14 +614,14 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_hfvbi"]
 _data = {
-"Attack": SubResource("Animation_mq3xd"),
-"Attack2": SubResource("Animation_sx0su"),
-"Damaged": SubResource("Animation_rsai2"),
-"Dead": SubResource("Animation_1dujo"),
-"Idle": SubResource("Animation_p1pnt"),
-"RESET": SubResource("Animation_vx7s0"),
-"RangeAttack": SubResource("Animation_23ffv"),
-"Walk": SubResource("Animation_0audv")
+&"Attack": SubResource("Animation_mq3xd"),
+&"Attack2": SubResource("Animation_sx0su"),
+&"Damaged": SubResource("Animation_rsai2"),
+&"Dead": SubResource("Animation_1dujo"),
+&"Idle": SubResource("Animation_p1pnt"),
+&"RESET": SubResource("Animation_vx7s0"),
+&"RangeAttack": SubResource("Animation_23ffv"),
+&"Walk": SubResource("Animation_0audv")
 }
 
 [sub_resource type="Resource" id="Resource_dynre"]
@@ -647,7 +648,7 @@ offset = Vector2(0, -6)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="AnimatedSprite2D"]
 libraries = {
-"": SubResource("AnimationLibrary_hfvbi")
+&"": SubResource("AnimationLibrary_hfvbi")
 }
 
 [node name="BehaviorTree" type="Node" parent="."]

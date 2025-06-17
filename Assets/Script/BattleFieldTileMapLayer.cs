@@ -32,9 +32,26 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 		        article.GlobalPosition = ToGlobal(MapToLocal(position));
 		        article.TilePosition = position;
 		        article.OnMove += OnArticleMove;
+		        article.OnDead += OnArticleDead;
 		        _placedArticles[article.TilePosition] = article;
+				
+		        GD.Print(article.Name + " is placed at " + article.GlobalPosition);
 	        }
         }
+	}
+
+	private void OnArticleDead(ArticleBase deadArticle)
+	{
+		if (deadArticle == null) return;
+
+		if (_placedArticles.ContainsKey(deadArticle.TilePosition))
+		{
+			_placedArticles[deadArticle.TilePosition] = null;
+		}
+		else
+		{
+			GD.PrintErr($"Article {deadArticle.Name} at position {deadArticle.TilePosition} not found in placed articles.");
+		}
 	}
 
 	private void OnArticleMove(Vector2I from, Vector2I to, ArticleBase article)

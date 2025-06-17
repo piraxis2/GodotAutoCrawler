@@ -27,7 +27,7 @@ public abstract partial class ArticleBase : Node2D
     public AnimationPlayer AnimationPlayer => _animationPlayer;
     public ProgressBar HealthBar;
     [Signal] public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
-    [Signal] public delegate void OnDeadEventHandler();
+    [Signal] public delegate void OnDeadEventHandler(ArticleBase deadArticle);
 
 
     private Vector2I _tilePosition;
@@ -51,13 +51,14 @@ public abstract partial class ArticleBase : Node2D
         HealthBar = GetNode<ProgressBar>("HealthBar");
         ArticleStatus.InitStatus(this);
         AnimationPlayer.Connect("animation_finished", new Callable(this, nameof(OnAnimationFinished)));
+        AnimationPlayer.Play("Idle");
     }
 
     public bool IsOpponent(ArticleBase article)
     {
         if (article is not { IsAlive: true }) return false;
 
-        if (this is not ITurnAffectedArticle<ArticleBase> || article is not ITurnAffectedArticle<ArticleBase>) return false;
+        // if (this is not ITurnAffectedArticle<ArticleBase> || article is not ITurnAffectedArticle<ArticleBase>) return false;
         
         return article.GetParent().Name != "Neutral" && article.GetParent().Name != GetParent().Name;
     }
@@ -73,7 +74,15 @@ public abstract partial class ArticleBase : Node2D
 
     public void Dead()
     {
-        AnimationPlayer.Play("Dead");
-        EmitSignal("OnDead");
+        if (AnimationPlayer.HasAnimation("Dead"))
+        {
+            AnimationPlayer.Play("Dead");
+        }
+        else
+        {
+            QueueFree();
+        }
+
+        EmitSignal("OnDead", this);
     }
 }
