@@ -35,7 +35,7 @@ public partial class TurnHelper : Node
                 if (articleBase is ITurnAffectedArticle<ArticleBase> turnAffectedArticle)
                 {
                     _turnAffectedArticleList.Add(turnAffectedArticle);
-                    articleBase.OnDead += () =>
+                    articleBase.OnDead += (ArticleBase deadArticle) =>
                     {
                         _turnAffectedArticleList.Remove(turnAffectedArticle);
                     };

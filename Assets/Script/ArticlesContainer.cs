@@ -20,7 +20,7 @@ public partial class ArticlesContainer : Node
     {
         foreach (ArticleBase article in GetChildren().SelectMany(child => child.GetChildren().OfType<ArticleBase>()))
         {
-            article.OnDead += () => { _articles[article.GetParent().Name].Remove(article); };
+            article.OnDead += (ArticleBase deadArticle) => { _articles[deadArticle.GetParent().Name].Remove(deadArticle); };
             _articles[article.GetParent().Name].Add(article);
         }
     }

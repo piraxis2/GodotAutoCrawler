@@ -121,18 +121,4 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
         article.AnimationPlayer.Play("Walk");
         return Constants.BtStatus.Running;
     }
-    
-
-    private void DrawLine(BattleFieldScene scene, Vector2 start, Vector2 end, Color color, float width = 1.0f)
-    {
-        var line = new Line2D
-        {
-            DefaultColor = color,
-            Width = width
-        };
-        line.AddPoint(start);
-        line.AddPoint(end);
-        // _lines.Add(line);
-        scene.AddChild(line);
-    }
 }
