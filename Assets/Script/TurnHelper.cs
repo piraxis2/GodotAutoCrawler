@@ -52,6 +52,7 @@ public partial class TurnHelper : Node
     {
         if (IsGameOver)
         {
+            // todo : 게임 오버 처리 
             GetTree().ReloadCurrentScene();
             return;
         }

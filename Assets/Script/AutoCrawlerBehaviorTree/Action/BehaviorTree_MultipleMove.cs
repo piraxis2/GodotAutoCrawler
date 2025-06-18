@@ -54,19 +54,27 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 
 
         var pathResult = path.Count < 2 ? null : new List<Vector2I>(path.Take(mobilityValue));
-        _line2D?.QueueFree();
-        
-        if (pathResult != null)
-        {
-            _line2D = new Line2D
-            {
-                Points = pathResult.Select(elem => tileMapLayer.ToGlobal(tileMapLayer.MapToLocal(elem))).ToArray(),
-                DefaultColor = Colors.Red,
-                Width = 1.0f
-            };
+#if DEBUG
 
-            GlobalUtil.GetBattleField(owner).AddChild(_line2D);
+        var gdsCheatManager = GetNode("/root/GdsCheatManager");
+
+        var isUsingDebugLine = (bool)gdsCheatManager.Get("_isUsingDebugLine");
+        _line2D?.QueueFree();
+        if (isUsingDebugLine)
+        {
+            if (pathResult != null)
+            {
+                _line2D = new Line2D
+                {
+                    Points = pathResult.Select(elem => tileMapLayer.ToGlobal(tileMapLayer.MapToLocal(elem))).ToArray(),
+                    DefaultColor = Colors.Red,
+                    Width = 1.0f
+                };
+
+                GlobalUtil.GetBattleField(owner).AddChild(_line2D);
+            }
         }
+#endif
 
         return pathResult;
     }
