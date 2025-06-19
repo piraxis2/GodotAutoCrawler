@@ -337,5 +337,3 @@ script = ExtResource("2_0g2jr")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]

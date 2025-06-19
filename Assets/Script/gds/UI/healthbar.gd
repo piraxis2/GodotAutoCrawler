@@ -9,8 +9,6 @@ func _set_health(new_health):
 	health = min(max_value, new_health)
 	value = health
 	
-	print("healthbar: ", health)
-	
 	if not is_visible():
 		set_visible(true)
 	
@@ -34,5 +32,5 @@ func init_health(_health):
 	
 
 func _damage_bar_affect(_health) -> void:
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.2).timeout
 	damage_bar.value = _health

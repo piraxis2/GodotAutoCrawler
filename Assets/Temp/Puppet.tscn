@@ -10,7 +10,7 @@
 [ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_mv88v"]
 [ext_resource type="Texture2D" uid="uid://quqyt23l2mcw" path="res://Assets/Textures/Scarecrow.png" id="9_01ww5"]
 [ext_resource type="Script" uid="uid://cwlvijl5y02o1" path="res://addons/behaviortree/BehaviorTree.cs" id="10_8140d"]
-[ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/healthbar.tscn" id="16_5f4bl"]
+[ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/health_bar.tscn" id="16_5f4bl"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
 resource_local_to_scene = true

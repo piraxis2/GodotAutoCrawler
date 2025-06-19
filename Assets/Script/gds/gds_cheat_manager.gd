@@ -21,11 +21,11 @@ func _on_close_requested() -> void:
 	if _consoleWindow:
 		_consoleWindow.queue_free()
 	_consoleWindow = null
-	
+#astar용 debug라인 노출	
 func use_astar_debug_line() -> void:
 	_isUsingDebugLine = true
 	debug_label()
-
+#astar용 debug라인 노출 해제
 func unuse_astar_debug_line() -> void:
 	_isUsingDebugLine = false
 	debug_label()
@@ -46,5 +46,6 @@ func debug_label() -> void:
 		_debug_canvas.add_child(_debug_label)
 		_debug_label.text = "UsingDebugLine..."
 		
+# 현재 씬을 다시 로드
 func reload_current_scene() -> void:
 	get_tree().reload_current_scene()

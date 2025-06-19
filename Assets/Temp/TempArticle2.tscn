@@ -15,7 +15,7 @@
 [ext_resource type="Script" uid="uid://bwx0oup5d1dc" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="11_o5kv7"]
 [ext_resource type="Script" uid="uid://c7js0inhhipcp" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="12_jhhxj"]
 [ext_resource type="Script" uid="uid://cchkqd5koibl1" path="res://Assets/Script/TurnAction/Common/TurnAction_Attack.cs" id="13_te07w"]
-[ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/healthbar.tscn" id="15_p4g11"]
+[ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/health_bar.tscn" id="15_p4g11"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
 resource_local_to_scene = true
@@ -663,7 +663,7 @@ script = ExtResource("10_qbpj0")
 [node name="BehaviorTree_MultipleMove" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
 script = ExtResource("12_jhhxj")
 
-[node name="BehaviorTree_TurnAction" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
+[node name="BehaviorTree_TurnAction(Attack)" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("11_o5kv7")
 TurnAction = SubResource("Resource_dynre")
 
