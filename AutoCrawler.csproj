@@ -4,6 +4,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="Assets\Script\TurnAction\Skill\Magic\" />
     <Folder Include="Assets\Script\Util\" />
   </ItemGroup>
 </Project>

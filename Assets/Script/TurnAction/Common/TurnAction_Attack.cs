@@ -13,34 +13,13 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
     [Export] private int minDamage = 10;
     [Export] private int maxDamage = 20;
     
-    public int Distance { get; } = 1;
-    public int Range { get; } = 1;
+    public int Range => 1;
+    public int Scale => 1;
 
     private bool _isAnimationRunning;
     
-
     private HashSet<Vector2I> _attackRangePositions;
-    public HashSet<Vector2I> AttackRangePositions
-    {
-        get
-        {
-            if (_attackRangePositions == null)
-            {
-                _attackRangePositions = new HashSet<Vector2I> { Vector2I.Zero };
-                for (int i = 0; i < Distance; i++)
-                {
-                    _attackRangePositions.UnionWith(_attackRangePositions.SelectMany(p => new[]
-                    {
-                        p + Vector2I.Right,
-                        p + Vector2I.Left,
-                        p + Vector2I.Down,
-                        p + Vector2I.Up
-                    }).ToList());
-                }
-            }
-            return _attackRangePositions;
-        }
-    }
+    public HashSet<Vector2I> AttackRangePositions => _attackRangePositions ??= SkillUtil.GetAttackRangePositions(Range);
 
     protected override void OnInit(Node owner) => _isAnimationRunning = false;
 
