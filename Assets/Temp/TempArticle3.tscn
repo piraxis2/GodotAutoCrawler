@@ -1,4 +1,4 @@
-[gd_scene load_steps=79 format=3 uid="uid://cbtoxh6imusjm"]
+[gd_scene load_steps=81 format=3 uid="uid://cbtoxh6imusjm"]
 
 [ext_resource type="Script" uid="uid://dfo7fcc4ivngo" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_x3swm"]
 [ext_resource type="Script" uid="uid://dt641onuentr8" path="res://Assets/Script/Article/Status/Element/StatusElement.cs" id="2_y7hsj"]
@@ -10,11 +10,12 @@
 [ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_vwhsm"]
 [ext_resource type="Texture2D" uid="uid://d0u23bchmqvqd" path="res://Assets/Textures/Soldier.png" id="9_0v02b"]
 [ext_resource type="Script" uid="uid://cwlvijl5y02o1" path="res://addons/behaviortree/BehaviorTree.cs" id="10_0m0e6"]
+[ext_resource type="AudioStream" uid="uid://cm7wog7mmni22" path="res://Assets/Audio/Charge.mp3" id="10_y7hsj"]
 [ext_resource type="Script" uid="uid://cfc212lal43iq" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="11_mm1bq"]
 [ext_resource type="Script" uid="uid://ciweyygvsxr1c" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="12_v8t08"]
 [ext_resource type="Script" uid="uid://c7js0inhhipcp" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="13_ad5g1"]
 [ext_resource type="Script" uid="uid://bwx0oup5d1dc" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="14_45j83"]
-[ext_resource type="Script" uid="uid://dpbh8tau83sd0" path="res://Assets/Script/TurnAction/Skill/Magic/TurnAction_FireBolt.cs" id="15_x3swm"]
+[ext_resource type="Script" uid="uid://dpbh8tau83sd0" path="res://Assets/Script/TurnAction/Skill/Magic/TurnAction_MagicBolt.cs" id="15_x3swm"]
 [ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/health_bar.tscn" id="16_2sfhm"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
@@ -442,6 +443,77 @@ tracks/1/keys = {
 "values": [0, 1, 2, 3, 4, 5]
 }
 
+[sub_resource type="Animation" id="Animation_x3swm"]
+resource_name = "Cast"
+length = 0.6
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"Attack"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.303804, 0.399825),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 2, 2]
+}
+tracks/2/type = "audio"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../AudioStreamPlayer2D")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"clips": [{
+"end_offset": 0.457538,
+"start_offset": 0.0,
+"stream": ExtResource("10_y7hsj")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/2/use_blend = true
+
+[sub_resource type="Animation" id="Animation_y7hsj"]
+resource_name = "Casting"
+length = 0.6
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"Attack"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [1, 1, 2, 2, 2]
+}
+
 [sub_resource type="Animation" id="Animation_rsai2"]
 resource_name = "Damaged"
 length = 0.4
@@ -612,39 +684,12 @@ tracks/1/keys = {
 "values": [0, 1, 2, 3, 4, 5, 6, 7]
 }
 
-[sub_resource type="Animation" id="Animation_x3swm"]
-resource_name = "Cast"
-length = 0.6
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:animation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"Attack"]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:frame")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.303804, 0.399825),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 1,
-"values": [0, 1, 2, 2, 2]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_hfvbi"]
 _data = {
 &"Attack": SubResource("Animation_mq3xd"),
 &"Attack2": SubResource("Animation_sx0su"),
 &"Cast": SubResource("Animation_x3swm"),
+&"Casting": SubResource("Animation_y7hsj"),
 &"Damaged": SubResource("Animation_rsai2"),
 &"Dead": SubResource("Animation_1dujo"),
 &"Idle": SubResource("Animation_p1pnt"),
@@ -655,8 +700,9 @@ _data = {
 
 [sub_resource type="Resource" id="Resource_y7hsj"]
 script = ExtResource("15_x3swm")
-minDamage = 10
-maxDamage = 20
+_minDamage = 10
+_maxDamage = 20
+_exportCost = 2
 metadata/_custom_type_script = "uid://dpbh8tau83sd0"
 
 [node name="Character" type="Node2D" node_paths=PackedStringArray("_animationPlayer")]
@@ -692,10 +738,13 @@ script = ExtResource("12_v8t08")
 [node name="BehaviorTree_MultipleMove" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
 script = ExtResource("13_ad5g1")
 
-[node name="BehaviorTree_TurnAction(Attack)" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
+[node name="BehaviorTree_TurnAction(FireBolt)" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("14_45j83")
 TurnAction = SubResource("Resource_y7hsj")
 
 [node name="HealthBar" parent="." instance=ExtResource("16_2sfhm")]
 offset_top = -20.0
 offset_bottom = -18.0
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+pitch_scale = 0.95
