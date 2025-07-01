@@ -20,7 +20,7 @@ public class PhysicalDamage : Damage
         _maxDamage = maxDamage;
         _strength = (giver.StatusElementsDictionary[typeof(Strength)] as Strength)?.Value ?? _strength;
         int luckValue = (giver.StatusElementsDictionary[typeof(Luck)] as Luck)?.Value ?? 0;
-        _isCritical = GD.RandRange(0, (double)100) < ((double)luckValue / 10) + 5; 
+        _isCritical = GD.RandRange(0, (double)100) < (double)luckValue / 10 + 5; 
     }
 
     protected override int CalculatedDamage(ArticleStatus recipient)

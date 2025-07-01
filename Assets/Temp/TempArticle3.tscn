@@ -700,7 +700,6 @@ _data = {
 
 [sub_resource type="Resource" id="Resource_y7hsj"]
 script = ExtResource("15_x3swm")
-_minDamage = 10
 _maxDamage = 20
 _exportCost = 2
 metadata/_custom_type_script = "uid://dpbh8tau83sd0"
@@ -738,7 +737,7 @@ script = ExtResource("12_v8t08")
 [node name="BehaviorTree_MultipleMove" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
 script = ExtResource("13_ad5g1")
 
-[node name="BehaviorTree_TurnAction(FireBolt)" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
+[node name="BehaviorTree_TurnAction(MagicBolt)" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("14_45j83")
 TurnAction = SubResource("Resource_y7hsj")
 

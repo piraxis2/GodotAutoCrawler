@@ -1,20 +1,23 @@
 extends Node
 
 
-func display(damage: int, position: Vector2, is_critical: bool):
-	var number = Label.new()
-	number.global_position = position - Vector2(0,10)
-	number.text = str(damage)
-	number.z_index = 5
-	number.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	number.label_settings = LabelSettings.new()
-	
+func damage_display(damage: int, position: Vector2, is_critical: bool):
 	var color = "#FFF"
 	if is_critical:
 		color = "#B22"
 	if damage == 0:
-		color  = "#FFF8"
+		color  = "#FFF8"		
 		
+	display(str(damage) ,position, color);		
+	
+func display(text: String, position: Vector2, color: Color) :
+	var number = Label.new()
+	number.global_position = position - Vector2(0,10)
+	number.text = text
+	number.z_index = 5
+	number.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	number.label_settings = LabelSettings.new()
+	
 	number.label_settings.font_color = color
 	number.label_settings.font_size = 10
 	number.label_settings.outline_color = "#000"
@@ -36,3 +39,4 @@ func display(damage: int, position: Vector2, is_critical: bool):
 	await tween.finished
 	tween.kill();
 	number.queue_free()
+	

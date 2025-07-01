@@ -1,23 +1,8 @@
-[gd_scene load_steps=18 format=3 uid="uid://5jaympibmkwm"]
+[gd_scene load_steps=19 format=3 uid="uid://5jaympibmkwm"]
 
-[ext_resource type="Texture2D" uid="uid://m5qwhbm5qd75" path="res://Assets/Textures/Wizard-Attack01_Effect.png" id="1_qubo6"]
 [ext_resource type="Script" uid="uid://bnn5wrha7242b" path="res://Assets/Script/gds/sprite_fx_object.gd" id="1_x0h8q"]
 [ext_resource type="AudioStream" uid="uid://37uy68te8p5i" path="res://Assets/Audio/Ice.mp3" id="2_6omrb"]
-
-[sub_resource type="Animation" id="Animation_6omrb"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [9]
-}
+[ext_resource type="Texture2D" uid="uid://cudu5qg3fho47" path="res://Assets/Textures/Wizard.png" id="3_x0h8q"]
 
 [sub_resource type="Animation" id="Animation_qubo6"]
 resource_name = "IceBolt"
@@ -29,10 +14,10 @@ tracks/0/path = NodePath(".:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 }
 tracks/1/type = "audio"
 tracks/1/imported = false
@@ -50,62 +35,75 @@ tracks/1/keys = {
 }
 tracks/1/use_blend = true
 
+[sub_resource type="Animation" id="Animation_6omrb"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [9]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_x0h8q"]
 _data = {
 &"IceBolt": SubResource("Animation_qubo6"),
 &"RESET": SubResource("Animation_6omrb")
 }
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6omrb"]
-atlas = ExtResource("1_qubo6")
-region = Rect2(0, 0, 100, 100)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_x0h8q"]
-atlas = ExtResource("1_qubo6")
-region = Rect2(100, 0, 100, 100)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_dfodt"]
-atlas = ExtResource("1_qubo6")
-region = Rect2(200, 0, 100, 100)
+atlas = ExtResource("3_x0h8q")
+region = Rect2(0, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rarmi"]
-atlas = ExtResource("1_qubo6")
-region = Rect2(300, 0, 100, 100)
+atlas = ExtResource("3_x0h8q")
+region = Rect2(100, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hughc"]
-atlas = ExtResource("1_qubo6")
-region = Rect2(400, 0, 100, 100)
+atlas = ExtResource("3_x0h8q")
+region = Rect2(200, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oq74g"]
-atlas = ExtResource("1_qubo6")
-region = Rect2(500, 0, 100, 100)
+atlas = ExtResource("3_x0h8q")
+region = Rect2(300, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2njie"]
-atlas = ExtResource("1_qubo6")
-region = Rect2(600, 0, 100, 100)
+atlas = ExtResource("3_x0h8q")
+region = Rect2(400, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j3s42"]
-atlas = ExtResource("1_qubo6")
-region = Rect2(700, 0, 100, 100)
+atlas = ExtResource("3_x0h8q")
+region = Rect2(500, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1g3xr"]
-atlas = ExtResource("1_qubo6")
-region = Rect2(800, 0, 100, 100)
+atlas = ExtResource("3_x0h8q")
+region = Rect2(600, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w6os1"]
-atlas = ExtResource("1_qubo6")
-region = Rect2(900, 0, 100, 100)
+atlas = ExtResource("3_x0h8q")
+region = Rect2(700, 400, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qxh3p"]
+atlas = ExtResource("3_x0h8q")
+region = Rect2(800, 400, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y22sv"]
+atlas = ExtResource("3_x0h8q")
+region = Rect2(900, 400, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x0h8q"]
+atlas = ExtResource("3_x0h8q")
+region = Rect2(1000, 400, 100, 100)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_qxh3p"]
 resource_local_to_scene = true
 animations = [{
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6omrb")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_x0h8q")
-}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_dfodt")
 }, {
@@ -129,9 +127,18 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_w6os1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qxh3p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y22sv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x0h8q")
 }],
 "loop": true,
-"name": &"default",
+"name": &"new_animation",
 "speed": 5.0
 }]
 
@@ -146,8 +153,10 @@ libraries = {
 }
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-texture_filter = 2
+texture_filter = 1
+position = Vector2(-3, -5)
 sprite_frames = SubResource("SpriteFrames_qxh3p")
+animation = &"new_animation"
 frame = 9
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]

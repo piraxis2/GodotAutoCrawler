@@ -10,7 +10,6 @@ namespace AutoCrawler.Assets.Script.TurnAction.Skill.Magic;
 [GlobalClass, Tool]
 public partial class TurnAction_MagicBolt : TurnActionBase, ISkill<TurnActionBase>
 {
-    [Export] private int _minDamage = 10;
     [Export] private int _maxDamage = 20;
     public int Range => 3;
     public int Scale => 3;
@@ -39,7 +38,7 @@ public partial class TurnAction_MagicBolt : TurnActionBase, ISkill<TurnActionBas
         {
             var spriteFx = GlobalUtil.GetBattleFieldCoreNode<SpriteFx>(owner);
             spriteFx.PlayFx("IceBolt", target.GlobalPosition);
-            target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, _minDamage, _maxDamage));
+            target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<MagicalDamage>(owner.ArticleStatus, _maxDamage, _maxDamage));
         }
     }
 
