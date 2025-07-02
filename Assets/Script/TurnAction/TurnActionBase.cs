@@ -27,15 +27,21 @@ public abstract partial class TurnActionBase : Resource
     }
 
     protected virtual void OnInit(Node owner){}
+    
+    protected virtual void OnUsedCostChanged(int oldCost, int newCost) {}
+    
 
     public ActionState Action(double delta, ArticleBase owner)
     {
         if (Cost <= 0) return ActionState.End;
 
         ActionState status = ActionExecute(delta, owner);
-        if (status == ActionState.Running) return status;
 
-        _usedCost++;
+        if (status != ActionState.Running)
+        {
+            OnUsedCostChanged(_usedCost++, _usedCost);
+        }
+        
         return Cost <= 0 ? ActionState.End : status;
     }
 

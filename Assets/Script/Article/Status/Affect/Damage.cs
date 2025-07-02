@@ -43,7 +43,7 @@ public abstract class Damage : StatusAffect, IAffectedImmediately
     public void ApplyImmediately<TStatus>(TStatus statusElement, ArticleStatus recipient) where TStatus : StatusElement
     {
         var gType = statusElement.GetType();
-        if (!AffectedType.Contains((gType))) return;
+        if (!AffectedType.Contains(gType)) return;
 
         if (statusElement is not Health health) return;
 
@@ -51,11 +51,10 @@ public abstract class Damage : StatusAffect, IAffectedImmediately
         var damageNegate = GetDamageNegate(recipient);
         if (damageNegate != DamageNegate.None)
         {
-            if (DamageNegateMessages.ContainsKey(damageNegate))
-                damageFloater.Call("display", DamageNegateMessages[damageNegate], recipient.Owner.GlobalPosition,Color.Color8(255, 0, 0));
+            if (DamageNegateMessages.TryGetValue(damageNegate, out var message))
+                damageFloater.Call("display", message, recipient.Owner.GlobalPosition, Color.Color8(255, 0, 0));
             else
                 GD.PrintErr($"Damage negate {damageNegate} is not allowed");
-            
             return;
         }
         int damage = CalculatedDamage(recipient) * (IsCritical ? 2 : 1);

@@ -7,6 +7,7 @@ using AutoCrawler.Assets.Script.Article;
 using AutoCrawler.Assets.Script.Article.Status.Affect;
 using AutoCrawler.Assets.Script.TurnAction;
 using AutoCrawler.Assets.Script.TurnAction.Skill;
+using AutoCrawler.Assets.Script.TurnAction.Skill.Magic;
 using AutoCrawler.Assets.Script.Util;
 
 public partial class TurnAction_ChainLightning : TurnActionBase, ISkill<TurnActionBase>
@@ -35,22 +36,6 @@ public partial class TurnAction_ChainLightning : TurnActionBase, ISkill<TurnActi
 
     protected override ActionState ActionExecute(double delta, ArticleBase owner)
     {
-        if (owner.AnimationPlayer.CurrentAnimation == "Cast")
-        {
-            if (owner.AnimationPlayer.CurrentAnimationPosition < owner.AnimationPlayer.CurrentAnimationLength)
-            {
-                owner.AnimationPlayer.Seek(owner.AnimationPlayer.CurrentAnimationPosition + delta);
-                return ActionState.Running;
-            }
-
-            if (Cost > 1) return ActionState.Executed;
-            
-            ShotChainLightning(delta, owner);
-        }
-
-
-        _isChaining = true;
-        owner.AnimationPlayer.Play("Cast", -1, 0);
-        return ActionState.Running; 
+        return ActionState.Executed;
     }
 }
