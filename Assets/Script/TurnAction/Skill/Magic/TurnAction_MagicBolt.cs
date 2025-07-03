@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using AutoCrawler.addons.behaviortree.node;
 using AutoCrawler.Assets.Script.Article;
 using AutoCrawler.Assets.Script.Article.Status.Affect;
 using AutoCrawler.Assets.Script.Util;
@@ -19,25 +20,30 @@ public partial class TurnAction_MagicBolt : TurnAction_Cast, ISkill<TurnActionBa
 
     private HashSet<Vector2I> _attackRangePositions;
     public HashSet<Vector2I> AttackRangePositions => _attackRangePositions ??= SkillUtil.GetAttackRangePositions(Range);
+    
+    private Vector2I _targetPosition;
 
-    private int _chainCount = 3;
 
     protected override void OnInit(Node owner)
     {
-        _chainCount = 3;
+        ArticleBase ownerArticle = (ArticleBase)((BehaviorTree_Action)owner).Tree.GetParent();
+        List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + ownerArticle.TilePosition).ToList();
+        BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
+        ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(ownerArticle));
+        if (target != null) _targetPosition = target.TilePosition;
     }
 
     protected override ActionState Shot(double delta, ArticleBase owner)
     {
-        List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
         BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
-        ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(owner));
+        ArticleBase target = tileMapLayer?.GetArticle(_targetPosition);
         owner.AnimationPlayer.Play("Idle");
+        var spriteFx = GlobalUtil.GetBattleFieldCoreNode<SpriteFx>(owner);
+        var targetGlobalPosition = tileMapLayer?.ToGlobal(tileMapLayer.MapToLocal(_targetPosition));
+        spriteFx.PlayFx("IceBolt", targetGlobalPosition.GetValueOrDefault());
         
         if (target is { IsAlive: true })
         {
-            var spriteFx = GlobalUtil.GetBattleFieldCoreNode<SpriteFx>(owner);
-            spriteFx.PlayFx("IceBolt", target.GlobalPosition);
             target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<MagicalDamage>(owner.ArticleStatus, _maxDamage, _maxDamage));
         }
 

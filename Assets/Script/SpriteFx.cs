@@ -14,7 +14,7 @@ public partial class SpriteFx : Node
         {
             var fxInstance = fxScene.Instantiate<Node2D>();
             fxInstance.Position = position;
-            GetTree().Root.AddChild(fxInstance);
+            AddChild(fxInstance);
             if (fxInstance.HasMethod("playanimation"))
                 fxInstance.Call("playanimation",fxName); 
             else
