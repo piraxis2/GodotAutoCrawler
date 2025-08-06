@@ -8,14 +8,18 @@ namespace AutoCrawler.Assets.Script.TurnAction.Skill.Magic;
 public abstract partial class TurnAction_Cast : TurnActionBase
 {
     
-    private bool _isAnimationRunning = false;
 
     protected abstract ActionState Shot(double delta, ArticleBase owner);
-    
-    private ActionState Cast(double delta, ArticleBase owner)
+
+    protected override void OnInit(Node owner)
     {
-        if (Cost <= 1) return Shot(delta, owner);
-        
+        if (MasterCost > 1)
+            ActionQueue.Enqueue(CastingPhase);
+        ActionQueue.Enqueue(Shot);
+    }
+
+    private ActionState CastingPhase(double delta, ArticleBase owner)
+    {
         if (owner.AnimationPlayer.CurrentAnimation is "Cast" or "Casting")
         {
             if (owner.AnimationPlayer.CurrentAnimationPosition < owner.AnimationPlayer.CurrentAnimationLength)
@@ -26,18 +30,12 @@ public abstract partial class TurnAction_Cast : TurnActionBase
                 if (owner.AnimationPlayer.CurrentAnimationPosition + delta < owner.AnimationPlayer.CurrentAnimationLength) return ActionState.Running;
             }
 
+            if (Cost == MasterCost)
+                ActionQueue.Dequeue();
             return ActionState.Executed;
         }
-
-        _isAnimationRunning = false;
+        
         owner.AnimationPlayer.Play(Cost == MasterCost ? "Cast" : "Casting", -1, 0);
         return ActionState.Running;
-    }
-
-
-
-    protected override ActionState ActionExecute(double delta, ArticleBase owner)
-    {
-        return Cast(delta, owner);
     }
 }

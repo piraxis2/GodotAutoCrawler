@@ -26,6 +26,7 @@ public partial class TurnAction_MagicBolt : TurnAction_Cast, ISkill<TurnActionBa
 
     protected override void OnInit(Node owner)
     {
+        base.OnInit(owner);
         ArticleBase ownerArticle = (ArticleBase)((BehaviorTree_Action)owner).Tree.GetParent();
         List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + ownerArticle.TilePosition).ToList();
         BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
@@ -38,15 +39,16 @@ public partial class TurnAction_MagicBolt : TurnAction_Cast, ISkill<TurnActionBa
         BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
         ArticleBase target = tileMapLayer?.GetArticle(_targetPosition);
         owner.AnimationPlayer.Play("Idle");
-        var spriteFx = GlobalUtil.GetBattleFieldCoreNode<SpriteFx>(owner);
+        var spriteFx = GlobalUtil.GetBattleFieldCoreNode<FxPlayer>(owner);
         var targetGlobalPosition = tileMapLayer?.ToGlobal(tileMapLayer.MapToLocal(_targetPosition));
-        spriteFx.PlayFx("IceBolt", targetGlobalPosition.GetValueOrDefault());
+        spriteFx.PlaySpriteFx("IceBolt", targetGlobalPosition.GetValueOrDefault());
         
         if (target is { IsAlive: true })
         {
             target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<MagicalDamage>(owner.ArticleStatus, _maxDamage, _maxDamage));
         }
 
+        ActionQueue.Dequeue();
         return ActionState.Executed;
     }
 

@@ -15,8 +15,8 @@
 [ext_resource type="Script" uid="uid://ciweyygvsxr1c" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="12_v8t08"]
 [ext_resource type="Script" uid="uid://c7js0inhhipcp" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="13_ad5g1"]
 [ext_resource type="Script" uid="uid://bwx0oup5d1dc" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="14_45j83"]
-[ext_resource type="Script" uid="uid://dpbh8tau83sd0" path="res://Assets/Script/TurnAction/Skill/Magic/TurnAction_MagicBolt.cs" id="15_x3swm"]
 [ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/health_bar.tscn" id="16_2sfhm"]
+[ext_resource type="Script" uid="uid://x5t3hrh74wu7" path="res://Assets/Script/TurnAction/Skill/Magic/TurnAction_ChainLightning.cs" id="16_y7hsj"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
 resource_local_to_scene = true
@@ -699,10 +699,9 @@ _data = {
 }
 
 [sub_resource type="Resource" id="Resource_y7hsj"]
-script = ExtResource("15_x3swm")
+script = ExtResource("16_y7hsj")
 _maxDamage = 20
-_exportCost = 2
-metadata/_custom_type_script = "uid://dpbh8tau83sd0"
+metadata/_custom_type_script = "uid://x5t3hrh74wu7"
 
 [node name="Character" type="Node2D" node_paths=PackedStringArray("_animationPlayer")]
 script = ExtResource("1_x3swm")

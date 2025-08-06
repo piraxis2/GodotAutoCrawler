@@ -1,0 +1,84 @@
+[gd_scene load_steps=9 format=3 uid="uid://dgjogfc7xujst"]
+
+[ext_resource type="Script" uid="uid://snyfxfbkyiw6" path="res://Assets/Script/gds/fx/thunder_line.gd" id="1_3xpci"]
+[ext_resource type="Shader" uid="uid://b3kvf2c5w8wpc" path="res://Assets/Shader/thunder.tres" id="1_wgags"]
+[ext_resource type="Texture2D" uid="uid://b1utllbvyl1dg" path="res://Assets/Textures/Piraxis_Lightning_002.png" id="2_3xpci"]
+[ext_resource type="AudioStream" uid="uid://y7kp5v5nbetr" path="res://Assets/Audio/Thunder.mp3" id="2_f6ufj"]
+
+[sub_resource type="Animation" id="Animation_f6ufj"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/vanishingValue")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_3xpci"]
+resource_name = "end"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:material:shader_parameter/vanishingValue")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/1/type = "audio"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../AudioStreamPlayer2D")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"clips": [{
+"end_offset": 0.383689,
+"start_offset": 0.157514,
+"stream": ExtResource("2_f6ufj")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/1/use_blend = true
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_tr4mp"]
+_data = {
+&"RESET": SubResource("Animation_f6ufj"),
+&"end": SubResource("Animation_3xpci")
+}
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f6ufj"]
+shader = ExtResource("1_wgags")
+shader_parameter/vanishingValue = 0.0
+shader_parameter/speed = Vector2(-1.5, 0)
+shader_parameter/pixelation_amount = 20.0
+shader_parameter/basic_texture = ExtResource("2_3xpci")
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_3xpci")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Line2D")
+libraries = {
+&"": SubResource("AnimationLibrary_tr4mp")
+}
+
+[node name="Line2D" type="Line2D" parent="."]
+texture_filter = 1
+material = SubResource("ShaderMaterial_f6ufj")
+position = Vector2(-140.092, -1.90735e-06)
+scale = Vector2(2.49034, 1)
+points = PackedVector2Array(104, 40, 104.44, 160)
+default_color = Color(0.2, 0.34902, 0.831373, 1)
+texture_mode = 2
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]

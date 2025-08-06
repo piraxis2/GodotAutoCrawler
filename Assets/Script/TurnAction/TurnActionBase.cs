@@ -1,4 +1,6 @@
-﻿using AutoCrawler.addons.behaviortree;
+﻿using System;
+using System.Collections.Generic;
+using AutoCrawler.addons.behaviortree;
 using AutoCrawler.Assets.Script.Article;
 using Godot;
 
@@ -14,6 +16,8 @@ public abstract partial class TurnActionBase : Resource
         End
     }
 
+    protected Queue<Func<double, ArticleBase, ActionState>> ActionQueue = [];
+
     protected virtual int MasterCost => 1;
     
     private int _usedCost = 0;
@@ -23,13 +27,13 @@ public abstract partial class TurnActionBase : Resource
     public void Init(Node owner)
     {
         _usedCost = 0;
+        ActionQueue.Clear();
         OnInit(owner);
     }
 
     protected virtual void OnInit(Node owner){}
     
     protected virtual void OnUsedCostChanged(int oldCost, int newCost) {}
-    
 
     public ActionState Action(double delta, ArticleBase owner)
     {
@@ -45,7 +49,10 @@ public abstract partial class TurnActionBase : Resource
         return Cost <= 0 ? ActionState.End : status;
     }
 
-    protected abstract ActionState ActionExecute(double delta, ArticleBase owner);
+    private ActionState ActionExecute(double delta, ArticleBase owner)
+    {
+        return ActionQueue.Peek()(delta, owner);
+    }
 
 
 }

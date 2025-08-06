@@ -16,14 +16,24 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
     public int Range => 1;
     public int Scale => 1;
 
-    private bool _isAnimationRunning;
-    
     private HashSet<Vector2I> _attackRangePositions;
     public HashSet<Vector2I> AttackRangePositions => _attackRangePositions ??= SkillUtil.GetAttackRangePositions(Range);
 
-    protected override void OnInit(Node owner) => _isAnimationRunning = false;
+    protected override void OnInit(Node owner)
+    {
+        ActionQueue.Enqueue(StartPhase);
+        ActionQueue.Enqueue(RunPhase);
+        ActionQueue.Enqueue(EndPhase); 
+    }
 
-    protected override ActionState ActionExecute(double delta, ArticleBase owner)
+    private ActionState StartPhase(double delta, ArticleBase owner)
+    {
+        owner.AnimationPlayer.Play("Attack", -1, 0);
+        ActionQueue.Dequeue();
+        return ActionState.Running; 
+    }
+
+    private ActionState RunPhase(double delta, ArticleBase owner)
     {
         if (owner.AnimationPlayer.CurrentAnimation == "Attack" && owner.AnimationPlayer.CurrentAnimationPosition < owner.AnimationPlayer.CurrentAnimationLength)
         {
@@ -31,21 +41,22 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
             return ActionState.Running;
         }
 
-        if (_isAnimationRunning)
+        ActionQueue.Dequeue(); 
+        return ActionState.Running;
+    }
+
+    private ActionState EndPhase(double delta, ArticleBase owner)
+    {
+        List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
+        BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
+        ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(owner));
+        owner.AnimationPlayer.Play("Idle");
+        if (target is { IsAlive: true })
         {
-            List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
-            BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
-            ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(owner));
-            owner.AnimationPlayer.Play("Idle");
-            if (target is { IsAlive: true })
-            {
-                target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, minDamage, maxDamage));
-            }
-            return ActionState.Executed;
+            target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, minDamage, maxDamage));
         }
 
-        owner.AnimationPlayer.Play("Attack", -1, 0);
-        _isAnimationRunning = true;
-        return ActionState.Running;
+        ActionQueue.Dequeue();
+        return ActionState.Executed;
     }
 }

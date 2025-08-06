@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=4 uid="uid://dv7r53qteumxi"]
+[gd_scene load_steps=57 format=4 uid="uid://dv7r53qteumxi"]
 
 [ext_resource type="Script" uid="uid://doh5xcdvrrn7g" path="res://Assets/Script/BattleFieldScene.cs" id="1_8td0i"]
 [ext_resource type="Script" uid="uid://bofxi10iwp1bf" path="res://Assets/Script/TurnHelper.cs" id="1_25g81"]
@@ -15,35 +15,9 @@
 [ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_jm7tw"]
 [ext_resource type="Script" uid="uid://527wle2alee2" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="8_ry6v4"]
 [ext_resource type="PackedScene" uid="uid://bvf5eww4h7tp2" path="res://Assets/Temp/Puppet.tscn" id="11_hv0hd"]
-[ext_resource type="Script" uid="uid://kxwtxub32atc" path="res://Assets/Script/SpriteFx.cs" id="16_3bkig"]
+[ext_resource type="Script" uid="uid://kxwtxub32atc" path="res://Assets/Script/FxPlayer.cs" id="16_3bkig"]
 [ext_resource type="PackedScene" uid="uid://5jaympibmkwm" path="res://Assets/Temp/TempSkillEffect.tscn" id="17_4m0c6"]
-
-[sub_resource type="Resource" id="Resource_1okoo"]
-resource_local_to_scene = true
-script = ExtResource("4_72njd")
-MaxHealth = 1000
-
-[sub_resource type="Resource" id="Resource_rujwq"]
-resource_local_to_scene = true
-script = ExtResource("5_rst3o")
-
-[sub_resource type="Resource" id="Resource_u7i10"]
-resource_local_to_scene = true
-script = ExtResource("6_ep4vv")
-
-[sub_resource type="Resource" id="Resource_mjwh7"]
-resource_local_to_scene = true
-script = ExtResource("7_56f8w")
-
-[sub_resource type="Resource" id="Resource_lsfeo"]
-resource_local_to_scene = true
-script = ExtResource("8_ry6v4")
-Value = 2
-
-[sub_resource type="Resource" id="Resource_j0vju"]
-resource_local_to_scene = true
-script = ExtResource("8_jm7tw")
-StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_1okoo"), SubResource("Resource_rujwq"), SubResource("Resource_u7i10"), SubResource("Resource_mjwh7"), SubResource("Resource_lsfeo")])
+[ext_resource type="PackedScene" uid="uid://dgjogfc7xujst" path="res://Assets/Fx/Lightning.tscn" id="18_enjqk"]
 
 [sub_resource type="Resource" id="Resource_38hap"]
 resource_local_to_scene = true
@@ -71,6 +45,33 @@ Value = 2
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
 StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_38hap"), SubResource("Resource_wcjbh"), SubResource("Resource_1g6wm"), SubResource("Resource_ak8v2"), SubResource("Resource_lwoqy")])
+
+[sub_resource type="Resource" id="Resource_1okoo"]
+resource_local_to_scene = true
+script = ExtResource("4_72njd")
+MaxHealth = 1000
+
+[sub_resource type="Resource" id="Resource_rujwq"]
+resource_local_to_scene = true
+script = ExtResource("5_rst3o")
+
+[sub_resource type="Resource" id="Resource_u7i10"]
+resource_local_to_scene = true
+script = ExtResource("6_ep4vv")
+
+[sub_resource type="Resource" id="Resource_mjwh7"]
+resource_local_to_scene = true
+script = ExtResource("7_56f8w")
+
+[sub_resource type="Resource" id="Resource_lsfeo"]
+resource_local_to_scene = true
+script = ExtResource("8_ry6v4")
+Value = 2
+
+[sub_resource type="Resource" id="Resource_j0vju"]
+resource_local_to_scene = true
+script = ExtResource("8_jm7tw")
+StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_1okoo"), SubResource("Resource_rujwq"), SubResource("Resource_u7i10"), SubResource("Resource_mjwh7"), SubResource("Resource_lsfeo")])
 
 [sub_resource type="Resource" id="Resource_jq4tx"]
 resource_local_to_scene = true
@@ -289,12 +290,12 @@ custom_data_layer_0/name = "FixedArticle"
 custom_data_layer_0/type = 24
 sources/3 = SubResource("TileSetAtlasSource_fla71")
 
-[node name="BattleField" type="Node2D" node_paths=PackedStringArray("TileMapLayer", "TurnHelper", "Articles", "SpriteFx")]
+[node name="BattleField" type="Node2D" node_paths=PackedStringArray("TileMapLayer", "TurnHelper", "Articles", "FxPlayer")]
 script = ExtResource("1_8td0i")
 TileMapLayer = NodePath("TileMapLayer")
 TurnHelper = NodePath("TurnHelper")
 Articles = NodePath("Articles")
-SpriteFx = NodePath("fxManager")
+FxPlayer = NodePath("FxPlayer")
 
 [node name="LevelGenerator" type="Node" parent="."]
 
@@ -305,13 +306,13 @@ script = ExtResource("2_q3ikk")
 
 [node name="Ally" type="Node" parent="Articles"]
 
-[node name="Character5" parent="Articles/Ally" instance=ExtResource("4_viutb")]
-position = Vector2(64, -80)
-ArticleStatus = SubResource("Resource_j0vju")
-
 [node name="Character" parent="Articles/Ally" instance=ExtResource("3_hv0hd")]
 position = Vector2(-80, 24)
 ArticleStatus = SubResource("Resource_cshov")
+
+[node name="Character2" parent="Articles/Ally" instance=ExtResource("4_viutb")]
+position = Vector2(80, -56)
+ArticleStatus = SubResource("Resource_j0vju")
 
 [node name="Opponent" type="Node" parent="Articles"]
 
@@ -323,11 +324,11 @@ ArticleStatus = SubResource("Resource_dewjv")
 ArticleStatus = SubResource("Resource_vdgyl")
 
 [node name="Character3" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
-position = Vector2(16, -7)
+position = Vector2(96, 0)
 ArticleStatus = SubResource("Resource_jw18j")
 
 [node name="Character4" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
-position = Vector2(32, -18)
+position = Vector2(-16, -24)
 ArticleStatus = SubResource("Resource_81x2m")
 
 [node name="TurnHelper" type="Node" parent="."]
@@ -342,8 +343,11 @@ script = ExtResource("2_0g2jr")
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
 
-[node name="fxManager" type="Node" parent="."]
+[node name="FxPlayer" type="Node" parent="."]
 script = ExtResource("16_3bkig")
-_fxScenes = Dictionary[StringName, PackedScene]({
+_spriteFxScenes = Dictionary[StringName, PackedScene]({
 &"IceBolt": ExtResource("17_4m0c6")
+})
+_lineFxScenes = Dictionary[StringName, PackedScene]({
+&"Lightning": ExtResource("18_enjqk")
 })
