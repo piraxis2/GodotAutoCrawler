@@ -20,6 +20,7 @@ config/icon="res://Assets/Textures/icon.svg"
 DamageFloater="*res://Assets/Script/gds/damage_floater.gd"
 CheatManager="*res://Assets/Script/CheatManager.cs"
 GdsCheatManager="*res://Assets/Script/gds/gds_cheat_manager.gd"
+SoundManager="*res://Assets/Script/gds/sound_manager.gd"
 
 [display]
 

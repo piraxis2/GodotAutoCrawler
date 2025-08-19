@@ -701,6 +701,7 @@ _data = {
 [sub_resource type="Resource" id="Resource_y7hsj"]
 script = ExtResource("16_y7hsj")
 _maxDamage = 20
+_chainCount = 3
 metadata/_custom_type_script = "uid://x5t3hrh74wu7"
 
 [node name="Character" type="Node2D" node_paths=PackedStringArray("_animationPlayer")]

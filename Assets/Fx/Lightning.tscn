@@ -21,7 +21,7 @@ tracks/0/keys = {
 }
 
 [sub_resource type="Animation" id="Animation_3xpci"]
-resource_name = "end"
+resource_name = "discharge"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -29,7 +29,7 @@ tracks/0/path = NodePath(".:material:shader_parameter/vanishingValue")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.4),
+"times": PackedFloat32Array(0, 0.433333),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [0.0, 1.0]
@@ -53,13 +53,13 @@ tracks/1/use_blend = true
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_tr4mp"]
 _data = {
 &"RESET": SubResource("Animation_f6ufj"),
-&"end": SubResource("Animation_3xpci")
+&"discharge": SubResource("Animation_3xpci")
 }
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f6ufj"]
 shader = ExtResource("1_wgags")
 shader_parameter/vanishingValue = 0.0
-shader_parameter/speed = Vector2(-1.5, 0)
+shader_parameter/speed = Vector2(-2.5, 0)
 shader_parameter/pixelation_amount = 20.0
 shader_parameter/basic_texture = ExtResource("2_3xpci")
 

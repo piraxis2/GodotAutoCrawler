@@ -30,10 +30,18 @@ public abstract partial class TurnActionBase : Resource
         ActionQueue.Clear();
         OnInit(owner);
     }
+    public void Finish(Node owner)
+    {
+        _usedCost = 0;
+        ActionQueue.Clear();
+        OnFinish(owner);
+    }
 
     protected virtual void OnInit(Node owner){}
     
-    protected virtual void OnUsedCostChanged(int oldCost, int newCost) {}
+    protected virtual void OnFinish(Node owner){}
+    
+    protected virtual void OnUsedCostChanged(int oldCost, int newCost){}
 
     public ActionState Action(double delta, ArticleBase owner)
     {
@@ -49,10 +57,11 @@ public abstract partial class TurnActionBase : Resource
         return Cost <= 0 ? ActionState.End : status;
     }
 
-    private ActionState ActionExecute(double delta, ArticleBase owner)
+    protected virtual ActionState ActionExecute(double delta, ArticleBase owner)
     {
         return ActionQueue.Peek()(delta, owner);
     }
 
 
+ 
 }

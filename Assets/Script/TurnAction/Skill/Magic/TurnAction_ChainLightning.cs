@@ -1,5 +1,4 @@
 using Godot;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoCrawler.addons.behaviortree.node;
@@ -8,67 +7,127 @@ using AutoCrawler.Assets.Script.Article;
 using AutoCrawler.Assets.Script.Article.Status.Affect;
 using AutoCrawler.Assets.Script.TurnAction;
 using AutoCrawler.Assets.Script.TurnAction.Skill;
-using AutoCrawler.Assets.Script.TurnAction.Skill.Magic;
 using AutoCrawler.Assets.Script.Util;
-using Godot.Collections;
 
 [GlobalClass, Tool]
 public partial class TurnAction_ChainLightning : TurnActionBase, ISkill<TurnActionBase>
 {
     [Export] private int _maxDamage = 20;
+    
+    [Export] private int _chainCount = 3;
     public int Range => 3;
     public int Scale => 3;
 
     private HashSet<Vector2I> _attackRangePositions;
     public HashSet<Vector2I> AttackRangePositions => _attackRangePositions ??= SkillUtil.GetAttackRangePositions(Range);
 
-    private int _chainCount = 3;
-    
-    private Vector2I _targetPosition;
+    private Node2D _playingFx;
+    private ArticleBase _owner;
+    private ArticleBase _startingArticle;
+    private ArticleBase _targetArticle;
+    private HashSet<ArticleBase> _hitTargets;
 
-    private Node2D _playingFx = null;
+    private BattleFieldTileMapLayer _tileMapLayer;
+    private FxPlayer _fxPlayer;
+    
+    
 
     protected override void OnInit(Node owner)
     {
-        ActionQueue.Enqueue(Shot);
+        _tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
+        _fxPlayer = GlobalUtil.GetBattleFieldCoreNode<FxPlayer>(owner);
+        ActionQueue.Enqueue(StartPhase);
+        ActionQueue.Enqueue(CastPhase);
+
+        for (int i = 0; i < _chainCount; i++)
+        {
+            ActionQueue.Enqueue(IgnitionPhase);
+            ActionQueue.Enqueue(DischargePhase);
+        }
+        ActionQueue.Enqueue(EndPhase);
         _playingFx = null;
-        ArticleBase ownerArticle = (ArticleBase)((BehaviorTree_Action)owner).Tree.GetParent();
-        List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + ownerArticle.TilePosition).ToList();
-        BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
-        ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(ownerArticle));
-        if (target != null) _targetPosition = target.TilePosition;
+        _owner = (ArticleBase)((BehaviorTree_Action)owner).Tree.GetParent();
+        _startingArticle = _owner; 
+        _hitTargets = new HashSet<ArticleBase> { _owner };
+        _targetArticle = GetTarget(_startingArticle.TilePosition);
     }
 
-
-    protected ActionState Shot(double delta, ArticleBase owner)
+    private void ForceExit()
     {
-        BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
-        ArticleBase target = tileMapLayer?.GetArticle(_targetPosition);
-        if (_playingFx != null)
-        {
-            var aniPlayer = _playingFx.GetNode<AnimationPlayer>("AnimationPlayer");
-            if (aniPlayer.CurrentAnimation == "end" && aniPlayer.CurrentAnimationPosition < aniPlayer.CurrentAnimationLength)
-            {
-                aniPlayer.Seek(aniPlayer.CurrentAnimationPosition + delta);
-                return ActionState.Running;
-            }
-            
-            _playingFx.QueueFree();
-            ActionQueue.Dequeue();
-            return ActionState.Executed;
-        }
+        ActionQueue.Clear();
+        ActionQueue.Enqueue(EndPhase);
+    }
+
+    private ArticleBase GetTarget(Vector2I tilePosition)
+    {
+        List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + tilePosition).ToList();
+        var potentialTargets = _tileMapLayer?.GetArticles(calculatedAttackRange)?
+            .Where(t => t is { IsAlive: true } && t.TilePosition != tilePosition && t.IsOpponent(_owner));
         
-        owner.AnimationPlayer.Play("Idle");
-        var spriteFx = GlobalUtil.GetBattleFieldCoreNode<FxPlayer>(owner);
-        var ownerGlobalPosition = tileMapLayer?.ToGlobal(tileMapLayer.MapToLocal(owner.TilePosition));
-        var targetGlobalPosition = tileMapLayer?.ToGlobal(tileMapLayer.MapToLocal(_targetPosition));
-        if (target is { IsAlive: true })
+        // 이미 공격한 대상은 우선순위를 낮춥니다(OrderBy). 새로운 대상이 없으면 이미 공격한 대상을 다시 공격할 수 있습니다.
+        return potentialTargets?.OrderBy(t => _hitTargets.Contains(t)).FirstOrDefault();
+    }
+
+    private ActionState StartPhase(double delta, ArticleBase owner)
+    {
+        owner.AnimationPlayer.Play("Cast");
+        ActionQueue.Dequeue();
+        return ActionState.Running;
+    }
+    private ActionState CastPhase(double delta, ArticleBase owner)
+    {
+        if (owner.AnimationPlayer.CurrentAnimation == "Cast" && owner.AnimationPlayer.CurrentAnimationPosition < owner.AnimationPlayer.CurrentAnimationLength)
         {
-            target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<MagicalDamage>(owner.ArticleStatus, _maxDamage, _maxDamage));
+            owner.AnimationPlayer.Seek(owner.AnimationPlayer.CurrentAnimationPosition + delta);
+            return ActionState.Running;
         }
 
-        _playingFx = spriteFx.PlayLineFx("Lightning", [ownerGlobalPosition.GetValueOrDefault(), targetGlobalPosition.GetValueOrDefault()]);
+        ActionQueue.Dequeue(); 
         return ActionState.Running;
     }
 
+    //점화
+    private ActionState IgnitionPhase(double delta, ArticleBase owner)
+    {
+        if (_targetArticle is null or { IsAlive: false })
+        {
+            ForceExit();
+            return ActionState.Running;
+        }
+        
+        var startingArticleGlobalPosition = _tileMapLayer?.ToGlobal(_tileMapLayer.MapToLocal(_startingArticle.TilePosition));
+        var targetGlobalPosition = _tileMapLayer?.ToGlobal(_tileMapLayer.MapToLocal(_targetArticle.TilePosition));
+
+        _hitTargets.Add(_targetArticle);
+        _startingArticle = _targetArticle;
+        _targetArticle.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<MagicalDamage>(owner.ArticleStatus, _maxDamage, _maxDamage));
+        _targetArticle = GetTarget(_targetArticle.TilePosition);
+        _playingFx = _fxPlayer.PlayLineFx("Lightning", [startingArticleGlobalPosition.GetValueOrDefault(), targetGlobalPosition.GetValueOrDefault()]);
+        ActionQueue.Dequeue();
+        return ActionState.Running; 
+        
+    }
+    
+    //방전
+    private ActionState DischargePhase(double delta, ArticleBase owner)
+    {
+        var aniPlayer = _playingFx.GetNode<AnimationPlayer>("AnimationPlayer");
+        if (aniPlayer.CurrentAnimation == "discharge" && aniPlayer.CurrentAnimationPosition < aniPlayer.CurrentAnimationLength)
+        {
+            aniPlayer.Seek(aniPlayer.CurrentAnimationPosition + delta);
+            return ActionState.Running; 
+        }
+        
+        _playingFx.QueueFree();
+        _playingFx = null;
+        ActionQueue.Dequeue();
+        return ActionState.Running; 
+    }
+
+    private ActionState EndPhase(double delta, ArticleBase owner)
+    {
+        owner.AnimationPlayer.Play("Idle");
+        ActionQueue.Clear();
+        return ActionState.Executed;
+    }
 }

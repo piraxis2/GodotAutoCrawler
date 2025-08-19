@@ -7,7 +7,13 @@ public partial class FxPlayer : Node
 {
     [Export] private Godot.Collections.Dictionary<StringName, PackedScene> _spriteFxScenes = new();
     [Export] private Godot.Collections.Dictionary<StringName, PackedScene> _lineFxScenes = new();
-    
+
+
+    public override void _PhysicsProcess(double delta)
+    {
+        
+    }
+
     public void PlaySpriteFx(StringName fxName, Vector2 position)
     {
         if (_spriteFxScenes.TryGetValue(fxName, out var fxScene))
