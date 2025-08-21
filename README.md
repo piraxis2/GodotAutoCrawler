@@ -1,5 +1,5 @@
 ![Image](https://github.com/user-attachments/assets/703b98a0-920b-4957-86b8-05c38c8b34c0)
-
+![Image](https://github.com/user-attachments/assets/1f17f8ca-3d86-44aa-984c-e8cb5cfd2f68)
 # AutoCrawler
 
 AutoCrawler는 완전히 자동으로 작동하는 텍틱컬 RPG 구현을 위한 기반 시스템입니다. 
@@ -111,7 +111,7 @@ AutoCrawler는 완전히 자동으로 작동하는 텍틱컬 RPG 구현을 위�
 - 테스트 환경 통합: Behavior Tree를 독립적으로 테스트할 수 있는 환경을 제공하여, 게임 실행 없이도 AI의 동작을 검증할 수 있도록 할 예정입니다.
 
 # 각종 스킬
-각종 스킬을 구현할 예정입니다. Ex 체인라이트닝 
+각종 스킬을 구현할 예정입니다. 
 
 # 웹 포팅
 웹으로 포팅하여 가벼운 승부 게임, 요컨대 사다리타기 같은 복불복 게임으로 공개하려 합니다. 
