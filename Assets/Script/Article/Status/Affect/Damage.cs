@@ -57,6 +57,9 @@ public abstract class Damage : StatusAffect, IAffectedImmediately
                 GD.PrintErr($"Damage negate {damageNegate} is not allowed");
             return;
         }
+        
+        recipient.Owner.Hit();
+        
         int damage = CalculatedDamage(recipient) * (IsCritical ? 2 : 1);
         damageFloater.Call("damage_display", damage, recipient.Owner.GlobalPosition, IsCritical);
         health.CurrentHealth -= damage;

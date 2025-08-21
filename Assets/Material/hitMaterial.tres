@@ -1,0 +1,53 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dd7qbgt5p6813"]
+
+[sub_resource type="Shader" id="Shader_l55mq"]
+code = "shader_type canvas_item;
+
+uniform float shake_effect : hint_range(0,1) = 0.0;
+uniform float flash_effect : hint_range(0,1) = 0.0;
+uniform float shake_intensity = 10.0;
+uniform float flash_speed = 30.0;
+uniform vec4 flash_color : source_color = vec4(1.0, 0.0, 0.0, 1.0);
+uniform bool active = false;
+
+float rand(vec2 co) {
+    return fract(sin(dot(co, vec2(12.9898,78.233))) * 43758.5453);
+}
+
+void vertex() {
+    	if (active) {
+        float time = TIME * 30.0;
+        vec2 random_offset = vec2(
+            rand(vec2(time, 0.0)) * 2.0 - 1.0,
+            rand(vec2(time, 2.0)) * 2.0 - 1.0
+        );
+        VERTEX += random_offset * shake_intensity * shake_effect;
+    }
+}
+
+void fragment() {
+    vec4 original_color = texture(TEXTURE, UV);
+	
+		if (active) {
+        float flash = sin(TIME * flash_speed) * 0.5 + 0.5;
+        flash *= original_color.a; 
+        
+        vec4 final_color = mix(original_color, flash_color, flash);
+        final_color = mix(original_color, final_color, flash_effect);
+        final_color.a = original_color.a; 
+        
+        COLOR = final_color;
+    } else {
+        COLOR = original_color;
+    }
+}"
+
+[resource]
+resource_local_to_scene = true
+shader = SubResource("Shader_l55mq")
+shader_parameter/shake_effect = 0.7
+shader_parameter/flash_effect = 1.0
+shader_parameter/shake_intensity = 2.5
+shader_parameter/flash_speed = 80.0
+shader_parameter/flash_color = Color(0.987453, 0, 0.126373, 1)
+shader_parameter/active = false

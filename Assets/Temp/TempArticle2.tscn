@@ -1,4 +1,4 @@
-[gd_scene load_steps=78 format=3 uid="uid://kpkog4h221oy"]
+[gd_scene load_steps=80 format=3 uid="uid://kpkog4h221oy"]
 
 [ext_resource type="Script" uid="uid://dfo7fcc4ivngo" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_vmxim"]
 [ext_resource type="Script" uid="uid://nhx4lou1hoy4" path="res://Assets/Script/Article/Status/Element/Health.cs" id="2_dji33"]
@@ -10,7 +10,9 @@
 [ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="6_10kml"]
 [ext_resource type="Texture2D" uid="uid://d0u23bchmqvqd" path="res://Assets/Textures/Soldier.png" id="7_xpkrf"]
 [ext_resource type="Script" uid="uid://cwlvijl5y02o1" path="res://addons/behaviortree/BehaviorTree.cs" id="8_00d73"]
+[ext_resource type="Material" uid="uid://dd7qbgt5p6813" path="res://Assets/Material/hitMaterial.tres" id="9_a1wky"]
 [ext_resource type="Script" uid="uid://cfc212lal43iq" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="9_vu6c8"]
+[ext_resource type="Script" uid="uid://bi51owx2orvu5" path="res://Assets/Script/gds/fx/article_sprite_hit.gd" id="10_0chxo"]
 [ext_resource type="Script" uid="uid://ciweyygvsxr1c" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="10_qbpj0"]
 [ext_resource type="Script" uid="uid://bwx0oup5d1dc" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="11_o5kv7"]
 [ext_resource type="Script" uid="uid://c7js0inhhipcp" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="12_jhhxj"]
@@ -630,10 +632,9 @@ script = ExtResource("13_te07w")
 minDamage = 1
 maxDamage = 10
 
-[node name="Character" type="Node2D" node_paths=PackedStringArray("_animationPlayer")]
+[node name="Character" type="Node2D"]
 script = ExtResource("1_vmxim")
 ArticleStatus = SubResource("Resource_7e21v")
-_animationPlayer = NodePath("AnimatedSprite2D/AnimationPlayer")
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
 tree_root = SubResource("AnimationNodeBlendSpace2D_fwt52")
@@ -641,10 +642,12 @@ parameters/blend_position = Vector2(-0.00198412, 0.0163934)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
+material = ExtResource("9_a1wky")
 sprite_frames = SubResource("SpriteFrames_ovkpk")
 animation = &"Idle"
 speed_scale = 2.0
 offset = Vector2(0, -6)
+script = ExtResource("10_0chxo")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="AnimatedSprite2D"]
 libraries = {

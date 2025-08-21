@@ -16,8 +16,8 @@
 [ext_resource type="PackedScene" uid="uid://bvf5eww4h7tp2" path="res://Assets/Temp/Puppet.tscn" id="11_hv0hd"]
 [ext_resource type="Script" uid="uid://kxwtxub32atc" path="res://Assets/Script/FxPlayer.cs" id="16_3bkig"]
 [ext_resource type="PackedScene" uid="uid://5jaympibmkwm" path="res://Assets/Temp/TempSkillEffect.tscn" id="17_4m0c6"]
-[ext_resource type="PackedScene" uid="uid://dgjogfc7xujst" path="res://Assets/Fx/Lightning.tscn" id="18_enjqk"]
-[ext_resource type="PackedScene" uid="uid://csamidlr34g7s" path="res://Assets/Fx/SoundFx/sound_fx_scene.tscn" id="18_fajhp"]
+[ext_resource type="PackedScene" uid="uid://dgjogfc7xujst" path="res://Assets/FxScene/Lightning.tscn" id="18_enjqk"]
+[ext_resource type="PackedScene" uid="uid://csamidlr34g7s" path="res://Assets/FxScene/SoundFx/sound_fx_scene.tscn" id="18_fajhp"]
 
 [sub_resource type="Resource" id="Resource_38hap"]
 resource_local_to_scene = true
@@ -303,7 +303,6 @@ ArticleStatus = SubResource("Resource_81x2m")
 [node name="TurnHelper" type="Node" parent="." node_paths=PackedStringArray("_fxPlayer")]
 script = ExtResource("1_25g81")
 _fxPlayer = NodePath("../FxPlayer")
-Speed = 5.0
 
 [node name="FxPlayer" type="Node" parent="."]
 script = ExtResource("16_3bkig")
