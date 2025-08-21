@@ -21,9 +21,10 @@ public abstract partial class ArticleBase : Node2D
             }
             return true;
         }
-    } 
-        
-    [Export] private AnimationPlayer _animationPlayer;
+    }
+
+    private AnimationPlayer _animationPlayer;
+    private AnimatedSprite2D _animatedSprite2D;
     public AnimationPlayer AnimationPlayer => _animationPlayer;
     public ProgressBar HealthBar;
     [Signal] public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
@@ -48,6 +49,8 @@ public abstract partial class ArticleBase : Node2D
 
     public sealed override void _Ready()
     {
+        _animatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+        _animationPlayer =  GetNode<AnimationPlayer>("AnimatedSprite2D/AnimationPlayer");
         HealthBar = GetNode<ProgressBar>("HealthBar");
         ArticleStatus.InitStatus(this);
         AnimationPlayer.Connect("animation_finished", new Callable(this, nameof(OnAnimationFinished)));
@@ -70,6 +73,11 @@ public abstract partial class ArticleBase : Node2D
         {
             QueueFree();
         }
+    }
+
+    public void Hit()
+    {
+        _animatedSprite2D.Call("hit");
     }
 
     public void Dead()
