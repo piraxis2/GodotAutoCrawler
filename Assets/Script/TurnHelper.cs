@@ -18,14 +18,11 @@ public partial class TurnHelper : Node
 
     private ArticlesContainer ArticlesContainer => _articlesContainer ??= GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(this);
 
-    public bool IsGameOver => _turnAffectedArticleList.Count <= 1 || _currentTurnArticle == null || ArticlesContainer.Articles["Opponent"].Count == 0 || ArticlesContainer.Articles["Ally"].Count == 0;
+    private bool IsGameOver => _turnAffectedArticleList.Count <= 1 || _currentTurnArticle == null || ArticlesContainer.Articles["Opponent"].Count == 0 || ArticlesContainer.Articles["Ally"].Count == 0;
+    private bool IsPaused => Speed == 0;
 
-    [Export]
-    public float Speed
-    {
-        get;
-        private set;
-    } = 1.0f;
+    [Export] public float Speed { get; private set; } = 1.0f;
+    
 
     public override void _Ready()
     {
@@ -51,6 +48,8 @@ public partial class TurnHelper : Node
 
     public override void _PhysicsProcess(double delta)
     {
+        if (IsPaused) return;
+        
         if (IsGameOver)
         {
             // todo : 게임 오버 처리 
