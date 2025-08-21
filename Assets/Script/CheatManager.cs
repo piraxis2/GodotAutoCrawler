@@ -21,14 +21,5 @@ public partial class CheatManager : Node
 				GD.Print($"Tile clicked at: {tilePosition}");
 			}
 		}
-
-		// if (@event is InputEventKey { Keycode: Key.Quoteleft, Pressed: true })
-		// {
-		// 	if (_consoleWindow == null)
-		// 	{
-		// 		_consoleWindow = GD.Load<PackedScene>("res://addons/devconsole/UI/consoleWindow.tscn").Instantiate();
-		// 		GetTree().Root.AddChild(_consoleWindow);
-		// 	}
-		// }
 	}
 }

@@ -1,12 +1,12 @@
-[gd_scene load_steps=47 format=4 uid="uid://dv7r53qteumxi"]
+[gd_scene load_steps=51 format=4 uid="uid://dv7r53qteumxi"]
 
 [ext_resource type="Script" uid="uid://doh5xcdvrrn7g" path="res://Assets/Script/BattleFieldScene.cs" id="1_8td0i"]
 [ext_resource type="Script" uid="uid://bofxi10iwp1bf" path="res://Assets/Script/TurnHelper.cs" id="1_25g81"]
 [ext_resource type="Texture2D" uid="uid://bk0bo4lm7w2ck" path="res://Assets/Textures/isometric-sandbox-sheet.png" id="1_xbpsd"]
 [ext_resource type="Script" uid="uid://dr75a3n4tydq3" path="res://Assets/Script/BattleFieldTileMapLayer.cs" id="2_0g2jr"]
 [ext_resource type="Script" uid="uid://cdvlslcfcln4t" path="res://Assets/Script/ArticlesContainer.cs" id="2_q3ikk"]
+[ext_resource type="PackedScene" uid="uid://cbtoxh6imusjm" path="res://Assets/Temp/TempArticle3.tscn" id="3_hv0hd"]
 [ext_resource type="Script" uid="uid://nhx4lou1hoy4" path="res://Assets/Script/Article/Status/Element/Health.cs" id="4_72njd"]
-[ext_resource type="PackedScene" uid="uid://kpkog4h221oy" path="res://Assets/Temp/TempArticle2.tscn" id="4_viutb"]
 [ext_resource type="Script" uid="uid://dt641onuentr8" path="res://Assets/Script/Article/Status/Element/StatusElement.cs" id="4_xn4rr"]
 [ext_resource type="Script" uid="uid://bmr3t8odnuo7b" path="res://Assets/Script/Article/Status/Element/Strength.cs" id="5_rst3o"]
 [ext_resource type="Script" uid="uid://do5ouq5ee4i4c" path="res://Assets/Script/Article/Status/Element/Defense.cs" id="6_ep4vv"]
@@ -14,33 +14,37 @@
 [ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_jm7tw"]
 [ext_resource type="Script" uid="uid://527wle2alee2" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="8_ry6v4"]
 [ext_resource type="PackedScene" uid="uid://bvf5eww4h7tp2" path="res://Assets/Temp/Puppet.tscn" id="11_hv0hd"]
+[ext_resource type="Script" uid="uid://kxwtxub32atc" path="res://Assets/Script/FxPlayer.cs" id="16_3bkig"]
+[ext_resource type="PackedScene" uid="uid://5jaympibmkwm" path="res://Assets/Temp/TempSkillEffect.tscn" id="17_4m0c6"]
+[ext_resource type="PackedScene" uid="uid://dgjogfc7xujst" path="res://Assets/Fx/Lightning.tscn" id="18_enjqk"]
+[ext_resource type="PackedScene" uid="uid://csamidlr34g7s" path="res://Assets/Fx/SoundFx/sound_fx_scene.tscn" id="18_fajhp"]
 
-[sub_resource type="Resource" id="Resource_whcma"]
+[sub_resource type="Resource" id="Resource_38hap"]
 resource_local_to_scene = true
 script = ExtResource("4_72njd")
-MaxHealth = 300
+MaxHealth = 1000
 
-[sub_resource type="Resource" id="Resource_j6sm0"]
+[sub_resource type="Resource" id="Resource_wcjbh"]
 resource_local_to_scene = true
 script = ExtResource("5_rst3o")
 
-[sub_resource type="Resource" id="Resource_fttdh"]
+[sub_resource type="Resource" id="Resource_1g6wm"]
 resource_local_to_scene = true
 script = ExtResource("6_ep4vv")
 
-[sub_resource type="Resource" id="Resource_8f88b"]
+[sub_resource type="Resource" id="Resource_ak8v2"]
 resource_local_to_scene = true
 script = ExtResource("7_56f8w")
 
-[sub_resource type="Resource" id="Resource_h1kac"]
+[sub_resource type="Resource" id="Resource_lwoqy"]
 resource_local_to_scene = true
 script = ExtResource("8_ry6v4")
-Value = 4
+Value = 2
 
-[sub_resource type="Resource" id="Resource_5ivcy"]
+[sub_resource type="Resource" id="Resource_cshov"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
-StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_whcma"), SubResource("Resource_j6sm0"), SubResource("Resource_fttdh"), SubResource("Resource_8f88b"), SubResource("Resource_h1kac")])
+StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_38hap"), SubResource("Resource_wcjbh"), SubResource("Resource_1g6wm"), SubResource("Resource_ak8v2"), SubResource("Resource_lwoqy")])
 
 [sub_resource type="Resource" id="Resource_jq4tx"]
 resource_local_to_scene = true
@@ -259,11 +263,12 @@ custom_data_layer_0/name = "FixedArticle"
 custom_data_layer_0/type = 24
 sources/3 = SubResource("TileSetAtlasSource_fla71")
 
-[node name="BattleField" type="Node2D" node_paths=PackedStringArray("TileMapLayer", "TurnHelper", "Articles")]
+[node name="BattleField" type="Node2D" node_paths=PackedStringArray("TileMapLayer", "TurnHelper", "Articles", "FxPlayer")]
 script = ExtResource("1_8td0i")
 TileMapLayer = NodePath("TileMapLayer")
 TurnHelper = NodePath("TurnHelper")
 Articles = NodePath("Articles")
+FxPlayer = NodePath("FxPlayer")
 
 [node name="LevelGenerator" type="Node" parent="."]
 
@@ -274,9 +279,9 @@ script = ExtResource("2_q3ikk")
 
 [node name="Ally" type="Node" parent="Articles"]
 
-[node name="A" parent="Articles/Ally" instance=ExtResource("4_viutb")]
-position = Vector2(-144, 24)
-ArticleStatus = SubResource("Resource_5ivcy")
+[node name="Character" parent="Articles/Ally" instance=ExtResource("3_hv0hd")]
+position = Vector2(-80, 24)
+ArticleStatus = SubResource("Resource_cshov")
 
 [node name="Opponent" type="Node" parent="Articles"]
 
@@ -288,15 +293,27 @@ ArticleStatus = SubResource("Resource_dewjv")
 ArticleStatus = SubResource("Resource_vdgyl")
 
 [node name="Character3" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
-position = Vector2(16, -7)
+position = Vector2(32, -32)
 ArticleStatus = SubResource("Resource_jw18j")
 
 [node name="Character4" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
-position = Vector2(32, -18)
+position = Vector2(-16, -24)
 ArticleStatus = SubResource("Resource_81x2m")
 
-[node name="TurnHelper" type="Node" parent="."]
+[node name="TurnHelper" type="Node" parent="." node_paths=PackedStringArray("_fxPlayer")]
 script = ExtResource("1_25g81")
+_fxPlayer = NodePath("../FxPlayer")
+Speed = 5.0
+
+[node name="FxPlayer" type="Node" parent="."]
+script = ExtResource("16_3bkig")
+_spriteFxScenes = Dictionary[StringName, PackedScene]({
+&"IceBolt": ExtResource("17_4m0c6")
+})
+_lineFxScenes = Dictionary[StringName, PackedScene]({
+&"Lightning": ExtResource("18_enjqk")
+})
+_soundFxScene = ExtResource("18_fajhp")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 position = Vector2(16, -104)

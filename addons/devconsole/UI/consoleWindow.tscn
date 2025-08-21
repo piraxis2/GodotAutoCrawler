@@ -3,12 +3,13 @@
 [ext_resource type="Script" uid="uid://lkg8120eahyh" path="res://addons/devconsole/consoleTextLabel.gd" id="1_376f1"]
 [ext_resource type="Script" uid="uid://cef3576l0x43j" path="res://addons/devconsole/UI/console_window.gd" id="1_y4o7j"]
 
-[node name="Window" type="Window" node_paths=PackedStringArray("console_text_label", "console_input")]
+[node name="Window" type="Window" node_paths=PackedStringArray("console_text_label", "console_input", "console_scroll_container")]
 position = Vector2i(0, 36)
 size = Vector2i(500, 500)
 script = ExtResource("1_y4o7j")
-console_text_label = NodePath("Control/VBoxContainer/RichTextLabel")
+console_text_label = NodePath("Control/VBoxContainer/ScrollContainer/RichTextLabel")
 console_input = NodePath("Control/VBoxContainer/LineEdit")
+console_scroll_container = NodePath("Control/VBoxContainer/ScrollContainer")
 
 [node name="Control" type="MarginContainer" parent="."]
 anchors_preset = 15
@@ -22,8 +23,13 @@ size_flags_vertical = 3
 [node name="VBoxContainer" type="VBoxContainer" parent="Control"]
 layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Control/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 bbcode_enabled = true
 fit_content = true

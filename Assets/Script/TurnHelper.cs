@@ -10,6 +10,7 @@ namespace AutoCrawler.Assets.Script;
 
 public partial class TurnHelper : Node
 {
+    [Export] private FxPlayer _fxPlayer;
     private readonly List<ITurnAffectedArticle<ArticleBase>> _turnAffectedArticleList = new();
     private ITurnAffectedArticle<ArticleBase> _currentTurnArticle;
 
@@ -52,9 +53,12 @@ public partial class TurnHelper : Node
     {
         if (IsGameOver)
         {
+            // todo : 게임 오버 처리 
             GetTree().ReloadCurrentScene();
             return;
         }
+        
+        _fxPlayer.Tick(delta);
 
         if (_currentTurnArticle is ArticleBase { IsAlive: false })
         {

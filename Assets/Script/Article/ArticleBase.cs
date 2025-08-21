@@ -37,7 +37,7 @@ public abstract partial class ArticleBase : Node2D
         get => _tilePosition;
         set
         {
-            if (!_isUnInitialized && _tilePosition == value && this is IFixedArticle<ArticleBase>) return;
+            if (!_isUnInitialized && _tilePosition == value) return;
             
             Vector2I oldPosition = _tilePosition;
             _tilePosition = value;

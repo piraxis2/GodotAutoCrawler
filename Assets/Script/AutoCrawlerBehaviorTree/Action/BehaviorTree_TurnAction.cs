@@ -23,6 +23,7 @@ public partial class BehaviorTree_TurnAction : BehaviorTree_Action
             TurnActionBase.ActionState actionStatus = TurnAction.Action(delta, article as ArticleBase);
             if (actionStatus is TurnActionBase.ActionState.Executed or TurnActionBase.ActionState.Running)
             {
+                article.CurrentTurnAction?.Finish(this);
                 article.CurrentTurnAction = TurnAction;
                 if (actionStatus == TurnActionBase.ActionState.Running)
                 {

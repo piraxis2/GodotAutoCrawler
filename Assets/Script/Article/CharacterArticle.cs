@@ -40,18 +40,20 @@ public partial class CharacterArticle : ArticleBase, ITurnAffectedArticle<Articl
     {
         if (BehaviorTree == null) throw new NullReferenceException("BehaviorTree is null");
         
+        // 턴마다 영향을 주는 상태를 적용
         ArticleStatus.ApplyAffectingStatuses();
 
-        if (CurrentTurnAction != null)
-        {
-            TurnActionBase.ActionState actionState = CurrentTurnAction.Action(delta, this);
+        if (CurrentTurnAction == null) return BehaviorTree.Behave(delta, this);
+        
+        // 현재 턴 액션이 null이 아닐 경우, 액션을 실행
+        TurnActionBase.ActionState actionState = CurrentTurnAction.Action(delta, this);
 
-            if (actionState == TurnActionBase.ActionState.End) CurrentTurnAction = null;
+        if (actionState == TurnActionBase.ActionState.End) CurrentTurnAction = null;
 
-            return actionState == TurnActionBase.ActionState.Running ? Constants.BtStatus.Running : Constants.BtStatus.Success;
-        }
+        // 액션이 실행 중인 경우, 상태를 Running으로 반환
+        // 액션이 실행 완료된 경우, 상태를 Success로 반환
+        return actionState == TurnActionBase.ActionState.Running ? Constants.BtStatus.Running : Constants.BtStatus.Success;
 
-        return BehaviorTree.Behave(delta, this);
     }
 
 }

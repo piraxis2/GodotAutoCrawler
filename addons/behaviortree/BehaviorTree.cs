@@ -17,11 +17,15 @@ public partial class BehaviorTree : Node
     [Signal]
     public delegate void OnUpdateTreeEventHandler(BehaviorTree tree);
     
+    public Blackboard Blackboard { get; private set; }
+    
     public string ArticleName => GetParent()?.Name;
     private bool _isUpdateRequested = false;
 
     public override void _Ready()
     {
+        Blackboard = new Blackboard();
+        
         ChildOrderChanged += OnChildOrderChanged; 
         SetTree(Root);
     }

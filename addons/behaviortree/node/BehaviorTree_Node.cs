@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree;
 using Godot;
 
 namespace AutoCrawler.addons.behaviortree.node;
@@ -14,6 +15,7 @@ public abstract partial class BehaviorTree_Node : Node
 
 
     public BehaviorTree Tree { get; internal set; }
+    public Blackboard Blackboard => Tree?.Blackboard;
 
 #if TOOLS
     public delegate void OnLogChangedEventHandler(Util.BehaviorLog log);

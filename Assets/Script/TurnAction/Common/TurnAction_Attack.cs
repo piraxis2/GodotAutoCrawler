@@ -13,38 +13,27 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
     [Export] private int minDamage = 10;
     [Export] private int maxDamage = 20;
     
-    public int Distance { get; } = 1;
-    public int Range { get; } = 1;
-
-    private bool _isAnimationRunning;
-    
+    public int Range => 1;
+    public int Scale => 1;
 
     private HashSet<Vector2I> _attackRangePositions;
-    public HashSet<Vector2I> AttackRangePositions
+    public HashSet<Vector2I> AttackRangePositions => _attackRangePositions ??= SkillUtil.GetAttackRangePositions(Range);
+
+    protected override void OnInit(Node owner)
     {
-        get
-        {
-            if (_attackRangePositions == null)
-            {
-                _attackRangePositions = new HashSet<Vector2I> { Vector2I.Zero };
-                for (int i = 0; i < Distance; i++)
-                {
-                    _attackRangePositions.UnionWith(_attackRangePositions.SelectMany(p => new[]
-                    {
-                        p + Vector2I.Right,
-                        p + Vector2I.Left,
-                        p + Vector2I.Down,
-                        p + Vector2I.Up
-                    }).ToList());
-                }
-            }
-            return _attackRangePositions;
-        }
+        ActionQueue.Enqueue(StartPhase);
+        ActionQueue.Enqueue(RunPhase);
+        ActionQueue.Enqueue(EndPhase); 
     }
 
-    protected override void OnInit(Node owner) => _isAnimationRunning = false;
+    private ActionState StartPhase(double delta, ArticleBase owner)
+    {
+        owner.AnimationPlayer.Play("Attack", -1, 0);
+        ActionQueue.Dequeue();
+        return ActionState.Running; 
+    }
 
-    protected override ActionState ActionExecute(double delta, ArticleBase owner)
+    private ActionState RunPhase(double delta, ArticleBase owner)
     {
         if (owner.AnimationPlayer.CurrentAnimation == "Attack" && owner.AnimationPlayer.CurrentAnimationPosition < owner.AnimationPlayer.CurrentAnimationLength)
         {
@@ -52,21 +41,22 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
             return ActionState.Running;
         }
 
-        if (_isAnimationRunning)
+        ActionQueue.Dequeue(); 
+        return ActionState.Running;
+    }
+
+    private ActionState EndPhase(double delta, ArticleBase owner)
+    {
+        List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
+        BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
+        ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(owner));
+        owner.AnimationPlayer.Play("Idle");
+        if (target is { IsAlive: true })
         {
-            List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
-            BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
-            ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(owner));
-            owner.AnimationPlayer.Play("Idle");
-            if (target is { IsAlive: true })
-            {
-                target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, minDamage, maxDamage));
-            }
-            return ActionState.Executed;
+            target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, minDamage, maxDamage));
         }
 
-        owner.AnimationPlayer.Play("Attack", -1, 0);
-        _isAnimationRunning = true;
-        return ActionState.Running;
+        ActionQueue.Dequeue();
+        return ActionState.Executed;
     }
 }
