@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 
@@ -7,11 +9,24 @@ public partial class FxPlayer : Node
 {
     [Export] private Godot.Collections.Dictionary<StringName, PackedScene> _spriteFxScenes = new();
     [Export] private Godot.Collections.Dictionary<StringName, PackedScene> _lineFxScenes = new();
+    [Export] private PackedScene _soundFxScene;
+
+    private List<AnimationPlayer> _playingSoundFxs = [];
 
 
-    public override void _PhysicsProcess(double delta)
+    public void Tick(double delta)
     {
-        
+        foreach (var elem in _playingSoundFxs.ToList())
+        {
+            elem.Seek(elem.CurrentAnimationPosition + delta);
+            if (elem.CurrentAnimation == "play" && elem.CurrentAnimationPosition < elem.CurrentAnimationLength)
+            {
+                continue;
+            }
+            
+            _playingSoundFxs.Remove(elem);
+            elem.QueueFree();
+        }
     }
 
     public void PlaySpriteFx(StringName fxName, Vector2 position)
@@ -45,6 +60,14 @@ public partial class FxPlayer : Node
         }
 
         return fxInstance;
+    }
+
+    public void PlaySoundFx(StringName fxName)
+    {
+        var soundFx = _soundFxScene.Instantiate<Node>();
+        AddChild(soundFx);
+        _playingSoundFxs.Add(soundFx.GetNode<AnimationPlayer>("AnimationPlayer"));
+        soundFx.Call("playSound", fxName);
     }
 
 }

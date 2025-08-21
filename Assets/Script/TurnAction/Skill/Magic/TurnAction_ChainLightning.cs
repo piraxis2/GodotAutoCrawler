@@ -64,7 +64,6 @@ public partial class TurnAction_ChainLightning : TurnActionBase, ISkill<TurnActi
         var potentialTargets = _tileMapLayer?.GetArticles(calculatedAttackRange)?
             .Where(t => t is { IsAlive: true } && t.TilePosition != tilePosition && t.IsOpponent(_owner));
         
-        // 이미 공격한 대상은 우선순위를 낮춥니다(OrderBy). 새로운 대상이 없으면 이미 공격한 대상을 다시 공격할 수 있습니다.
         return potentialTargets?.OrderBy(t => _hitTargets.Contains(t)).FirstOrDefault();
     }
 
@@ -103,6 +102,7 @@ public partial class TurnAction_ChainLightning : TurnActionBase, ISkill<TurnActi
         _targetArticle.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<MagicalDamage>(owner.ArticleStatus, _maxDamage, _maxDamage));
         _targetArticle = GetTarget(_targetArticle.TilePosition);
         _playingFx = _fxPlayer.PlayLineFx("Lightning", [startingArticleGlobalPosition.GetValueOrDefault(), targetGlobalPosition.GetValueOrDefault()]);
+        _fxPlayer.PlaySoundFx("Thunder");
         ActionQueue.Dequeue();
         return ActionState.Running; 
         
