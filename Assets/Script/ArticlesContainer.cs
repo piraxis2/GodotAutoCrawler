@@ -5,7 +5,7 @@ using AutoCrawler.Assets.Script.Article;
 
 namespace AutoCrawler.Assets.Script;
 
-public partial class ArticlesContainer : Node
+public partial class ArticlesContainer : Node2D
 {
 
     private readonly Dictionary<string, List<ArticleBase>> _articles = new Dictionary<string, List<ArticleBase>>{

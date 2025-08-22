@@ -8,8 +8,7 @@ namespace AutoCrawler.Assets.Script.Article;
 
 public abstract partial class ArticleBase : Node2D
 {
-    [Export]
-    public ArticleStatus ArticleStatus = new();
+    [Export] public ArticleStatus ArticleStatus = new();
 
     public bool IsAlive
     {
@@ -19,6 +18,7 @@ public abstract partial class ArticleBase : Node2D
             {
                 return health.CurrentHealth > 0;
             }
+
             return true;
         }
     }
@@ -27,19 +27,24 @@ public abstract partial class ArticleBase : Node2D
     private AnimatedSprite2D _animatedSprite2D;
     public AnimationPlayer AnimationPlayer => _animationPlayer;
     public ProgressBar HealthBar;
-    [Signal] public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
-    [Signal] public delegate void OnDeadEventHandler(ArticleBase deadArticle);
+
+    [Signal]
+    public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
+
+    [Signal]
+    public delegate void OnDeadEventHandler(ArticleBase deadArticle);
 
 
     private Vector2I _tilePosition;
     private bool _isUnInitialized = true;
+
     public Vector2I TilePosition
     {
         get => _tilePosition;
         set
         {
             if (!_isUnInitialized && _tilePosition == value) return;
-            
+
             Vector2I oldPosition = _tilePosition;
             _tilePosition = value;
             _isUnInitialized = false;
@@ -50,7 +55,7 @@ public abstract partial class ArticleBase : Node2D
     public sealed override void _Ready()
     {
         _animatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-        _animationPlayer =  GetNode<AnimationPlayer>("AnimatedSprite2D/AnimationPlayer");
+        _animationPlayer = GetNode<AnimationPlayer>("AnimatedSprite2D/AnimationPlayer");
         HealthBar = GetNode<ProgressBar>("HealthBar");
         ArticleStatus.InitStatus(this);
         AnimationPlayer.Connect("animation_finished", new Callable(this, nameof(OnAnimationFinished)));
@@ -62,11 +67,11 @@ public abstract partial class ArticleBase : Node2D
         if (article is not { IsAlive: true }) return false;
 
         // if (this is not ITurnAffectedArticle<ArticleBase> || article is not ITurnAffectedArticle<ArticleBase>) return false;
-        
+
         return article.GetParent().Name != "Neutral" && article.GetParent().Name != GetParent().Name;
     }
 
-    
+
     private void OnAnimationFinished(string animName)
     {
         if (animName == "Dead")
@@ -96,7 +101,7 @@ public abstract partial class ArticleBase : Node2D
 
     public void DecisionFlipH(Vector2I target)
     {
-        // 대상 위치에 따라 스프라이트의 좌우 반전을 결정합니다.
-        _animatedSprite2D.FlipH = target.Y > TilePosition.Y || (target.Y == TilePosition.Y && target.X < TilePosition.X);
-    } 
+        // Flip based on X-coordinate difference, if X is same, then Y-coordinate difference
+        _animatedSprite2D.FlipH = target.X < TilePosition.X || (target.X == TilePosition.X && target.Y > TilePosition.Y);
+    }
 }

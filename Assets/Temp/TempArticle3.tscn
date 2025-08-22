@@ -1,4 +1,4 @@
-[gd_scene load_steps=81 format=3 uid="uid://cbtoxh6imusjm"]
+[gd_scene load_steps=83 format=3 uid="uid://cbtoxh6imusjm"]
 
 [ext_resource type="Script" uid="uid://dfo7fcc4ivngo" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_x3swm"]
 [ext_resource type="Script" uid="uid://dt641onuentr8" path="res://Assets/Script/Article/Status/Element/StatusElement.cs" id="2_y7hsj"]
@@ -9,7 +9,9 @@
 [ext_resource type="Script" uid="uid://527wle2alee2" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="7_36ego"]
 [ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_vwhsm"]
 [ext_resource type="Texture2D" uid="uid://d0u23bchmqvqd" path="res://Assets/Textures/Soldier.png" id="9_0v02b"]
+[ext_resource type="Material" uid="uid://dd7qbgt5p6813" path="res://Assets/Material/hitMaterial.tres" id="9_fnr2j"]
 [ext_resource type="Script" uid="uid://cwlvijl5y02o1" path="res://addons/behaviortree/BehaviorTree.cs" id="10_0m0e6"]
+[ext_resource type="Script" uid="uid://bi51owx2orvu5" path="res://Assets/Script/gds/fx/article_sprite_hit.gd" id="10_wtn77"]
 [ext_resource type="AudioStream" uid="uid://cm7wog7mmni22" path="res://Assets/Audio/Charge.mp3" id="10_y7hsj"]
 [ext_resource type="Script" uid="uid://cfc212lal43iq" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="11_mm1bq"]
 [ext_resource type="Script" uid="uid://ciweyygvsxr1c" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="12_v8t08"]
@@ -715,10 +717,12 @@ parameters/blend_position = Vector2(-0.00198412, 0.0163934)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
+material = ExtResource("9_fnr2j")
 sprite_frames = SubResource("SpriteFrames_ovkpk")
 animation = &"Idle"
 speed_scale = 2.0
 offset = Vector2(0, -6)
+script = ExtResource("10_wtn77")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="AnimatedSprite2D"]
 libraries = {

@@ -10,12 +10,13 @@ namespace AutoCrawler.Assets.Script;
 
 public partial class TurnHelper : Node
 {
-    [Export] private FxPlayer _fxPlayer;
     private readonly List<ITurnAffectedArticle<ArticleBase>> _turnAffectedArticleList = new();
     private ITurnAffectedArticle<ArticleBase> _currentTurnArticle;
 
-    private ArticlesContainer _articlesContainer;
+    private FxPlayer _fxPlayer;
+    private FxPlayer FxPlayer => _fxPlayer ??= GlobalUtil.GetBattleFieldCoreNode<FxPlayer>(this);
 
+    private ArticlesContainer _articlesContainer;
     private ArticlesContainer ArticlesContainer => _articlesContainer ??= GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(this);
 
     private bool IsGameOver => _turnAffectedArticleList.Count <= 1 || _currentTurnArticle == null || ArticlesContainer.Articles["Opponent"].Count == 0 || ArticlesContainer.Articles["Ally"].Count == 0;
@@ -56,8 +57,8 @@ public partial class TurnHelper : Node
             GetTree().ReloadCurrentScene();
             return;
         }
-        
-        _fxPlayer.Tick(delta);
+
+        FxPlayer?.Tick(delta);
 
         if (_currentTurnArticle is ArticleBase { IsAlive: false })
         {

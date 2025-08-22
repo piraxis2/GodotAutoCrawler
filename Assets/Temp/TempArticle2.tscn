@@ -1,4 +1,4 @@
-[gd_scene load_steps=80 format=3 uid="uid://kpkog4h221oy"]
+[gd_scene load_steps=81 format=3 uid="uid://kpkog4h221oy"]
 
 [ext_resource type="Script" uid="uid://dfo7fcc4ivngo" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_vmxim"]
 [ext_resource type="Script" uid="uid://nhx4lou1hoy4" path="res://Assets/Script/Article/Status/Element/Health.cs" id="2_dji33"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://bi51owx2orvu5" path="res://Assets/Script/gds/fx/article_sprite_hit.gd" id="10_0chxo"]
 [ext_resource type="Script" uid="uid://ciweyygvsxr1c" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="10_qbpj0"]
 [ext_resource type="Script" uid="uid://bwx0oup5d1dc" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="11_o5kv7"]
+[ext_resource type="AudioStream" uid="uid://cy23lehnb6mey" path="res://Assets/Audio/temp_whip.wav" id="12_6fvbv"]
 [ext_resource type="Script" uid="uid://c7js0inhhipcp" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="12_jhhxj"]
 [ext_resource type="Script" uid="uid://cchkqd5koibl1" path="res://Assets/Script/TurnAction/Common/TurnAction_Attack.cs" id="13_te07w"]
 [ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/health_bar.tscn" id="15_p4g11"]
@@ -415,6 +416,21 @@ tracks/1/keys = {
 "update": 1,
 "values": [0, 1, 2, 3, 4, 5]
 }
+tracks/2/type = "audio"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../AudioStreamPlayer2D")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"clips": [{
+"end_offset": 0.0845868,
+"start_offset": 0.0,
+"stream": ExtResource("12_6fvbv")
+}],
+"times": PackedFloat32Array(0.3)
+}
+tracks/2/use_blend = true
 
 [sub_resource type="Animation" id="Animation_sx0su"]
 resource_name = "Attack2"
@@ -673,3 +689,5 @@ TurnAction = SubResource("Resource_dynre")
 [node name="HealthBar" parent="." instance=ExtResource("15_p4g11")]
 offset_top = -20.0
 offset_bottom = -18.0
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
