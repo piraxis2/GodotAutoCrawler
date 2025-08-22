@@ -26,8 +26,7 @@ public partial class CharacterArticle : ArticleBase, ITurnAffectedArticle<Articl
             if (_attackRangePositions != null) return _attackRangePositions;
             _attackRangePositions = BehaviorTree.FindNodeByType(typeof(BehaviorTree_TurnAction))
                 .OfType<BehaviorTree_TurnAction>()
-                .Where(action => action.TurnAction is ISkill<TurnActionBase> skill)
-                .Select(action => ((ISkill<TurnActionBase>)action.TurnAction).AttackRangePositions)
+                .Select(action => action.TurnAction.AttackRangePositions)
                 .OrderByDescending(positions => positions.Count)
                 .FirstOrDefault();
             return _attackRangePositions;

@@ -93,4 +93,10 @@ public abstract partial class ArticleBase : Node2D
 
         EmitSignal("OnDead", this);
     }
+
+    public void DecisionFlipH(Vector2I target)
+    {
+        // 대상 위치에 따라 스프라이트의 좌우 반전을 결정합니다.
+        _animatedSprite2D.FlipH = target.Y > TilePosition.Y || (target.Y == TilePosition.Y && target.X < TilePosition.X);
+    } 
 }

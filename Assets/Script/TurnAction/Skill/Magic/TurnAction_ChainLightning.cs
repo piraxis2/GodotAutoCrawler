@@ -10,16 +10,13 @@ using AutoCrawler.Assets.Script.TurnAction.Skill;
 using AutoCrawler.Assets.Script.Util;
 
 [GlobalClass, Tool]
-public partial class TurnAction_ChainLightning : TurnActionBase, ISkill<TurnActionBase>
+public partial class TurnAction_ChainLightning : TurnActionBase 
 {
     [Export] private int _maxDamage = 20;
     
     [Export] private int _chainCount = 3;
-    public int Range => 3;
-    public int Scale => 3;
-
-    private HashSet<Vector2I> _attackRangePositions;
-    public HashSet<Vector2I> AttackRangePositions => _attackRangePositions ??= SkillUtil.GetAttackRangePositions(Range);
+    protected override int Range => 3;
+    protected override int Scale => 3;
 
     private Node2D _playingFx;
     private ArticleBase _owner;
@@ -48,8 +45,8 @@ public partial class TurnAction_ChainLightning : TurnActionBase, ISkill<TurnActi
         _playingFx = null;
         _owner = (ArticleBase)((BehaviorTree_Action)owner).Tree.GetParent();
         _startingArticle = _owner; 
-        _hitTargets = new HashSet<ArticleBase> { _owner };
-        _targetArticle = GetTarget(_startingArticle.TilePosition);
+        _hitTargets = [_owner];
+        _targetArticle = GetTarget(owner);
     }
 
     private void ForceExit()
@@ -58,7 +55,7 @@ public partial class TurnAction_ChainLightning : TurnActionBase, ISkill<TurnActi
         ActionQueue.Enqueue(EndPhase);
     }
 
-    private ArticleBase GetTarget(Vector2I tilePosition)
+    private ArticleBase GetChainTarget(Vector2I tilePosition)
     {
         List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + tilePosition).ToList();
         var potentialTargets = _tileMapLayer?.GetArticles(calculatedAttackRange)?
@@ -100,7 +97,7 @@ public partial class TurnAction_ChainLightning : TurnActionBase, ISkill<TurnActi
         _hitTargets.Add(_targetArticle);
         _startingArticle = _targetArticle;
         _targetArticle.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<MagicalDamage>(owner.ArticleStatus, _maxDamage, _maxDamage));
-        _targetArticle = GetTarget(_targetArticle.TilePosition);
+        _targetArticle = GetChainTarget(_targetArticle.TilePosition);
         _playingFx = _fxPlayer.PlayLineFx("Lightning", [startingArticleGlobalPosition.GetValueOrDefault(), targetGlobalPosition.GetValueOrDefault()]);
         _fxPlayer.PlaySoundFx("Thunder");
         ActionQueue.Dequeue();

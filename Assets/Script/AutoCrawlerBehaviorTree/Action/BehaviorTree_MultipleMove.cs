@@ -92,7 +92,12 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 
         if (_moveTweenQueue.Count > 0)
         {
-            if (!_moveTweenQueue.Peek().Value.CustomStep(_elapsedTime))
+            
+            var queueElem = _moveTweenQueue.Peek();
+            
+            article.DecisionFlipH(queueElem.Key);
+            var currentTween = queueElem.Value;
+            if (!currentTween.CustomStep(_elapsedTime))
             {
                 var moveTween = _moveTweenQueue.Dequeue();
                 moveTween.Value.Kill();

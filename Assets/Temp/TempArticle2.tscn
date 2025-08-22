@@ -638,7 +638,7 @@ ArticleStatus = SubResource("Resource_7e21v")
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
 tree_root = SubResource("AnimationNodeBlendSpace2D_fwt52")
-parameters/blend_position = Vector2(-0.00198412, 0.0163934)
+parameters/blend_position = Vector2(0.200761, 0.201923)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1

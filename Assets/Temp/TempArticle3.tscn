@@ -699,6 +699,7 @@ _data = {
 }
 
 [sub_resource type="Resource" id="Resource_y7hsj"]
+resource_local_to_scene = true
 script = ExtResource("16_y7hsj")
 _maxDamage = 30
 _chainCount = 3
