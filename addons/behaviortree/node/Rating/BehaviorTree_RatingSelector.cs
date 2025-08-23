@@ -9,18 +9,18 @@ namespace AutoCrawler.addons.behaviortree.node.Rating
     {
         private BehaviorTree_RatingDecorator _highestRatingDecorator;
 
-        protected override Constants.BtStatus OnBehave(double delta, Node owner)
+        protected override BtStatus OnBehave(double delta, Node owner)
         {
             if (_highestRatingDecorator == null)
             {
                 _highestRatingDecorator = TakeDecorator(owner);
                 
-                if (_highestRatingDecorator == null) return Constants.BtStatus.Failure;
+                if (_highestRatingDecorator == null) return BtStatus.Failure;
             }
 
             var status = _highestRatingDecorator.Behave(delta, owner);
 
-            if (status is Constants.BtStatus.Success or Constants.BtStatus.Failure)
+            if (status is BtStatus.Success or BtStatus.Failure)
             {
                 _highestRatingDecorator = null;
             }

@@ -29,7 +29,7 @@ public abstract partial class BehaviorTree_Decorator : BehaviorTree_Node
         }
     }
 
-    protected override Constants.BtStatus OnBehave(double delta, Node owner)
+    protected override BtStatus OnBehave(double delta, Node owner)
     {
         if (Child == null)
         {
@@ -39,5 +39,5 @@ public abstract partial class BehaviorTree_Decorator : BehaviorTree_Node
         return Decorate(Child, delta, owner);
     }
 
-    protected abstract Constants.BtStatus Decorate(BehaviorTree_Node child, double delta, Node owner);
+    protected abstract BtStatus Decorate(BehaviorTree_Node child, double delta, Node owner);
 }

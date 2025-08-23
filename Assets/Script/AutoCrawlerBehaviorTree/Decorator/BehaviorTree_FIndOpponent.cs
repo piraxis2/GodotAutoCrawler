@@ -17,9 +17,9 @@ public partial class BehaviorTree_FIndOpponent: BehaviorTree_Decorator
         _tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(this);
     }
     
-    protected override Constants.BtStatus Decorate(BehaviorTree_Node child, double delta, Node owner)
+    protected override BtStatus Decorate(BehaviorTree_Node child, double delta, Node owner)
     {
-        return !IsOpponentInAttackRange(owner as CharacterArticle) ? child.Behave(delta, owner) : Constants.BtStatus.Failure;
+        return !IsOpponentInAttackRange(owner as CharacterArticle) ? child.Behave(delta, owner) : BtStatus.Failure;
     }
 
     private bool IsOpponentInAttackRange(CharacterArticle ownerCharacterArticle)

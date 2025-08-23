@@ -8,7 +8,7 @@ public interface ITurnAffectedArticle<T> where T : ArticleBase
     public int Priority { get; set; }
     public TurnActionBase CurrentTurnAction { get; set; }
     protected BehaviorTree BehaviorTree { get; }
-    public Constants.BtStatus TurnPlay(double delta);
+    public BtStatus TurnPlay(double delta);
 
 
 }

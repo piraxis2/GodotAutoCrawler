@@ -11,7 +11,7 @@ public abstract partial class BehaviorTree_Node : Node
 {
     
     private long _elapsedTime = 0;
-    private Constants.BtStatus _status = Constants.BtStatus.Failure;
+    private BtStatus _status = BtStatus.Failure;
 
 
     public BehaviorTree Tree { get; internal set; }
@@ -43,9 +43,9 @@ public abstract partial class BehaviorTree_Node : Node
 
     protected abstract void OnTreeChanged();
     
-    public Constants.BtStatus Behave(double delta, Node owner)
+    public BtStatus Behave(double delta, Node owner)
     {
-        if (_status is Constants.BtStatus.Success or Constants.BtStatus.Failure)
+        if (_status is BtStatus.Success or BtStatus.Failure)
         {
             OnInit(owner);
             _elapsedTime = 0;
@@ -63,9 +63,9 @@ public abstract partial class BehaviorTree_Node : Node
 #endif
         return _status;
     }
-    protected virtual Constants.BtStatus OnBehave(double delta, Node owner)
+    protected virtual BtStatus OnBehave(double delta, Node owner)
     {
-        return Constants.BtStatus.Failure;
+        return BtStatus.Failure;
     }
     
     private bool IsLeafNode()

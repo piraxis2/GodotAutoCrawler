@@ -66,8 +66,8 @@ public partial class TurnHelper : Node
             return;
         }
         
-        Constants.BtStatus status = _currentTurnArticle.TurnPlay(delta * Speed);
-        if (status is Constants.BtStatus.Success or Constants.BtStatus.Failure)
+        BtStatus status = _currentTurnArticle.TurnPlay(delta * Speed);
+        if (status is BtStatus.Success or BtStatus.Failure)
         {
             _currentTurnArticle = GetNextTurnArticle();
         }

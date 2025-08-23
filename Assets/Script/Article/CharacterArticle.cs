@@ -35,7 +35,7 @@ public partial class CharacterArticle : ArticleBase, ITurnAffectedArticle<Articl
 
     public List<Vector2I> CalculatedAttackRange => AttackRangePositions.Select(p => p + TilePosition).ToList();
 
-    public Constants.BtStatus TurnPlay(double delta)
+    public BtStatus TurnPlay(double delta)
     {
         if (BehaviorTree == null) throw new NullReferenceException("BehaviorTree is null");
         
@@ -45,13 +45,13 @@ public partial class CharacterArticle : ArticleBase, ITurnAffectedArticle<Articl
         if (CurrentTurnAction == null) return BehaviorTree.Behave(delta, this);
         
         // 현재 턴 액션이 null이 아닐 경우, 액션을 실행
-        TurnActionBase.ActionState actionState = CurrentTurnAction.Action(delta, this);
+        ActionState actionState = CurrentTurnAction.Action(delta, this);
 
-        if (actionState == TurnActionBase.ActionState.End) CurrentTurnAction = null;
+        if (actionState == ActionState.End) CurrentTurnAction = null;
 
         // 액션이 실행 중인 경우, 상태를 Running으로 반환
         // 액션이 실행 완료된 경우, 상태를 Success로 반환
-        return actionState == TurnActionBase.ActionState.Running ? Constants.BtStatus.Running : Constants.BtStatus.Success;
+        return actionState == ActionState.Running ? BtStatus.Running : BtStatus.Success;
 
     }
 

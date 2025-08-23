@@ -16,10 +16,10 @@ public abstract partial class BehaviorTree_Action : BehaviorTree_Node
         }
     }
 
-    protected override sealed Constants.BtStatus OnBehave(double delta, Node owner)
+    protected override sealed BtStatus OnBehave(double delta, Node owner)
     {
         return PerformAction(delta, owner);
     }
 
-    protected abstract Constants.BtStatus PerformAction(double delta, Node owner);
+    protected abstract BtStatus PerformAction(double delta, Node owner);
 }

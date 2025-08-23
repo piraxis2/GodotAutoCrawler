@@ -10,16 +10,16 @@ using Godot;
 
 namespace AutoCrawler.Assets.Script.TurnAction;
 
+public enum ActionState
+{
+    Executed,
+    Running,
+    End
+}
+
 [GlobalClass, Tool]
 public abstract partial class TurnActionBase : Resource 
 {
-    public enum ActionState
-    {
-        Executed,
-        Running,
-        End
-    }
-
     protected Queue<Func<double, ArticleBase, ActionState>> ActionQueue = [];
     
     // Action 사거리
