@@ -10,22 +10,20 @@ namespace AutoCrawler.Assets.Script;
 
 public partial class TurnHelper : Node
 {
-    [Export] private FxPlayer _fxPlayer;
     private readonly List<ITurnAffectedArticle<ArticleBase>> _turnAffectedArticleList = new();
     private ITurnAffectedArticle<ArticleBase> _currentTurnArticle;
 
-    private ArticlesContainer _articlesContainer;
+    private FxPlayer _fxPlayer;
+    private FxPlayer FxPlayer => _fxPlayer ??= GlobalUtil.GetBattleFieldCoreNode<FxPlayer>(this);
 
+    private ArticlesContainer _articlesContainer;
     private ArticlesContainer ArticlesContainer => _articlesContainer ??= GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(this);
 
-    public bool IsGameOver => _turnAffectedArticleList.Count <= 1 || _currentTurnArticle == null || ArticlesContainer.Articles["Opponent"].Count == 0 || ArticlesContainer.Articles["Ally"].Count == 0;
+    private bool IsGameOver => _turnAffectedArticleList.Count <= 1 || _currentTurnArticle == null || ArticlesContainer.Articles["Opponent"].Count == 0 || ArticlesContainer.Articles["Ally"].Count == 0;
+    private bool IsPaused => Speed == 0;
 
-    [Export]
-    public float Speed
-    {
-        get;
-        private set;
-    } = 1.0f;
+    [Export] public float Speed { get; private set; } = 1.0f;
+    
 
     public override void _Ready()
     {
@@ -51,14 +49,16 @@ public partial class TurnHelper : Node
 
     public override void _PhysicsProcess(double delta)
     {
+        if (IsPaused) return;
+        
         if (IsGameOver)
         {
             // todo : 게임 오버 처리 
             GetTree().ReloadCurrentScene();
             return;
         }
-        
-        _fxPlayer.Tick(delta);
+
+        FxPlayer?.Tick(delta);
 
         if (_currentTurnArticle is ArticleBase { IsAlive: false })
         {
@@ -66,8 +66,8 @@ public partial class TurnHelper : Node
             return;
         }
         
-        Constants.BtStatus status = _currentTurnArticle.TurnPlay(delta * Speed);
-        if (status is Constants.BtStatus.Success or Constants.BtStatus.Failure)
+        BtStatus status = _currentTurnArticle.TurnPlay(delta * Speed);
+        if (status is BtStatus.Success or BtStatus.Failure)
         {
             _currentTurnArticle = GetNextTurnArticle();
         }

@@ -49,6 +49,8 @@ shader_parameter/pixelation_amount = 20.0
 shader_parameter/basic_texture = ExtResource("2_3xpci")
 
 [node name="Node2D" type="Node2D"]
+z_index = 1
+y_sort_enabled = true
 script = ExtResource("1_3xpci")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

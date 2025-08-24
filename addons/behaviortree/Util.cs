@@ -6,11 +6,11 @@ public static class Util
 {
     public struct BehaviorLog
     {
-        public Constants.BtStatus Status;
+        public BtStatus Status;
         public long Time;
         public BehaviorLog()
         {
-            Status = Constants.BtStatus.Failure;
+            Status = BtStatus.Failure;
             Time = 0;
         }
     }

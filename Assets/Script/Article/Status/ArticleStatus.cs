@@ -8,7 +8,7 @@ namespace AutoCrawler.Assets.Script.Article.Status;
 
 public partial class ArticleStatus : Resource
 {
-    [Export] private Array<StatusElement> StatusElements { get; set; } = new();
+    [Export] private Array<StatusElement> StatusElements { get; set; } 
     public System.Collections.Generic.Dictionary<Type, StatusElement> StatusElementsDictionary { get; } = new();
     private uint _affectStatusUniqId;
     private System.Collections.Generic.List<StatusAffect> AffectingStatusesList { get; set; } = new();

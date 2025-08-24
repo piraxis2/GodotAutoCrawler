@@ -8,19 +8,19 @@ using Godot;
 
 namespace AutoCrawler.Assets.Script.TurnAction.Common;
 [GlobalClass, Tool]
-public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
+public partial class TurnAction_Attack : TurnActionBase
 {
     [Export] private int minDamage = 10;
     [Export] private int maxDamage = 20;
-    
-    public int Range => 1;
-    public int Scale => 1;
 
-    private HashSet<Vector2I> _attackRangePositions;
-    public HashSet<Vector2I> AttackRangePositions => _attackRangePositions ??= SkillUtil.GetAttackRangePositions(Range);
+    protected override int Range => 1;
+    protected override int Scale => 1;
+
+    private ArticleBase _target;
 
     protected override void OnInit(Node owner)
     {
+         _target = GetTarget(owner); 
         ActionQueue.Enqueue(StartPhase);
         ActionQueue.Enqueue(RunPhase);
         ActionQueue.Enqueue(EndPhase); 
@@ -47,13 +47,10 @@ public partial class TurnAction_Attack : TurnActionBase, ISkill<TurnActionBase>
 
     private ActionState EndPhase(double delta, ArticleBase owner)
     {
-        List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + owner.TilePosition).ToList();
-        BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
-        ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(owner));
         owner.AnimationPlayer.Play("Idle");
-        if (target is { IsAlive: true })
+        if (_target is { IsAlive: true })
         {
-            target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, minDamage, maxDamage));
+            _target.ArticleStatus?.ApplyAffectStatus(Damage.CreateDamage<PhysicalDamage>(owner.ArticleStatus, minDamage, maxDamage));
         }
 
         ActionQueue.Dequeue();

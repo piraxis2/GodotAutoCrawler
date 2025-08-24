@@ -1,8 +1,8 @@
 [gd_scene load_steps=19 format=3 uid="uid://5jaympibmkwm"]
 
-[ext_resource type="Script" uid="uid://bnn5wrha7242b" path="res://Assets/Script/gds/fx/sprite_fx_object.gd" id="1_x0h8q"]
-[ext_resource type="AudioStream" uid="uid://37uy68te8p5i" path="res://Assets/Audio/Ice.mp3" id="2_6omrb"]
-[ext_resource type="Texture2D" uid="uid://cudu5qg3fho47" path="res://Assets/Textures/Wizard.png" id="3_x0h8q"]
+[ext_resource type="Script" uid="uid://bnn5wrha7242b" path="res://Assets/Script/gds/fx/sprite_fx_object.gd" id="1_m77n6"]
+[ext_resource type="AudioStream" uid="uid://37uy68te8p5i" path="res://Assets/Audio/Ice.mp3" id="2_xsx86"]
+[ext_resource type="Texture2D" uid="uid://cudu5qg3fho47" path="res://Assets/Textures/Wizard.png" id="3_mays7"]
 
 [sub_resource type="Animation" id="Animation_qubo6"]
 resource_name = "IceBolt"
@@ -27,11 +27,11 @@ tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "clips": [{
-"end_offset": 2.0,
-"start_offset": 0.0,
-"stream": ExtResource("2_6omrb")
+"end_offset": 1.33,
+"start_offset": 0.57,
+"stream": ExtResource("2_xsx86")
 }],
-"times": PackedFloat32Array(0)
+"times": PackedFloat32Array(0.0333334)
 }
 tracks/1/use_blend = true
 
@@ -57,47 +57,47 @@ _data = {
 }
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dfodt"]
-atlas = ExtResource("3_x0h8q")
+atlas = ExtResource("3_mays7")
 region = Rect2(0, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rarmi"]
-atlas = ExtResource("3_x0h8q")
+atlas = ExtResource("3_mays7")
 region = Rect2(100, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hughc"]
-atlas = ExtResource("3_x0h8q")
+atlas = ExtResource("3_mays7")
 region = Rect2(200, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oq74g"]
-atlas = ExtResource("3_x0h8q")
+atlas = ExtResource("3_mays7")
 region = Rect2(300, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2njie"]
-atlas = ExtResource("3_x0h8q")
+atlas = ExtResource("3_mays7")
 region = Rect2(400, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j3s42"]
-atlas = ExtResource("3_x0h8q")
+atlas = ExtResource("3_mays7")
 region = Rect2(500, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1g3xr"]
-atlas = ExtResource("3_x0h8q")
+atlas = ExtResource("3_mays7")
 region = Rect2(600, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_w6os1"]
-atlas = ExtResource("3_x0h8q")
+atlas = ExtResource("3_mays7")
 region = Rect2(700, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qxh3p"]
-atlas = ExtResource("3_x0h8q")
+atlas = ExtResource("3_mays7")
 region = Rect2(800, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y22sv"]
-atlas = ExtResource("3_x0h8q")
+atlas = ExtResource("3_mays7")
 region = Rect2(900, 400, 100, 100)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_x0h8q"]
-atlas = ExtResource("3_x0h8q")
+atlas = ExtResource("3_mays7")
 region = Rect2(1000, 400, 100, 100)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_qxh3p"]
@@ -142,9 +142,9 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="TempSkillEffect" type="Node2D"]
+[node name="IceBolt" type="Node2D"]
 texture_filter = 2
-script = ExtResource("1_x0h8q")
+script = ExtResource("1_m77n6")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../AnimatedSprite2D")

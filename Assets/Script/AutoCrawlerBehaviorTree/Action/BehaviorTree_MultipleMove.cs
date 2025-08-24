@@ -79,20 +79,25 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
         return pathResult;
     }
 
-    private Constants.BtStatus ActionExecuted()
+    private BtStatus ActionExecuted()
     {
         _moveTweenQueue.Clear();
         _elapsedTime = 0;
-        return Constants.BtStatus.Success;
+        return BtStatus.Success;
     }
 
-    protected override Constants.BtStatus PerformAction(double delta, Node owner)
+    protected override BtStatus PerformAction(double delta, Node owner)
     {
-        if (owner is not ArticleBase article) return Constants.BtStatus.Failure;
+        if (owner is not ArticleBase article) return BtStatus.Failure;
 
         if (_moveTweenQueue.Count > 0)
         {
-            if (!_moveTweenQueue.Peek().Value.CustomStep(_elapsedTime))
+            
+            var queueElem = _moveTweenQueue.Peek();
+            
+            article.DecisionFlipH(queueElem.Key);
+            var currentTween = queueElem.Value;
+            if (!currentTween.CustomStep(_elapsedTime))
             {
                 var moveTween = _moveTweenQueue.Dequeue();
                 moveTween.Value.Kill();
@@ -106,7 +111,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
                 }
             }
             _elapsedTime += delta;
-            return Constants.BtStatus.Running;
+            return BtStatus.Running;
         }
 
         var tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(article);
@@ -127,6 +132,6 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
         if (_moveTweenQueue.Count == 0) return ActionExecuted();
 
         article.AnimationPlayer.Play("Walk");
-        return Constants.BtStatus.Running;
+        return BtStatus.Running;
     }
 }

@@ -9,17 +9,16 @@ using BehaviorTree_Node = AutoCrawler.addons.behaviortree.node.BehaviorTree_Node
 namespace AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Decorator;
 
 [GlobalClass, Tool]
-public partial class BehaviorTree_FIndOpponent: BehaviorTree_Decorator
+public partial class BehaviorTree_FindOpponent: BehaviorTree_Decorator
 {
     BattleFieldTileMapLayer _tileMapLayer;
     protected override void OnReady()
     {
         _tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(this);
     }
-    
-    protected override Constants.BtStatus Decorate(BehaviorTree_Node child, double delta, Node owner)
+    protected override bool IsValid(BehaviorTree_Node child, double delta, Node owner)
     {
-        return !IsOpponentInAttackRange(owner as CharacterArticle) ? child.Behave(delta, owner) : Constants.BtStatus.Failure;
+        return !IsOpponentInAttackRange(owner as CharacterArticle);
     }
 
     private bool IsOpponentInAttackRange(CharacterArticle ownerCharacterArticle)

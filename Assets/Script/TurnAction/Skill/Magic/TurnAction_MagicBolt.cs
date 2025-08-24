@@ -9,17 +9,15 @@ using Godot;
 namespace AutoCrawler.Assets.Script.TurnAction.Skill.Magic;
 
 [GlobalClass, Tool]
-public partial class TurnAction_MagicBolt : TurnAction_Cast, ISkill<TurnActionBase>
+public partial class TurnAction_MagicBolt : TurnAction_Cast
 {
     [Export] private int _maxDamage = 20;
-    public int Range => 3;
-
-
-    public int Scale => 3;    [Export] private int _exportCost = 2;
+    protected override int Range => 3;
+    protected override int Scale => 3;   
+    
+    [Export] private int _exportCost = 2;
     protected override int MasterCost => _exportCost; 
 
-    private HashSet<Vector2I> _attackRangePositions;
-    public HashSet<Vector2I> AttackRangePositions => _attackRangePositions ??= SkillUtil.GetAttackRangePositions(Range);
     
     private Vector2I _targetPosition;
 
@@ -27,10 +25,7 @@ public partial class TurnAction_MagicBolt : TurnAction_Cast, ISkill<TurnActionBa
     protected override void OnInit(Node owner)
     {
         base.OnInit(owner);
-        ArticleBase ownerArticle = (ArticleBase)((BehaviorTree_Action)owner).Tree.GetParent();
-        List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + ownerArticle.TilePosition).ToList();
-        BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
-        ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(ownerArticle));
+        ArticleBase target = GetTarget(owner); 
         if (target != null) _targetPosition = target.TilePosition;
     }
 

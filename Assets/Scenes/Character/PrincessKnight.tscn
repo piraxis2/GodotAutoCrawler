@@ -1,222 +1,224 @@
-[gd_scene load_steps=81 format=3 uid="uid://cbtoxh6imusjm"]
+[gd_scene load_steps=83 format=3 uid="uid://il2qeudbmyb2"]
 
-[ext_resource type="Script" uid="uid://dfo7fcc4ivngo" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_x3swm"]
-[ext_resource type="Script" uid="uid://dt641onuentr8" path="res://Assets/Script/Article/Status/Element/StatusElement.cs" id="2_y7hsj"]
-[ext_resource type="Script" uid="uid://nhx4lou1hoy4" path="res://Assets/Script/Article/Status/Element/Health.cs" id="3_wtn77"]
-[ext_resource type="Script" uid="uid://bmr3t8odnuo7b" path="res://Assets/Script/Article/Status/Element/Strength.cs" id="4_fnr2j"]
-[ext_resource type="Script" uid="uid://do5ouq5ee4i4c" path="res://Assets/Script/Article/Status/Element/Defense.cs" id="5_olsad"]
-[ext_resource type="Script" uid="uid://jhjvup735lqt" path="res://Assets/Script/Article/Status/Element/Luck.cs" id="6_5gmgb"]
-[ext_resource type="Script" uid="uid://527wle2alee2" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="7_36ego"]
-[ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_vwhsm"]
-[ext_resource type="Texture2D" uid="uid://d0u23bchmqvqd" path="res://Assets/Textures/Soldier.png" id="9_0v02b"]
-[ext_resource type="Script" uid="uid://cwlvijl5y02o1" path="res://addons/behaviortree/BehaviorTree.cs" id="10_0m0e6"]
-[ext_resource type="AudioStream" uid="uid://cm7wog7mmni22" path="res://Assets/Audio/Charge.mp3" id="10_y7hsj"]
-[ext_resource type="Script" uid="uid://cfc212lal43iq" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="11_mm1bq"]
-[ext_resource type="Script" uid="uid://ciweyygvsxr1c" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="12_v8t08"]
-[ext_resource type="Script" uid="uid://c7js0inhhipcp" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="13_ad5g1"]
-[ext_resource type="Script" uid="uid://bwx0oup5d1dc" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="14_45j83"]
-[ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/health_bar.tscn" id="16_2sfhm"]
-[ext_resource type="Script" uid="uid://x5t3hrh74wu7" path="res://Assets/Script/TurnAction/Skill/Magic/TurnAction_ChainLightning.cs" id="16_y7hsj"]
+[ext_resource type="Script" uid="uid://dfo7fcc4ivngo" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_gsf7d"]
+[ext_resource type="Script" uid="uid://dt641onuentr8" path="res://Assets/Script/Article/Status/Element/StatusElement.cs" id="2_h6g00"]
+[ext_resource type="Script" uid="uid://nhx4lou1hoy4" path="res://Assets/Script/Article/Status/Element/Health.cs" id="3_lifnf"]
+[ext_resource type="Script" uid="uid://bmr3t8odnuo7b" path="res://Assets/Script/Article/Status/Element/Strength.cs" id="4_bspvq"]
+[ext_resource type="Script" uid="uid://do5ouq5ee4i4c" path="res://Assets/Script/Article/Status/Element/Defense.cs" id="5_4kmym"]
+[ext_resource type="Script" uid="uid://jhjvup735lqt" path="res://Assets/Script/Article/Status/Element/Luck.cs" id="6_fd11m"]
+[ext_resource type="Script" uid="uid://527wle2alee2" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="7_2wmeo"]
+[ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_bbtgs"]
+[ext_resource type="Material" uid="uid://dd7qbgt5p6813" path="res://Assets/Material/hitMaterial.tres" id="9_pycj8"]
+[ext_resource type="Texture2D" uid="uid://d0u23bchmqvqd" path="res://Assets/Textures/Soldier.png" id="10_khh6t"]
+[ext_resource type="Script" uid="uid://bi51owx2orvu5" path="res://Assets/Script/gds/fx/article_sprite_hit.gd" id="11_8lsrf"]
+[ext_resource type="AudioStream" uid="uid://cm7wog7mmni22" path="res://Assets/Audio/Charge.mp3" id="12_nf1yw"]
+[ext_resource type="Script" uid="uid://cwlvijl5y02o1" path="res://addons/behaviortree/BehaviorTree.cs" id="13_p53nb"]
+[ext_resource type="Script" uid="uid://cfc212lal43iq" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="14_byd7f"]
+[ext_resource type="Script" uid="uid://cm4wshnybyy74" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FindOpponent.cs" id="15_tgiwn"]
+[ext_resource type="Script" uid="uid://c7js0inhhipcp" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="16_1m3ts"]
+[ext_resource type="Script" uid="uid://bwx0oup5d1dc" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="17_omeeg"]
+[ext_resource type="Script" uid="uid://x5t3hrh74wu7" path="res://Assets/Script/TurnAction/Skill/Magic/TurnAction_ChainLightning.cs" id="18_3tkjk"]
+[ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/health_bar.tscn" id="19_lfan2"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
 resource_local_to_scene = true
-script = ExtResource("3_wtn77")
+script = ExtResource("3_lifnf")
 MaxHealth = 1000
 
 [sub_resource type="Resource" id="Resource_f6flg"]
 resource_local_to_scene = true
-script = ExtResource("4_fnr2j")
+script = ExtResource("4_bspvq")
 
 [sub_resource type="Resource" id="Resource_pne82"]
 resource_local_to_scene = true
-script = ExtResource("5_olsad")
+script = ExtResource("5_4kmym")
 
 [sub_resource type="Resource" id="Resource_2fwi5"]
 resource_local_to_scene = true
-script = ExtResource("6_5gmgb")
+script = ExtResource("6_fd11m")
 
 [sub_resource type="Resource" id="Resource_7tk6w"]
 resource_local_to_scene = true
-script = ExtResource("7_36ego")
+script = ExtResource("7_2wmeo")
 Value = 2
 
 [sub_resource type="Resource" id="Resource_7e21v"]
 resource_local_to_scene = true
-script = ExtResource("8_vwhsm")
-StatusElements = Array[ExtResource("2_y7hsj")]([SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5"), SubResource("Resource_7tk6w")])
+script = ExtResource("8_bbtgs")
+StatusElements = Array[ExtResource("2_h6g00")]([SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5"), SubResource("Resource_7tk6w")])
 
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_fwt52"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_l1mya"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(25, 225, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tuser"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(125, 225, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7qkca"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(225, 225, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_k7j8l"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(325, 225, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4r2lg"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(425, 225, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wcs2y"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(525, 225, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_laeuf"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(25, 325, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_i07f7"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(125, 325, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ofx8p"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(225, 325, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1fca4"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(325, 325, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xdkr3"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(425, 325, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ucq32"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(525, 325, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_m256m"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(25, 525, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3bjg7"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(125, 525, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jnfgo"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(225, 525, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dkdyp"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(325, 525, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cayra"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(25, 625, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dtjt7"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(125, 625, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2hwbu"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(225, 625, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1cvgu"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(325, 625, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gvhrh"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(25, 25, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_md6la"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(125, 25, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uwiyy"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(225, 25, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wfpdj"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(325, 25, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tr3sr"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(425, 25, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ekp12"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(525, 25, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yv2mn"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(25, 425, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0lc86"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(125, 425, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kcuy2"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(225, 425, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pgtga"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(325, 425, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_64rm8"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(425, 425, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ir3jk"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(525, 425, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mfjfu"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(625, 425, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cyw33"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(725, 425, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wu2w8"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(825, 425, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cjigo"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(25, 125, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_15gja"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(125, 125, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8tn6h"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(225, 125, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e1pux"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(325, 125, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wwtfr"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(425, 125, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6htoh"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(525, 125, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1n2my"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(625, 125, 50, 50)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dj377"]
-atlas = ExtResource("9_0v02b")
+atlas = ExtResource("10_khh6t")
 region = Rect2(725, 125, 50, 50)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ovkpk"]
@@ -480,7 +482,7 @@ tracks/2/keys = {
 "clips": [{
 "end_offset": 0.457538,
 "start_offset": 0.0,
-"stream": ExtResource("10_y7hsj")
+"stream": ExtResource("12_nf1yw")
 }],
 "times": PackedFloat32Array(0)
 }
@@ -699,13 +701,14 @@ _data = {
 }
 
 [sub_resource type="Resource" id="Resource_y7hsj"]
-script = ExtResource("16_y7hsj")
+resource_local_to_scene = true
+script = ExtResource("18_3tkjk")
 _maxDamage = 30
 _chainCount = 3
 metadata/_custom_type_script = "uid://x5t3hrh74wu7"
 
 [node name="Character" type="Node2D"]
-script = ExtResource("1_x3swm")
+script = ExtResource("1_gsf7d")
 ArticleStatus = SubResource("Resource_7e21v")
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
@@ -714,10 +717,12 @@ parameters/blend_position = Vector2(-0.00198412, 0.0163934)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
+material = ExtResource("9_pycj8")
 sprite_frames = SubResource("SpriteFrames_ovkpk")
 animation = &"Idle"
 speed_scale = 2.0
 offset = Vector2(0, -6)
+script = ExtResource("11_8lsrf")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="AnimatedSprite2D"]
 libraries = {
@@ -725,24 +730,24 @@ libraries = {
 }
 
 [node name="BehaviorTree" type="Node" parent="."]
-script = ExtResource("10_0m0e6")
+script = ExtResource("13_p53nb")
 
 [node name="BehaviorTree_Selector_Root" type="Node" parent="BehaviorTree"]
-script = ExtResource("11_mm1bq")
+script = ExtResource("14_byd7f")
 
 [node name="BehaviorTree_FIndOpponent" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
-script = ExtResource("12_v8t08")
+script = ExtResource("15_tgiwn")
 
 [node name="BehaviorTree_MultipleMove" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
-script = ExtResource("13_ad5g1")
+script = ExtResource("16_1m3ts")
 
 [node name="BehaviorTree_TurnAction(MagicBolt)" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
-script = ExtResource("14_45j83")
+script = ExtResource("17_omeeg")
 TurnAction = SubResource("Resource_y7hsj")
 
-[node name="HealthBar" parent="." instance=ExtResource("16_2sfhm")]
-offset_top = -20.0
-offset_bottom = -18.0
+[node name="HealthBar" parent="." instance=ExtResource("19_lfan2")]
+offset_top = -22.0
+offset_bottom = -20.0
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 pitch_scale = 0.95

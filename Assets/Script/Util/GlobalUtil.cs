@@ -14,7 +14,20 @@ public static class GlobalUtil
     
     public static T GetBattleFieldCoreNode<T>(Node targetNode) where T : Node
     {
-        var battleFieldScene = GetBattleField(targetNode);
-        return battleFieldScene?.GetBattleFieldCoreNode<T>();
+        var currentScene = targetNode.GetTree().CurrentScene;
+        if (currentScene is BattleFieldScene)
+        {
+            return typeof(T) switch
+            {
+                var t when t == typeof(BattleFieldTileMapLayer) => currentScene.GetNode<T>("TileMapLayer"),
+                var t when t == typeof(TurnHelper) => currentScene.GetNode<T>("TurnHelper"),
+                var t when t == typeof(ArticlesContainer) => currentScene.GetNode<T>("Articles"),
+                var t when t == typeof(FxPlayer) => currentScene.GetNode<T>("FxPlayer"),
+                _ => null
+            };
+        }
+        return null;
     }
+
+
 }

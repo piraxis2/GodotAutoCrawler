@@ -49,9 +49,9 @@ public partial class BehaviorTree : Node
         }
     }
 
-    public Constants.BtStatus Behave(double delta, Node owner)
+    public BtStatus Behave(double delta, Node owner)
     {
-        return Root?.Behave(delta, owner) ?? Constants.BtStatus.Failure;
+        return Root?.Behave(delta, owner) ?? BtStatus.Failure;
     }
 
     public void UpdateRequest()
@@ -69,7 +69,7 @@ public partial class BehaviorTree : Node
         GD.Print($"OnUpdateTree : {Name}");
     }
 
-    public void OnLeafNodeExecuted(BehaviorTree_Node leafNode, Constants.BtStatus status)
+    public void OnLeafNodeExecuted(BehaviorTree_Node leafNode, BtStatus status)
     {
         
     }

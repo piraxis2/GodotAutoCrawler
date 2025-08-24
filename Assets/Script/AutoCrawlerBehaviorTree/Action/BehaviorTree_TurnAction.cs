@@ -13,25 +13,25 @@ public partial class BehaviorTree_TurnAction : BehaviorTree_Action
     [Export]
     public TurnActionBase TurnAction { get; private set; }
 
-    protected override Constants.BtStatus PerformAction(double delta, Node owner)
+    protected override BtStatus PerformAction(double delta, Node owner)
     {
         if (owner is ITurnAffectedArticle<ArticleBase> article)
         {
-            if (TurnAction == null) return Constants.BtStatus.Failure;
+            if (TurnAction == null) return BtStatus.Failure;
             
             TurnAction.Init(this);
-            TurnActionBase.ActionState actionStatus = TurnAction.Action(delta, article as ArticleBase);
-            if (actionStatus is TurnActionBase.ActionState.Executed or TurnActionBase.ActionState.Running)
+            ActionState actionStatus = TurnAction.Action(delta, article as ArticleBase);
+            if (actionStatus is ActionState.Executed or ActionState.Running)
             {
                 article.CurrentTurnAction?.Finish(this);
                 article.CurrentTurnAction = TurnAction;
-                if (actionStatus == TurnActionBase.ActionState.Running)
+                if (actionStatus == ActionState.Running)
                 {
-                    return Constants.BtStatus.Running;
+                    return BtStatus.Running;
                 }
             }
-            return Constants.BtStatus.Success;
+            return BtStatus.Success;
         }
-        return Constants.BtStatus.Failure;
+        return BtStatus.Failure;
     }
 }
