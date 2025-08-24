@@ -39,5 +39,10 @@ public abstract partial class BehaviorTree_Decorator : BehaviorTree_Node
         return Decorate(Child, delta, owner);
     }
 
-    protected abstract BtStatus Decorate(BehaviorTree_Node child, double delta, Node owner);
+    private BtStatus Decorate(BehaviorTree_Node child, double delta, Node owner)
+    {
+        return IsValid(child, delta, owner) ? child.Behave(delta, owner) : BtStatus.Failure;
+    }
+    
+    protected abstract bool IsValid(BehaviorTree_Node child, double delta, Node owner);
 }

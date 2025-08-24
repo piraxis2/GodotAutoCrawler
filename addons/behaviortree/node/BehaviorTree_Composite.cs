@@ -6,7 +6,7 @@ namespace AutoCrawler.addons.behaviortree.node;
 [GlobalClass, Tool]
 public abstract partial class BehaviorTree_Composite : BehaviorTree_Node
 {
-    private List<BehaviorTree_Node> _children = new List<BehaviorTree_Node>();
+    private List<BehaviorTree_Node> _children = new();
 
     public override List<BehaviorTree_Node> TreeChildren => _children;
 
