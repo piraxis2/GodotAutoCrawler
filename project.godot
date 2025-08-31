@@ -32,4 +32,4 @@ project/assembly_name="AutoCrawler"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/behaviortree/plugin.cfg", "res://addons/devconsole/plugin.cfg")
+enabled=PackedStringArray("res://addons/behaviortree/plugin.cfg", "res://addons/devconsole/plugin.cfg", "res://addons/dialogtool/plugin.cfg")
