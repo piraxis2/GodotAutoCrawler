@@ -2,7 +2,7 @@
 extends NodeDefinition
 class_name EndDef
 
-func _node_init(node: dialogue_node) -> void:
+func _node_init(node: DialogueNode) -> void:
 	node.title = "end"
 	node.clear_all_slots()
 	node.set_slot(0, true, 0, Color.WHITE, false, 0, Color.WHITE)

@@ -3,7 +3,8 @@ extends NodeDefinition
 class_name StartDef
 
 
-func _node_init(node: dialogue_node) -> void:
+func _node_init(node: DialogueNode) -> void:
+	node.id = 0
 	node.delete_button.queue_free()
 	node.title = "start"
 	node.clear_all_slots()

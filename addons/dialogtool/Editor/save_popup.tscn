@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://7drkijljbjxx"]
+
+[ext_resource type="Script" uid="uid://phtagmcrldgv" path="res://addons/dialogtool/Editor/save_popup.gd" id="1_vyaon"]
+
+[node name="SavePopup" type="FileDialog"]
+visible = true
+script = ExtResource("1_vyaon")

@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://ckpiv7tibmmgh"]
+
+[sub_resource type="Theme" id="Theme_ywnp2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y8bo1"]
+bg_color = Color(0.129412, 0.129412, 0.129412, 1)
+corner_detail = 18
+shadow_color = Color(0.0745098, 0.0745098, 0.0745098, 1)
+shadow_size = 1
+shadow_offset = Vector2(0, 1)
+
+[node name="GridContainer" type="GridContainer"]
+columns = 2
+
+[node name="Label3" type="Label" parent="."]
+layout_mode = 2
+text = "Portrait"
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+theme = SubResource("Theme_ywnp2")
+theme_override_styles/panel = SubResource("StyleBoxFlat_y8bo1")
+
+[node name="PortraitPath" type="Label" parent="PanelContainer"]
+layout_mode = 2
+text = "null"
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Speaker"
+
+[node name="SpeakerTargetTextEdit" type="TextEdit" parent="."]
+custom_minimum_size = Vector2(500, 35)
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="."]
+layout_mode = 2
+text = "Say"
+
+[node name="SayTextEdit2" type="TextEdit" parent="."]
+custom_minimum_size = Vector2(500, 200)
+layout_mode = 2

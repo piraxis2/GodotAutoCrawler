@@ -1,7 +1,7 @@
 @tool
 extends ItemList
-
-@export var dialogue_dic : Dictionary
+class_name DialogueNodeItemList
+var dialogue_dic : Dictionary = { "end": EndDef, "say": SayDef}
 
 func _ready() -> void:
 	var index: int = 0
@@ -19,5 +19,5 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	var preview = GraphNode.new()
 	preview.title = get_item_text(item_index)
 	set_drag_preview(preview)
-	var item_meta = get_item_metadata(item_index)
+	var item_meta = get_item_metadata(item_index).new()
 	return item_meta
