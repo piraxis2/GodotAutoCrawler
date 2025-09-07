@@ -16,3 +16,4 @@ mono_crash.*.json
 
 Assets/Textures/
 Assets/Audio/
+addons/godot-vim/
