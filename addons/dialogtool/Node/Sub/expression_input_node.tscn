@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3 uid="uid://ylfj6rgmcnhb"]
+
+[ext_resource type="Script" uid="uid://bkj6a88gl0tbi" path="res://addons/dialogtool/Node/Sub/expression_input_node.gd" id="1_m6kd1"]
+
+[node name="inputnode" type="HBoxContainer"]
+script = ExtResource("1_m6kd1")
+
+[node name="TextEdit" type="TextEdit" parent="."]
+custom_minimum_size = Vector2(200, 35)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Hold" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "Hold"
+
+[node name="Delete" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "Delete"
+
+[connection signal="pressed" from="Hold" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Hold" to="." method="_on_hold_pressed"]
+[connection signal="pressed" from="Delete" to="." method="_on_delete_pressed"]

@@ -1,0 +1,71 @@
+[gd_scene load_steps=3 format=3 uid="uid://c2ubni7x7cwax"]
+
+[ext_resource type="Script" uid="uid://6q5mfuhiu8hr" path="res://addons/dialogtool/Node/expression_node.gd" id="1_urtcq"]
+[ext_resource type="Script" uid="uid://dtvahj2wfrjlg" path="res://addons/dialogtool/Node/Sub/code_edit.gd" id="2_oakwl"]
+
+[node name="ExpressionNode" type="GraphNode"]
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 0.0784314, 0.576471, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+script = ExtResource("1_urtcq")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="AddInput" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Add Input"
+
+[node name="Build" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Build"
+
+[node name="CodeEdit" type="CodeEdit" parent="."]
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+size_flags_vertical = 3
+symbol_lookup_on_click = true
+symbol_tooltip_on_hover = true
+gutters_draw_line_numbers = true
+script = ExtResource("2_oakwl")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[connection signal="button_up" from="HBoxContainer/AddInput" to="." method="_on_add_input_button_up"]
+[connection signal="button_up" from="HBoxContainer/Build" to="." method="_on_build_button_up"]

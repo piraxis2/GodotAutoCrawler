@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=6 format=3 uid="uid://dnkc0hw24o4bh"]
+
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/start_def.gd" id="1_0ik1g"]
+[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/say_def.gd" id="2_sml76"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/dialogtool/Resource/dialogue_graph_resource.gd" id="4_555e2"]
+
+[sub_resource type="Resource" id="Resource_wddal"]
+resource_local_to_scene = true
+script = ExtResource("1_0ik1g")
+metadata/_custom_type_script = "uid://cqwgrh0esffof"
+
+[sub_resource type="Resource" id="Resource_f6jts"]
+script = ExtResource("2_sml76")
+portrait = "empty"
+speaker = "empty"
+say_text = "empty"
+
+[resource]
+script = ExtResource("4_555e2")
+nodes = {
+0: {
+"definition": SubResource("Resource_wddal"),
+"id": 0,
+"name": &"StartNode",
+"position_offset": Vector2(100, 100),
+"size": Vector2(100, 100)
+},
+1: {
+"definition": SubResource("Resource_f6jts"),
+"id": 1,
+"name": &"1",
+"position_offset": Vector2(340, 0),
+"size": Vector2(584, 304)
+}
+}
+connections = Array[Dictionary]([])
+start_node_id = 0
+next_node_id = 8

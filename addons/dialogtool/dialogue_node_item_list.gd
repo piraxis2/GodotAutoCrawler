@@ -1,7 +1,7 @@
 @tool
 extends ItemList
 class_name DialogueNodeItemList
-var dialogue_dic : Dictionary = { "end": EndDef, "say": SayDef}
+@export var dialogue_dic : Dictionary = { "end": EndDef, "say": SayDef}
 
 func _ready() -> void:
 	var index: int = 0

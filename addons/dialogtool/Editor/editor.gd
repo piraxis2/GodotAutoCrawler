@@ -6,6 +6,11 @@ var _next_id: int = 1
 @onready var _start_node_position: Vector2 = $StartNode.position_offset
 @onready var _path_label: Label = $"../../HBoxContainer/PanelContainer/PathLabel"
 
+
+
+func _ready() -> void:
+	connection_request.connect(_on_connection_request)
+
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.is_pressed() and not event.is_echo():
 		if event.keycode == KEY_S and event.ctrl_pressed:
@@ -17,16 +22,32 @@ func _gui_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			print("Graph Saved!")
 			
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.is_pressed():
+		var mouse_pos = get_local_mouse_position()
+		var closest_connection = get_closest_connection_at_point(mouse_pos)
+		if closest_connection == null:
+			return
+			
+		if closest_connection.size() == 0:
+			return
+			
+		var undo_redo = EditorInterface.get_editor_undo_redo()
+		undo_redo.create_action("Disconnect Nodes")
+		undo_redo.add_do_method(self, "disconnect_node", closest_connection["from_node"], closest_connection["from_port"], closest_connection["to_node"], closest_connection["to_port"])
+		undo_redo.add_undo_method(self, "connect_node", closest_connection["from_node"], closest_connection["from_port"], closest_connection["to_node"], closest_connection["to_port"])
+		undo_redo.commit_action()
 
-func _ready() -> void:
-	connection_request.connect(_on_connection_request)	
+
 	
 func _on_connection_request(from_node_name: StringName, from_port: int, to_node_name: StringName, to_port: int) -> void:
-	var undo_redo = EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("Connect Nodes")
-	undo_redo.add_do_method(self, "connect_node", from_node_name, from_port, to_node_name, to_port)
-	undo_redo.add_undo_method(self, "disconnect_node", from_node_name, from_port, to_node_name, to_port)
-	undo_redo.commit_action()	
+	if Engine.is_editor_hint():
+		var undo_redo = EditorInterface.get_editor_undo_redo()
+		undo_redo.create_action("Connect Nodes")
+		undo_redo.add_do_method(self, "connect_node", from_node_name, from_port, to_node_name, to_port)
+		undo_redo.add_undo_method(self, "disconnect_node", from_node_name, from_port, to_node_name, to_port)
+		undo_redo.commit_action()	
+	else:
+		connect_node(from_node_name, from_port, to_node_name, to_port)
 
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	if data is NodeDefinition:
@@ -53,7 +74,7 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 		return
 	
 	var definition = droped_resource
-	var node = load("res://addons/dialogtool/Node/dialogue_node.tscn").instantiate()
+	var node = load(definition._get_dialogue_node()).instantiate()
 	node.definition = definition
 	var viewposition = (at_position + scroll_offset) / zoom
 	node.position_offset = viewposition
@@ -161,7 +182,7 @@ func load_resource(resource: DialogueGraphResource) -> void:
 			push_error(str(node_id) + ": definition is null")
 			continue
 		
-		var node = load("res://addons/dialogtool/Node/dialogue_node.tscn").instantiate()
+		var node = load(definition._get_dialogue_node()).instantiate()
 		
 		node.name = node_data["name"]
 		node.definition = definition

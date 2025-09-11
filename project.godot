@@ -21,6 +21,8 @@ DamageFloater="*res://Assets/Script/gds/damage_floater.gd"
 CheatManager="*res://Assets/Script/CheatManager.cs"
 GdsCheatManager="*res://Assets/Script/gds/gds_cheat_manager.gd"
 SoundManager="*res://Assets/Script/gds/sound_manager.gd"
+Test="*res://test.gd"
+PlayerData="*res://Assets/Script/gds/player_data.gd"
 
 [display]
 
@@ -32,4 +34,4 @@ project/assembly_name="AutoCrawler"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/behaviortree/plugin.cfg", "res://addons/devconsole/plugin.cfg", "res://addons/dialogtool/plugin.cfg")
+enabled=PackedStringArray("res://addons/behaviortree/plugin.cfg", "res://addons/devconsole/plugin.cfg", "res://addons/dialogtool/plugin.cfg", "res://addons/godot-vim/plugin.cfg")

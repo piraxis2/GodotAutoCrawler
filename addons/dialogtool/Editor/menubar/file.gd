@@ -18,7 +18,7 @@ func _ready() -> void:
 	save_file_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
 	save_file_dialog.add_filter("*.tres", "Dialogue Graph Resource")
 	save_file_dialog.file_selected.connect(_on_save_file_selected)
-	get_tree().root.add_child(save_file_dialog)
+	get_tree().root.call_deferred("add_child", save_file_dialog)
 
 	# Load Dialog
 	load_file_dialog = FileDialog.new()
@@ -26,7 +26,7 @@ func _ready() -> void:
 	load_file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 	load_file_dialog.add_filter("*.tres", "Dialogue Graph Resource")
 	load_file_dialog.file_selected.connect(_on_load_file_selected)
-	get_tree().root.add_child(load_file_dialog)
+	get_tree().root.call_deferred("add_child", load_file_dialog)
 
 
 func _on_id_pressed(id: int) -> void:
