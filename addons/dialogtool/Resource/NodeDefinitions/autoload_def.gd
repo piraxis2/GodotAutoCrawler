@@ -71,6 +71,10 @@ func on_property_option_selected(idx: int) -> void:
 	
 func _get_data_output(port: int) -> Variant:
 	match port:
-		0: return Engine.get_singleton(autoload_name).get(property_name)
+		0:
+			if Engine.is_editor_hint():
+				return definition_node.autoload_option.get_selected_metadata().get(property_name)
+			else:
+				return (Engine.get_main_loop() as SceneTree).get_root().get_node(autoload_name).get(property_name)
 	return null
 	
