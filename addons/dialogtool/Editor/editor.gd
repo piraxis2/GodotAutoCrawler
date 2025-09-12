@@ -6,6 +6,7 @@ var _next_id: int = 1
 @onready var _start_node_position: Vector2 = $StartNode.position_offset
 @onready var _path_label: Label = $"../../HBoxContainer/PanelContainer/PathLabel"
 
+var graph_resource: DialogueGraphResource = DialogueGraphResource.new()
 
 
 func _ready() -> void:
@@ -76,6 +77,7 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 	var definition = droped_resource
 	var node = load(definition._get_dialogue_node()).instantiate()
 	node.definition = definition
+	definition.node_id = _next_id
 	var viewposition = (at_position + scroll_offset) / zoom
 	node.position_offset = viewposition
 	node.name = str(_next_id)
@@ -103,9 +105,9 @@ func get_connections_for_node(node: GraphNode) -> Array:
 		if connection.from_node == node.name or connection.to_node == node.name:
 			results.append(connection)
 	return results
-
+	
 func capture_current_graphedit() -> DialogueGraphResource:
-	var graph_resource = DialogueGraphResource.new()
+	graph_resource = DialogueGraphResource.new()
 	
 	var nodes_data = {}
 	var node_name_to_id = {}
@@ -130,8 +132,8 @@ func capture_current_graphedit() -> DialogueGraphResource:
 	
 	var connections_data: Array[Dictionary] = []
 	for c in get_connection_list():
-		var from_id = node_name_to_id.get(c.from_node)
-		var to_id = node_name_to_id.get(c.to_node)
+		var from_id = node_name_to_id[c.from_node]
+		var to_id = node_name_to_id[c.to_node]
 		if from_id != null and to_id != null:
 			connections_data.append({
 				"from_node_id": from_id,

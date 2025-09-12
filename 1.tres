@@ -1,24 +1,38 @@
-[gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=4 format=3 uid="uid://durhwta683yfb"]
+[gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=6 format=3 uid="uid://ucy1cpx5vgpg"]
 
 [ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/start_def.gd" id="1_w1vuq"]
+[ext_resource type="Script" uid="uid://dol1mfeoxw33q" path="res://addons/dialogtool/Resource/NodeDefinitions/autoload_def.gd" id="2_t0hpo"]
 [ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/dialogtool/Resource/dialogue_graph_resource.gd" id="3_6y7fw"]
 
-[sub_resource type="Resource" id="Resource_b4ylq"]
+[sub_resource type="Resource" id="Resource_ui7pn"]
 resource_local_to_scene = true
 script = ExtResource("1_w1vuq")
 metadata/_custom_type_script = "uid://cqwgrh0esffof"
+
+[sub_resource type="Resource" id="Resource_igy2m"]
+script = ExtResource("2_t0hpo")
+auto_load_idx = 0
+property_idx = 1
+property_name = "teststring"
 
 [resource]
 script = ExtResource("3_6y7fw")
 nodes = {
 0: {
-"definition": SubResource("Resource_b4ylq"),
+"definition": SubResource("Resource_ui7pn"),
 "id": 0,
 "name": &"StartNode",
 "position_offset": Vector2(100, 100),
 "size": Vector2(100, 100)
+},
+2: {
+"definition": SubResource("Resource_igy2m"),
+"id": 2,
+"name": &"2",
+"position_offset": Vector2(360, 40),
+"size": Vector2(222, 73)
 }
 }
 connections = Array[Dictionary]([])
 start_node_id = 0
-next_node_id = 27
+next_node_id = 3

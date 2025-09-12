@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://pg1kks8ifw54"]
+[gd_scene load_steps=16 format=3 uid="uid://pg1kks8ifw54"]
 
 [ext_resource type="Script" uid="uid://dn4xcpya3mvb3" path="res://addons/dialogtool/dialoguetool_main.gd" id="1_18cn2"]
 [ext_resource type="Script" uid="uid://drv8iybf22ql3" path="res://addons/dialogtool/dialogue_node_item_list.gd" id="1_by5s2"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/say_def.gd" id="6_hsfof"]
 [ext_resource type="Script" uid="uid://0o7pt687wpfu" path="res://addons/dialogtool/Resource/NodeDefinitions/expression_value_def.gd" id="7_hsfof"]
 [ext_resource type="Script" uid="uid://dol1mfeoxw33q" path="res://addons/dialogtool/Resource/NodeDefinitions/autoload_def.gd" id="9_4r51w"]
+[ext_resource type="Script" uid="uid://ctwquv1svfqc4" path="res://addons/dialogtool/Resource/NodeDefinitions/test_def.gd" id="10_2xcej"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uc1a4"]
 bg_color = Color(0.28, 0.28, 0.28, 1)
@@ -91,17 +92,19 @@ layout_mode = 2
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 allow_reselect = true
-item_count = 4
+item_count = 5
 item_0/text = "autoload"
 item_1/text = "end"
 item_2/text = "expression"
 item_3/text = "say"
+item_4/text = "test"
 script = ExtResource("1_by5s2")
 dialogue_dic = {
 "autoload": ExtResource("9_4r51w"),
 "end": ExtResource("5_mjxqt"),
 "expression": ExtResource("7_hsfof"),
-"say": ExtResource("6_hsfof")
+"say": ExtResource("6_hsfof"),
+"test": ExtResource("10_2xcej")
 }
 
 [node name="GraphEdit" type="GraphEdit" parent="VSplitContainer/HSplitContainer"]

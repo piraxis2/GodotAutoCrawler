@@ -8,6 +8,7 @@ var delete_button: DeleteButton
 var id: int = -1
 
 enum port_type { flow, data }
+const color_dic: Dictionary = {"flow": Color.WHITE, "input": Color.AQUAMARINE, "output": Color.DEEP_PINK}
 
 var port_info: Dictionary
 
@@ -82,3 +83,12 @@ func remove_right_port_info(idx: int) -> void:
 		port_info[idx].erase("right")
 		update_port()
 	
+func get_connected_node(is_left: bool, port_id: int) -> DialogueNode:
+	var connections = get_parent().get_connections_for_node(self)
+
+	for connect in connections:
+		if connect["from_port"] == port_id or connect["to_port"] == port_id:
+			var target_node_name = str(connect["from_node"]) if is_left else str(connect["to_node"])
+			return get_parent().get_node(target_node_name)
+			
+	return null
