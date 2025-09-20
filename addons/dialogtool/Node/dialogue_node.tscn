@@ -4,13 +4,8 @@
 
 [node name="DialogueNode" type="GraphNode"]
 custom_minimum_size = Vector2(100, 100)
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -1032.0
-offset_bottom = -538.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_right = 100.0
+offset_bottom = 100.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 slot/0/left_enabled = false

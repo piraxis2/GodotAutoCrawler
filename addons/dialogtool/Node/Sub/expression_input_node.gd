@@ -2,18 +2,14 @@
 extends Control
 class_name ExpressionInputNode
 
-@onready var edit: TextEdit = $TextEdit
-@onready var hold_button: Button = $Hold
-signal on_hold(text: String)
-signal on_delete(text: String)
-
-func _on_hold_pressed() -> void:
-	edit.editable = false
-	on_hold.emit(edit.text)
-	$Hold.queue_free()
+@onready var edit: Label = $Label
+signal on_delete(text: String, port_idx: int, input_node: Node)
 
 func _on_delete_pressed() -> void:
-	on_hold.emit(edit.text)
+	on_delete.emit(edit.text, get_index(), self)
 	get_parent().call_deferred("update_input_slot")
 	get_parent().remove_child(self)
 	queue_free()
+	
+func get_label() -> Label:
+	return $Label

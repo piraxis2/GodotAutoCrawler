@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=8 format=3 uid="uid://neuokox0xcwv"]
+
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_yo8yb"]
+[ext_resource type="Script" uid="uid://dvwqdiyirh54x" path="res://addons/dialogtool/Resource/NodeDefinitions/Data/variable_def.gd" id="2_0ik1g"]
+[ext_resource type="Script" uid="uid://ctwquv1svfqc4" path="res://addons/dialogtool/Resource/NodeDefinitions/test_def.gd" id="3_0ik1g"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/dialogtool/Resource/dialogue_graph_resource.gd" id="3_sml76"]
+
+[sub_resource type="Resource" id="Resource_w4mwv"]
+resource_local_to_scene = true
+script = ExtResource("1_yo8yb")
+metadata/_custom_type_script = "uid://cqwgrh0esffof"
+
+[sub_resource type="Resource" id="Resource_555e2"]
+script = ExtResource("3_0ik1g")
+
+[sub_resource type="Resource" id="Resource_0ik1g"]
+script = ExtResource("2_0ik1g")
+variable_name = "RANDOM"
+variable_type = 100
+variable = [0, 10, Callable()]
+
+[resource]
+script = ExtResource("3_sml76")
+nodes = {
+0: {
+"definition": SubResource("Resource_w4mwv"),
+"id": 0,
+"name": &"@GraphNode@47327",
+"position_offset": Vector2(100, 100),
+"size": Vector2(100, 100.00006)
+},
+15: {
+"definition": SubResource("Resource_555e2"),
+"id": 15,
+"name": &"15",
+"position_offset": Vector2(620, 0),
+"size": Vector2(100.00006, 100)
+},
+17: {
+"definition": SubResource("Resource_0ik1g"),
+"id": 17,
+"name": &"17",
+"position_offset": Vector2(200, -80),
+"size": Vector2(325, 73)
+}
+}
+next_node_id = 18

@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5fg425in7ihs"]
+
+[ext_resource type="Script" uid="uid://d2pe65xbb1qiv" path="res://addons/dialogtool/Node/Sub/choice_item.gd" id="1_n7jp6"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_l0npf"]
+resource_local_to_scene = true
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 3
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(2, 2)
+
+[node name="HBoxContainer" type="HBoxContainer"]
+offset_right = 319.0
+offset_bottom = 45.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("1_n7jp6")
+
+[node name="Label" type="Label" parent="."]
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+text = "A"
+label_settings = SubResource("LabelSettings_l0npf")
+horizontal_alignment = 1
+
+[node name="TextEdit" type="TextEdit" parent="."]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2

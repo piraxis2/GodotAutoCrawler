@@ -10,6 +10,7 @@ func _ready() -> void:
 	clear()
 	add_item("Save", 0)
 	add_item("Load", 1)
+	add_item("New", 2)
 
 	
 	# Save Dialog
@@ -35,6 +36,8 @@ func _on_id_pressed(id: int) -> void:
 			save_file_dialog.popup_centered()
 		1: # Load
 			load_file_dialog.popup_centered()
+		2: # New
+			graph_edit.reset()
 
 func _on_save_file_selected(path: String) -> void:
 	if graph_edit:

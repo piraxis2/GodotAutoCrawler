@@ -1,25 +1,20 @@
-[gd_scene load_steps=2 format=3 uid="uid://ylfj6rgmcnhb"]
+[gd_scene load_steps=3 format=3 uid="uid://ylfj6rgmcnhb"]
 
 [ext_resource type="Script" uid="uid://bkj6a88gl0tbi" path="res://addons/dialogtool/Node/Sub/expression_input_node.gd" id="1_m6kd1"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_m6kd1"]
+resource_local_to_scene = true
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 3
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(2, 2)
 
 [node name="inputnode" type="HBoxContainer"]
 script = ExtResource("1_m6kd1")
 
-[node name="TextEdit" type="TextEdit" parent="."]
+[node name="Label" type="Label" parent="."]
 custom_minimum_size = Vector2(200, 35)
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="Hold" type="Button" parent="."]
-custom_minimum_size = Vector2(60, 0)
-layout_mode = 2
-text = "Hold"
-
-[node name="Delete" type="Button" parent="."]
-custom_minimum_size = Vector2(60, 0)
-layout_mode = 2
-text = "Delete"
-
-[connection signal="pressed" from="Hold" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="Hold" to="." method="_on_hold_pressed"]
-[connection signal="pressed" from="Delete" to="." method="_on_delete_pressed"]
+label_settings = SubResource("LabelSettings_m6kd1")

@@ -3,8 +3,8 @@ extends GraphEdit
 
 var _popup_menu: PopupMenu
 var _next_id: int = 1
-@onready var _start_node_position: Vector2 = $StartNode.position_offset
-@onready var _path_label: Label = $"../../HBoxContainer/PanelContainer/PathLabel"
+@onready var _start_node_position: Vector2 = $"0".position_offset
+@onready var _path_label: Label = $"../../HBoxContainer/HBoxContainer/HBoxContainer/PanelContainer/PathLabel"
 
 var graph_resource: DialogueGraphResource = DialogueGraphResource.new()
 
@@ -32,12 +32,18 @@ func _gui_input(event: InputEvent) -> void:
 		if closest_connection.size() == 0:
 			return
 			
-		var undo_redo = EditorInterface.get_editor_undo_redo()
-		undo_redo.create_action("Disconnect Nodes")
-		undo_redo.add_do_method(self, "disconnect_node", closest_connection["from_node"], closest_connection["from_port"], closest_connection["to_node"], closest_connection["to_port"])
-		undo_redo.add_undo_method(self, "connect_node", closest_connection["from_node"], closest_connection["from_port"], closest_connection["to_node"], closest_connection["to_port"])
-		undo_redo.commit_action()
+		if Engine.is_editor_hint():
+			var undo_redo = EditorInterface.get_editor_undo_redo()
+			undo_redo.create_action("Disconnect Nodes")
+			undo_redo.add_do_method(self, "disconnect_graph_node", closest_connection["from_node"], closest_connection["from_port"], closest_connection["to_node"], closest_connection["to_port"])
+			undo_redo.add_undo_method(self, "connect_node", closest_connection["from_node"], closest_connection["from_port"], closest_connection["to_node"], closest_connection["to_port"])
+			undo_redo.commit_action()
+		else:
+			disconnect_graph_node(closest_connection["from_node"], closest_connection["from_port"], closest_connection["to_node"], closest_connection["to_port"])
 
+func disconnect_graph_node(from_node: StringName, from_port: int, to_node: StringName, to_port: int) -> void:
+	disconnect_node(from_node, from_port, to_node, to_port)
+	disconnection_request.emit(from_node, from_port, to_node, to_port)
 
 	
 func _on_connection_request(from_node_name: StringName, from_port: int, to_node_name: StringName, to_port: int) -> void:
@@ -63,7 +69,7 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 func _drop_data(at_position: Vector2, data: Variant) -> void:
 	var droped_resource: NodeDefinition
 	if not data is NodeDefinition:
-		if 	data.files[0].ends_with(".tres") and data.files.size() == 1:
+		if data.files[0].ends_with(".tres") and data.files.size() == 1:
 			load_resource_action(data.files[0])
 			return
 		else:
@@ -78,6 +84,7 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 	var node = load(definition._get_dialogue_node()).instantiate()
 	node.definition = definition
 	definition.node_id = _next_id
+	definition.graph_resource = graph_resource
 	var viewposition = (at_position + scroll_offset) / zoom
 	node.position_offset = viewposition
 	node.name = str(_next_id)
@@ -109,12 +116,13 @@ func get_connections_for_node(node: GraphNode) -> Array:
 func capture_current_graphedit() -> DialogueGraphResource:
 	graph_resource = DialogueGraphResource.new()
 	
-	var nodes_data = {}
+	var node_datas = {}
 	var node_name_to_id = {}
 
 	for node in get_children():
 		if node is DialogueNode:
 			node.definition._capture()
+			node.definition.graph_resource = graph_resource
 			var node_data = {
 				"name": node.name,
 				"size": node.size,
@@ -122,13 +130,13 @@ func capture_current_graphedit() -> DialogueGraphResource:
 				"definition": node.definition,
 				"id": node.id
 			}
-			nodes_data[node.id] = node_data
+			node_datas[node.id] = node_data
 			node_name_to_id[node.name] = node.id
 			
 			if node.definition is StartDef:
 				graph_resource.start_node_id = node.id
 
-	graph_resource.nodes = nodes_data
+	graph_resource.nodes = node_datas
 	
 	var connections_data: Array[Dictionary] = []
 	for c in get_connection_list():
@@ -160,21 +168,24 @@ func clear_graph() -> void:
 	clear_connections()
 	for node in get_children():
 		if node is DialogueNode:
-			node.free()
+			node.queue_free()
 
 func load_resource_action(path: String) -> void:
-	var undo_redo = EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("load_resource")
-	undo_redo.add_do_property(_path_label, "text", path)
-	undo_redo.add_do_method(self, "load_resource", ResourceLoader.load(path))
-	undo_redo.add_undo_method(self, "load_resource", capture_current_graphedit())
-	undo_redo.add_undo_property(_path_label, "text", _path_label.text)	
-	undo_redo.commit_action()
+	if Engine.is_editor_hint():
+		var undo_redo = EditorInterface.get_editor_undo_redo()
+		undo_redo.create_action("load_resource")
+		undo_redo.add_do_property(_path_label, "text", path)
+		undo_redo.add_do_method(self, "load_resource", ResourceLoader.load(path))
+		undo_redo.add_undo_method(self, "load_resource", capture_current_graphedit())
+		undo_redo.add_undo_property(_path_label, "text", _path_label.text)	
+		undo_redo.commit_action()
+	else:
+		load_resource(ResourceLoader.load(path))
 	pass
 
 func load_resource(resource: DialogueGraphResource) -> void:
 	clear_graph()
-	
+	graph_resource = resource
 	var id_to_name_map = {}
 
 	for node_id in resource.nodes:
@@ -188,6 +199,7 @@ func load_resource(resource: DialogueGraphResource) -> void:
 		
 		node.name = node_data["name"]
 		node.definition = definition
+		node.definition.graph_resource = graph_resource
 		node.position_offset = node_data["position_offset"]
 		node.id = node_id
 		
@@ -214,4 +226,15 @@ func load_resource(resource: DialogueGraphResource) -> void:
 		if from_name != null and to_name != null:
 			connect_node(from_name, connection.from_port, to_name, connection.to_port)
 	
-	
+
+func reset() -> void:
+	_next_id = 1
+	clear_connections()
+	for node in get_children():
+		if node is DialogueNode:
+			if node.definition is StartDef:
+				node.position_offset = _start_node_position
+				continue
+			node.free()
+	_path_label.text = "null"
+	graph_resource = DialogueGraphResource.new()

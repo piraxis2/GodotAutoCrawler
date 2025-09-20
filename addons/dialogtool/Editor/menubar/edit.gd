@@ -11,16 +11,19 @@ func _ready() -> void:
 
 func _on_id_pressed(id: int) -> void:
 	match id :
-		0 : 
-			selected_nodes_delete()	
+		0 : #선택된 노드 삭제
+			selected_nodes_delete()
 			pass
-		1 :
-			var undo_redo = EditorInterface.get_editor_undo_redo()
-			undo_redo.create_action("reset_graph_edit")
-			undo_redo.add_do_method(self, "reset_graph_edit")
-			var graph =	graph_edit.capture_current_graphedit()
-			undo_redo.add_undo_method(graph_edit, "load_resource", graph)
-			undo_redo.commit_action()
+		1 : #초기화
+			if Engine.is_editor_hint():
+				var undo_redo = EditorInterface.get_editor_undo_redo()
+				undo_redo.create_action("reset_graph_edit")
+				undo_redo.add_do_method(self, "reset_graph_edit")
+				var graph = graph_edit.capture_current_graphedit()
+				undo_redo.add_undo_method(graph_edit, "load_resource", graph)
+				undo_redo.commit_action()
+			else:
+				reset_graph_edit()
 			pass
 
 func selected_nodes_delete() -> void:
@@ -49,11 +52,9 @@ func selected_nodes_delete() -> void:
 	undo_redo.commit_action()		
 	
 func reset_graph_edit() -> void:
-	graph_edit.clear_connections()
-	for node in graph_edit.get_children():
-		if node is DialogueNode:
-			if node.definition is StartDef:
-				node.position_offset = graph_edit._start_node_position
-				continue
-			node.free()
+	var file_path = graph_edit._path_label.text
+	if file_path == "null":
+		graph_edit.reset()
+		return
 	
+	graph_edit.load_resource_action(file_path)

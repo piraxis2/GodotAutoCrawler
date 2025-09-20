@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://dhgecfcol7fj2"]
+
+[node name="HBoxContainer" type="HBoxContainer"]
+
+[node name="AddInput" type="Label" parent="."]
+layout_mode = 2
+text = "Input Slider"
+
+[node name="HSlider" type="HSlider" parent="."]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+max_value = 26.0
+scrollable = false
+
+[node name="Build" type="Button" parent="."]
+layout_mode = 2
+text = "Build"

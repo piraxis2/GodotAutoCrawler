@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://pg1kks8ifw54"]
+[gd_scene load_steps=20 format=3 uid="uid://pg1kks8ifw54"]
 
 [ext_resource type="Script" uid="uid://dn4xcpya3mvb3" path="res://addons/dialogtool/dialoguetool_main.gd" id="1_18cn2"]
 [ext_resource type="Script" uid="uid://drv8iybf22ql3" path="res://addons/dialogtool/dialogue_node_item_list.gd" id="1_by5s2"]
@@ -7,12 +7,21 @@
 [ext_resource type="Script" uid="uid://csr6q12ci7amu" path="res://addons/dialogtool/Editor/menubar/edit.gd" id="2_uc1a4"]
 [ext_resource type="PackedScene" uid="uid://bphpfky14sujp" path="res://addons/dialogtool/Node/dialogue_node.tscn" id="3_h8qhg"]
 [ext_resource type="Script" uid="uid://b433cbwymu6lu" path="res://addons/dialogtool/Editor/path_container.gd" id="3_hutkb"]
-[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/dialogtool/Resource/NodeDefinitions/end_def.gd" id="5_mjxqt"]
-[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/start_def.gd" id="5_w4pru"]
-[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/say_def.gd" id="6_hsfof"]
-[ext_resource type="Script" uid="uid://0o7pt687wpfu" path="res://addons/dialogtool/Resource/NodeDefinitions/expression_value_def.gd" id="7_hsfof"]
-[ext_resource type="Script" uid="uid://dol1mfeoxw33q" path="res://addons/dialogtool/Resource/NodeDefinitions/autoload_def.gd" id="9_4r51w"]
+[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="5_mjxqt"]
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="5_w4pru"]
+[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="6_hsfof"]
+[ext_resource type="Script" uid="uid://0o7pt687wpfu" path="res://addons/dialogtool/Resource/NodeDefinitions/Data/expression_value_def.gd" id="7_hsfof"]
+[ext_resource type="Script" uid="uid://dol1mfeoxw33q" path="res://addons/dialogtool/Resource/NodeDefinitions/Data/autoload_def.gd" id="9_4r51w"]
 [ext_resource type="Script" uid="uid://ctwquv1svfqc4" path="res://addons/dialogtool/Resource/NodeDefinitions/test_def.gd" id="10_2xcej"]
+[ext_resource type="Script" uid="uid://d3ax6cbn0kha7" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/branch_def.gd" id="11_djb4p"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_djb4p"]
+resource_local_to_scene = true
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 3
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(2, 2)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uc1a4"]
 bg_color = Color(0.28, 0.28, 0.28, 1)
@@ -26,7 +35,17 @@ shadow_color = Color(0, 0, 0, 0.647059)
 shadow_size = 2
 shadow_offset = Vector2(2, 2)
 
-[sub_resource type="Resource" id="Resource_4r51w"]
+[sub_resource type="LabelSettings" id="LabelSettings_xbano"]
+resource_local_to_scene = true
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 3
+shadow_color = Color(0, 0, 0, 1)
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_djb4p"]
+
+[sub_resource type="Resource" id="Resource_djb4p"]
 resource_local_to_scene = true
 script = ExtResource("5_w4pru")
 metadata/_custom_type_script = "uid://cqwgrh0esffof"
@@ -58,11 +77,13 @@ flat = true
 [node name="File" type="PopupMenu" parent="VSplitContainer/HBoxContainer/MenuBar"]
 auto_translate_mode = 1
 size = Vector2i(100, 116)
-item_count = 2
+item_count = 3
 item_0/text = "Save"
 item_0/id = 0
 item_1/text = "Load"
 item_1/id = 1
+item_2/text = "New"
+item_2/id = 2
 script = ExtResource("1_uc1a4")
 
 [node name="Edit" type="PopupMenu" parent="VSplitContainer/HBoxContainer/MenuBar"]
@@ -75,14 +96,56 @@ item_1/text = "초기화"
 item_1/id = 1
 script = ExtResource("2_uc1a4")
 
-[node name="PanelContainer" type="PanelContainer" parent="VSplitContainer/HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/HBoxContainer"]
 layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VSplitContainer/HBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "path:"
+label_settings = SubResource("LabelSettings_djb4p")
+
+[node name="PanelContainer" type="PanelContainer" parent="VSplitContainer/HBoxContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_uc1a4")
 script = ExtResource("3_hutkb")
+panel_type = "NodePath"
 
-[node name="PathLabel" type="Label" parent="VSplitContainer/HBoxContainer/PanelContainer"]
+[node name="PathLabel" type="Label" parent="VSplitContainer/HBoxContainer/HBoxContainer/HBoxContainer/PanelContainer"]
 layout_mode = 2
 text = "null"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VSplitContainer/HBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VSplitContainer/HBoxContainer/HBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = " scene:"
+label_settings = SubResource("LabelSettings_xbano")
+
+[node name="PanelContainer2" type="PanelContainer" parent="VSplitContainer/HBoxContainer/HBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_uc1a4")
+script = ExtResource("3_hutkb")
+panel_type = "ScenePath"
+
+[node name="ScenePathLabel" type="Label" parent="VSplitContainer/HBoxContainer/HBoxContainer/HBoxContainer2/PanelContainer2"]
+layout_mode = 2
+text = "null"
+
+[node name="Button" type="Button" parent="VSplitContainer/HBoxContainer/HBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+text = "Play"
+icon = SubResource("CompressedTexture2D_djb4p")
+flat = true
+icon_alignment = 2
 
 [node name="HSplitContainer" type="HSplitContainer" parent="VSplitContainer"]
 clip_contents = true
@@ -92,15 +155,19 @@ layout_mode = 2
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 allow_reselect = true
-item_count = 5
-item_0/text = "autoload"
-item_1/text = "end"
-item_2/text = "expression"
-item_3/text = "say"
-item_4/text = "test"
+item_count = 8
+item_0/text = "AutoLoad"
+item_1/text = "ExpressionValue"
+item_2/text = "Variable"
+item_3/text = "Branch"
+item_4/text = "Choice"
+item_5/text = "End"
+item_6/text = "Say"
+item_7/text = "Test"
 script = ExtResource("1_by5s2")
 dialogue_dic = {
 "autoload": ExtResource("9_4r51w"),
+"branch": ExtResource("11_djb4p"),
 "end": ExtResource("5_mjxqt"),
 "expression": ExtResource("7_hsfof"),
 "say": ExtResource("6_hsfof"),
@@ -111,25 +178,21 @@ dialogue_dic = {
 layout_mode = 2
 script = ExtResource("2_by5s2")
 
-[node name="StartNode" parent="VSplitContainer/HSplitContainer/GraphEdit" instance=ExtResource("3_h8qhg")]
+[node name="0" parent="VSplitContainer/HSplitContainer/GraphEdit" instance=ExtResource("3_h8qhg")]
 self_modulate = Color(0.8, 1, 0.8, 1)
-layout_mode = 0
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
+layout_mode = 1
 offset_left = 100.0
 offset_top = 100.0
 offset_right = 200.0
 offset_bottom = 200.0
-grow_horizontal = 1
-grow_vertical = 1
 mouse_filter = 1
 position_offset = Vector2(100, 100)
 title = "Start"
 slot/0/right_enabled = true
-definition = SubResource("Resource_4r51w")
+definition = SubResource("Resource_djb4p")
 
 [connection signal="id_pressed" from="VSplitContainer/HBoxContainer/MenuBar/File" to="VSplitContainer/HBoxContainer/MenuBar/File" method="_on_id_pressed"]
 [connection signal="id_pressed" from="VSplitContainer/HBoxContainer/MenuBar/Edit" to="VSplitContainer/HBoxContainer/MenuBar/Edit" method="_on_id_pressed"]
+[connection signal="button_up" from="VSplitContainer/HBoxContainer/HBoxContainer/HBoxContainer2/Button" to="." method="_on_button_button_up"]
 [connection signal="node_deselected" from="VSplitContainer/HSplitContainer/GraphEdit" to="VSplitContainer/HBoxContainer/MenuBar/Edit" method="_on_graph_edit_node_deselected"]
 [connection signal="node_selected" from="VSplitContainer/HSplitContainer/GraphEdit" to="VSplitContainer/HBoxContainer/MenuBar/Edit" method="_on_graph_edit_node_selected"]

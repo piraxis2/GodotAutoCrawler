@@ -3,38 +3,45 @@ extends GraphNode
 class_name DialogueNode
 
 @export var definition : NodeDefinition
+@export var is_dynamic_slot: bool = true
 var delete_button: DeleteButton
 
 var id: int = -1
 
-enum port_type { flow, data }
-const color_dic: Dictionary = {"flow": Color.WHITE, "input": Color.AQUAMARINE, "output": Color.DEEP_PINK}
+enum port_type { flow, data, boolean }
+const color_dic: Dictionary = {"flow": Color.WHITE, "input": Color.AQUAMARINE, "output": Color.DEEP_PINK, "boolean": Color.REBECCA_PURPLE}
 
 var port_info: Dictionary
 
 
 func _ready() -> void:
-	delete_button = load("res://addons/dialogtool/Node/Sub/DeleteButton.tscn").instantiate()
+	delete_button = load("res://addons/dialogtool/Node/Sub/delete_button.tscn").instantiate()
 	add_child(delete_button)
 	move_child(delete_button, 0)
 	delete_button.on_click_delete.connect(_on_delete_button_pressed)
 	
-	if definition:
+	if is_dynamic_slot:
 		clear_all_slots()
+	
+	if definition:
 		definition._node_init(self)
 		title = str(definition.get_script().get_global_name()).left(-3)
 
+
 func _on_delete_button_pressed() -> void:
 	print(name)
-	var undo_redo = EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("delete node")
-	undo_redo.add_do_method(get_parent(), "remove_child", self)
-	undo_redo.add_undo_method(get_parent(), "add_child", self)
-	var connections : Array = get_parent().get_connections_for_node(self)
-	if connections.size() > 0 :
-		for connection in connections :
-			undo_redo.add_undo_method(get_parent(), "connect_node", connection["from_node"], connection["from_port"], connection["to_node"], connection["to_port"])
-	undo_redo.commit_action()
+	if Engine.is_editor_hint():
+		var undo_redo = EditorInterface.get_editor_undo_redo()
+		undo_redo.create_action("delete node")
+		undo_redo.add_do_method(get_parent(), "remove_child", self)
+		undo_redo.add_undo_method(get_parent(), "add_child", self)
+		var connections : Array = get_parent().get_connections_for_node(self)
+		if connections.size() > 0 :
+			for connection in connections :
+				undo_redo.add_undo_method(get_parent(), "connect_node", connection["from_node"], connection["from_port"], connection["to_node"], connection["to_port"])
+		undo_redo.commit_action()
+	else:
+		get_parent().remove_child(self)
 
 func update_port() -> void:
 	clear_all_slots()

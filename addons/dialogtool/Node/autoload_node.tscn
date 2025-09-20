@@ -24,6 +24,7 @@ slot/1/right_color = Color(1, 1, 1, 1)
 slot/1/right_icon = null
 slot/1/draw_stylebox = true
 script = ExtResource("1_b1ncv")
+is_dynamic_slot = false
 metadata/_custom_type_script = "uid://dsgslgnkwssi5"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
