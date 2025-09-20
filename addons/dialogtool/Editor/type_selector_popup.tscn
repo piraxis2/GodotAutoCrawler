@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cwuxealkh5uu4"]
 
 [node name="Popup" type="PopupPanel"]
+oversampling_override = 1.0
 size = Vector2i(76, 60)
 visible = true
 

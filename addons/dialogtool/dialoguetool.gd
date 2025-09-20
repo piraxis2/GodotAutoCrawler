@@ -40,4 +40,4 @@ func _get_plugin_name():
 
 
 func _get_plugin_icon():
-	return EditorInterface.get_editor_theme().get_icon("Node", "EditorIcons")
+	return load("res://addons/dialogtool/Icon/dialogue_tool_icon.png")

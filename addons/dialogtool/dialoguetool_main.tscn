@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://b433cbwymu6lu" path="res://addons/dialogtool/Editor/path_container.gd" id="3_hutkb"]
 [ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="5_mjxqt"]
 [ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="5_w4pru"]
+[ext_resource type="Texture2D" uid="uid://ceigxgfhbd52e" path="res://addons/dialogtool/Icon/play_icon.png" id="5_xbano"]
 [ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="6_hsfof"]
 [ext_resource type="Script" uid="uid://0o7pt687wpfu" path="res://addons/dialogtool/Resource/NodeDefinitions/Data/expression_value_def.gd" id="7_hsfof"]
 [ext_resource type="Script" uid="uid://dol1mfeoxw33q" path="res://addons/dialogtool/Resource/NodeDefinitions/Data/autoload_def.gd" id="9_4r51w"]
@@ -43,9 +44,7 @@ shadow_size = 3
 shadow_color = Color(0, 0, 0, 1)
 shadow_offset = Vector2(2, 2)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_djb4p"]
-
-[sub_resource type="Resource" id="Resource_djb4p"]
+[sub_resource type="Resource" id="Resource_xbano"]
 resource_local_to_scene = true
 script = ExtResource("5_w4pru")
 metadata/_custom_type_script = "uid://cqwgrh0esffof"
@@ -143,7 +142,7 @@ text = "null"
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 text = "Play"
-icon = SubResource("CompressedTexture2D_djb4p")
+icon = ExtResource("5_xbano")
 flat = true
 icon_alignment = 2
 
@@ -189,7 +188,11 @@ mouse_filter = 1
 position_offset = Vector2(100, 100)
 title = "Start"
 slot/0/right_enabled = true
-definition = SubResource("Resource_djb4p")
+definition = SubResource("Resource_xbano")
+
+[node name="PopupMenu" type="PopupMenu" parent="."]
+oversampling_override = 1.0
+position = Vector2i(526, 274)
 
 [connection signal="id_pressed" from="VSplitContainer/HBoxContainer/MenuBar/File" to="VSplitContainer/HBoxContainer/MenuBar/File" method="_on_id_pressed"]
 [connection signal="id_pressed" from="VSplitContainer/HBoxContainer/MenuBar/Edit" to="VSplitContainer/HBoxContainer/MenuBar/Edit" method="_on_id_pressed"]

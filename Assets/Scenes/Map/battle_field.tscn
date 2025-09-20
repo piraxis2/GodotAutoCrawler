@@ -264,30 +264,24 @@ custom_data_layer_0/name = "FixedArticle"
 custom_data_layer_0/type = 24
 sources/3 = SubResource("TileSetAtlasSource_fla71")
 
-[node name="BattleField" type="Node2D" node_paths=PackedStringArray("TileMapLayer", "TurnHelper", "Articles", "FxPlayer")]
+[node name="BattleField" type="Node2D" node_paths=PackedStringArray("TileMapLayer", "TurnHelper")]
 y_sort_enabled = true
 script = ExtResource("1_8td0i")
 TileMapLayer = NodePath("TileMapLayer")
 TurnHelper = NodePath("TurnHelper")
-Articles = NodePath("Articles")
-FxPlayer = NodePath("FxPlayer")
 
-[node name="Articles" type="Node2D" parent="."]
-y_sort_enabled = true
+[node name="Articles" type="Node" parent="."]
 script = ExtResource("2_q3ikk")
 
-[node name="Neutral" type="Node2D" parent="Articles"]
-y_sort_enabled = true
+[node name="Neutral" type="Node" parent="Articles"]
 
-[node name="Ally" type="Node2D" parent="Articles"]
-y_sort_enabled = true
+[node name="Ally" type="Node" parent="Articles"]
 
 [node name="Character" parent="Articles/Ally" instance=ExtResource("3_fajhp")]
 position = Vector2(-80, 40)
 ArticleStatus = SubResource("Resource_jw18j")
 
-[node name="Opponent" type="Node2D" parent="Articles"]
-y_sort_enabled = true
+[node name="Opponent" type="Node" parent="Articles"]
 
 [node name="Character" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
 position = Vector2(48, -24)
@@ -310,7 +304,7 @@ script = ExtResource("1_25g81")
 [node name="InputHelper" type="Node" parent="."]
 script = ExtResource("19_fajhp")
 
-[node name="FxPlayer" type="Node2D" parent="."]
+[node name="FxPlayer" type="Node" parent="."]
 script = ExtResource("16_3bkig")
 _spriteFxScenes = Dictionary[StringName, PackedScene]({
 &"IceBolt": ExtResource("17_4m0c6")

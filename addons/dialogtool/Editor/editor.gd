@@ -5,7 +5,7 @@ var _popup_menu: PopupMenu
 var _next_id: int = 1
 @onready var _start_node_position: Vector2 = $"0".position_offset
 @onready var _path_label: Label = $"../../HBoxContainer/HBoxContainer/HBoxContainer/PanelContainer/PathLabel"
-
+@onready var context_menu: PopupMenu = $"../../../PopupMenu"
 var graph_resource: DialogueGraphResource = DialogueGraphResource.new()
 
 
@@ -25,6 +25,9 @@ func _gui_input(event: InputEvent) -> void:
 			
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.is_pressed():
 		var mouse_pos = get_local_mouse_position()
+		var g_pos = get_global_mouse_position()
+		context_menu.popup_on_parent(Rect2i(g_pos, context_menu.size))
+		
 		var closest_connection = get_closest_connection_at_point(mouse_pos)
 		if closest_connection == null:
 			return
