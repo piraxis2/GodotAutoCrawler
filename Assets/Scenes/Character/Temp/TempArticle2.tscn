@@ -649,7 +649,6 @@ minDamage = 1
 maxDamage = 10
 
 [node name="Character" type="Node2D"]
-visible = false
 script = ExtResource("1_vmxim")
 ArticleStatus = SubResource("Resource_7e21v")
 

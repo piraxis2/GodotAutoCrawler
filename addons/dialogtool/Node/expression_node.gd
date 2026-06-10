@@ -1,6 +1,5 @@
 @tool
-extends DialogueNode
-class_name ExpressionGrapheNode
+class_name ExpressionGrapheNode extends DialogueNode
 var left_slot_count: int = 0
 
 @onready var code_edit: CodeEdit = $CodeEdit
@@ -12,6 +11,8 @@ var left_slot_count: int = 0
 
 
 @onready var input_node = load("res://addons/dialogtool/Node/Sub/expression_input_node.tscn")
+
+signal on_change_text_edit(node: DialogueNode)
 
 func _ready() -> void:
 	super._ready()
@@ -37,8 +38,7 @@ func on_slider_update(value: float) -> void:
 			
 	for i in range(value as int):
 		var label = input_node.instantiate()
-		#Ascii_A
-		var key = char(i + 65)
+		var key = char(i + 65) #Ascii_A
 		label.get_label().text = key
 		var lambda_capture_definition = definition
 		var lambda = func() -> Variant:
@@ -61,3 +61,7 @@ func on_slider_update(value: float) -> void:
 	
 	definition.update_input(input)
 	
+
+
+func _on_code_edit_text_changed() -> void:
+	on_change_text_edit.emit(self)

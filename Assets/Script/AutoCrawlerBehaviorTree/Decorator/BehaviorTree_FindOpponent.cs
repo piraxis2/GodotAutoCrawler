@@ -11,11 +11,6 @@ namespace AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Decorator;
 [GlobalClass, Tool]
 public partial class BehaviorTree_FindOpponent: BehaviorTree_Decorator
 {
-    BattleFieldTileMapLayer _tileMapLayer;
-    protected override void OnReady()
-    {
-        _tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(this);
-    }
     protected override bool IsValid(BehaviorTree_Node child, double delta, Node owner)
     {
         return !IsOpponentInAttackRange(owner as CharacterArticle);
@@ -30,7 +25,7 @@ public partial class BehaviorTree_FindOpponent: BehaviorTree_Decorator
 
         foreach (var position in ownerCharacterArticle.CalculatedAttackRange)
         {
-            var article = _tileMapLayer.GetArticle(position);
+            var article = BattleFieldScene.BattleField.BattleFieldTileMap.GetArticle(position);
             if (article != null)
             {
                 if (ownerCharacterArticle.IsOpponent(article))

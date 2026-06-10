@@ -4,7 +4,6 @@ class_name ExpressionValueDef extends DataDefinition
 @export var expression_string: String = ""
 @export var inputs: Dictionary
 var expression: Expression = Expression.new()
-var dialogue_node: DialogueNode
 var built_value
 
 var output_port_data: Dictionary = {"slot_position": 1, "port_type": DialogueNode.port_type.data, "color": DialogueNode.color_dic["output"]}
@@ -15,16 +14,15 @@ func _get_dialogue_node() -> String:
 func _node_init(node: DialogueNode) -> void:
 	node.resizable = true
 	node.code_edit.text = expression_string
-	node.code_edit.text_changed.connect(text_changed)
-	dialogue_node = node
+	node.on_change_text_edit.connect(text_changed)
 	node.set_slot(output_port_data["slot_position"], false, output_port_data["port_type"], Color.WHITE, true, output_port_data["port_type"], output_port_data["color"])
  
-func _capture() -> void:
-	expression_string = dialogue_node.code_edit.text
+func _capture(node: DialogueNode) -> void:
+	expression_string = node.code_edit.text
 	build()
 	
-func text_changed() -> void:
-	expression_string = dialogue_node.code_edit.text
+func text_changed(node: DialogueNode) -> void:
+	expression_string = node.code_edit.text
 	
 func temp_property(property_path: String) -> void:
 	print("property: ", property_path)

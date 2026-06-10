@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://c1vtkfftwkxf4"]
+
+[ext_resource type="PackedScene" uid="uid://bphpfky14sujp" path="res://addons/dialogtool/Node/dialogue_node.tscn" id="1_suftv"]
+[ext_resource type="Script" uid="uid://dhnnm6x3hey1w" path="res://addons/dialogtool/Node/scene_function_node.gd" id="2_eh4xx"]
+
+[node name="DialogueNode" instance=ExtResource("1_suftv")]
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+script = ExtResource("2_eh4xx")
+
+[node name="OptionButton" type="OptionButton" parent="." index="1"]
+layout_mode = 2

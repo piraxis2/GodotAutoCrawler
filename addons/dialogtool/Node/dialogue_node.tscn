@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dsgslgnkwssi5" path="res://addons/dialogtool/Node/dialogue_node.gd" id="1_ywnp2"]
 
 [node name="DialogueNode" type="GraphNode"]
+z_index = 1
 custom_minimum_size = Vector2(100, 100)
 offset_right = 100.0
 offset_bottom = 100.0

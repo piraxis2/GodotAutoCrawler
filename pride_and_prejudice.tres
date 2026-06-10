@@ -1,0 +1,177 @@
+[gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=15 format=3 uid="uid://bjhdru85ecpag"]
+
+[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="1_dku57"]
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="2_nxxe4"]
+[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="3_3ganr"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/dialogtool/Resource/dialogue_graph_resource.gd" id="4_tl1xb"]
+
+[sub_resource type="Resource" id="Resource_rf3nk"]
+resource_local_to_scene = true
+script = ExtResource("2_nxxe4")
+metadata/_custom_type_script = "uid://cqwgrh0esffof"
+
+[sub_resource type="Resource" id="Resource_ph3je"]
+script = ExtResource("1_dku57")
+speaker = "엘리자베스"
+say_text = "잠시 어색한 침묵이 흐른 뒤 두 친구는 다른 식구들이 있는 곳으로 돌아갔다. "
+
+[sub_resource type="Resource" id="Resource_8xwoy"]
+script = ExtResource("1_dku57")
+speaker = "엘리자베스"
+say_text = "샬럿은 잠시 후에 떠났고, [color=blue]엘리자베스[/color]는 혼자 남아서 샬럿이 했던 말을 곱씹어 보고 있었다."
+
+[sub_resource type="Resource" id="Resource_54atc"]
+script = ExtResource("1_dku57")
+speaker = "엘리자베스"
+say_text = "두 사람이 전혀 어울리지 않는 상대라는 생각을 접기까지에는 꽤 오랜 시간이 걸렸다."
+
+[sub_resource type="Resource" id="Resource_ph7o4"]
+script = ExtResource("1_dku57")
+speaker = "엘리자베스"
+say_text = "콜린스가 겨우 사흘 동안에 두 여자에게 청혼을 했다는 사실은 그의 청혼을 샬럿이 수락했다는 사실에 비하면 전혀 놀라운 일이 아니었다.  "
+
+[sub_resource type="Resource" id="Resource_m56fl"]
+script = ExtResource("1_dku57")
+speaker = "엘리자베스"
+say_text = "[color=blue]엘리자베스[/color]는 평소에 결혼에 대한 샬럿의 생각이 자신의 생각과 똑같지 않다는 건 알고 있었다."
+
+[sub_resource type="Resource" id="Resource_lxtkn"]
+script = ExtResource("1_dku57")
+speaker = "엘리자베스"
+say_text = "그러나 샬럿이 막상 결혼을 결정하는 순간에 세속적인 유익을 위해 그보다 중요한 모든 감정을 희생할 수 있을 거라고는 생각하지 못했다. "
+
+[sub_resource type="Resource" id="Resource_814n7"]
+script = ExtResource("1_dku57")
+speaker = "엘리자베스"
+say_text = "콜린스의 아내가 된 샬럿의 모습은 너무도 굴욕적인 그림이었다."
+
+[sub_resource type="Resource" id="Resource_otpto"]
+script = ExtResource("1_dku57")
+speaker = "엘리자베"
+say_text = "[color=blue]엘리자베스[/color]는 친구가 수치스러운 선택을 해서 자신을 실망시킨 것이 너무 가슴아팠다. 
+그러나 그보다 더 고통스러운 건 샬럿이 스스로 선택한 운명을 행스복하게 살아 낼 수 없을 거라는 우울한 확신이었다."
+
+[sub_resource type="Resource" id="Resource_wjeyc"]
+script = ExtResource("3_3ganr")
+
+[resource]
+script = ExtResource("4_tl1xb")
+nodes = {
+0: {
+"definition": SubResource("Resource_rf3nk"),
+"id": 0,
+"name": &"_GraphNode_37514",
+"position_offset": Vector2(-9020, -4060),
+"size": Vector2(100, 100.000244)
+},
+4: {
+"definition": SubResource("Resource_ph3je"),
+"id": 4,
+"name": &"_GraphNode_40329",
+"position_offset": Vector2(-8820, -4180),
+"size": Vector2(584, 280)
+},
+5: {
+"definition": SubResource("Resource_8xwoy"),
+"id": 5,
+"name": &"_GraphNode_40342",
+"position_offset": Vector2(-8160, -4180),
+"size": Vector2(584, 280)
+},
+6: {
+"definition": SubResource("Resource_54atc"),
+"id": 6,
+"name": &"_GraphNode_40355",
+"position_offset": Vector2(-7480, -4180),
+"size": Vector2(584, 280)
+},
+7: {
+"definition": SubResource("Resource_ph7o4"),
+"id": 7,
+"name": &"_GraphNode_40368",
+"position_offset": Vector2(-8800, -3760),
+"size": Vector2(584, 280)
+},
+8: {
+"definition": SubResource("Resource_m56fl"),
+"id": 8,
+"name": &"_GraphNode_40381",
+"position_offset": Vector2(-8100, -3780),
+"size": Vector2(584, 280)
+},
+9: {
+"definition": SubResource("Resource_lxtkn"),
+"id": 9,
+"name": &"_GraphNode_40394",
+"position_offset": Vector2(-7440, -3760),
+"size": Vector2(584, 280)
+},
+10: {
+"definition": SubResource("Resource_814n7"),
+"id": 10,
+"name": &"_GraphNode_40407",
+"position_offset": Vector2(-8780, -3420),
+"size": Vector2(584, 280)
+},
+11: {
+"definition": SubResource("Resource_otpto"),
+"id": 11,
+"name": &"_GraphNode_40420",
+"position_offset": Vector2(-8100, -3420),
+"size": Vector2(584, 280)
+},
+12: {
+"definition": SubResource("Resource_wjeyc"),
+"id": 12,
+"name": &"_GraphNode_40433",
+"position_offset": Vector2(-7380, -3340),
+"size": Vector2(100, 100)
+}
+}
+connections = Array[Dictionary]([{
+"from_node_id": 4,
+"from_port": 0,
+"to_node_id": 5,
+"to_port": 0
+}, {
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 4,
+"to_port": 0
+}, {
+"from_node_id": 5,
+"from_port": 0,
+"to_node_id": 6,
+"to_port": 0
+}, {
+"from_node_id": 6,
+"from_port": 0,
+"to_node_id": 7,
+"to_port": 0
+}, {
+"from_node_id": 7,
+"from_port": 0,
+"to_node_id": 8,
+"to_port": 0
+}, {
+"from_node_id": 8,
+"from_port": 0,
+"to_node_id": 9,
+"to_port": 0
+}, {
+"from_node_id": 9,
+"from_port": 0,
+"to_node_id": 10,
+"to_port": 0
+}, {
+"from_node_id": 10,
+"from_port": 0,
+"to_node_id": 11,
+"to_port": 0
+}, {
+"from_node_id": 11,
+"from_port": 0,
+"to_node_id": 12,
+"to_port": 0
+}])
+next_node_id = 13

@@ -27,7 +27,7 @@ public partial class BehaviorTree_Move : BehaviorTree_Action
 
         if (owner is not CharacterArticle characterArticle) return null;
 
-        var articlesContainer = GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(owner);
+        var articlesContainer = BattleFieldScene.BattleField.Articles; 
         if (articlesContainer == null) return null;
 
         var opponentList = articlesContainer.GetOpponentArticles(owner);
@@ -85,7 +85,7 @@ public partial class BehaviorTree_Move : BehaviorTree_Action
             return BtStatus.Running;
         }
 
-        var tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(article)
+        var tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap 
                            ?? throw new NullReferenceException("TileMapLayer is null");
 
         _targetPosition ??= FindTarget(article, tileMapLayer);

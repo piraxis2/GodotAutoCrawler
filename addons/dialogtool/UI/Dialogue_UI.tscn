@@ -1,0 +1,136 @@
+[gd_scene load_steps=9 format=3 uid="uid://bk1bu7m0trp58"]
+
+[ext_resource type="Theme" uid="uid://bqrysn554oj2a" path="res://addons/dialogtool/UI/DialogueTheme.tres" id="1_edf6t"]
+[ext_resource type="Script" uid="uid://b7kljqpa3nl1b" path="res://addons/dialogtool/UI/dialogue_ui.gd" id="1_nyeh5"]
+[ext_resource type="Script" uid="uid://bfwj56povbrk2" path="res://addons/dialogtool/UI/type_effect.gd" id="2_fx6m3"]
+[ext_resource type="Texture2D" uid="uid://bhi7382a1qe86" path="res://addons/dialogtool/Icon/dialogue_indicator.png" id="4_0ktg2"]
+[ext_resource type="Script" uid="uid://66eymdyxay5j" path="res://addons/dialogtool/RunTime/dialogue_player.gd" id="6_eaov6"]
+
+[sub_resource type="Animation" id="Animation_43xjo"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-48, -20)]
+}
+
+[sub_resource type="Animation" id="Animation_85v12"]
+resource_name = "idle"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(-50, -30), Vector2(-50, -25), Vector2(-50, -30)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4x2k0"]
+_data = {
+&"RESET": SubResource("Animation_43xjo"),
+&"idle": SubResource("Animation_85v12")
+}
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nyeh5")
+
+[node name="MarginContainer" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -211.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "엘리자베스"
+
+[node name="Text" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = ExtResource("1_edf6t")
+bbcode_enabled = true
+text = "잠시 어색한 침묵이 흐른 뒤 두 친구는 다른 식구들이 있는 곳으로 돌아갔다. 샬럿은 잠시 후에 떠났고, 엘리자베스는 혼자 남아서 샬럿이 했던 말을 곱씹어 보고 있었다. 두 사람이 전혀 어울리지 않는 상대라는 생각을 접기까지에는 꽤 오랜 시간이 걸렸다. 콜린스가 겨우 사흘 동안에 두 여자에게 청혼을 했다는 사실은 그의 청혼을 샬럿이 수락했다는 사실에 비하면 전혀 놀라운 일이 아니었다. 엘리자베스는 평소에 결혼에 대한 샬럿의 생각이 자신의 생각과 똑같지 않다는 건 알고 있었다. 그러나 샬럿이 막상 결혼을 결정하는 순간에 세속적인 유익을 위해 그보다 중요한 모든 감정을 희생할 수 있을 거라고는 생각하지 못했다. 콜린스의 아내가 된 샬럿의 모습은 너무도 굴욕적인 그림이었다. 엘리자베스는 친구가 수치스러운 선택을 해서 자신을 실망시킨 것이 너무 가슴아팠다. 그러나 그보다 더 고통스러운 건 샬럿이 스스로 선택한 운명을 행복하게 살아 낼 수 없을 거라는 우울한 확신이었다."
+fit_content = true
+custom_effects = [null]
+script = ExtResource("2_fx6m3")
+delay_per_char = 0.08
+
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/Control"]
+texture_filter = 1
+layout_mode = 0
+offset_left = -48.0
+offset_top = -20.0
+offset_right = -16.0
+offset_bottom = 12.0
+size_flags_horizontal = 8
+texture = ExtResource("4_0ktg2")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MarginContainer/VBoxContainer/Control/TextureRect"]
+libraries = {
+&"": SubResource("AnimationLibrary_4x2k0")
+}
+autoplay = "idle"
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("6_eaov6")
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

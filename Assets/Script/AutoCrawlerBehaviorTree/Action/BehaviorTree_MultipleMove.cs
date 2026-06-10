@@ -27,7 +27,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 
         if (owner is not CharacterArticle) return null;
 
-        var articlesContainer = GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(owner);
+        var articlesContainer = BattleFieldScene.BattleField.Articles; 
         if (articlesContainer == null) return null;
 
         var opponentList = articlesContainer.GetOpponentArticles(owner);
@@ -71,7 +71,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
                     Width = 1.0f
                 };
 
-                GlobalUtil.GetBattleField(owner).AddChild(_line2D);
+                BattleFieldScene.BattleField.AddChild(_line2D);
             }
         }
 #endif
@@ -114,7 +114,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
             return BtStatus.Running;
         }
 
-        var tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(article);
+        var tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap; 
         if (tileMapLayer == null) throw new NullReferenceException("TileMapLayer is null");
 
         _moveTweenQueue.Clear();

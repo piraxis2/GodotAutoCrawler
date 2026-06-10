@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=3 uid="uid://c8neexdujii5q"]
+
+[ext_resource type="Shader" uid="uid://buey5kki8tcp8" path="res://Assets/Shader/UI/masking.gdshader" id="1_uuktv"]
+[ext_resource type="Texture2D" uid="uid://6nctta0sds4j" path="res://Assets/Textures/Portraits/Noabel.png" id="2_7gjyi"]
+[ext_resource type="Texture2D" uid="uid://nnnb4jxmix6y" path="res://Assets/Textures/mask.png" id="2_41irh"]
+[ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/health_bar.tscn" id="3_41irh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7gjyi"]
+bg_color = Color(0, 0, 0, 0.36600003)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g68pl"]
+shader = ExtResource("1_uuktv")
+shader_parameter/texture_scale = 0.99999998137332
+shader_parameter/texture_offset = Vector2(0, 0)
+shader_parameter/mask_texture = ExtResource("2_41irh")
+shader_parameter/mask_scale = 1.0
+shader_parameter/mask_offset = Vector2(0, 0)
+
+[node name="Control" type="PanelContainer"]
+offset_right = 246.0
+offset_bottom = 42.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_7gjyi")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer"]
+material = SubResource("ShaderMaterial_g68pl")
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+texture = ExtResource("2_7gjyi")
+expand_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "노아벨"
+
+[node name="HealthBar" parent="HBoxContainer/VBoxContainer" instance=ExtResource("3_41irh")]
+custom_minimum_size = Vector2(200, 15)
+layout_mode = 2
+size_flags_horizontal = 1

@@ -1,7 +1,6 @@
 @tool
 extends ItemList
 class_name DialogueNodeItemList
-@export var dialogue_dic : Dictionary = { "end": EndDef, "say": SayDef}
 
 func _ready() -> void:
 	var index: int = 0
@@ -11,8 +10,9 @@ func _ready() -> void:
 	for elem in file_list:
 		var script: Script = load(elem)
 		var name = script.get_global_name().left(-3)
-		if name == "Start":
+		if name == "Start" or name == "Description":
 			continue
+			
 		add_item(name)
 		set_item_metadata(index, script)
 		index += 1

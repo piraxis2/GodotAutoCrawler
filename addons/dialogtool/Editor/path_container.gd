@@ -17,5 +17,5 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 func _drop_data(at_position: Vector2, data: Variant) -> void:
 	match panel_type:
 		"NodePath": $"../../../../HSplitContainer/GraphEdit".load_resource_action(data.files[0])
-		"ScenePath": 1
+		"ScenePath": $"../../HBoxContainer2/PanelContainer2/ScenePathLabel".text = data.files[0]
 	

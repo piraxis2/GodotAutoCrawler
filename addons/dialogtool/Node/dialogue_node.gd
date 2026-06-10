@@ -1,8 +1,7 @@
 @tool
-extends GraphNode
-class_name DialogueNode
+class_name DialogueNode extends GraphNode
 
-@export var definition : NodeDefinition
+@export var definition : DialogueDefinition
 @export var is_dynamic_slot: bool = true
 var delete_button: DeleteButton
 

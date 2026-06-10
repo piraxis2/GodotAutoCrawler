@@ -1,6 +1,5 @@
 @tool
-extends DialogueNode
-class_name AutoloadGraphNode
+class_name AutoloadGraphNode extends DialogueNode
 
 @onready var autoload_option: OptionButton = $HBoxContainer/OptionButton
 @onready var property_option: OptionButton = $HBoxContainer/OptionButton2

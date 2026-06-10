@@ -16,14 +16,27 @@ enum AllowedVariables {
 	RANDOM = 100,
 }
 
+
+func get_runtime_type() -> StringName:
+	return &"variable"
+
+
+func get_runtime_params() -> Dictionary:
+	return {
+		"name": variable_name,
+		"variable_type": variable_type,
+		"value": variable,
+	}
+
+
 func _get_dialogue_node() -> String:
 	return "res://addons/dialogtool/Node/variable_node.tscn"
 
 func _node_init(node: DialogueNode) -> void:
-	definition_node = node
+	return
 
-func _capture() ->void:
-	var node_value = definition_node.get_value()
+func _capture(node: DialogueNode) ->void:
+	var node_value = node.get_value()
 	variable_name = node_value["name"]
 	variable_type = node_value["type"]
 	variable = node_value["variable"]

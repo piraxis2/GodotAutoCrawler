@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://u1rqr5y5im8w"]
+
+[ext_resource type="Theme" uid="uid://bqrysn554oj2a" path="res://addons/dialogtool/UI/DialogueTheme.tres" id="1_nf1fl"]
+[ext_resource type="Script" uid="uid://bfwj56povbrk2" path="res://addons/dialogtool/UI/type_effect.gd" id="2_pen7a"]
+
+[node name="Text" type="RichTextLabel"]
+custom_minimum_size = Vector2(200, 0)
+theme = ExtResource("1_nf1fl")
+bbcode_enabled = true
+fit_content = true
+custom_effects = [null]
+script = ExtResource("2_pen7a")
+delay_per_char = 0.08

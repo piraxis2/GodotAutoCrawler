@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://fmrbrhfsmn68"]
+
+[node name="GridContainer" type="GridContainer"]
+columns = 2
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Speaker"
+
+[node name="SpeakerTargetTextEdit" type="TextEdit" parent="."]
+custom_minimum_size = Vector2(500, 35)
+layout_mode = 2
+placeholder_text = "empty"
+
+[node name="Label2" type="Label" parent="."]
+layout_mode = 2
+text = "Say"
+
+[node name="SayTextEdit2" type="TextEdit" parent="."]
+custom_minimum_size = Vector2(500, 200)
+layout_mode = 2
+placeholder_text = "empty"

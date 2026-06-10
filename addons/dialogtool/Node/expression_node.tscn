@@ -53,9 +53,11 @@ symbol_lookup_on_click = true
 symbol_tooltip_on_hover = true
 gutters_draw_line_numbers = true
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="EmptySpace" type="Control" parent="."]
 modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
+
+[connection signal="text_changed" from="CodeEdit" to="." method="_on_code_edit_text_changed"]
 
 [editable path="HBoxContainer"]

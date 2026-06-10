@@ -1,5 +1,5 @@
 @tool
-@abstract class_name DataDefinition extends NodeDefinition
+@abstract class_name DataDefinition extends DialogueDefinition
 
 var value: Variant:
 	get:

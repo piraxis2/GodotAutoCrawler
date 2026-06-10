@@ -1,5 +1,5 @@
 @tool
-class_name TestDef extends NodeDefinition
+class_name TestDef extends DialogueDefinition
 
 func _node_init(node: DialogueNode) -> void:
 	node.set_slot(0, true, node.port_type.data, node.color_dic["input"], false, 0, Color.WHITE)
@@ -10,5 +10,5 @@ func _node_init(node: DialogueNode) -> void:
 	node.add_child(tempbutton)
 	pass
 
-func _capture() ->void:
+func _capture(node: DialogueNode) ->void:
 	pass

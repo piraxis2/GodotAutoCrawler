@@ -1,0 +1,78 @@
+[gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=9 format=3 uid="uid://cv0vpkp0aor7k"]
+
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_t0hpo"]
+[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="2_6y7fw"]
+[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="3_ui7pn"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/dialogtool/Resource/dialogue_graph_resource.gd" id="4_igy2m"]
+
+[sub_resource type="Resource" id="Resource_rf3nk"]
+resource_local_to_scene = true
+script = ExtResource("1_t0hpo")
+graph_resource = null
+metadata/_custom_type_script = "uid://cqwgrh0esffof"
+
+[sub_resource type="Resource" id="Resource_xsfy0"]
+script = ExtResource("2_6y7fw")
+speaker = "1"
+say_text = "1"
+graph_resource = null
+
+[sub_resource type="Resource" id="Resource_b4ylq"]
+script = ExtResource("2_6y7fw")
+speaker = "2"
+say_text = "2"
+graph_resource = null
+
+[sub_resource type="Resource" id="Resource_da3iy"]
+script = ExtResource("3_ui7pn")
+graph_resource = null
+
+[resource]
+script = ExtResource("4_igy2m")
+nodes = {
+0: {
+"definition": SubResource("Resource_rf3nk"),
+"id": 0,
+"name": &"@GraphNode@37514",
+"position_offset": Vector2(0, 0),
+"size": Vector2(100, 100.0002)
+},
+1: {
+"definition": SubResource("Resource_xsfy0"),
+"id": 1,
+"name": &"1",
+"position_offset": Vector2(200, -60),
+"size": Vector2(584, 280)
+},
+2: {
+"definition": SubResource("Resource_b4ylq"),
+"id": 2,
+"name": &"2",
+"position_offset": Vector2(860, -80),
+"size": Vector2(584, 280)
+},
+3: {
+"definition": SubResource("Resource_da3iy"),
+"id": 3,
+"name": &"3",
+"position_offset": Vector2(1580, 60),
+"size": Vector2(100, 100)
+}
+}
+connections = Array[Dictionary]([{
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 1,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 0,
+"to_node_id": 2,
+"to_port": 0
+}, {
+"from_node_id": 2,
+"from_port": 0,
+"to_node_id": 3,
+"to_port": 0
+}])
+next_node_id = 4

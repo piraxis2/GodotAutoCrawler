@@ -47,7 +47,8 @@ public abstract class Damage : StatusAffect, IAffectedImmediately
 
         if (statusElement is not Health health) return;
 
-        var damageFloater = recipient.Owner.GetNode("/root/DamageFloater");
+
+        var damageFloater = BattleFieldScene.BattleField.DamageFloater; 
         var damageNegate = GetDamageNegate(recipient);
         if (damageNegate != DamageNegate.None)
         {

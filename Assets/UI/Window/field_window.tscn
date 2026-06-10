@@ -1,0 +1,68 @@
+[gd_scene load_steps=4 format=3 uid="uid://o131wnnlspr3"]
+
+[ext_resource type="PackedScene" uid="uid://b01mjaqgpwrnq" path="res://Assets/UI/Window/inspector.tscn" id="1_vmhkt"]
+[ext_resource type="PackedScene" uid="uid://o131wnnlspr3" path="res://Assets/UI/Window/field_window.tscn" id="2_oune0"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_h2yge"]
+viewport_path = NodePath(".")
+
+[node name="main" type="Node"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.29803923, 0.29803923, 0.29803923, 1)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="VSplitContainer" type="VSplitContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offset = 200
+
+[node name="HSplitContainer" type="HSplitContainer" parent="CanvasLayer/VSplitContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = -500
+
+[node name="Panel" type="Panel" parent="CanvasLayer/VSplitContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSplitContainer" type="HSplitContainer" parent="CanvasLayer/VSplitContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Panel" type="Panel" parent="CanvasLayer/VSplitContainer/HSplitContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FieldWindow" parent="CanvasLayer/VSplitContainer/HSplitContainer/HSplitContainer/Panel" instance=ExtResource("2_oune0")]
+vrs_texture = SubResource("ViewportTexture_h2yge")
+
+[node name="Panel2" type="Panel" parent="CanvasLayer/VSplitContainer/HSplitContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Window" parent="CanvasLayer/VSplitContainer/HSplitContainer/HSplitContainer/Panel2" node_paths=PackedStringArray("_snapTarget") groups=["sub_windows"] instance=ExtResource("1_vmhkt")]
+initial_position = 0
+position = Vector2i(376, 36)
+_snapTarget = NodePath("..")
+
+[node name="HSplitContainer2" type="HSplitContainer" parent="CanvasLayer/VSplitContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Panel" type="Panel" parent="CanvasLayer/VSplitContainer/HSplitContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Panel2" type="Panel" parent="CanvasLayer/VSplitContainer/HSplitContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3

@@ -24,7 +24,6 @@ func _ready() -> void:
 
 		if definition and definition.variable_type == VariableDef.AllowedVariables[type]:
 			selected = option_button.item_count - 1
-			print(selected)
 				
 		option_button.set_item_metadata(option_button.item_count - 1, VariableDef.AllowedVariables[type])
 	
