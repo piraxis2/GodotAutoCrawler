@@ -46,8 +46,14 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 
         if (targetPointList.Count == 0) return null;
 
-        targetPointList.Sort((a, b) => (a - owner.TilePosition).LengthSquared().CompareTo((b - owner.TilePosition).LengthSquared()));
-        var path = _aStar2D.GetIdPath(owner.TilePosition, targetPointList[0], true);
+        _aStar2D.SetPointSolid(owner.TilePosition, false);
+        var path = targetPointList
+            .Select(targetPoint => _aStar2D.GetIdPath(owner.TilePosition, targetPoint, true))
+            .Where(candidatePath => candidatePath.Count >= 2)
+            .OrderBy(candidatePath => candidatePath.Count)
+            .ThenBy(candidatePath => (candidatePath[candidatePath.Count - 1] - owner.TilePosition).LengthSquared())
+            .FirstOrDefault();
+        if (path == null) return null;
 
         owner.ArticleStatus.StatusElementsDictionary.TryGetValue(typeof(Mobility), out var mobility);
         int mobilityValue = ((mobility as Mobility)?.Value ?? 2) + 1;

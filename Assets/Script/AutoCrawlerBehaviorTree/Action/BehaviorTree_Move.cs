@@ -50,11 +50,15 @@ public partial class BehaviorTree_Move : BehaviorTree_Action
 
         if (targetPointList.Count == 0) return null;
 
-        // 가장 가까운 타겟을 찾는다.
-        targetPointList.Sort((a, b) => (a - characterArticle.TilePosition).LengthSquared().CompareTo((b - characterArticle.TilePosition).LengthSquared()));
-        var path = _aStar2D.GetIdPath(characterArticle.TilePosition, targetPointList[0], true);
+        _aStar2D.SetPointSolid(characterArticle.TilePosition, false);
+        var path = targetPointList
+            .Select(targetPoint => _aStar2D.GetIdPath(characterArticle.TilePosition, targetPoint, true))
+            .Where(candidatePath => candidatePath.Count >= 2)
+            .OrderBy(candidatePath => candidatePath.Count)
+            .ThenBy(candidatePath => (candidatePath[candidatePath.Count - 1] - characterArticle.TilePosition).LengthSquared())
+            .FirstOrDefault();
 
-        if (path.Count < 2) return null;
+        if (path == null) return null;
 
         return path.Count > 1 ? path[1] : null;
     }
