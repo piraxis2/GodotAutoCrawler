@@ -17,6 +17,8 @@ func _enter_tree() -> void:
 	
 	_make_visible(false)
 	debugger_plugin = DialogueDebuggerPlugin.new()
+	# 디버거가 실행 노드 메시지를 받아 하이라이트할 GraphEdit를 주입.
+	debugger_plugin.graph_edit = main_panel_instance.get_node("VSplitContainer/HSplitContainer/GraphEdit")
 	add_debugger_plugin(debugger_plugin)
 
 

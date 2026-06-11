@@ -35,7 +35,8 @@ func _ready() -> void:
 	
 	
 func value_update(idx: int) -> void:
-	definition.call_deferred("_capture")
+	# _capture(node)는 노드 인자가 필요하므로, deferred 호출에 self를 넘긴다.
+	definition.call_deferred("_capture", self)
 
 func _process(delta: float) -> void:
 	set_deferred("size", get_combined_minimum_size())
@@ -154,7 +155,7 @@ func load_value() -> void:
 		VariableDef.AllowedVariables.VECTOR3:
 			value_node.get_child(0).value = definition.variable.x
 			value_node.get_child(1).value = definition.variable.y
-			value_node.get_child(1).value = definition.variable.z
+			value_node.get_child(2).value = definition.variable.z
 		VariableDef.AllowedVariables.COLOR:
 			value_node.color = definition.variable
 		VariableDef.AllowedVariables.RANDOM:

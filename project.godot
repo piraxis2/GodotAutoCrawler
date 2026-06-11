@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="AutoCrawler"
-run/main_scene="uid://cgcwqpybenfsh"
+run/main_scene="uid://dv7r53qteumxi"
 config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://Assets/Textures/icon.svg"
 
@@ -27,8 +27,9 @@ GdsCheatManager="*res://Assets/Script/gds/gds_cheat_manager.gd"
 SoundManager="*res://Assets/Script/gds/sound_manager.gd"
 Test="*res://test.gd"
 PlayerData="*res://Assets/Script/gds/player_data.gd"
-DialogueToolUtil="*uid://bg2wpsw3ggue7"
 WindowManager="*res://Assets/Script/WindowManager.cs"
+DialogueManager="*res://addons/dialogtool/RunTime/dialogue_manager.gd"
+DialogueToolUtil="*uid://bg2wpsw3ggue7"
 
 [debug]
 

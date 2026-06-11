@@ -22,24 +22,41 @@ func get_runtime_type() -> StringName:
 
 
 func get_runtime_params() -> Dictionary:
-	return {
+	var params := {
 		"name": variable_name,
 		"variable_type": variable_type,
-		"value": variable,
 	}
+	# RANDOM은 [min, max, Callable] 형태다. Callable은 직렬화도 안 되고 쓸 수 있는
+	# 값도 아니므로, 범위만 저장하고 런타임에서 다시 생성하게 한다.
+	if variable_type == AllowedVariables.RANDOM and variable is Array and variable.size() >= 2:
+		params["random"] = true
+		params["random_min"] = int(variable[0])
+		params["random_max"] = int(variable[1])
+		params["value"] = null
+	else:
+		params["value"] = variable
+	return params
 
 
 func _get_dialogue_node() -> String:
 	return "res://addons/dialogtool/Node/variable_node.tscn"
 
 func _node_init(node: DialogueNode) -> void:
-	return
+	var adapter := get_editor_adapter()
+	if adapter:
+		adapter.apply_params(node, {})
 
 func _capture(node: DialogueNode) ->void:
-	var node_value = node.get_value()
-	variable_name = node_value["name"]
-	variable_type = node_value["type"]
-	variable = node_value["variable"]
+	var adapter := get_editor_adapter()
+	if adapter == null:
+		return
+	var node_value: Dictionary = adapter.capture_params(node)
+	if node_value.has("name"):
+		variable_name = node_value["name"]
+	if node_value.has("type"):
+		variable_type = node_value["type"]
+	if node_value.has("variable"):
+		variable = node_value["variable"]
 
 func _get_data_output(port: int) -> Variant:
 	if variable_type == AllowedVariables.RANDOM:

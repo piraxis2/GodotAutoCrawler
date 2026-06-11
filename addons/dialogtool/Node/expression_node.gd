@@ -22,7 +22,22 @@ func _ready() -> void:
 	build_button.button_up.connect(_on_build_button_up)
 
 func _on_build_button_up() -> void:
-	print(definition.build())
+	print("Expression result: ", evaluate_preview())
+
+# 새로 캡처한 스냅샷에 실제 런타임 evaluator를 적용해 식을 미리 본다.
+# 먼저 캡처하면 현재 위젯 값(예: Variable의 SpinBox)을 읽으므로, 에디터 build()
+# 경로의 낡은 definition에 의존하지 않고 살아있는 입력 값을 반영하며 런타임 동작과
+# 일치한다.
+func evaluate_preview() -> Variant:
+	var graph = get_parent()
+	if graph == null or not graph.has_method("capture_current_graphedit"):
+		return definition.build() # 폴백: 기존 에디터 build()
+	var snapshot = graph.capture_current_graphedit()
+	var player := DialoguePlayer.new()
+	player.dialogue_resource = snapshot
+	var value = player._get_data_value(id)
+	player.free()
+	return value
 	
 func on_slider_update(value: float) -> void:
 	var temp = input

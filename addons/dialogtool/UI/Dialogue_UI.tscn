@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bk1bu7m0trp58"]
+[gd_scene format=3 uid="uid://bk1bu7m0trp58"]
 
 [ext_resource type="Theme" uid="uid://bqrysn554oj2a" path="res://addons/dialogtool/UI/DialogueTheme.tres" id="1_edf6t"]
 [ext_resource type="Script" uid="uid://b7kljqpa3nl1b" path="res://addons/dialogtool/UI/dialogue_ui.gd" id="1_nyeh5"]
@@ -44,7 +44,7 @@ _data = {
 &"idle": SubResource("Animation_85v12")
 }
 
-[node name="Control" type="Control"]
+[node name="Control" type="Control" unique_id=818923791]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -53,7 +53,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_nyeh5")
 
-[node name="MarginContainer" type="PanelContainer" parent="."]
+[node name="MarginContainer" type="PanelContainer" parent="." unique_id=1787671379]
 visible = false
 layout_mode = 1
 anchors_preset = 12
@@ -64,15 +64,15 @@ offset_top = -211.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1948422990]
 layout_mode = 2
 alignment = 1
 
-[node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1446899066]
 layout_mode = 2
 text = "엘리자베스"
 
-[node name="Text" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+[node name="Text" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1301994315]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme = ExtResource("1_edf6t")
@@ -83,11 +83,11 @@ custom_effects = [null]
 script = ExtResource("2_fx6m3")
 delay_per_char = 0.08
 
-[node name="Control" type="Control" parent="MarginContainer/VBoxContainer"]
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer" unique_id=2000137560]
 layout_mode = 2
 size_flags_horizontal = 8
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/Control"]
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/VBoxContainer/Control" unique_id=1639317309]
 texture_filter = 1
 layout_mode = 0
 offset_left = -48.0
@@ -97,13 +97,11 @@ offset_bottom = 12.0
 size_flags_horizontal = 8
 texture = ExtResource("4_0ktg2")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="MarginContainer/VBoxContainer/Control/TextureRect"]
-libraries = {
-&"": SubResource("AnimationLibrary_4x2k0")
-}
-autoplay = "idle"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MarginContainer/VBoxContainer/Control/TextureRect" unique_id=485091205]
+libraries/ = SubResource("AnimationLibrary_4x2k0")
+autoplay = &"idle"
 
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="." unique_id=363638653]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -112,7 +110,7 @@ grow_horizontal = 2
 grow_vertical = 2
 flat = true
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=2123712215]
 visible = false
 layout_mode = 1
 anchors_preset = 8
@@ -127,10 +125,10 @@ offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1930872870]
 layout_mode = 2
 
-[node name="Node" type="Node" parent="."]
+[node name="Node" type="Node" parent="." unique_id=1418513816]
 script = ExtResource("6_eaov6")
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

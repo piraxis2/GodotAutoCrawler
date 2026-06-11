@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=9 format=3 uid="uid://cv0vpkp0aor7k"]
+[gd_resource type="Resource" script_class="DialogueGraphResource" format=3 uid="uid://cv0vpkp0aor7k"]
 
+[ext_resource type="Script" uid="uid://cg1ti1whyl5sm" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/choice_def.gd" id="1_6y7fw"]
 [ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_t0hpo"]
 [ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="2_6y7fw"]
 [ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="3_ui7pn"]
@@ -8,24 +9,35 @@
 [sub_resource type="Resource" id="Resource_rf3nk"]
 resource_local_to_scene = true
 script = ExtResource("1_t0hpo")
-graph_resource = null
 metadata/_custom_type_script = "uid://cqwgrh0esffof"
 
 [sub_resource type="Resource" id="Resource_xsfy0"]
 script = ExtResource("2_6y7fw")
 speaker = "1"
 say_text = "1"
-graph_resource = null
 
 [sub_resource type="Resource" id="Resource_b4ylq"]
 script = ExtResource("2_6y7fw")
 speaker = "2"
 say_text = "2"
-graph_resource = null
 
 [sub_resource type="Resource" id="Resource_da3iy"]
 script = ExtResource("3_ui7pn")
-graph_resource = null
+
+[sub_resource type="Resource" id="Resource_ui7pn"]
+script = ExtResource("1_6y7fw")
+choice_dic = {
+"2": {},
+"3": {}
+}
+choices = Array[String](["2", "3"])
+node_id = 6
+
+[sub_resource type="Resource" id="Resource_igy2m"]
+script = ExtResource("2_6y7fw")
+speaker = "3"
+say_text = "3"
+node_id = 9
 
 [resource]
 script = ExtResource("4_igy2m")
@@ -33,30 +45,44 @@ nodes = {
 0: {
 "definition": SubResource("Resource_rf3nk"),
 "id": 0,
-"name": &"@GraphNode@37514",
-"position_offset": Vector2(0, 0),
-"size": Vector2(100, 100.0002)
+"name": &"@GraphNode@41831",
+"position_offset": Vector2(-420, -20),
+"size": Vector2(100, 100.00026)
 },
 1: {
 "definition": SubResource("Resource_xsfy0"),
 "id": 1,
 "name": &"1",
-"position_offset": Vector2(200, -60),
-"size": Vector2(584, 280)
+"position_offset": Vector2(-220, -80),
+"size": Vector2(594.0001, 279.99985)
 },
 2: {
 "definition": SubResource("Resource_b4ylq"),
 "id": 2,
 "name": &"2",
-"position_offset": Vector2(860, -80),
-"size": Vector2(584, 280)
+"position_offset": Vector2(1140, -280),
+"size": Vector2(594.0004, 279.99994)
 },
 3: {
 "definition": SubResource("Resource_da3iy"),
 "id": 3,
 "name": &"3",
-"position_offset": Vector2(1580, 60),
-"size": Vector2(100, 100)
+"position_offset": Vector2(1880, 60),
+"size": Vector2(100.00055, 100.00008)
+},
+6: {
+"definition": SubResource("Resource_ui7pn"),
+"id": 6,
+"name": &"6",
+"position_offset": Vector2(680, -40),
+"size": Vector2(351, 186)
+},
+9: {
+"definition": SubResource("Resource_igy2m"),
+"id": 9,
+"name": &"9",
+"position_offset": Vector2(1160, 60),
+"size": Vector2(594.0002, 279)
 }
 }
 connections = Array[Dictionary]([{
@@ -65,14 +91,106 @@ connections = Array[Dictionary]([{
 "to_node_id": 1,
 "to_port": 0
 }, {
+"from_node_id": 2,
+"from_port": 0,
+"to_node_id": 3,
+"to_port": 0
+}, {
 "from_node_id": 1,
 "from_port": 0,
+"to_node_id": 6,
+"to_port": 0
+}, {
+"from_node_id": 6,
+"from_port": 0,
 "to_node_id": 2,
+"to_port": 0
+}, {
+"from_node_id": 6,
+"from_port": 1,
+"to_node_id": 9,
+"to_port": 0
+}, {
+"from_node_id": 9,
+"from_port": 0,
+"to_node_id": 3,
+"to_port": 0
+}])
+next_node_id = 10
+runtime_nodes = {
+0: {
+"id": 0,
+"params": {},
+"type": &"start"
+},
+1: {
+"id": 1,
+"params": {
+"portrait": "empty",
+"speaker": "1",
+"text": "1"
+},
+"type": &"say"
+},
+2: {
+"id": 2,
+"params": {
+"portrait": "empty",
+"speaker": "2",
+"text": "2"
+},
+"type": &"say"
+},
+3: {
+"id": 3,
+"params": {},
+"type": &"end"
+},
+6: {
+"id": 6,
+"params": {
+"choices": Array[String](["2", "3"])
+},
+"type": &"choice"
+},
+9: {
+"id": 9,
+"params": {
+"portrait": "empty",
+"speaker": "3",
+"text": "3"
+},
+"type": &"say"
+}
+}
+runtime_connections = Array[Dictionary]([{
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 1,
 "to_port": 0
 }, {
 "from_node_id": 2,
 "from_port": 0,
 "to_node_id": 3,
 "to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 0,
+"to_node_id": 6,
+"to_port": 0
+}, {
+"from_node_id": 6,
+"from_port": 0,
+"to_node_id": 2,
+"to_port": 0
+}, {
+"from_node_id": 6,
+"from_port": 1,
+"to_node_id": 9,
+"to_port": 0
+}, {
+"from_node_id": 9,
+"from_port": 0,
+"to_node_id": 3,
+"to_port": 0
 }])
-next_node_id = 4

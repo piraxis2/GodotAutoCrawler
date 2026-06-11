@@ -16,7 +16,9 @@ func execute(dialogue_player: Node) -> FlowDefinition:
 	return null	
 
 func _node_init(node: DialogueNode) -> void:
-	return
+	var adapter := get_editor_adapter()
+	if adapter:
+		adapter.apply_params(node, {})
 
 func _capture(node: DialogueNode) ->void:
 	pass

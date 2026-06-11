@@ -13,7 +13,11 @@ public partial class CheatManager : Node
 		
 		if (@event is InputEventMouseButton { Pressed: true } mouseEvent)
 		{
-			var tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap; 
+			var battleField = BattleFieldScene.BattleField;
+			if (battleField == null)
+				return;
+
+			var tileMapLayer = battleField.BattleFieldTileMap;
 			if (tileMapLayer != null)
 			{
 				Vector2 mousePosition = mouseEvent.Position;

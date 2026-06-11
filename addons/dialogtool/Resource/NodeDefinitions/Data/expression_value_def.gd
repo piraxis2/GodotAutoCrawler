@@ -8,18 +8,36 @@ var built_value
 
 var output_port_data: Dictionary = {"slot_position": 1, "port_type": DialogueNode.port_type.data, "color": DialogueNode.color_dic["output"]}
 
+func get_runtime_type() -> StringName:
+	return &"expression"
+
+
+func get_runtime_params() -> Dictionary:
+	# 런타임은 원본 식과 순서가 있는 입력 키(포트 i -> keys[i])가 필요하다.
+	# 값은 런타임에 연결을 통해 해결되므로 Callable은 저장하지 않는다.
+	return {
+		"expression": expression_string,
+		"inputs": inputs.keys(),
+	}
+
+
 func _get_dialogue_node() -> String:
 	return "res://addons/dialogtool/Node/expression_node.tscn"
 
 func _node_init(node: DialogueNode) -> void:
-	node.resizable = true
-	node.code_edit.text = expression_string
-	node.on_change_text_edit.connect(text_changed)
-	node.set_slot(output_port_data["slot_position"], false, output_port_data["port_type"], Color.WHITE, true, output_port_data["port_type"], output_port_data["color"])
- 
+	var adapter := get_editor_adapter()
+	if adapter:
+		adapter.apply_params(node, {"expression": expression_string})
+
 func _capture(node: DialogueNode) -> void:
-	expression_string = node.code_edit.text
-	build()
+	# 평가는 런타임 evaluator(및 Build 미리보기)가 수행하므로 원본 식 텍스트만
+	# 저장한다. 어댑터가 code_edit에서 텍스트를 읽어온다.
+	var adapter := get_editor_adapter()
+	if adapter == null:
+		return
+	var params: Dictionary = adapter.capture_params(node)
+	if params.has("expression"):
+		expression_string = params["expression"]
 	
 func text_changed(node: DialogueNode) -> void:
 	expression_string = node.code_edit.text
