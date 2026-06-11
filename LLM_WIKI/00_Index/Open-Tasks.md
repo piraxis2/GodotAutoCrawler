@@ -8,12 +8,17 @@ updated: 2026-06-11
 
 ## Next
 
-- [[DT-002-Portrait-State]]: Portrait를 Say와 느슨하게 결합된 UI 상태 명령으로 설계한다.
+- Say 줄 누적 표시 실제 UI 회귀 검증: 한 줄/여러 줄/빈 줄/CRLF의 클릭 순서와 Flow 진행을 Godot에서 확인한다.
 - Dialogue 통합 회귀 그래프 작성: Start, Say, Choice, Expression, Branch, End를 한 리소스에서 검증한다.
 - DialogueManager 반복 실행/교체/연속 실행 테스트를 자동화한다.
 
 ## Later
 
+- Portrait transition 애니메이션(fade/slide 등) — DT-002 MVP 이후.
+- Portrait Focus와 비활성 Portrait dim 처리 — DT-002 MVP 이후.
+- actor database 및 actor/expression -> Texture resolver — DT-002 MVP 이후.
+- speaker 기반 자동 Portrait focus/선택 정책 — DT-002 MVP 이후.
+- 기존 `SayDef.portrait` 데이터의 명시적 마이그레이션 도구.
 - Set Variable 노드
 - Compare 노드
 - Random Branch 노드
@@ -34,4 +39,3 @@ updated: 2026-06-11
 - 시스템 문서는 코드 변경 후 현재 사실만 남도록 갱신한다.
 - 완료 작업은 Task 문서에 검증 결과를 남기고 이 목록에서 제거한다.
 - 새로운 중요한 설계 선택은 ADR을 먼저 작성한다.
-

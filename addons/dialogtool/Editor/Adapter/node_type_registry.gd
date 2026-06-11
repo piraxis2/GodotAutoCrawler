@@ -29,6 +29,11 @@ static func _ensure_registered() -> void:
 	_adapters[&"scene_function"] = load(_ADAPTER_DIR + "scene_function_editor_adapter.gd").new()
 	_adapters[&"description"] = load(_ADAPTER_DIR + "description_editor_adapter.gd").new()
 	_adapters[&"test"] = load(_ADAPTER_DIR + "test_editor_adapter.gd").new()
+	# Portrait show/hide/expression은 같은 어댑터를 공유한다(필드 노출은 노드 type으로 결정).
+	var portrait_adapter = load(_ADAPTER_DIR + "portrait_editor_adapter.gd").new()
+	_adapters[&"portrait_show"] = portrait_adapter
+	_adapters[&"portrait_hide"] = portrait_adapter
+	_adapters[&"portrait_expression"] = portrait_adapter
 
 
 static func get_adapter(type: StringName) -> Variant:

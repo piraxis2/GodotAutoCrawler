@@ -19,5 +19,11 @@ func _process(delta: float) -> void:
 			read_finished = true
 			
 func start() -> void:
+	elapsedtime = 0.0
 	visible_ratio = 0.0
+	read_finished = false
+
+
+func start_from_visible_characters() -> void:
+	elapsedtime = 0.0
 	read_finished = false

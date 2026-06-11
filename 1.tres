@@ -5,6 +5,8 @@
 [ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="2_6y7fw"]
 [ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="3_ui7pn"]
 [ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/dialogtool/Resource/dialogue_graph_resource.gd" id="4_igy2m"]
+[ext_resource type="Script" uid="uid://dvgsv2wrv1p2u" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/portrait_show_def.gd" id="5_ui7pn"]
+[ext_resource type="Script" uid="uid://dt2ufkq0gq5f" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/portrait_hide_def.gd" id="6_igy2m"]
 
 [sub_resource type="Resource" id="Resource_rf3nk"]
 resource_local_to_scene = true
@@ -14,7 +16,9 @@ metadata/_custom_type_script = "uid://cqwgrh0esffof"
 [sub_resource type="Resource" id="Resource_xsfy0"]
 script = ExtResource("2_6y7fw")
 speaker = "1"
-say_text = "1"
+say_text = "1
+2
+3"
 
 [sub_resource type="Resource" id="Resource_b4ylq"]
 script = ExtResource("2_6y7fw")
@@ -39,66 +43,81 @@ speaker = "3"
 say_text = "3"
 node_id = 9
 
+[sub_resource type="Resource" id="Resource_nihao"]
+script = ExtResource("5_ui7pn")
+slot = "left"
+texture_path = "res://Assets/Textures/Portraits/Noabel.png"
+node_id = 10
+
+[sub_resource type="Resource" id="Resource_llf28"]
+script = ExtResource("6_igy2m")
+slot = "left"
+node_id = 11
+
 [resource]
 script = ExtResource("4_igy2m")
 nodes = {
 0: {
 "definition": SubResource("Resource_rf3nk"),
 "id": 0,
-"name": &"@GraphNode@41831",
+"name": &"_GraphNode_41831",
 "position_offset": Vector2(-420, -20),
-"size": Vector2(100, 100.00026)
+"size": Vector2(100, 100.00021)
 },
 1: {
 "definition": SubResource("Resource_xsfy0"),
 "id": 1,
 "name": &"1",
-"position_offset": Vector2(-220, -80),
-"size": Vector2(594.0001, 279.99985)
+"position_offset": Vector2(-240, 0),
+"size": Vector2(603.00006, 280.00015)
 },
 2: {
 "definition": SubResource("Resource_b4ylq"),
 "id": 2,
 "name": &"2",
 "position_offset": Vector2(1140, -280),
-"size": Vector2(594.0004, 279.99994)
+"size": Vector2(603, 280)
 },
 3: {
 "definition": SubResource("Resource_da3iy"),
 "id": 3,
 "name": &"3",
 "position_offset": Vector2(1880, 60),
-"size": Vector2(100.00055, 100.00008)
+"size": Vector2(100.00049, 100.00006)
 },
 6: {
 "definition": SubResource("Resource_ui7pn"),
 "id": 6,
 "name": &"6",
 "position_offset": Vector2(680, -40),
-"size": Vector2(351, 186)
+"size": Vector2(360.00006, 190)
 },
 9: {
 "definition": SubResource("Resource_igy2m"),
 "id": 9,
 "name": &"9",
 "position_offset": Vector2(1160, 60),
-"size": Vector2(594.0002, 279)
+"size": Vector2(603.00024, 280)
+},
+10: {
+"definition": SubResource("Resource_nihao"),
+"id": 10,
+"name": &"10",
+"position_offset": Vector2(-280, -280),
+"size": Vector2(308.00003, 207)
+},
+11: {
+"definition": SubResource("Resource_llf28"),
+"id": 11,
+"name": &"11",
+"position_offset": Vector2(368.6119, -185.60196),
+"size": Vector2(308, 108)
 }
 }
 connections = Array[Dictionary]([{
-"from_node_id": 0,
-"from_port": 0,
-"to_node_id": 1,
-"to_port": 0
-}, {
 "from_node_id": 2,
 "from_port": 0,
 "to_node_id": 3,
-"to_port": 0
-}, {
-"from_node_id": 1,
-"from_port": 0,
-"to_node_id": 6,
 "to_port": 0
 }, {
 "from_node_id": 6,
@@ -115,8 +134,28 @@ connections = Array[Dictionary]([{
 "from_port": 0,
 "to_node_id": 3,
 "to_port": 0
+}, {
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 10,
+"to_port": 0
+}, {
+"from_node_id": 10,
+"from_port": 0,
+"to_node_id": 1,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 0,
+"to_node_id": 11,
+"to_port": 0
+}, {
+"from_node_id": 11,
+"from_port": 0,
+"to_node_id": 6,
+"to_port": 0
 }])
-next_node_id = 10
+next_node_id = 12
 runtime_nodes = {
 0: {
 "id": 0,
@@ -128,7 +167,9 @@ runtime_nodes = {
 "params": {
 "portrait": "empty",
 "speaker": "1",
-"text": "1"
+"text": "1
+2
+3"
 },
 "type": &"say"
 },
@@ -161,22 +202,34 @@ runtime_nodes = {
 "text": "3"
 },
 "type": &"say"
+},
+10: {
+"id": 10,
+"params": {
+"actor": "",
+"expression": "",
+"slot": "left",
+"texture_path": "res://Assets/Textures/Portraits/Noabel.png",
+"transition": "none"
+},
+"type": &"portrait_show"
+},
+11: {
+"id": 11,
+"params": {
+"actor": "",
+"expression": "",
+"slot": "left",
+"texture_path": "",
+"transition": "none"
+},
+"type": &"portrait_hide"
 }
 }
 runtime_connections = Array[Dictionary]([{
-"from_node_id": 0,
-"from_port": 0,
-"to_node_id": 1,
-"to_port": 0
-}, {
 "from_node_id": 2,
 "from_port": 0,
 "to_node_id": 3,
-"to_port": 0
-}, {
-"from_node_id": 1,
-"from_port": 0,
-"to_node_id": 6,
 "to_port": 0
 }, {
 "from_node_id": 6,
@@ -192,5 +245,25 @@ runtime_connections = Array[Dictionary]([{
 "from_node_id": 9,
 "from_port": 0,
 "to_node_id": 3,
+"to_port": 0
+}, {
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 10,
+"to_port": 0
+}, {
+"from_node_id": 10,
+"from_port": 0,
+"to_node_id": 1,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 0,
+"to_node_id": 11,
+"to_port": 0
+}, {
+"from_node_id": 11,
+"from_port": 0,
+"to_node_id": 6,
 "to_port": 0
 }])

@@ -4,43 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "3631c030626b496a",
-        "type": "tabs",
-        "dimension": 54.87220447284346,
-        "children": [
-          {
-            "id": "107c07d27ed7af0d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "STEP_REVIEW_WORKFLOW.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "STEP_REVIEW_WORKFLOW"
-            }
-          }
-        ]
-      },
-      {
         "id": "789b816e84a31e72",
         "type": "tabs",
-        "dimension": 45.12779552715655,
         "children": [
           {
             "id": "541893579710ee26",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "30_Tasks/DT-002-Portrait-State.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "DT-002-Portrait-State"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "그래프 뷰"
             }
           }
         ]
@@ -116,7 +90,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "30_Tasks/DT-002-Portrait-State.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -126,7 +99,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "DT-002-Portrait-State 의 백링크"
+              "title": "백링크"
             }
           },
           {
@@ -135,12 +108,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "30_Tasks/DT-002-Portrait-State.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "DT-002-Portrait-State 의 나가는 링크"
+              "title": "나가는 링크"
             }
           },
           {
@@ -178,13 +150,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "30_Tasks/DT-002-Portrait-State.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "DT-002-Portrait-State 의 개요"
+              "title": "개요"
             }
           }
         ]
@@ -207,25 +178,30 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
-    "30_Tasks/DT-001-DialogueTool-Foundation.md",
+    "30_Tasks/DT-003-Say-Line-Paging.md",
+    "40_Decisions/ADR-004-Portrait-Texture-Path-MVP.md",
+    "50_Reviews/DT-002-Portrait-Review.md",
+    "STEP_REVIEW_WORKFLOW.md",
+    "Related Document.md",
     "30_Tasks/DT-002-Portrait-State.md",
+    "30_Tasks/DT-001-DialogueTool-Foundation.md",
+    "00_Index/Current-State.md.tmp.37396.261f98c513fa",
+    "40_Decisions/ADR-003-DialogueManager-Autoload.md",
+    "40_Decisions/ADR-002-Editor-Adapter.md",
+    "40_Decisions/ADR-001-Runtime-Snapshot.md",
+    "50_Reviews/DialogueTool-Step-1-to-8.md",
+    "20_Systems/Article-Status-System.md",
     "90_Templates/Task.md",
     "90_Templates/Review.md",
     "90_Templates/ADR.md",
     "00_Index/Current-State.md",
-    "STEP_REVIEW_WORKFLOW.md",
-    "20_Systems/Article-Status-System.md",
-    "50_Reviews/DialogueTool-Step-1-to-8.md",
     "20_Systems/DialogueTool.md",
     "20_Systems/BehaviorTree-System.md",
     "10_Architecture/Project-Overview.md",
     "10_Architecture/Runtime-Data-Flow.md",
     "10_Architecture/DialogueTool-Architecture.md",
-    "40_Decisions/ADR-001-Runtime-Snapshot.md",
     "90_Templates",
     "50_Reviews",
-    "40_Decisions/ADR-003-DialogueManager-Autoload.md",
-    "40_Decisions/ADR-002-Editor-Adapter.md",
     "40_Decisions",
     "30_Tasks",
     "20_Systems/Turn-System.md",

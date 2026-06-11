@@ -10,11 +10,6 @@ resource_local_to_scene = true
 script = ExtResource("2_nxxe4")
 metadata/_custom_type_script = "uid://cqwgrh0esffof"
 
-[sub_resource type="Resource" id="Resource_ph3je"]
-script = ExtResource("1_dku57")
-speaker = "엘리자베스"
-say_text = "잠시 어색한 침묵이 흐른 뒤 두 친구는 다른 식구들이 있는 곳으로 돌아갔다. "
-
 [sub_resource type="Resource" id="Resource_8xwoy"]
 script = ExtResource("1_dku57")
 speaker = "엘리자베스"
@@ -53,6 +48,11 @@ say_text = "[color=blue]엘리자베스[/color]는 친구가 수치스러운 선
 
 [sub_resource type="Resource" id="Resource_wjeyc"]
 script = ExtResource("3_3ganr")
+
+[sub_resource type="Resource" id="Resource_ph3je"]
+script = ExtResource("1_dku57")
+speaker = "엘리자베스"
+say_text = "잠시 어색한 침묵이 흐른 뒤 두 친구는 다른 식구들이 있는 곳으로 돌아갔다. "
 
 [resource]
 script = ExtResource("4_tl1xb")
@@ -111,14 +111,14 @@ nodes = {
 "id": 10,
 "name": &"_GraphNode_40407",
 "position_offset": Vector2(-8780, -3420),
-"size": Vector2(603, 280)
+"size": Vector2(603, 280.00012)
 },
 11: {
 "definition": SubResource("Resource_otpto"),
 "id": 11,
 "name": &"_GraphNode_40420",
 "position_offset": Vector2(-8100, -3420),
-"size": Vector2(603, 280)
+"size": Vector2(603, 280.00012)
 },
 12: {
 "definition": SubResource("Resource_wjeyc"),

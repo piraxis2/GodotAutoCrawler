@@ -93,6 +93,8 @@ func _execute_until_waiting() -> void:
 				_execute_choice(node_data.get("params", {}))
 			&"branch":
 				_execute_branch()
+			&"portrait_show", &"portrait_hide", &"portrait_expression":
+				_execute_portrait(node_data.get("type", &"unknown"), node_data.get("params", {}))
 			&"end":
 				_end_dialogue()
 			_:
@@ -140,6 +142,66 @@ func _execute_choice(params: Dictionary) -> void:
 		"type": "offer_choice",
 		"choices": choices,
 	})
+
+
+# Portrait 명령은 Say와 독립된 비대기 Flow 명령이다.
+# DialoguePlayer는 Portrait 상태를 보관하거나 렌더링하지 않고, 정규화된 UI 상태
+# 변경 요청만 발행한 뒤 즉시 출력 포트 0의 다음 Flow 노드로 진행한다.
+# 실제 상태 소유와 렌더링은 이후 Step의 DialogueUI 책임이다.
+const PORTRAIT_SLOTS := ["left", "center", "right"]
+const PORTRAIT_DEFAULT_SLOT := "center"
+
+func _execute_portrait(node_type: StringName, params: Dictionary) -> void:
+	# waiting_for를 만들지 않는다: 요청을 발행하고 같은 실행 루프에서 다음 노드로 진행.
+	ui_request.emit(_build_portrait_request(node_type, params))
+	_go_to_next_node(0)
+
+
+# 세 Portrait 노드 타입을 공통 "portrait_state" 요청 형식으로 정규화한다.
+# actor/expression은 향후 resolver를 위한 메타데이터로 그대로 통과시킨다.
+func _build_portrait_request(node_type: StringName, params: Dictionary) -> Dictionary:
+	var action := _portrait_action_from_type(node_type)
+	var slot := _normalize_portrait_slot(params.get("slot", PORTRAIT_DEFAULT_SLOT))
+	var texture_path := String(params.get("texture_path", ""))
+
+	# show MVP는 texture_path를 직접 저장/전달한다(ADR-004 참조).
+	# texture_path가 비어 있어도 Flow를 중단하지 않는다: 경고만 남기고 요청은 그대로
+	# 발행한다. actor/expression이 이후 Step의 resolver에서 텍스처를 해결할 수 있다.
+	if action == "show" and texture_path.is_empty():
+		push_warning("DialoguePlayer: portrait_show node %d has empty texture_path; emitting request anyway (actor/expression may resolve it later)." % current_node_id)
+
+	return {
+		"type": "portrait_state",
+		"action": action,
+		"slot": slot,
+		"texture_path": texture_path,
+		"actor": String(params.get("actor", "")),
+		"expression": String(params.get("expression", "")),
+		"transition": String(params.get("transition", "none")),
+	}
+
+
+func _portrait_action_from_type(node_type: StringName) -> String:
+	match node_type:
+		&"portrait_show":
+			return "show"
+		&"portrait_hide":
+			return "hide"
+		&"portrait_expression":
+			return "expression"
+		_:
+			# 디스패치 match가 타입을 보장하므로 도달하지 않지만, 방어적으로 처리한다.
+			push_warning("DialoguePlayer: unexpected portrait node type '%s'; defaulting action to 'show'." % str(node_type))
+			return "show"
+
+
+# slot이 잘못됐을 때 크래시하지 않고 기본 slot으로 일관되게 대체한다.
+func _normalize_portrait_slot(raw: Variant) -> String:
+	var slot := String(raw)
+	if slot in PORTRAIT_SLOTS:
+		return slot
+	push_warning("DialoguePlayer: portrait node %d has invalid slot '%s'; falling back to '%s'." % [current_node_id, slot, PORTRAIT_DEFAULT_SLOT])
+	return PORTRAIT_DEFAULT_SLOT
 
 
 func _execute_branch() -> void:

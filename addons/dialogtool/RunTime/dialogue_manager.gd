@@ -39,7 +39,10 @@ func play(dialogue_resource: DialogueGraphResource) -> void:
 	_layer.add_child(_ui)
 
 	_ui.dialogue_started.connect(dialogue_started.emit)
-	_ui.ui_request.connect(ui_request.emit)
+	# ui_request에도 발신 UI를 바인딩 — 교체된 이전 대화가 발행하는 지연 요청을 무시한다.
+	# 비대기 명령(portrait_*)은 요청 후 루프를 계속 진행하므로, 요청 콜백에서 play()로
+	# 대화를 교체하면 이전 player가 돌아와 stale 요청을 발행할 수 있다. (P1)
+	_ui.ui_request.connect(_on_ui_request.bind(_ui))
 	# 종료 신호에 발신 UI를 바인딩 — 교체된 이전 대화의 지연 신호를 식별해 무시한다.
 	_ui.dialogue_end.connect(_on_end.bind(_ui))
 
@@ -49,6 +52,14 @@ func play(dialogue_resource: DialogueGraphResource) -> void:
 # 현재 대화가 표시 중인지.
 func is_playing() -> bool:
 	return _ui != null and is_instance_valid(_ui)
+
+
+func _on_ui_request(request: Dictionary, source_ui) -> void:
+	# play()로 이미 다른 대화로 교체된 뒤 도착한 지연 요청이면 무시한다.
+	# dialogue_end와 동일한 source guard.
+	if source_ui != _ui:
+		return
+	ui_request.emit(request)
 
 
 func _on_end(source_ui) -> void:
