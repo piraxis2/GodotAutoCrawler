@@ -62,7 +62,10 @@ updated: 2026-06-11
 
 - Start 노드는 정확히 하나여야 한다.
 - 연결 endpoint가 존재해야 한다.
-- Flow와 Data 포트를 섞은 연결은 저장을 중단한다.
+- Flow, Value(Data/Boolean), Effect 포트 카테고리가 다른 연결은 저장을 중단한다.
+- 한 Flow 출력 포트에 주 Flow 대상이 둘 이상이면 저장을 중단한다.
+- Portrait가 아닌 Effect 대상과 Effect 순환은 저장을 중단한다.
+- 치명적 연결 오류에는 node id, runtime type, output/input port를 표시한다.
 - 도달 불가능한 Flow와 Start의 연결 누락은 warning이다.
 
 ## Extension Rules
@@ -78,6 +81,7 @@ updated: 2026-06-11
 
 ## Related
 
+- [[DialogueTool-User-Guide]]
 - [[DialogueTool-Architecture]]
 - [[DT-002-Portrait-State]]
 - [[DialogueTool-Step-1-to-8]]

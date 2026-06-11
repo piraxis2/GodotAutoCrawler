@@ -131,7 +131,7 @@ layout_mode = 2
 [node name="Node" type="Node" parent="." unique_id=1418513816]
 script = ExtResource("6_eaov6")
 
-[node name="Portraits" type="Control" parent="."]
+[node name="Portraits" type="Control" parent="." unique_id=853535479]
 z_index = -1
 layout_mode = 1
 anchors_preset = 15
@@ -141,10 +141,11 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="left" type="TextureRect" parent="Portraits"]
+[node name="left" type="TextureRect" parent="Portraits" unique_id=237650724]
 visible = false
 texture_filter = 1
 layout_mode = 1
+anchors_preset = -1
 anchor_right = 0.333
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -153,10 +154,11 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="center" type="TextureRect" parent="Portraits"]
+[node name="center" type="TextureRect" parent="Portraits" unique_id=1084136104]
 visible = false
 texture_filter = 1
 layout_mode = 1
+anchors_preset = -1
 anchor_left = 0.333
 anchor_right = 0.667
 anchor_bottom = 1.0
@@ -166,10 +168,11 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="right" type="TextureRect" parent="Portraits"]
+[node name="right" type="TextureRect" parent="Portraits" unique_id=1662228347]
 visible = false
 texture_filter = 1
 layout_mode = 1
+anchors_preset = -1
 anchor_left = 0.667
 anchor_right = 1.0
 anchor_bottom = 1.0

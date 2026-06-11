@@ -64,6 +64,9 @@ func select_choice(index: int) -> void:
 	selected_choice = index
 	waiting_for = &"none"
 
+	# 이 Choice 노드를 떠나기 전에 연결된 Effect를 실행한 뒤 주 Flow로 이동한다(ADR-005).
+	_run_effects(current_node_id)
+
 	var next_id = dialogue_resource.get_runtime_next_node_id(current_node_id, index)
 	if next_id == -1:
 		push_warning("DialoguePlayer: choice port %d has no connection; ending dialogue." % index)
@@ -150,6 +153,8 @@ func _execute_choice(params: Dictionary) -> void:
 # 실제 상태 소유와 렌더링은 이후 Step의 DialogueUI 책임이다.
 const PORTRAIT_SLOTS := ["left", "center", "right"]
 const PORTRAIT_DEFAULT_SLOT := "center"
+
+# Effect 대상 허용 타입은 DialogueGraphResource에 단일 정의를 둔다(에디터 validation과 공유).
 
 func _execute_portrait(node_type: StringName, params: Dictionary) -> void:
 	# waiting_for를 만들지 않는다: 요청을 발행하고 같은 실행 루프에서 다음 노드로 진행.
@@ -290,9 +295,50 @@ func _to_bool(value: Variant) -> bool:
 
 
 func _go_to_next_node(port: int) -> void:
+	# 이 노드를 떠나기 직전에 연결된 비대기 Effect들을 실행한 뒤 주 Flow 하나로 이동한다(ADR-005).
+	_run_effects(current_node_id)
 	current_node_id = dialogue_resource.get_runtime_next_node_id(current_node_id, port)
 	if current_node_id == -1:
 		_end_dialogue()
+
+
+# 한 노드(from_node_id)에 연결된 Effect들을 저장 순서대로 실행한다.
+# Effect는 실행 커서를 옮기지 않고 wait state를 만들지 않으며, 정규화된 비대기
+# UI 요청만 발행한다. Effect 노드가 다시 Effect를 연결하면 체인을 따라가되,
+# visited 셋으로 순환을 차단하고 Portrait 외 대상은 경고 후 건너뛴다.
+func _run_effects(from_node_id: int) -> void:
+	var queue: Array = dialogue_resource.get_runtime_effect_node_ids(from_node_id)
+	if queue.is_empty():
+		return
+
+	var visited: Array = []
+	while not queue.is_empty():
+		var effect_id: int = queue.pop_front()
+		if effect_id == -1:
+			continue
+
+		# 순환 방어: 이미 실행한 Effect 노드는 다시 실행하지 않는다.
+		if effect_id in visited:
+			push_warning("DialoguePlayer: effect cycle detected at node %d; skipping." % effect_id)
+			continue
+		visited.append(effect_id)
+
+		var node_data = dialogue_resource.get_runtime_node(effect_id)
+		if node_data.is_empty():
+			push_warning("DialoguePlayer: effect target node %d not found; skipping." % effect_id)
+			continue
+
+		var node_type = node_data.get("type", &"unknown")
+		if not DialogueGraphResource.is_effect_target_type(node_type):
+			# 잘못된 Effect 대상(Say/Choice/Branch/End/Data 등): Flow를 멈추지 않고 건너뛴다.
+			push_warning("DialoguePlayer: node %d type '%s' is not a valid effect target; skipping." % [effect_id, str(node_type)])
+			continue
+
+		ui_request.emit(_build_portrait_request(node_type, node_data.get("params", {})))
+
+		# Effect-to-Effect 체인: 이 Effect 노드에 연결된 Effect들을 저장 순서대로 잇는다.
+		for child in dialogue_resource.get_runtime_effect_node_ids(effect_id):
+			queue.append(child)
 
 
 func _end_dialogue() -> void:

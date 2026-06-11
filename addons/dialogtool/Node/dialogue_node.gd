@@ -7,8 +7,13 @@ var delete_button: DeleteButton
 
 var id: int = -1
 
-enum port_type { flow, data, boolean }
-const color_dic: Dictionary = {"flow": Color.WHITE, "input": Color.AQUAMARINE, "output": Color.DEEP_PINK, "boolean": Color.REBECCA_PURPLE}
+# effect는 마지막에 추가한다(flow=0, data=1, boolean=2 값을 유지해 기존 포트 타입 호환).
+# effect는 비대기 Effect 연결 전용 포트 타입이다(ADR-005). 같은 effect 포트끼리만
+# 연결되고(Godot 기본 same-type 규칙), flow/data와는 섞이지 않는다.
+enum port_type { flow, data, boolean, effect }
+const color_dic: Dictionary = {"flow": Color.WHITE, "input": Color.AQUAMARINE, "output": Color.DEEP_PINK, "boolean": Color.REBECCA_PURPLE, "effect": Color.ORANGE}
+# Effect 포트 공통 색상(어댑터에서 참조).
+const EFFECT_PORT_COLOR: Color = Color.ORANGE
 
 var port_info: Dictionary
 

@@ -8,18 +8,6 @@
 [ext_resource type="Script" uid="uid://dvgsv2wrv1p2u" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/portrait_show_def.gd" id="5_ui7pn"]
 [ext_resource type="Script" uid="uid://dt2ufkq0gq5f" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/portrait_hide_def.gd" id="6_igy2m"]
 
-[sub_resource type="Resource" id="Resource_rf3nk"]
-resource_local_to_scene = true
-script = ExtResource("1_t0hpo")
-metadata/_custom_type_script = "uid://cqwgrh0esffof"
-
-[sub_resource type="Resource" id="Resource_xsfy0"]
-script = ExtResource("2_6y7fw")
-speaker = "1"
-say_text = "1
-2
-3"
-
 [sub_resource type="Resource" id="Resource_b4ylq"]
 script = ExtResource("2_6y7fw")
 speaker = "2"
@@ -43,16 +31,28 @@ speaker = "3"
 say_text = "3"
 node_id = 9
 
-[sub_resource type="Resource" id="Resource_nihao"]
-script = ExtResource("5_ui7pn")
-slot = "left"
-texture_path = "res://Assets/Textures/Portraits/Noabel.png"
-node_id = 10
+[sub_resource type="Resource" id="Resource_xsfy0"]
+script = ExtResource("2_6y7fw")
+speaker = "1"
+say_text = "1
+2
+3"
 
 [sub_resource type="Resource" id="Resource_llf28"]
 script = ExtResource("6_igy2m")
 slot = "left"
 node_id = 11
+
+[sub_resource type="Resource" id="Resource_rf3nk"]
+resource_local_to_scene = true
+script = ExtResource("1_t0hpo")
+metadata/_custom_type_script = "uid://cqwgrh0esffof"
+
+[sub_resource type="Resource" id="Resource_nihao"]
+script = ExtResource("5_ui7pn")
+slot = "left"
+texture_path = "res://Assets/Textures/Portraits/Noabel.png"
+node_id = 10
 
 [resource]
 script = ExtResource("4_igy2m")
@@ -61,15 +61,15 @@ nodes = {
 "definition": SubResource("Resource_rf3nk"),
 "id": 0,
 "name": &"_GraphNode_41831",
-"position_offset": Vector2(-420, -20),
-"size": Vector2(100, 100.00021)
+"position_offset": Vector2(-480, 60),
+"size": Vector2(100.00003, 100.00018)
 },
 1: {
 "definition": SubResource("Resource_xsfy0"),
 "id": 1,
 "name": &"1",
-"position_offset": Vector2(-240, 0),
-"size": Vector2(603.00006, 280.00015)
+"position_offset": Vector2(-160, -60),
+"size": Vector2(603, 280.0001)
 },
 2: {
 "definition": SubResource("Resource_b4ylq"),
@@ -83,35 +83,35 @@ nodes = {
 "id": 3,
 "name": &"3",
 "position_offset": Vector2(1880, 60),
-"size": Vector2(100.00049, 100.00006)
+"size": Vector2(100.00049, 100.00003)
 },
 6: {
 "definition": SubResource("Resource_ui7pn"),
 "id": 6,
 "name": &"6",
 "position_offset": Vector2(680, -40),
-"size": Vector2(360.00006, 190)
+"size": Vector2(360.00003, 190)
 },
 9: {
 "definition": SubResource("Resource_igy2m"),
 "id": 9,
 "name": &"9",
 "position_offset": Vector2(1160, 60),
-"size": Vector2(603.00024, 280)
+"size": Vector2(603.00024, 280.00003)
 },
 10: {
 "definition": SubResource("Resource_nihao"),
 "id": 10,
 "name": &"10",
-"position_offset": Vector2(-280, -280),
-"size": Vector2(308.00003, 207)
+"position_offset": Vector2(-160, -280),
+"size": Vector2(308.00006, 207.00005)
 },
 11: {
 "definition": SubResource("Resource_llf28"),
 "id": 11,
 "name": &"11",
-"position_offset": Vector2(368.6119, -185.60196),
-"size": Vector2(308, 108)
+"position_offset": Vector2(720, -180),
+"size": Vector2(308.00006, 108.00006)
 }
 }
 connections = Array[Dictionary]([{
@@ -140,19 +140,19 @@ connections = Array[Dictionary]([{
 "to_node_id": 10,
 "to_port": 0
 }, {
-"from_node_id": 10,
-"from_port": 0,
-"to_node_id": 1,
-"to_port": 0
-}, {
 "from_node_id": 1,
 "from_port": 0,
 "to_node_id": 11,
 "to_port": 0
 }, {
-"from_node_id": 11,
+"from_node_id": 1,
 "from_port": 0,
 "to_node_id": 6,
+"to_port": 0
+}, {
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 1,
 "to_port": 0
 }])
 next_node_id = 12
@@ -252,18 +252,18 @@ runtime_connections = Array[Dictionary]([{
 "to_node_id": 10,
 "to_port": 0
 }, {
-"from_node_id": 10,
-"from_port": 0,
-"to_node_id": 1,
-"to_port": 0
-}, {
 "from_node_id": 1,
 "from_port": 0,
 "to_node_id": 11,
 "to_port": 0
 }, {
-"from_node_id": 11,
+"from_node_id": 1,
 "from_port": 0,
 "to_node_id": 6,
+"to_port": 0
+}, {
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 1,
 "to_port": 0
 }])

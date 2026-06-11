@@ -38,7 +38,15 @@ func apply_params(node: DialogueNode, params: Dictionary) -> void:
 			widget.add_child(_make_text_row(field, str(params.get(field, fallback))))
 	node.add_child(widget)
 	# Flow 입력 1개(왼쪽) + Flow 출력 1개(오른쪽). delete_button이 row 0이므로 위젯은 row 1.
+	# 기존 직렬 Flow 사용(PortraitShow -> Say)을 위해 Flow 입력/출력을 그대로 유지한다(하위 호환).
 	node.set_slot(1, true, DialogueNode.port_type.flow, Color.WHITE, true, DialogueNode.port_type.flow, Color.WHITE)
+	# Effect 입력(비대기, ADR-005). row 2에 두어 flow 입력은 port 0, effect 입력은 port 1.
+	# Start/Say의 Effect 출력이 이 포트로 연결된다. Effect 노드는 leaf이므로 Effect 출력은 없다.
+	var effect_label := Label.new()
+	effect_label.text = "effect"
+	effect_label.tooltip_text = "비대기 Effect 입력(주황): Start/Say의 Effect 출력에 연결합니다. 일반 Flow 입력과 다릅니다."
+	node.add_child(effect_label)
+	node.set_slot(2, true, DialogueNode.port_type.effect, DialogueNode.EFFECT_PORT_COLOR, false, 0, Color.WHITE)
 	node.set_meta(WIDGET_META, widget)
 
 

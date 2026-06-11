@@ -11,4 +11,12 @@ func apply_params(node: DialogueNode, _params: Dictionary) -> void:
 	node.title = "start"
 	node.add_child(Control.new())
 	node.add_right_port_info(0, DialogueNode.port_type.flow, Color.WHITE)
+	# Effect 출력(비대기, ADR-005). flow 출력 아래 row에 두어 flow는 port 0,
+	# effect는 port 1로 배치한다(기존 flow port index 불변).
+	var effect_label := Label.new()
+	effect_label.text = "effect"
+	effect_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	effect_label.tooltip_text = "비대기 Effect 출력(주황): 연결된 Portrait 명령을 실행한 뒤 주 Flow로 진행합니다. 일반 Flow 포트와 다릅니다."
+	node.add_child(effect_label)
+	node.add_right_port_info(1, DialogueNode.port_type.effect, DialogueNode.EFFECT_PORT_COLOR)
 	node.self_modulate = Color(0.8, 1.0, 0.8)

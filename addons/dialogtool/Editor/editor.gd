@@ -127,6 +127,7 @@ func capture_current_graphedit() -> DialogueGraphResource:
 	
 	var node_datas = {}
 	var node_name_to_id = {}
+	var node_name_to_gnode = {}
 
 	for node in get_children():
 		if node is DialogueNode:
@@ -141,23 +142,32 @@ func capture_current_graphedit() -> DialogueGraphResource:
 			}
 			node_datas[node.id] = node_data
 			node_name_to_id[node.name] = node.id
-			
+			node_name_to_gnode[node.name] = node
+
 			if node.definition is StartDef:
 				graph_resource.start_node_id = node.id
 
 	graph_resource.nodes = node_datas
-	
+
+	var effect_type: int = DialogueNode.port_type.effect
 	var connections_data: Array[Dictionary] = []
 	for c in get_connection_list():
 		var from_id = node_name_to_id[c.from_node]
 		var to_id = node_name_to_id[c.to_node]
 		if from_id != null and to_id != null:
-			connections_data.append({
+			var connection := {
 				"from_node_id": from_id,
 				"from_port": c.from_port,
 				"to_node_id": to_id,
 				"to_port": c.to_port
-			})
+			}
+			# 출력 포트 타입이 effect면 비대기 Effect 연결로 표시한다(ADR-005).
+			# kind를 포트 타입에서 파생하므로 저장/재로드 후 재캡처해도 동일하게 복원된다.
+			var from_g = node_name_to_gnode.get(c.from_node)
+			if from_g != null and c.from_port < from_g.get_output_port_count():
+				if from_g.get_output_port_type(c.from_port) == effect_type:
+					connection["kind"] = DialogueGraphResource.CONNECTION_KIND_EFFECT
+			connections_data.append(connection)
 	
 	graph_resource.connections = connections_data
 	graph_resource.next_node_id = _next_id
@@ -184,6 +194,7 @@ func _validate_runtime_snapshot(graph_resource: DialogueGraphResource) -> bool:
 	var nodes: Dictionary = graph_resource.nodes
 	var connections: Array = graph_resource.connections
 	var flow_type: int = DialogueNode.port_type.flow
+	var effect_type: int = DialogueNode.port_type.effect
 	var fatal := false
 
 	# 실제 포트 타입/개수를 조회하기 위해 node id -> 라이브 GraphNode 매핑.
@@ -201,7 +212,10 @@ func _validate_runtime_snapshot(graph_resource: DialogueGraphResource) -> bool:
 		push_error("DialogueTool 검증: Start 노드는 정확히 1개여야 합니다 (현재 %d개)." % start_ids.size())
 		fatal = true
 
-	# (4) 연결 양 끝 노드 존재 + (3) 명백한 포트 타입 오류 검사.
+	# (4) 연결 양 끝 노드 존재 + (3) 포트 카테고리 + (A) 주 Flow 단일성 + (B) Effect 화이트리스트.
+	# flow_groups["from_id:from_port"] = {from_id, from_port, targets:[{id,port,type} ...]}.
+	var flow_groups := {}
+	var effect_adj := {}         # from_id -> [to_id ...] : Effect 간선(순환 검사용).
 	for c in connections:
 		var from_id = c.get("from_node_id")
 		var to_id = c.get("to_node_id")
@@ -227,16 +241,57 @@ func _validate_runtime_snapshot(graph_resource: DialogueGraphResource) -> bool:
 
 		var out_type: int = from_g.get_output_port_type(c.from_port)
 		var in_type: int = to_g.get_input_port_type(c.to_port)
-		# Flow는 Flow끼리만 연결돼야 한다. data/boolean은 서로 호환되는 값 포트다.
-		# Flow와 비-Flow 값 포트를 섞는 경우만 치명적 오류로 본다.
-		if (out_type == flow_type) != (in_type == flow_type):
-			push_error("DialogueTool 검증: Flow↔Data 타입 불일치 연결 — node %s port %d → node %s port %d." % [str(from_id), c.from_port, str(to_id), c.to_port])
+		var to_type: StringName = _node_runtime_type(nodes, to_id)
+		# 포트는 카테고리(flow / value(data·boolean) / effect)가 같아야 연결할 수 있다.
+		# flow끼리, data/boolean 값 포트끼리, effect끼리만 허용하고 카테고리가 다르면 치명적 오류.
+		if _port_category(out_type) != _port_category(in_type):
+			push_error("DialogueTool 검증: 포트 카테고리 불일치 연결 — node %s(out type %d) port %d → node %s(in type %d) port %d." % [str(from_id), out_type, c.from_port, str(to_id), in_type, c.to_port])
+			fatal = true
+			continue
+
+		var from_type: StringName = _node_runtime_type(nodes, from_id)
+		if out_type == flow_type:
+			# (A) 주 Flow 출력 포트별 대상 수집(나중에 2개 이상이면 차단).
+			var key := "%d:%d" % [from_id, c.from_port]
+			if not flow_groups.has(key):
+				flow_groups[key] = {"from_id": from_id, "from_port": c.from_port, "from_type": from_type, "targets": []}
+			flow_groups[key]["targets"].append({"id": to_id, "port": c.to_port, "type": to_type})
+		elif out_type == effect_type:
+			# (B) Effect 대상 type whitelist: Portrait만 허용.
+			if not DialogueGraphResource.is_effect_target_type(to_type):
+				push_error("DialogueTool 검증: Effect 대상이 Portrait가 아닙니다 — %s. Effect는 Portrait만 허용합니다." % _format_port_edge(from_id, from_type, c.from_port, to_id, to_type, c.to_port))
+				fatal = true
+			# 순환 검사용 Effect 간선(포트 포함).
+			effect_adj.get_or_add(from_id, []).append({"to": to_id, "from_port": c.from_port, "to_port": c.to_port})
+
+	# (A) 한 실행 지점의 주 Flow 대상은 최대 하나. 여러 개면 조용히 첫 연결만 실행되므로 차단.
+	for key in flow_groups:
+		var group: Dictionary = flow_groups[key]
+		var targets: Array = group["targets"]
+		if targets.size() > 1:
+			var edge_descs: Array = []
+			for t in targets:
+				edge_descs.append(_format_port_edge(group["from_id"], group["from_type"], group["from_port"], t["id"], t["type"], t["port"]))
+			push_error("DialogueTool 검증: 주 Flow 대상이 둘 이상입니다 — %s. 한 Flow 포트에는 하나만 연결하세요." % " ; ".join(edge_descs))
 			fatal = true
 
-	# (2) Start에서 Flow 도달 가능 + (5) 끊긴 Flow 경고 — flow 간선 BFS.
+	# (C) Effect 순환 차단. Portrait는 에디터에서 Effect 출력이 없어 정상 그래프엔 생기지 않지만,
+	# 수작업/레거시 리소스 방어를 위해 Effect 간선의 순환을 검사한다.
+	var cycle_edges: Array = _find_effect_cycle(effect_adj)
+	if not cycle_edges.is_empty():
+		var cycle_descs: Array = []
+		for e in cycle_edges:
+			cycle_descs.append(_format_port_edge(e["from_id"], _node_runtime_type(nodes, e["from_id"]), e["from_port"], e["to_id"], _node_runtime_type(nodes, e["to_id"]), e["to_port"]))
+		push_error("DialogueTool 검증: Effect 연결에 순환이 있습니다 — 경로: %s. Effect는 순환할 수 없습니다." % " → ".join(cycle_descs))
+		fatal = true
+
+	# (2) Start에서 도달 가능 + (5) 끊긴 Flow 경고.
+	# flow_adj: 끊긴 Flow 검사용(flow 간선만). reach_adj: 도달성 검사용(flow + effect 간선).
+	# Effect 연결로만 닿는 Portrait도 "도달 가능"으로 본다(ADR-005).
 	if start_ids.size() == 1:
 		var start_id = start_ids[0]
 		var flow_adj := {}
+		var reach_adj := {}
 		for c in connections:
 			var fg = id_to_gnode.get(c.get("from_node_id"))
 			var tg = id_to_gnode.get(c.get("to_node_id"))
@@ -244,14 +299,19 @@ func _validate_runtime_snapshot(graph_resource: DialogueGraphResource) -> bool:
 				continue
 			if c.from_port >= fg.get_output_port_count() or c.to_port >= tg.get_input_port_count():
 				continue
-			if fg.get_output_port_type(c.from_port) == flow_type and tg.get_input_port_type(c.to_port) == flow_type:
+			var ot: int = fg.get_output_port_type(c.from_port)
+			var it: int = tg.get_input_port_type(c.to_port)
+			if ot == flow_type and it == flow_type:
 				flow_adj.get_or_add(c.from_node_id, []).append(c.to_node_id)
+				reach_adj.get_or_add(c.from_node_id, []).append(c.to_node_id)
+			elif ot == effect_type and it == effect_type:
+				reach_adj.get_or_add(c.from_node_id, []).append(c.to_node_id)
 
 		var reachable := {start_id: true}
 		var queue: Array = [start_id]
 		while not queue.is_empty():
 			var cur = queue.pop_back()
-			for nxt in flow_adj.get(cur, []):
+			for nxt in reach_adj.get(cur, []):
 				if not reachable.has(nxt):
 					reachable[nxt] = true
 					queue.append(nxt)
@@ -265,6 +325,72 @@ func _validate_runtime_snapshot(graph_resource: DialogueGraphResource) -> bool:
 				push_warning("DialogueTool 검증: 도달 불가능한 Flow 노드 (id %s, type %s)." % [str(nid), str(def.get_runtime_type())])
 
 	return not fatal
+
+
+# 포트 타입을 연결 호환 카테고리로 묶는다. 같은 카테고리끼리만 연결할 수 있다.
+# 0=flow, 1=value(data·boolean), 2=effect.
+func _port_category(port_type_value: int) -> int:
+	if port_type_value == DialogueNode.port_type.flow:
+		return 0
+	if port_type_value == DialogueNode.port_type.effect:
+		return 2
+	return 1
+
+
+# nodes 스냅샷에서 node_id의 런타임 타입을 얻는다(없으면 &"?").
+func _node_runtime_type(nodes: Dictionary, node_id) -> StringName:
+	if not nodes.has(node_id):
+		return &"?"
+	var def = nodes[node_id].get("definition")
+	if def == null:
+		return &"?"
+	return def.get_runtime_type()
+
+
+# 연결 한 줄을 "node A(type) out-port P → node B(type) in-port Q" 형식으로 포맷한다.
+# 모든 validation 오류 메시지가 이 헬퍼를 공유해 node id/type/port를 일관되게 포함한다.
+func _format_port_edge(from_id, from_type, from_port: int, to_id, to_type, to_port: int) -> String:
+	return "node %s(type %s) out-port %d → node %s(type %s) in-port %d" % [str(from_id), str(from_type), from_port, str(to_id), str(to_type), to_port]
+
+
+# Effect 간선 인접 리스트에서 순환을 찾아 그 간선 경로를 반환한다(닫힌 형태).
+# adj[from_id] = [{to, from_port, to_port} ...]. 반환은 {from_id, from_port, to_id, to_port} 배열.
+# 순환이 없으면 빈 배열. 오류 메시지에 정확한 port를 싣기 위해 node id가 아닌 간선을 돌려준다.
+func _find_effect_cycle(adj: Dictionary) -> Array:
+	var visiting := {}
+	var visited := {}
+	var parent_edge := {}
+	for node in adj.keys():
+		if not visited.has(node):
+			var cyc := _effect_cycle_dfs(node, adj, visiting, visited, parent_edge)
+			if not cyc.is_empty():
+				return cyc
+	return []
+
+
+func _effect_cycle_dfs(node, adj: Dictionary, visiting: Dictionary, visited: Dictionary, parent_edge: Dictionary) -> Array:
+	visiting[node] = true
+	for e in adj.get(node, []):
+		var nxt = e["to"]
+		var edge := {"from_id": node, "from_port": e["from_port"], "to_id": nxt, "to_port": e["to_port"]}
+		if visiting.has(nxt):
+			# 순환 발견: 현재 경로(parent_edge)를 nxt까지 거슬러 올라가 간선들을 모으고 닫는 간선을 더한다.
+			var cyc: Array = []
+			var walk = node
+			while walk != nxt:
+				var pe: Dictionary = parent_edge[walk]
+				cyc.push_front(pe)
+				walk = pe["from_id"]
+			cyc.append(edge)
+			return cyc
+		if not visited.has(nxt):
+			parent_edge[nxt] = edge
+			var r := _effect_cycle_dfs(nxt, adj, visiting, visited, parent_edge)
+			if not r.is_empty():
+				return r
+	visiting.erase(node)
+	visited[node] = true
+	return []
 
 
 func clear_graph() -> void:
@@ -325,11 +451,48 @@ func load_resource(resource: DialogueGraphResource) -> void:
 	for connection in resource.connections:
 		var from_name = id_to_name_map.get(connection.from_node_id)
 		var to_name = id_to_name_map.get(connection.to_node_id)
-		
-		if from_name != null and to_name != null:
-			connect_node(from_name, connection.from_port, to_name, connection.to_port)
+		if from_name == null or to_name == null:
+			continue
 
-	call_deferred("reset_camera")			
+		var from_port: int = connection.from_port
+		var to_port: int = connection.to_port
+
+		# Effect 연결(kind=="effect")은 저장된 포트 index가 아니라 노드의 Effect 포트로
+		# 정규화한다. Step 1 시대 리소스는 Effect를 Flow 포트(0→0)로 저장했으므로, kind를
+		# 무시하고 그대로 연결하면 Effect가 Flow로 둔갑한다(연결 의미 손실). kind를 신뢰해
+		# Effect 출력/입력 포트를 찾아 매핑하고, 매핑할 수 없으면 조용히 Flow로 바꾸지 않고
+		# 오류로 보고한 뒤 그 연결을 건너뛴다.
+		if connection.get("kind", "") == DialogueGraphResource.CONNECTION_KIND_EFFECT:
+			var from_g: DialogueNode = get_node_or_null(NodePath(from_name))
+			var to_g: DialogueNode = get_node_or_null(NodePath(to_name))
+			var effect_out := _find_effect_port(from_g, true)
+			var effect_in := _find_effect_port(to_g, false)
+			if effect_out == -1 or effect_in == -1:
+				push_error("DialogueTool: Effect 연결을 매핑할 Effect 포트가 없습니다 — node %s → node %s. 연결을 건너뜁니다." % [str(connection.from_node_id), str(connection.to_node_id)])
+				continue
+			from_port = effect_out
+			to_port = effect_in
+
+		connect_node(from_name, from_port, to_name, to_port)
+
+	call_deferred("reset_camera")
+
+
+# gnode에서 첫 Effect 포트 index를 찾는다(없으면 -1). is_output=true면 출력 포트,
+# false면 입력 포트를 검사한다. Effect 연결을 로드할 때 포트 정규화에 사용한다.
+func _find_effect_port(gnode: DialogueNode, is_output: bool) -> int:
+	if gnode == null:
+		return -1
+	var effect_type: int = DialogueNode.port_type.effect
+	if is_output:
+		for i in gnode.get_output_port_count():
+			if gnode.get_output_port_type(i) == effect_type:
+				return i
+	else:
+		for i in gnode.get_input_port_count():
+			if gnode.get_input_port_type(i) == effect_type:
+				return i
+	return -1
 
 func reset() -> void:
 	_next_id = 1
