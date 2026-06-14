@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "20_Systems/Article-Status-System.md",
+                "file": "20_Systems/World-State-User-Guide.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Article-Status-System"
+              "title": "World-State-User-Guide"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "20_Systems/Article-Status-System.md",
+                "file": "20_Systems/BehaviorTree-System.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Article-Status-System 의 백링크"
+              "title": "BehaviorTree-System 의 백링크"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "20_Systems/Article-Status-System.md",
+                "file": "20_Systems/BehaviorTree-System.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Article-Status-System 의 나가는 링크"
+              "title": "BehaviorTree-System 의 나가는 링크"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "20_Systems/Article-Status-System.md",
+                "file": "20_Systems/BehaviorTree-System.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Article-Status-System 의 개요"
+              "title": "BehaviorTree-System 의 개요"
             }
           }
         ]
@@ -185,41 +185,41 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
+    "20_Systems/World-State-System.md",
+    "20_Systems/World-State-User-Guide.md",
+    "30_Tasks/DT-006-WorldState-Runtime-Integration.md",
+    "50_Reviews/DT-006-WorldState-Runtime-Review.md",
+    "50_Reviews/DT-006-WorldState-Runtime-Review.md.tmp.41472.6cc4e2fa04e7",
+    "20_Systems/World-State-System.md.tmp.41472.70fb812283c4",
+    "30_Tasks/DT-006-WorldState-Runtime-Integration.md.tmp.41472.90df327150c7",
+    "00_Index/Current-State.md.tmp.41472.e323e58822af",
+    "40_Decisions/ADR-007-WorldState-Runtime-Lifecycle.md",
+    "30_Tasks/DT-005-StateSchema-WorldStateStore.md",
+    "50_Reviews/DT-005-WorldState-Review.md",
+    "30_Tasks/DT-005-StateSchema-WorldStateStore.md.tmp.41472.019b6124f2e5",
+    "20_Systems/World-State-System.md.tmp.34512.6683dae951c1",
+    "30_Tasks/DT-005-StateSchema-WorldStateStore.md.tmp.34512.be3b6a7ffa49",
+    "30_Tasks/DT-005-StateSchema-WorldStateStore.md.tmp.34512.d5f41d952855",
+    "20_Systems/World-State-System.md.tmp.34512.db272dc3d05c",
+    "20_Systems/World-State-System.md.tmp.34512.ac5a142192b5",
+    "90_Templates/Design-Review-Prompt.md",
+    "90_Templates/Implementation-Prompt.md",
     "20_Systems/BehaviorTree-System.md",
+    "20_Systems/Article-Status-System.md",
     "20_Systems/DialogueTool.md",
     "20_Systems/DialogueTool-User-Guide.md",
     "20_Systems/Turn-System.md",
-    "00_Index/Home.md",
-    "30_Tasks/DT-004-Nonblocking-Effect-Flow.md",
-    "STEP_REVIEW_WORKFLOW.md",
-    "50_Reviews/DT-004-Effect-Flow-Review.md.tmp.44792.a01dc1c3373a",
-    "00_Index/Current-State.md.tmp.44792.273b961b9b97",
-    "50_Reviews/DT-004-Effect-Flow-Review.md",
-    "30_Tasks/DT-004-Nonblocking-Effect-Flow.md.tmp.44792.bc89afe0fbd2",
-    "30_Tasks/DT-004-Nonblocking-Effect-Flow.md.tmp.43712.2f4d97524f4e",
-    "40_Decisions/ADR-005-Nonblocking-Effect-Connections.md.tmp.43712.7c7553c6e70e",
-    "00_Index/Current-State.md.tmp.43712.ede83d212c13",
-    "30_Tasks/DT-004-Nonblocking-Effect-Flow.md.tmp.43712.5ca104297e66",
-    "30_Tasks/DT-004-Nonblocking-Effect-Flow.md.tmp.43712.7c830441415e",
-    "40_Decisions/ADR-005-Nonblocking-Effect-Connections.md",
-    "30_Tasks/DT-003-Say-Line-Paging.md",
-    "40_Decisions/ADR-004-Portrait-Texture-Path-MVP.md",
-    "50_Reviews/DT-002-Portrait-Review.md",
-    "Related Document.md",
-    "30_Tasks/DT-002-Portrait-State.md",
-    "30_Tasks/DT-001-DialogueTool-Foundation.md",
-    "00_Index/Current-State.md.tmp.37396.261f98c513fa",
-    "40_Decisions/ADR-003-DialogueManager-Autoload.md",
-    "40_Decisions/ADR-002-Editor-Adapter.md",
-    "40_Decisions/ADR-001-Runtime-Snapshot.md",
-    "50_Reviews/DialogueTool-Step-1-to-8.md",
-    "20_Systems/Article-Status-System.md",
-    "90_Templates/Task.md",
-    "90_Templates/Review.md",
-    "90_Templates/ADR.md",
-    "00_Index/Current-State.md",
     "10_Architecture/Project-Overview.md",
     "10_Architecture/Runtime-Data-Flow.md",
-    "90_Templates"
+    "00_Index/Home.md",
+    "30_Tasks/DT-002-Portrait-State.md",
+    "30_Tasks/DT-003-Say-Line-Paging.md",
+    "30_Tasks/DT-004-Nonblocking-Effect-Flow.md",
+    "40_Decisions/ADR-006-Typed-World-State.md",
+    "50_Reviews/DT-002-Portrait-Review.md",
+    "50_Reviews/DialogueTool-Step-1-to-8.md",
+    "STEP_REVIEW_WORKFLOW.md",
+    "50_Reviews/DT-004-Effect-Flow-Review.md",
+    "40_Decisions/ADR-005-Nonblocking-Effect-Connections.md"
   ]
 }

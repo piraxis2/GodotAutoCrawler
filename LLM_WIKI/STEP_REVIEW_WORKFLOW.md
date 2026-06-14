@@ -233,7 +233,38 @@ Start
   -> End
 ```
 
-## 8. 작업 프롬프트 템플릿
+## 8. 프롬프트 단계 분리
+
+Agent 작업은 다음 세션 역할을 섞지 않는다.
+
+```text
+설계 작성
+  -> 설계 리뷰
+  -> 설계 승인
+  -> Step 구현
+  -> 코드 리뷰
+  -> 수정 및 재검증
+```
+
+### 설계 리뷰
+
+- Task와 ADR의 구현 가능성, 범위, API, 데이터 계약, 테스트 계획을 검토한다.
+- 제품 코드는 수정하지 않는다.
+- 결과는 `Approved`, `Approved after design fixes`, `Rework required`로 판정한다.
+- 템플릿: [[Design-Review-Prompt]]
+
+### 구현
+
+- 승인된 설계의 Step 하나만 구현한다.
+- 구현 중 설계 변경이 필요하면 임의로 확장하지 않고 Design Deviation을 보고한다.
+- 템플릿: [[Implementation-Prompt]]
+
+### 코드 리뷰
+
+- 구현 결과가 승인된 Task/ADR과 Completion Criteria를 만족하는지 검토한다.
+- 버그, 회귀, 데이터 손실, 수명 주기 문제를 P0~P3로 분류한다.
+
+## 9. 간단한 구현 프롬프트
 
 ```text
 현재 프로젝트에서 Step N만 진행해라.
@@ -258,7 +289,9 @@ Start
 - 변경 파일, 구현 내용, 검증 결과, 남은 위험을 보고한다.
 ```
 
-## 9. 리뷰 프롬프트 템플릿
+상세한 구현 세션에는 [[Implementation-Prompt]]를 우선 사용한다.
+
+## 10. 코드 리뷰 프롬프트
 
 ```text
 완료된 Step N을 코드 리뷰해라.

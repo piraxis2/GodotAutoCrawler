@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://4rfxlermberk"]
+
+[ext_resource type="Script" uid="uid://cq747dwoyymb" path="res://Assets/Script/gds/world_state/world_state_store.gd" id="1"]
+[ext_resource type="Resource" path="res://Assets/Script/gds/world_state/world_state_schema.tres" id="2"]
+
+[node name="WorldStateStore" type="Node" unique_id=2010339340]
+script = ExtResource("1")
+schema = ExtResource("2")

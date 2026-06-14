@@ -29,6 +29,8 @@ Test="*res://test.gd"
 PlayerData="*res://Assets/Script/gds/player_data.gd"
 WindowManager="*res://Assets/Script/WindowManager.cs"
 DialogueManager="*res://addons/dialogtool/RunTime/dialogue_manager.gd"
+WorldState="*res://Assets/Script/gds/world_state/world_state_store.tscn"
+WorldStateRuntime="*res://Assets/Script/gds/world_state/world_state_runtime.gd"
 DialogueToolUtil="*uid://bg2wpsw3ggue7"
 
 [debug]

@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-06-11
+updated: 2026-06-12
 ---
 
 # Current State
@@ -25,6 +25,27 @@ updated: 2026-06-11
 - Say 텍스트에 줄바꿈이 있으면 이전 줄을 같은 대화창에 유지하면서 한 줄씩 누적 공개하고,
   마지막 줄 이후에만 다음 Flow로 진행한다([[DT-003-Say-Line-Paging]]).
 
+## World State
+
+- 타입 안전 World State 기반 DT-005 Step 1~6이 완료됐다([[DT-005-WorldState-Review]], 판정: 완료).
+- `Assets/Script/gds/world_state/`: `StateDefinition`/`StateSchema`(선언·validation·lookup),
+  `WorldStateStore`(read/write/reset/`value_changed`, SAVE/SESSION lifetime + `reset_lifetime`,
+  JSON snapshot export/import replace-load, atomic `apply_batch`, read/mutation provider facade).
+- `DialoguePlayer`는 read 상태 provider를 주입받는다(`DialogueManager`→`DialogueUI`→`DialoguePlayer`).
+  `/root`/PlayerData/save를 직접 조회하지 않고 주입 provider로만 상태를 읽는다.
+- 허용 타입은 bool/int/float/String/StringName, snapshot INT는 JSON-safe `±(2^53-1)`로 제한.
+- 헤드리스 테스트 `Assets/Script/gds/world_state/tests/dt005_step1~6_*`로 검증(ALL PASS).
+- 실제 Schema 작성과 Store API 사용법은 [[World-State-User-Guide]]에 정리돼 있다.
+- 런타임 통합 DT-006 Step 0~5 완료([[DT-006-WorldState-Runtime-Review]], 판정: 완료).
+  - `WorldState` autoload(`/root/WorldState`): 유효 6-key bootstrap Schema(`world_state_schema.tres`)로
+    부팅 시 ready.
+  - `WorldStateRuntime` autoload(`/root/WorldStateRuntime`): new game/load lifecycle coordinator.
+    `start_new_game()`/`restore_game()`(=`restore_world_state()`)는 transactional(envelope pre-validation,
+    실패 시 기존 상태 보존), `capture_world_state()`는 SAVE-only. SESSION은 새 게임/load에서만 default.
+  - 결정: [[ADR-007-WorldState-Runtime-Lifecycle]]. autoload 이름은 class_name 충돌 회피로 `WorldState`.
+- 미구현(후속): 실제 SaveGame file/slot 시스템(DT-006 adapter 소비), State Read/Set Dialogue 노드,
+  ConditionEvaluator, full int64.
+
 ## Known Gaps
 
 - Portrait는 `Say` 요청의 문자열 필드와 별개로, 독립적인 비대기 UI 상태 명령으로 분리됐다.
@@ -38,7 +59,8 @@ updated: 2026-06-11
   - MVP 이후 후속: transition 애니메이션, Portrait Focus/dim, actor database/resolver,
     speaker 기반 자동 선택. [[Open-Tasks]] 참고.
 - Autoload와 SceneFunction의 안전한 런타임 평가/부작용 정책은 미완성이다.
-- DialogueTool 통합 회귀 테스트 리소스와 자동 테스트가 아직 고정되지 않았다.
+- DialogueTool 헤드리스 자동 테스트가 고정됐다(`dt004_step1~4`+integration). World State는
+  `dt005_step1~6`로 통합 매트릭스까지 검증된다. 별도의 에디터-저장 기반 통합 회귀 .tres 샘플은 아직 없다.
 - Say 줄 누적 표시는 정적 검토만 완료됐으며 Godot 실제 클릭/headless 회귀 검증이 남아 있다.
 - Portrait와 주 Flow를 같은 실행 지점에 연결하는 비대기 Effect 모델이 완료됐다
   ([[DT-004-Nonblocking-Effect-Flow]], [[ADR-005-Nonblocking-Effect-Connections]], [[DT-004-Effect-Flow-Review]]).

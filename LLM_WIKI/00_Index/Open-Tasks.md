@@ -1,19 +1,25 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-06-11
+updated: 2026-06-12
 ---
 
 # Open Tasks
 
 ## Next
 
+- SaveGame file/slot system: DT-006 snapshot adapter(`capture_world_state`/`restore_world_state`)를
+  소비해 실제 파일, 슬롯, 백업 정책을 구현한다(DT-006 후속, [[DT-006-WorldState-Runtime-Review]]).
+- ConditionSet + ConditionEvaluator: DT-005 read provider 위에 구조화 조건 평가(pure read, trace 가능)를 올린다.
+- State Read / Set·Add State Effect Dialogue 노드: DT-005 provider/`apply_batch`를 실제 소비하는 노드.
 - Say 줄 누적 표시 실제 UI 회귀 검증: 한 줄/여러 줄/빈 줄/CRLF의 클릭 순서와 Flow 진행을 Godot에서 확인한다.
 - Dialogue 통합 회귀 그래프 작성: Start, Say, Choice, Expression, Branch, End를 한 리소스에서 검증한다.
 - DialogueManager 반복 실행/교체/연속 실행 테스트를 자동화한다.
 
 ## Later
 
+- Response Selector와 조건부 Choice
+- DialogueHistory 및 State Inspector
 - Portrait transition 애니메이션(fade/slide 등) — DT-002 MVP 이후.
 - Portrait Focus와 비활성 Portrait dim 처리 — DT-002 MVP 이후.
 - actor database 및 actor/expression -> Texture resolver — DT-002 MVP 이후.

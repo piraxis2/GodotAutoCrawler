@@ -13,6 +13,13 @@ var current_node_id: int = -1
 var waiting_for: StringName = &"none"
 var selected_choice: int = -1
 
+# --- 상태 provider seam (DT-005 Step 5) ---
+# Dialogue runtime은 save file/PlayerData/전역 singleton을 직접 알지 않는다. 조건 평가 계층이
+# 사용할 read 상태는 외부에서 주입된 read provider를 통해서만 접근한다(/root를 직접 조회하지 않음).
+# read provider 계약(duck-typed): has_state(key) / read_state(key) / try_read_state(key, fallback).
+# mutation provider는 이 Step에서 주입하지 않는다(소비하는 노드/Effect가 아직 없음 — 후속 Task).
+var _read_state_provider = null
+
 
 func _ready() -> void:
 	if DialogueToolUtil.is_dialogue_debug_hint():
@@ -29,6 +36,41 @@ func _ready() -> void:
 
 func init_dialogue(dialogue: DialogueGraphResource) -> void:
 	start_dialogue(dialogue)
+
+
+# --- read 상태 provider seam (DT-005 Step 5) -------------------------
+# DialogueUI/DialogueManager 또는 테스트가 read provider를 주입한다. start_dialogue 전에 호출한다.
+func set_read_state_provider(provider) -> void:
+	_read_state_provider = provider
+
+
+func get_read_state_provider():
+	return _read_state_provider
+
+
+func has_read_state_provider() -> bool:
+	return _read_state_provider != null
+
+
+# 조건 평가 계층(후속 ConditionEvaluator/노드)이 사용할 read seam. provider가 없으면 안전 기본값을
+# 반환한다(현재 이 메서드를 소비하는 Dialogue 노드는 없다 — 경계만 만든다).
+func has_state(key: StringName) -> bool:
+	if _read_state_provider == null:
+		return false
+	return _read_state_provider.has_state(key)
+
+
+func read_state(key: StringName) -> Variant:
+	if _read_state_provider == null:
+		push_warning("DialoguePlayer: read_state('%s') without a read state provider; returning null." % key)
+		return null
+	return _read_state_provider.read_state(key)
+
+
+func try_read_state(key: StringName, fallback: Variant = null) -> Variant:
+	if _read_state_provider == null:
+		return fallback
+	return _read_state_provider.try_read_state(key, fallback)
 
 
 func start_dialogue(dialogue: DialogueGraphResource) -> void:

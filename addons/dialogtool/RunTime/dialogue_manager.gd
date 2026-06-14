@@ -24,7 +24,8 @@ var _ui: DialogueUI = null
 
 
 # 리소스 하나를 넘겨 대화를 시작한다. 진행 중이던 대화는 정리된다.
-func play(dialogue_resource: DialogueGraphResource) -> void:
+# read_state_provider(선택)는 DialoguePlayer까지 전달할 read 상태 provider다(DT-005 Step 5).
+func play(dialogue_resource: DialogueGraphResource, read_state_provider = null) -> void:
 	if dialogue_resource == null:
 		push_error("DialogueManager: dialogue_resource is null.")
 		return
@@ -46,7 +47,7 @@ func play(dialogue_resource: DialogueGraphResource) -> void:
 	# 종료 신호에 발신 UI를 바인딩 — 교체된 이전 대화의 지연 신호를 식별해 무시한다.
 	_ui.dialogue_end.connect(_on_end.bind(_ui))
 
-	_ui.play(dialogue_resource)
+	_ui.play(dialogue_resource, read_state_provider)
 
 
 # 현재 대화가 표시 중인지.
@@ -73,6 +74,10 @@ func _on_end(source_ui) -> void:
 
 
 func _dismiss() -> void:
+	# 폐기되는 UI가 아직 시작 안 한(deferred 대기) 대화를 갖고 있으면 취소한다. 같은 프레임에
+	# play()로 교체하면 이전 UI의 deferred 시작이 뒤늦게 돌아 폐기된 그래프가 실행/평가될 수 있다.
+	if _ui != null and is_instance_valid(_ui):
+		_ui.cancel_pending_start()
 	if _layer != null and is_instance_valid(_layer):
 		_layer.queue_free()
 	_layer = null
