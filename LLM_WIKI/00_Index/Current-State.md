@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-06-12
+updated: 2026-06-14
 ---
 
 # Current State
@@ -44,7 +44,28 @@ updated: 2026-06-12
     실패 시 기존 상태 보존), `capture_world_state()`는 SAVE-only. SESSION은 새 게임/load에서만 default.
   - 결정: [[ADR-007-WorldState-Runtime-Lifecycle]]. autoload 이름은 class_name 충돌 회피로 `WorldState`.
 - 미구현(후속): 실제 SaveGame file/slot 시스템(DT-006 adapter 소비), State Read/Set Dialogue 노드,
-  ConditionEvaluator, full int64.
+  DT-007 Step 4 완료 판정, full int64.
+- DT-007 Step 1~4 구현·검증 완료(in-progress, 최종 완료 판정 대기 — [[DT-007-Condition-Review]]).
+  Step 1~3 코드 리뷰 완료.
+  - `Assets/Script/gds/world_state/condition/`: `ConditionClause`(@abstract base),
+    `StateCondition`(leaf), `ConditionGroup`(ALL/ANY/NOT, recursive `Array[ConditionClause]`),
+    `ConditionSet`(top-level asset), `ConditionValidator`(구조 검증), `ConditionEvaluator`(pure-read 평가).
+  - Step 1 validator는 iterative DFS로 null/unknown/empty/NOT arity/cycle/alias/depth(64)/node(4096)/key/
+    operator/expected/ordered 타입을 검사하고 `{valid, errors[{code,path,key,message}], error_codes,
+    node_count}` deep copy를 반환한다. provider read 없음. spike로 `@abstract` 인식 + 재귀 `.tres` 왕복 확인.
+    추가 코드 `logic_invalid` 코드 리뷰 비준됨. 판정: Step 1 완료.
+  - Step 2 evaluator는 2단계 평가다: validator(read 0)를 먼저 통과해야 주입 provider의 `has_state`/
+    `read_state`만으로 트리를 재귀 평가한다. strict typeof 비교(암시적 변환 없음), evaluation-local key
+    cache(miss 포함 1회 read), non-short-circuit 전체 trace, fail-closed errored 전파(NOT/ANY가 errored
+    child를 pass로 안 바꿈), `{passed, valid, errors, trace, read_count}` deep copy. mutation/autoload 미접근.
+  - Step 3은 실제 `WorldStateStore`를 read provider로 주입하는 통합 검증(제품 코드 변경 없음). Step 4는
+    end-to-end 완료 검증: 대표 RPG `.tres`를 재로드해 in-memory set과 **동일한 report**(passed/valid/
+    errors/trace/read_count 문자열 표현 일치)를 실제 Store에서 내고, load lifecycle(restore_world_state로
+    SESSION reset 직접 단언)·성능 sanity(node 4096, 같은 key read 1)·fail-closed Store 불변을 확인했다.
+  - 검증: `condition/tests` `dt007_step1`(24)/`step2`(23)/`step3`(11)/`step4`(e2e)/`spike` ALL PASS.
+    전체 회귀 DT-004(5)+DT-005(6)+DT-006(5) ALL PASS, editor `--import` 0 오류 — 합계 21 headless.
+  - 후속 State Condition Dialogue node Task 입력 계약은 [[DT-007-Condition-Review]]에 문서화. P0/P1 없음
+    (구현자 자가평가), 최종 완료 판정 리뷰 대기.
 
 ## Known Gaps
 

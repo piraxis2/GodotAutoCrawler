@@ -1,16 +1,22 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-06-12
+updated: 2026-06-14
 ---
 
 # Open Tasks
 
 ## Next
 
+- [[DT-007-ConditionSet-ConditionEvaluator]]: 구조화 ConditionSet + pure-read ConditionEvaluator.
+  Step 0~4 구현·검증 완료(in-progress, [[ADR-008-Structured-Condition-Evaluation]] accepted,
+  [[DT-007-Condition-Review]] 리뷰 대기). P0/P1 없음(자가평가). 최종 완료 판정 후 이 항목을 제거하고
+  아래 후속 Task를 Next로 올린다.
+- State Condition Dialogue node + 조건부 Choice: [[DT-007-Condition-Review]]의 입력 계약
+  (`ConditionEvaluator.evaluate(set, provider) -> {passed,valid,errors,trace,read_count}`)을 소비해
+  Dialogue Branch가 `ConditionSet`으로 분기하고 조건부 Choice/Response Selector를 추가한다.
 - SaveGame file/slot system: DT-006 snapshot adapter(`capture_world_state`/`restore_world_state`)를
   소비해 실제 파일, 슬롯, 백업 정책을 구현한다(DT-006 후속, [[DT-006-WorldState-Runtime-Review]]).
-- ConditionSet + ConditionEvaluator: DT-005 read provider 위에 구조화 조건 평가(pure read, trace 가능)를 올린다.
 - State Read / Set·Add State Effect Dialogue 노드: DT-005 provider/`apply_batch`를 실제 소비하는 노드.
 - Say 줄 누적 표시 실제 UI 회귀 검증: 한 줄/여러 줄/빈 줄/CRLF의 클릭 순서와 Flow 진행을 Godot에서 확인한다.
 - Dialogue 통합 회귀 그래프 작성: Start, Say, Choice, Expression, Branch, End를 한 리소스에서 검증한다.

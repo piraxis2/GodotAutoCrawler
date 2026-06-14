@@ -2,7 +2,7 @@
 type: system
 system: WorldState
 status: complete
-updated: 2026-06-12
+updated: 2026-06-14
 ---
 
 # World State System
@@ -30,7 +30,8 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
   snapshot 복원은 envelope를 먼저 비변경 검사하고, 호환될 때만 default 초기화와 SAVE import를 수행한다.
 - 외부 SaveGame 계층용 adapter는 `capture_world_state()`/`restore_world_state(snapshot)`이다. coordinator와
   Store 모두 파일 경로와 slot을 모른다.
-- State Read/Set Dialogue 노드와 ConditionEvaluator, 실제 SaveGame file/slot 시스템은 아직 없다.
+- 조건 데이터 모델/검증/pure-read 평가기와 실제 `WorldStateStore` 통합(DT-007 Step 1~3)은 존재한다
+  (아래 Condition Model). State Read/Set Dialogue 노드, 실제 SaveGame file/slot 시스템은 아직 없다.
 
 - `Assets/Script/gds/world_state/state_definition.gd` — `StateDefinition` Resource.
   - 필드: `key: StringName`, `value_type`, `default_value: Variant`, `lifetime`,
@@ -133,9 +134,37 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
   대화가 시작/평가되지 않는다.
 - 검증: `tests/dt005_step5_provider_seam_test.tscn`(ALL PASS) + 기존 DialogueTool dt004 회귀.
 
+## Condition Model (DT-007 Step 1~4 완료, 완료 판정 대기 — [[DT-007-Condition-Review]])
+
+- `Assets/Script/gds/world_state/condition/`에 조건 데이터 모델과 구조 검증기가 있다
+  ([[DT-007-ConditionSet-ConditionEvaluator]] Step 1, [[ADR-008-Structured-Condition-Evaluation]]).
+  - `ConditionClause`(@abstract base), `StateCondition`(leaf: key/operator/expected_value),
+    `ConditionGroup`(ALL/ANY/NOT + recursive `Array[ConditionClause]`), `ConditionSet`(top-level asset).
+    모두 순수 데이터 Resource이며 평가/provider/UI를 모른다.
+  - `ConditionValidator.validate(condition_set) -> {valid, errors[{code,path,key,message}], error_codes,
+    node_count}`: stateless static, iterative(explicit-stack) DFS. null/unknown/empty/NOT arity/
+    cycle/alias/depth(64)/node(4096)/key 형식/operator/expected 타입/ordered 숫자 제약을 검사한다.
+    provider를 읽지 않으며(2단계 평가의 1단계, structural reject 시 read 0), 결과는 호출별 deep copy다.
+  - condition key 형식은 DT-005 `StateSchema.KEY_PATTERN`을 재사용한다(단일 source of truth).
+  - `ConditionEvaluator.evaluate(condition_set, read_provider) -> {passed, valid, errors, trace,
+    read_count}`(DT-007 Step 2): pure-read 평가기. 2단계 평가 — Validator(read 0)를 먼저 통과해야
+    주입 provider의 `has_state`/`read_state`만으로 트리를 재귀 평가한다. strict typeof 비교(암시적 변환
+    없음), evaluation-local key cache(miss 포함 key당 1회 read), non-short-circuit 전체 trace,
+    fail-closed errored 전파(provider/state/type 오류는 errors에 적재되어 valid·passed=false; NOT/ANY가
+    errored child를 pass로 안 바꿈). mutation/signal/save/UI/autoload를 모른다. report/trace는 deep copy.
+    runtime 오류 코드: `provider_missing`/`provider_contract_invalid`/`state_missing`/`actual_type_mismatch`.
+  - DT-007 Step 3: 실제 `WorldStateStore`를 read provider로 그대로 주입해 통합 검증했다(제품 코드 변경
+    없음). set_value/apply_batch/reset_value/reset_lifetime(SESSION)/import_snapshot 뒤 재평가가 새 값을
+    반영하고, read-only/SESSION key도 평가에서 정상 read되며, evaluate는 Store를 변경하지 않는다(pure read).
+  - 검증: `condition/tests` `dt007_step1`(24)/`step2`(23)/`step3`(11 실제 Store)/`step4`(end-to-end:
+    `.tres` 왕복 trace parity·lifecycle·snapshot·성능 sanity)/spike ALL PASS. DT-004/005/006 회귀 +
+    editor import 통과. 후속 Dialogue node 입력 계약은 [[DT-007-Condition-Review]]에 문서화.
+
 ## Planned Components (미구현)
 
-- State Read/Set Dialogue 노드, ConditionEvaluator (후속 Task)
+- State Condition / Read·Set Dialogue 노드와 조건부 Choice/Response Selector: 위 ConditionSet/Evaluator를
+  소비한다([[DT-007-Condition-Review]]의 입력 계약). mutation Effect는 별도 mutation provider 주입 필요.
+- State Read/Set Dialogue 노드와 조건부 Choice/Response Selector
 - SaveGame file/slot, backup, autosave 정책(`capture_world_state`/`restore_world_state` adapter 소비)
 - schema migration/key alias와 full int64 snapshot wire
 

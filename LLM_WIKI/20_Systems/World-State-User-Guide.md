@@ -2,7 +2,7 @@
 type: guide
 system: WorldState
 status: current
-updated: 2026-06-12
+updated: 2026-06-14
 ---
 
 # World State User Guide
@@ -27,10 +27,13 @@ updated: 2026-06-12
 - `WorldStateStore`를 Dialogue read provider로 주입
 - 변경 및 snapshot 관련 signal
 
+구조화 조건 평가도 사용할 수 있다(DT-007, 아래 20절): `ConditionSet`/`ConditionValidator`/
+`ConditionEvaluator`로 ALL/ANY/NOT 트리를 작성·검증·평가한다.
+
 아직 구현되지 않은 기능:
 
-- Dialogue 그래프의 State Read/Set/Add 노드
-- ConditionSet/ConditionEvaluator
+- Dialogue 그래프의 State Read/Set/Add 노드와 Condition 노드
+- 조건부 Choice / Response Selector
 - 실제 save slot 및 파일 관리
 - schema version migration과 key rename alias
 - full int64 snapshot
@@ -687,13 +690,106 @@ DT-006 런타임 통합 테스트:
 - schema version을 올리기 전에 migration 정책을 먼저 설계한다.
 - 출시 이후 key rename은 alias/migration 없이 수행하지 않는다.
 
+## 20. 구조화 조건 평가 (DT-007)
+
+World State 위에서 ALL/ANY/NOT 조건을 데이터로 작성하고, 주입한 read provider로 결정론적으로
+평가한다. 설계는 [[ADR-008-Structured-Condition-Evaluation]], 검증·계약은 [[DT-007-Condition-Review]].
+
+### Resource 모델
+
+- `StateCondition`(leaf): `key`(등록된 state key), `operator`(EQUAL/NOT_EQUAL/LESS/LESS_EQUAL/GREATER/
+  GREATER_EQUAL), `expected_value`(bool/int/float/String/StringName literal).
+- `ConditionGroup`: `logic`(ALL/ANY/NOT) + `children: Array[ConditionClause]`. NOT은 child 정확히 1개.
+- `ConditionSet`: `root`(leaf 또는 group) + `description`/`tags`. `.tres`로 저장·재로드된다.
+- `ConditionClause`는 `@abstract` base다. Inspector에서 직접 생성하지 않고 StateCondition/ConditionGroup만 쓴다.
+
+### 코드로 작성하고 평가하기
+
+```gdscript
+func make_gate() -> ConditionSet:
+    var stage := StateCondition.new()
+    stage.key = &"quest.main.stage"
+    stage.operator = StateCondition.Operator.GREATER_EQUAL
+    stage.expected_value = 3
+
+    var seen := StateCondition.new()
+    seen.key = &"session.intro.seen"
+    seen.operator = StateCondition.Operator.EQUAL
+    seen.expected_value = true
+
+    var not_seen := ConditionGroup.new()
+    not_seen.logic = ConditionGroup.Logic.NOT
+    not_seen.children = [seen] as Array[ConditionClause]
+
+    var root := ConditionGroup.new()
+    root.logic = ConditionGroup.Logic.ALL
+    root.children = [stage, not_seen] as Array[ConditionClause]
+
+    var set := ConditionSet.new()
+    set.root = root
+    return set
+
+
+func check_gate() -> void:
+    var report := ConditionEvaluator.evaluate(make_gate(), WorldState)
+    if not report["valid"]:
+        for e in report["errors"]:
+            push_error("[%s] %s %s: %s" % [e["code"], e["path"], e["key"], e["message"]])
+        return
+    if report["passed"]:
+        print("gate open")
+```
+
+`read_provider`는 `has_state(key: StringName) -> bool`와 `read_state(key: StringName) -> Variant`를
+제공해야 한다. `WorldState`(=`/root/WorldState`, `WorldStateStore`)가 그대로 만족한다.
+
+### 결과 구조
+
+```gdscript
+{
+    "passed": bool,                # valid && 논리 결과
+    "valid": bool,                 # errors.is_empty()
+    "errors": [{code, path, key, message}],
+    "trace": { ... },              # 노드 트리(아래)
+    "read_count": int,             # 읽은 unique key 수(miss 포함)
+}
+```
+
+- `valid==false`면 `passed`는 항상 false.
+- trace leaf: `{kind:"state", path, key, operator, expected, actual, passed}`(에러 leaf는 `actual:null`,
+  `error:<code>`). group: `{kind:"group", logic, path, passed, children}`. root path=`[]`.
+- operator 문자열 `equal|not_equal|less|less_equal|greater|greater_equal`, logic `all|any|not`은 안정 계약.
+
+### 규칙과 fail-closed
+
+- strict 비교: 양쪽 `typeof()` 정확 일치. int↔float, String↔StringName 암시적 변환 없음. ordered(LESS 등)는
+  int/float만.
+- 2단계 평가: 구조 검증(provider read 0) 통과 후에만 값을 읽는다. 같은 key는 호출 내 1회 read.
+- 다음은 모두 `valid=false`, `passed=false`로 fail-closed: 빈 group, NOT arity 위반, cycle/alias, depth>64,
+  node>4096, 빈/잘못된 key, 잘못된 operator/logic, 미지원 expected, 미등록 key(`state_missing`), 타입
+  불일치(`actual_type_mismatch`), provider null/계약 위반(`provider_missing`/`provider_contract_invalid`).
+- ANY가 논리적으로 true여도 형제에 오류가 있으면 통과하지 않는다. NOT/ANY는 errored child를 pass로 바꾸지 않는다.
+- evaluator는 pure read다. Store를 변경하지 않고 mutation/signal에 의존하지 않는다.
+
+### 검증 테스트
+
+```text
+res://Assets/Script/gds/world_state/condition/tests/dt007_step1_validation_test.tscn   # 구조 검증
+res://Assets/Script/gds/world_state/condition/tests/dt007_step2_evaluator_test.tscn    # fake provider 평가
+res://Assets/Script/gds/world_state/condition/tests/dt007_step3_store_integration_test.tscn # 실제 Store
+res://Assets/Script/gds/world_state/condition/tests/dt007_step4_e2e_test.tscn          # .tres+trace e2e
+```
+
 ## Related
 
 - [[World-State-System]]
 - [[ADR-006-Typed-World-State]]
 - [[ADR-007-WorldState-Runtime-Lifecycle]]
+- [[ADR-008-Structured-Condition-Evaluation]]
 - [[DT-005-StateSchema-WorldStateStore]]
 - [[DT-005-WorldState-Review]]
 - [[DT-006-WorldState-Runtime-Integration]]
 - [[DT-006-WorldState-Runtime-Review]]
+- [[DT-007-ConditionSet-ConditionEvaluator]]
+- [[DT-007-Condition-Review]]
 - [[DialogueTool-User-Guide]]
