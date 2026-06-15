@@ -11,14 +11,10 @@
             "id": "541893579710ee26",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "30_Tasks/DT-007-ConditionSet-ConditionEvaluator.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "DT-007-ConditionSet-ConditionEvaluator"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "그래프 뷰"
             }
           }
         ]
@@ -185,7 +181,16 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
+    "50_Reviews/DT-008-Choice-Integration-Review.md.tmp.34612.34ab98a0de8d",
+    "20_Systems/World-State-System.md.tmp.34612.a1a44d5afd60",
+    "00_Index/Open-Tasks.md.tmp.34612.1ae343c58ce1",
+    "50_Reviews/DT-008-Choice-Integration-Review.md",
+    "00_Index/Open-Tasks.md",
+    "00_Index/Current-State.md",
     "20_Systems/World-State-User-Guide.md",
+    "40_Decisions/ADR-009-State-Condition-Dialogue-Consumption.md",
+    "30_Tasks/DT-008-State-Condition-Dialogue-Integration.md",
+    "30_Tasks/DT-007-ConditionSet-ConditionEvaluator.md",
     "20_Systems/World-State-System.md",
     "30_Tasks/DT-006-WorldState-Runtime-Integration.md",
     "50_Reviews/DT-006-WorldState-Runtime-Review.md",
@@ -200,8 +205,6 @@
     "20_Systems/World-State-System.md.tmp.34512.6683dae951c1",
     "30_Tasks/DT-005-StateSchema-WorldStateStore.md.tmp.34512.be3b6a7ffa49",
     "30_Tasks/DT-005-StateSchema-WorldStateStore.md.tmp.34512.d5f41d952855",
-    "20_Systems/World-State-System.md.tmp.34512.db272dc3d05c",
-    "20_Systems/World-State-System.md.tmp.34512.ac5a142192b5",
     "90_Templates/Design-Review-Prompt.md",
     "90_Templates/Implementation-Prompt.md",
     "20_Systems/BehaviorTree-System.md",
@@ -213,13 +216,6 @@
     "10_Architecture/Runtime-Data-Flow.md",
     "00_Index/Home.md",
     "30_Tasks/DT-002-Portrait-State.md",
-    "30_Tasks/DT-003-Say-Line-Paging.md",
-    "30_Tasks/DT-004-Nonblocking-Effect-Flow.md",
-    "40_Decisions/ADR-006-Typed-World-State.md",
-    "50_Reviews/DT-002-Portrait-Review.md",
-    "50_Reviews/DialogueTool-Step-1-to-8.md",
-    "STEP_REVIEW_WORKFLOW.md",
-    "50_Reviews/DT-004-Effect-Flow-Review.md",
-    "40_Decisions/ADR-005-Nonblocking-Effect-Connections.md"
+    "30_Tasks/DT-003-Say-Line-Paging.md"
   ]
 }

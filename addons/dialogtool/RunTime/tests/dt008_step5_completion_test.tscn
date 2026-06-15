@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dt008step5complete"]
+
+[ext_resource type="Script" path="res://addons/dialogtool/RunTime/tests/dt008_step5_completion_test.gd" id="1"]
+
+[node name="DT008Step5Completion" type="Node"]
+script = ExtResource("1")

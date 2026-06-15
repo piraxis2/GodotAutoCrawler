@@ -1,7 +1,7 @@
 ---
 id: DT-007
 type: task
-status: in-progress
+status: done
 system: WorldState
 created: 2026-06-14
 updated: 2026-06-14
@@ -695,7 +695,8 @@ ALL
 - malformed/missing/type mismatch fail-closed이며 Store·값 불변(E).
 - DT-004/005/006 회귀와 headless editor load 성공.
 - 후속 State Condition Dialogue node Task 입력 계약은 [[DT-007-Condition-Review]]에 문서화.
-- P0/P1 없음(구현자 자가평가). 최종 완료 판정은 리뷰 대기.
+- P0/P1 없음. [[DT-007-Condition-Review]] 최종 판정은 **수정 후 완료**이며,
+  Step 0~4를 완료했다.
 
 ## Verification Matrix
 

@@ -154,6 +154,13 @@ Say 텍스트에 줄바꿈이 있으면 같은 대화창에서 이전 줄을 유
 
 선택지 텍스트를 추가하거나 제거한 뒤 저장하면 포트 구성도 함께 저장된다.
 
+**조건부 선택지(DT-008).** 각 선택지에는 항목별 Data 입력 포트가 있다(항목 i의 Data 입력 = port i+1,
+flow 출력 = port i). 여기에 State Condition / Variable / Expression boolean 값을 연결하면, Choice 진입 시
+한 번 평가해 `true`인 선택지만 표시한다. Data 입력이 없는 선택지는 항상 표시되어 기존 대화와 호환된다.
+중간 선택지가 숨겨져도 사용자가 고른 선택지는 원래 Flow로 정확히 진행한다. 조건이 오류(미등록 key/타입
+불일치/provider 미지정 등)면 해당 선택지는 숨겨진다(fail-closed). 모든 선택지가 숨겨지면 경고 후 종료한다.
+대기 중 상태가 바뀌어도 현재 목록은 고정되고, 같은 Choice에 다시 진입할 때 재평가한다.
+
 ### Branch
 
 입력된 Data 값을 bool로 변환해 두 Flow 중 하나로 이동한다.
@@ -206,7 +213,25 @@ Variable(B) ----/
 ```
 
 Expression의 입력 키 순서와 입력 포트 순서가 대응한다. 식 파싱 또는 실행이 실패하면 경고 후
-`null`을 반환하며, Branch에서는 false로 처리된다.
+`null`을 반환하며, Branch에서는 false로 처리된다. 입력 중 하나라도 조건 오류(아래 State Condition)면
+식 결과도 오류로 전파되어 Branch false / Choice 숨김으로 fail-closed된다(`not c` 같은 식이 오류 조건을
+true로 뒤집지 못한다).
+
+### State Condition (DT-008)
+
+World State `ConditionSet` 하나를 평가해 boolean Data를 제공한다. 노드에 ConditionSet `.tres`를 드롭해
+지정하고, boolean output 포트를 Branch의 조건 입력이나 Choice 항목별 Data 입력에 연결한다.
+
+```text
+State Condition("quest.main.stage >= 3") -> Branch (true/false Flow)
+State Condition("actor.example.affinity >= 10") -> Choice 항목 i Data 입력(port i+1)
+```
+
+- 평가는 게임 코드가 주입한 read 상태 provider(예: `WorldStateStore`)로만 수행한다(`/root` 직접 조회 없음).
+- ConditionSet이 비었거나 invalid이거나 provider가 없거나 key 누락/타입 불일치면 조용히 true가 되지 않고
+  fail-closed된다(Branch false / Choice 숨김). 평가 `report`는 디버거/후속 inspector가 쓸 수 있는
+  `condition_evaluated` signal로 노출된다.
+- ConditionSet 작성법(leaf/group/ALL·ANY·NOT, operator, 타입 규칙)은 [[World-State-User-Guide]]를 따른다.
 
 ## 7. Portrait 노드
 

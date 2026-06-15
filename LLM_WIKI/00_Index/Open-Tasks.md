@@ -8,13 +8,6 @@ updated: 2026-06-14
 
 ## Next
 
-- [[DT-007-ConditionSet-ConditionEvaluator]]: 구조화 ConditionSet + pure-read ConditionEvaluator.
-  Step 0~4 구현·검증 완료(in-progress, [[ADR-008-Structured-Condition-Evaluation]] accepted,
-  [[DT-007-Condition-Review]] 리뷰 대기). P0/P1 없음(자가평가). 최종 완료 판정 후 이 항목을 제거하고
-  아래 후속 Task를 Next로 올린다.
-- State Condition Dialogue node + 조건부 Choice: [[DT-007-Condition-Review]]의 입력 계약
-  (`ConditionEvaluator.evaluate(set, provider) -> {passed,valid,errors,trace,read_count}`)을 소비해
-  Dialogue Branch가 `ConditionSet`으로 분기하고 조건부 Choice/Response Selector를 추가한다.
 - SaveGame file/slot system: DT-006 snapshot adapter(`capture_world_state`/`restore_world_state`)를
   소비해 실제 파일, 슬롯, 백업 정책을 구현한다(DT-006 후속, [[DT-006-WorldState-Runtime-Review]]).
 - State Read / Set·Add State Effect Dialogue 노드: DT-005 provider/`apply_batch`를 실제 소비하는 노드.
@@ -24,7 +17,10 @@ updated: 2026-06-14
 
 ## Later
 
-- Response Selector와 조건부 Choice
+- schema-aware key/operator picker와 inline ConditionSet tree editor — DT-008 후속(현재는 외부
+  `.tres` ConditionSet 지정 중심, runtime provider 검증만).
+- 조건 평가 trace inspector UI와 disabled-choice + reason UI — DT-008 `condition_evaluated` seam 소비.
+- Response Selector와 weighted/random response
 - DialogueHistory 및 State Inspector
 - Portrait transition 애니메이션(fade/slide 등) — DT-002 MVP 이후.
 - Portrait Focus와 비활성 Portrait dim 처리 — DT-002 MVP 이후.

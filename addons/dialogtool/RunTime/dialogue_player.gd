@@ -8,10 +8,23 @@ signal dialogue_end
 signal ui_request(request_data: Dictionary)
 # 실행 중인 노드가 바뀔 때마다 그 node_id를 알린다(디버깅/하이라이트용).
 signal current_node_changed(node_id: int)
+# 조건 평가 결과 seam (DT-008 Step 1, ADR-009 D3).
+# state_condition Data 노드를 평가할 때마다(구조 invalid 포함) 평가 1회당 정확히 1회 발행한다.
+# - condition_node_id: 평가한 state_condition Data 노드 id.
+# - consumer_node_id: 이 Data 노드의 입력 포트를 직접 소유한 소비 노드 id
+#   (Branch=branch id, expression 중첩=expression id, 에디터 미리보기=-1).
+# - report: ConditionEvaluator가 deep copy로 반환한 detached 사본(변조해도 다음 평가에 영향 없음).
+# UI/Branch는 report를 재평가하거나 변조하지 않는다. 후속 trace inspector/DialogueHistory의 seam이다.
+signal condition_evaluated(condition_node_id: int, consumer_node_id: int, report: Dictionary)
 
 var current_node_id: int = -1
 var waiting_for: StringName = &"none"
 var selected_choice: int = -1
+
+# 조건부 Choice 대기 동안의 visible index -> 원래 항목 index(= 원래 flow 출력 port) mapping (DT-008 Step 4).
+# Choice 진입 시 한 번 구성하고, select_choice가 visible index를 원래 Flow port로 되돌린다.
+# start_dialogue/_end_dialogue/Choice 재진입에서 초기화한다. 빈 배열이면 활성 조건부 Choice 대기가 없다.
+var _choice_visible_map: Array = []
 
 # --- 상태 provider seam (DT-005 Step 5) ---
 # Dialogue runtime은 save file/PlayerData/전역 singleton을 직접 알지 않는다. 조건 평가 계층이
@@ -82,6 +95,7 @@ func start_dialogue(dialogue: DialogueGraphResource) -> void:
 	current_node_id = dialogue_resource.get_runtime_start_node_id()
 	waiting_for = &"none"
 	selected_choice = -1
+	_choice_visible_map = []
 	dialogue_started.emit()
 	_execute_until_waiting()
 
@@ -96,22 +110,33 @@ func advance() -> void:
 		_execute_until_waiting()
 
 
-func select_choice(index: int) -> void:
+func select_choice(visible_index: int) -> void:
 	if dialogue_resource == null or current_node_id == -1:
 		return
 
 	if waiting_for != &"choice":
 		return
 
-	selected_choice = index
+	# F5(ADR-009): visible index를 mapping 범위로 *먼저* 검증한다. 범위 밖이면 경고 후 대기를 유지하고
+	# waiting_for/selected_choice/effects/Flow를 전혀 건드리지 않는다(잘못된 입력이 대화를 종료시키거나
+	# 엉뚱한 Flow로 진행하지 못하게 함).
+	if visible_index < 0 or visible_index >= _choice_visible_map.size():
+		push_warning("DialoguePlayer: invalid visible choice index %d (visible count %d); keeping wait." % [visible_index, _choice_visible_map.size()])
+		return
+
+	# 검증을 통과한 경우에만 상태를 커밋한다. visible index를 원래 항목 index(= 원래 flow 출력 port)로
+	# 되돌린다 — 중간 항목이 숨겨져 있어도 사용자가 고른 항목의 원래 Flow로 정확히 진행한다.
+	var original_port: int = _choice_visible_map[visible_index]
+	selected_choice = original_port
 	waiting_for = &"none"
+	_choice_visible_map = []
 
 	# 이 Choice 노드를 떠나기 전에 연결된 Effect를 실행한 뒤 주 Flow로 이동한다(ADR-005).
 	_run_effects(current_node_id)
 
-	var next_id = dialogue_resource.get_runtime_next_node_id(current_node_id, index)
+	var next_id = dialogue_resource.get_runtime_next_node_id(current_node_id, original_port)
 	if next_id == -1:
-		push_warning("DialoguePlayer: choice port %d has no connection; ending dialogue." % index)
+		push_warning("DialoguePlayer: choice port %d has no connection; ending dialogue." % original_port)
 		_end_dialogue()
 		return
 
@@ -178,14 +203,43 @@ func _execute_choice(params: Dictionary) -> void:
 	var choices = params.get("choices", [])
 	if choices.is_empty():
 		push_warning("DialoguePlayer: choice node %d has no choices; ending dialogue." % current_node_id)
+		_choice_visible_map = []
 		_end_dialogue()
 		return
 
+	# 항목별 Data 입력(port i+1)을 조건으로 평가해 visible list와 visible->original output port mapping을
+	# 구성한다(ADR-009 D5). 항목 i의 조건 노드 = get_runtime_input_node_id(choice_id, i+1).
+	# - Data 입력이 없는 항목(cond_id == -1)은 unconditional로 항상 표시한다(레거시 Choice 호환).
+	# - 조건은 Choice 진입 시 한 번만 평가한다. 대기 중 외부 상태가 바뀌어도 현재 목록/mapping은 고정되고,
+	#   Choice에 다시 진입할 때만 재평가한다(재진입 시 이 함수가 mapping을 새로 구성).
+	# - invalid/error 조건은 _to_bool이 false로 처리해 숨긴다(state_condition은 fail-closed로 passed=false).
+	# consumer는 이 Choice 노드다(입력 포트를 직접 소유) → state_condition signal에 choice id가 전달된다.
+	var visible_choices: Array = []
+	var visible_map: Array = []   # visible_index -> 원래 항목 index(= 원래 flow 출력 port)
+	for i in range(choices.size()):
+		var cond_id = dialogue_resource.get_runtime_input_node_id(current_node_id, i + 1)
+		var visible := true
+		if cond_id != -1:
+			# errored(조건/구조 오류, 중첩 Expression 포함)는 fail-closed로 숨긴다(단순 false와 구분).
+			var result := _eval_data(cond_id, current_node_id)
+			visible = false if result["errored"] else _to_bool(result["value"])
+		if visible:
+			visible_choices.append(choices[i])
+			visible_map.append(i)
+
+	# 모든 항목이 숨겨지면 기존 empty-choice와 같은 종료 정책을 쓴다(ADR-009 D6).
+	if visible_choices.is_empty():
+		push_warning("DialoguePlayer: all choices hidden at node %d; ending dialogue." % current_node_id)
+		_choice_visible_map = []
+		_end_dialogue()
+		return
+
+	_choice_visible_map = visible_map
 	waiting_for = &"choice"
 	selected_choice = -1
 	ui_request.emit({
 		"type": "offer_choice",
-		"choices": choices,
+		"choices": visible_choices,
 	})
 
 
@@ -259,63 +313,115 @@ func _execute_branch() -> void:
 		_go_to_next_node(1)
 		return
 
-	var input_value = _get_data_value(input_node_id)
-	var condition := _to_bool(input_value)
+	# consumer는 이 Branch 노드다(입력 포트 0을 직접 소유). state_condition signal에 전달된다.
+	# errored(조건/구조 오류)는 단순 false와 구분해 fail-closed로 항상 false 분기다
+	# (ADR-008 error-dominance / ADR-009): Expression이 오류 조건을 true로 뒤집지 못한다.
+	var result := _eval_data(input_node_id, current_node_id)
+	var condition: bool = false if result["errored"] else _to_bool(result["value"])
 	_go_to_next_node(0 if condition else 1)
 
 
-func _get_data_value(node_id: int, visited: Array = []) -> Variant:
-	if node_id == -1:
-		return null
+# 외부 호환 래퍼(에디터 미리보기 expression_node.gd 등): 평가 값만 반환한다.
+# 런타임 소비자(Branch/Choice/중첩 Expression)는 _eval_data로 {value, errored}를 받아 fail-closed한다.
+func _get_data_value(node_id: int, consumer_node_id: int = -1, visited: Array = []) -> Variant:
+	return _eval_data(node_id, consumer_node_id, visited)["value"]
 
-	# 경로 기반 visited 셋으로 순환 data 의존성을 방어한다.
+
+# consumer_node_id는 이 Data 노드의 입력 포트를 직접 소유한 소비 노드 id다(state_condition signal에
+# 전달). Branch/Expression 같은 직접 소비 노드가 명시적으로 넘긴다. 에디터 미리보기 등 consumer가
+# 없는 호출은 -1을 쓴다.
+#
+# 반환 {value, errored}: errored는 조건/구조 오류 전파용이다(DT-008 Step 4 P1 수정).
+# state_condition의 invalid report, 중첩 Expression 입력 중 하나라도 errored, 순환/미상 노드/
+# parse·execute 실패가 모두 errored=true다. errored는 *단순 false와 구분*되어, Expression
+# (`not c`/`c or true` 등)이 오류 조건을 true로 뒤집지 못하게 한다(ADR-008 error-dominance /
+# ADR-009 fail-closed). 직접 소비자(Branch/Choice)는 errored면 무조건 false/숨김 처리한다.
+func _eval_data(node_id: int, consumer_node_id: int = -1, visited: Array = []) -> Dictionary:
+	if node_id == -1:
+		# 입력 미연결: 값 null, 구조 오류는 아니다(미연결 처리 정책은 소비자에 둔다).
+		return {"value": null, "errored": false}
+
+	# 경로 기반 visited 셋으로 순환 data 의존성을 방어한다(순환은 구조 오류 -> errored).
 	if node_id in visited:
-		push_warning("DialoguePlayer: circular data dependency at node %d; returning null." % node_id)
-		return null
+		push_warning("DialoguePlayer: circular data dependency at node %d; failing closed." % node_id)
+		return {"value": null, "errored": true}
 
 	var node_data = dialogue_resource.get_runtime_node(node_id)
 	if node_data.is_empty():
-		return null
+		return {"value": null, "errored": true}
 
 	var params = node_data.get("params", {})
 	match node_data.get("type", &"unknown"):
 		&"variable":
 			if params.get("random", false):
-				return randi_range(int(params.get("random_min", 0)), int(params.get("random_max", 0)))
-			return params.get("value")
+				return {"value": randi_range(int(params.get("random_min", 0)), int(params.get("random_max", 0))), "errored": false}
+			return {"value": params.get("value"), "errored": false}
 		&"expression":
+			# expression 입력으로 중첩된 state_condition의 consumer는 이 expression 노드다.
 			return _evaluate_expression(node_id, params, visited + [node_id])
+		&"state_condition":
+			return _evaluate_state_condition(node_id, consumer_node_id, params)
 		_:
-			push_warning("DialoguePlayer: data node %d type '%s' is not evaluable." % [node_id, str(node_data.get("type", &"unknown"))])
-			return null
+			push_warning("DialoguePlayer: data node %d type '%s' is not evaluable; failing closed." % [node_id, str(node_data.get("type", &"unknown"))])
+			return {"value": null, "errored": true}
+
+
+# state_condition Data 노드를 평가한다(DT-008 Step 1, ADR-009 D2/D3).
+# 주입된 원본 read provider(_read_state_provider)를 ConditionEvaluator에 그대로 전달한다.
+# DialoguePlayer.has_state facade를 provider로 다시 감싸지 않아, provider 미지정이
+# state_missing이 아니라 evaluator의 provider_missing으로 fail-closed되게 한다.
+# 평가 1회당 condition_evaluated를 정확히 1회 발행하고 {value: passed, errored: not valid}를 반환한다.
+# null/invalid ConditionSet, missing key, 타입 오류는 valid=false -> errored=true(fail-closed 지배).
+# 정상이지만 논리상 false인 조건은 valid=true -> errored=false(이 경우의 false는 Expression이 다룰 수 있음).
+func _evaluate_state_condition(node_id: int, consumer_node_id: int, params: Dictionary) -> Dictionary:
+	# 잘못된 타입/누락 값은 null로 좁혀 evaluator가 condition_set_null로 fail-closed하게 한다
+	# (런타임 snapshot이 손상돼도 크래시 없이 false).
+	var raw_set: Variant = params.get("condition_set")
+	var condition_set: ConditionSet = raw_set if raw_set is ConditionSet else null
+
+	var report: Dictionary = ConditionEvaluator.evaluate(condition_set, _read_state_provider)
+	# 동기 signal listener가 report를 변조해 분기 결과를 뒤집지 못하도록, 발행 전에 passed/valid를
+	# 캡처하고 signal에는 별도 deep copy를 넘긴다.
+	var passed := bool(report.get("passed", false))
+	var errored: bool = not bool(report.get("valid", false))   # invalid report -> errored 전파
+	condition_evaluated.emit(node_id, consumer_node_id, report.duplicate(true))
+	return {"value": passed, "errored": errored}
 
 
 # expression data 노드를 평가한다. 각 입력 포트 i는 변수 keys[i]에 바인딩되고,
 # 그 값은 해당 포트로 들어오는 런타임 연결을 따라가 해결한다.
-func _evaluate_expression(node_id: int, params: Dictionary, visited: Array) -> Variant:
+# {value, errored}를 반환한다: 입력 중 하나라도 errored이거나 빈 식/parse/execute 실패면 errored=true다.
+# 이로써 errored 조건이 `not c`/`c or true` 같은 식을 통해 true로 새지 않는다(error-dominance 전파).
+func _evaluate_expression(node_id: int, params: Dictionary, visited: Array) -> Dictionary:
 	var expr_string: String = params.get("expression", "")
 	if expr_string.is_empty():
-		push_warning("DialoguePlayer: expression node %d has empty expression; returning null." % node_id)
-		return null
+		push_warning("DialoguePlayer: expression node %d has empty expression; failing closed." % node_id)
+		return {"value": null, "errored": true}
 
 	var keys: Array = params.get("inputs", [])
 	var values: Array = []
+	var inputs_errored := false
 	for port in range(keys.size()):
 		var src_id = dialogue_resource.get_runtime_input_node_id(node_id, port)
-		values.append(_get_data_value(src_id, visited))
+		# 이 expression 노드가 입력 포트를 직접 소유하므로 consumer는 node_id다.
+		var sub := _eval_data(src_id, node_id, visited)
+		values.append(sub["value"])
+		if sub["errored"]:
+			inputs_errored = true
 
 	var expr := Expression.new()
 	var err := expr.parse(expr_string, PackedStringArray(keys))
 	if err != OK:
 		push_warning("DialoguePlayer: expression parse failed at node %d: %s" % [node_id, expr.get_error_text()])
-		return null
+		return {"value": null, "errored": true}
 
 	var result = expr.execute(values, null)
 	if expr.has_execute_failed():
 		push_warning("DialoguePlayer: expression execute failed at node %d: %s" % [node_id, expr.get_error_text()])
-		return null
+		return {"value": null, "errored": true}
 
-	return result
+	# 입력 중 하나라도 errored면 결과도 errored로 전파한다(오류 조건이 식으로 뒤집히지 않게).
+	return {"value": result, "errored": inputs_errored}
 
 
 # 분기를 위해 런타임 data 값을 일관되게 bool로 변환한다.
@@ -386,4 +492,5 @@ func _run_effects(from_node_id: int) -> void:
 func _end_dialogue() -> void:
 	current_node_id = -1
 	waiting_for = &"none"
+	_choice_visible_map = []
 	dialogue_end.emit()

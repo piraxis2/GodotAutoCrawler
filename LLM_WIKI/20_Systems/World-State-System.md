@@ -30,8 +30,10 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
   snapshot 복원은 envelope를 먼저 비변경 검사하고, 호환될 때만 default 초기화와 SAVE import를 수행한다.
 - 외부 SaveGame 계층용 adapter는 `capture_world_state()`/`restore_world_state(snapshot)`이다. coordinator와
   Store 모두 파일 경로와 slot을 모른다.
-- 조건 데이터 모델/검증/pure-read 평가기와 실제 `WorldStateStore` 통합(DT-007 Step 1~3)은 존재한다
-  (아래 Condition Model). State Read/Set Dialogue 노드, 실제 SaveGame file/slot 시스템은 아직 없다.
+- 조건 데이터 모델/검증/pure-read 평가기와 실제 `WorldStateStore` 통합 및 end-to-end 검증
+  (DT-007 Step 1~4)은 완료됐다(아래 Condition Model). 이를 소비하는 State Condition Dialogue 노드와
+  조건부 Branch/Choice는 DT-008에서 완료됐다(아래 Condition 소비 절). State Read/Set Dialogue 노드와
+  mutation provider, 실제 SaveGame file/slot 시스템은 아직 없다.
 
 - `Assets/Script/gds/world_state/state_definition.gd` — `StateDefinition` Resource.
   - 필드: `key: StringName`, `value_type`, `default_value: Variant`, `lifetime`,
@@ -134,7 +136,7 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
   대화가 시작/평가되지 않는다.
 - 검증: `tests/dt005_step5_provider_seam_test.tscn`(ALL PASS) + 기존 DialogueTool dt004 회귀.
 
-## Condition Model (DT-007 Step 1~4 완료, 완료 판정 대기 — [[DT-007-Condition-Review]])
+## Condition Model (DT-007 Step 1~4 완료 — [[DT-007-Condition-Review]])
 
 - `Assets/Script/gds/world_state/condition/`에 조건 데이터 모델과 구조 검증기가 있다
   ([[DT-007-ConditionSet-ConditionEvaluator]] Step 1, [[ADR-008-Structured-Condition-Evaluation]]).
@@ -160,11 +162,18 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
     `.tres` 왕복 trace parity·lifecycle·snapshot·성능 sanity)/spike ALL PASS. DT-004/005/006 회귀 +
     editor import 통과. 후속 Dialogue node 입력 계약은 [[DT-007-Condition-Review]]에 문서화.
 
+## Condition 소비: Dialogue 통합 (DT-008 완료)
+
+- [[DT-008-State-Condition-Dialogue-Integration]] Step 1~5가 위 `ConditionSet`/`ConditionEvaluator`를
+  Dialogue Data Flow에 연결했다(Step 1~4 수정 후 완료, Step 5 완료 판정 리뷰 대기 —
+  [[DT-008-Choice-Integration-Review]]). `state_condition` Data 노드가 주입된 원본 read provider로
+  evaluator를 호출해 boolean을 내고, Branch와 조건부 Choice가 같은 계약으로 fail-closed(error-dominance
+  전파 포함) 동작한다. 평가 결과 `report`는 `condition_evaluated` signal로 노출된다. evaluator/Store는
+  여전히 Dialogue를 모르며 provider 주입 경계가 유지된다. 상세 동작은 [[DialogueTool]] State Condition 절.
+
 ## Planned Components (미구현)
 
-- State Condition / Read·Set Dialogue 노드와 조건부 Choice/Response Selector: 위 ConditionSet/Evaluator를
-  소비한다([[DT-007-Condition-Review]]의 입력 계약). mutation Effect는 별도 mutation provider 주입 필요.
-- State Read/Set Dialogue 노드와 조건부 Choice/Response Selector
+- State Read/Set Dialogue 노드와 Response Selector(조건부 Choice는 DT-008에서 완료)
 - SaveGame file/slot, backup, autosave 정책(`capture_world_state`/`restore_world_state` adapter 소비)
 - schema migration/key alias와 full int64 snapshot wire
 

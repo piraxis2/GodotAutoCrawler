@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-06-14
+updated: 2026-06-15
 ---
 
 # Current State
@@ -43,10 +43,10 @@ updated: 2026-06-14
     `start_new_game()`/`restore_game()`(=`restore_world_state()`)는 transactional(envelope pre-validation,
     실패 시 기존 상태 보존), `capture_world_state()`는 SAVE-only. SESSION은 새 게임/load에서만 default.
   - 결정: [[ADR-007-WorldState-Runtime-Lifecycle]]. autoload 이름은 class_name 충돌 회피로 `WorldState`.
-- 미구현(후속): 실제 SaveGame file/slot 시스템(DT-006 adapter 소비), State Read/Set Dialogue 노드,
-  DT-007 Step 4 완료 판정, full int64.
-- DT-007 Step 1~4 구현·검증 완료(in-progress, 최종 완료 판정 대기 — [[DT-007-Condition-Review]]).
-  Step 1~3 코드 리뷰 완료.
+- State Condition Dialogue 통합은 DT-008에서 완료됐다(아래 DT-008 항목,
+  [[DT-008-State-Condition-Dialogue-Integration]]). 미구현(후속): 실제 SaveGame file/slot 시스템
+  (DT-006 adapter 소비), State Read/Set Dialogue 노드와 mutation provider, full int64.
+- DT-007 Step 1~4 구현·검증·리뷰 완료([[DT-007-Condition-Review]], 판정: 수정 후 완료).
   - `Assets/Script/gds/world_state/condition/`: `ConditionClause`(@abstract base),
     `StateCondition`(leaf), `ConditionGroup`(ALL/ANY/NOT, recursive `Array[ConditionClause]`),
     `ConditionSet`(top-level asset), `ConditionValidator`(구조 검증), `ConditionEvaluator`(pure-read 평가).
@@ -64,8 +64,59 @@ updated: 2026-06-14
     SESSION reset 직접 단언)·성능 sanity(node 4096, 같은 key read 1)·fail-closed Store 불변을 확인했다.
   - 검증: `condition/tests` `dt007_step1`(24)/`step2`(23)/`step3`(11)/`step4`(e2e)/`spike` ALL PASS.
     전체 회귀 DT-004(5)+DT-005(6)+DT-006(5) ALL PASS, editor `--import` 0 오류 — 합계 21 headless.
-  - 후속 State Condition Dialogue node Task 입력 계약은 [[DT-007-Condition-Review]]에 문서화. P0/P1 없음
-    (구현자 자가평가), 최종 완료 판정 리뷰 대기.
+  - 후속 State Condition Dialogue node 입력 계약은 [[DT-007-Condition-Review]]에 문서화했다.
+    [[DT-008-State-Condition-Dialogue-Integration]] Step 0은 Approved after design fixes로 승인됐고,
+    [[ADR-009-State-Condition-Dialogue-Consumption]]을 accepted로 확정했다.
+- DT-008 Step 1(Runtime State Condition Data Node) 구현·리뷰 완료(판정: 수정 후 완료)
+  ([[DT-008-State-Condition-Dialogue-Integration]] Step 1 결과).
+  - `WorldStateConditionDef`(Data Definition, runtime type `state_condition`)가 `ConditionSet`을
+    runtime params로 보존한다. `DialoguePlayer._get_data_value(node_id, consumer_node_id, visited)`의
+    `state_condition` 분기가 주입된 원본 `_read_state_provider`를 `ConditionEvaluator.evaluate`에 직접
+    전달하고(facade 재포장 금지) `report.passed`를 boolean Data로 반환한다.
+  - `condition_evaluated(condition_node_id, consumer_node_id, report)` signal을 평가당 1회 발행한다.
+    consumer는 입력 포트를 직접 소유한 노드(Branch=branch id, expression 중첩=expression id)다.
+    동기 signal listener가 분기를 못 바꾸도록 `passed`를 발행 전에 캡처하고 signal에는 `report.duplicate(true)`
+    deep copy를 넘긴다(1차 리뷰 P1 수정). provider 미지정/null·invalid set/missing key/타입 오류는 모두
+    false이고 구조 오류는 read_count==0이다.
+  - 헤드리스 `addons/dialogtool/RunTime/tests/dt008_step1_state_condition_test`(15 사례, P1 회귀 O 포함)
+    ALL PASS.
+- DT-008 Step 2(Editor Authoring and Resource Round-trip) 구현·리뷰 완료(판정: 수정 후 완료).
+  - `WorldStateConditionNode`(전용 GraphNode 씬) + `condition_set_picker`(ConditionSet `.tres` 드롭) +
+    `world_state_condition_editor_adapter`(boolean output 슬롯 + capture/apply). `node_type_registry`에
+    `state_condition` 어댑터 등록. boolean output은 Branch boolean 조건 입력과 동일 타입이고 editor.gd의
+    `data↔boolean` 교차 호환으로 data 입력에도 연결된다.
+  - 선행 F4 spike(`dt008_step2_snapshot_spike`)로 `runtime_nodes` Dictionary에 2중 중첩된 ConditionSet이
+    external(`ext_resource`)/inline(`sub_resource`) 양쪽에서 `.tres` 왕복 보존됨을 확인(Design Deviation
+    없음). 에디터 왕복 `dt008_step2_editor_roundtrip_test`로 외부 참조/연결 capture→save→재로드 보존,
+    null 저장+런타임 fail-closed를 검증. 1차 리뷰 P2(빈 노드 노출)는 정식 노드 등록으로 해소.
+  - 전체 회귀(DT-008 step1, DT-004 step1~4, DT-005 step5, DT-007 step1~4) + editor import ALL PASS.
+    Branch e2e는 Step 3, 조건부 Choice는 Step 4~5 범위다.
+- DT-008 Step 3(Branch End-to-End Integration) 구현·리뷰 완료(판정: 수정 후 완료). **제품 코드 변경 없음**(통합
+  검증 단계). 실제 `DialogueManager.play(resource, store)` → UI → Player provider 주입 경로에서 통합
+  그래프 `Start → Branch(state_condition) → Say TRUE/FALSE → End`가 실제 `WorldStateStore` 값에 따라
+  분기함을 검증했다(`dt008_step3_branch_e2e_test`): set/reset/snapshot restore 후 Store 최종값 일치,
+  provider 미지정/조건 오류 false Flow(크래시·자동 true 없음), condition_evaluated node/consumer/report
+  검증, 반복·같은 프레임 교체(latest-wins) provider 미혼입. DT-004/005/006/007/008 전체 24 headless
+  ALL PASS.
+- DT-008 Step 4(Conditional Choice Runtime Mapping) 구현·리뷰 완료(판정: 수정 후 완료).
+  `DialoguePlayer`가 Choice 진입 시 항목별 Data 입력(port i+1)을 조건으로 평가해 visible list와
+  `_choice_visible_map`(visible_index → 원래 항목 index = 원래 flow 출력 port)을 구성한다. Data 입력 없으면
+  항상 표시(레거시 호환), 조건은 진입 시 1회만 평가하고 대기 중 재평가하지 않으며 재진입에서만 갱신.
+  `select_choice(visible_index)`는 mapping 범위를 먼저 검증해 범위 밖이면 대기 유지(Flow 불변), 통과 시에만
+  원래 port로 effects/Flow 커밋(F5). all-hidden 명시 종료, invalid/error 조건 숨김, no-input 레거시는 identity.
+  내부 Data 평가는 `_eval_data → {value, errored}`로 전파되어, errored 조건이 Expression(`not c`/`c or true`)을
+  통해 true로 뒤집히지 못하고 Branch/Choice에서 fail-closed된다(1차 리뷰 P1 수정, ADR-008 error-dominance).
+  헤드리스 `dt008_step4_conditional_choice_test`(L1~L4 error-dominance 포함) + DT-004 Choice 회귀 ALL PASS.
+- **DT-008 Step 0~5 완료**([[DT-008-Choice-Integration-Review]], 판정: 완료 — Step 1~4 수정 후 완료,
+  Step 5 Approved after design fixes). State Condition Data 노드(`state_condition`)가 boolean Data로 Branch와
+  조건부 Choice를 같은 `ConditionSet`/`ConditionEvaluator` 계약으로 제어한다.
+- DT-008 Step 5(Conditional Choice Editor and Completion Review) 완료.
+  **제품 코드 변경 없음**(검증 + 문서). 실제 `dialoguetool_main.tscn` fixture로 (1) State Condition boolean
+  output ↔ Choice 항목별 Data 입력 연결이 저장/재로드 후 동일하고 Choice resize(3→2)가 남은 항목의 조건/Flow
+  연결을 잘못 재배치하지 않으며 사라진 항목 연결만 드롭함을 검증하고, (2) 복합 `Branch(state_condition) +
+  conditional Choice`가 실제 `WorldStateStore` 상태에 따라 같은 evaluator 계약으로 동작함을 e2e로 확인했다
+  (`dt008_step5_completion_test`). 전체 회귀 26/26 GREEN(DT-004~008), editor `--import` 0 오류.
+  Step 1~4 판정 수정 후 완료, Step 5 완료 판정 리뷰 대기([[DT-008-Choice-Integration-Review]]).
 
 ## Known Gaps
 

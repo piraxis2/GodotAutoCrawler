@@ -2,7 +2,7 @@
 type: system
 system: DialogueTool
 status: active
-updated: 2026-06-11
+updated: 2026-06-15
 ---
 
 # DialogueTool
@@ -31,6 +31,7 @@ updated: 2026-06-11
 | `end` | 대화 종료 |
 | `variable` | 정적 값 또는 random range 제공 |
 | `expression` | 연결된 Data 입력으로 Expression 평가 |
+| `state_condition` | 주입된 read provider로 `ConditionSet`을 평가해 boolean Data 제공(DT-008) |
 
 ## Portrait Nodes (DT-002 MVP)
 
@@ -43,6 +44,23 @@ updated: 2026-06-11
 - Portrait Show/Expression의 `texture_path` 필드는 문자열 직접 입력과 FileSystem의
   Texture2D 리소스 드롭을 지원한다. 유효한 단일 Texture만 `res://` 경로로 반영한다.
 - MVP 이후: transition 애니메이션, Portrait Focus/dim, actor/expression resolver. [[DT-002-Portrait-State]]
+
+## State Condition (DT-008)
+
+- `state_condition` Data 노드(`WorldStateConditionDef`)는 `ConditionSet` 하나를 보유하고 boolean Data를
+  낸다. 에디터 노드는 boolean output 포트 + ConditionSet `.tres` 드롭 picker를 갖는다.
+- 런타임 평가는 `DialoguePlayer._eval_data`가 주입된 **원본** read provider를 `ConditionEvaluator.evaluate`에
+  그대로 전달해 수행한다(facade 재포장 금지). 내부 Data 평가는 `{value, errored}`로 전파되어, 조건/구조
+  오류(invalid report·중첩 Expression 입력 오류·순환·parse/execute 실패)는 단순 false와 구분된 errored로
+  지배한다(ADR-008 error-dominance). 소비자(Branch/Choice)는 errored면 무조건 false/숨김으로 fail-closed한다.
+- **Branch**: Data 입력(port 0)을 평가해 true→port 0 / false·errored→port 1.
+- **조건부 Choice**: 항목 i의 Data 입력(port i+1)을 Choice 진입 시 1회 평가해 true 항목만 표시한다. Data
+  입력이 없는 항목은 항상 표시(레거시 호환). DialoguePlayer가 `visible_index → 원래 항목 index(=flow 출력
+  port i)` mapping을 대기 동안 보관하고, `select_choice(visible_index)`가 범위 검증 후 원래 Flow로 진행한다.
+  대기 중 외부 상태 변화는 현재 목록을 바꾸지 않고 재진입에서만 재평가한다. 모든 항목이 숨겨지면 명시적 종료.
+- `condition_evaluated(condition_node_id, consumer_node_id, report)` signal을 평가 1회당 발행한다(consumer는
+  입력 포트를 직접 소유한 Branch/Choice/Expression id). report는 evaluator의 detached deep copy다.
+- 자세한 결정은 [[ADR-009-State-Condition-Dialogue-Consumption]], 검증은 [[DT-008-Choice-Integration-Review]].
 
 ## Say Line Paging
 
@@ -78,6 +96,14 @@ updated: 2026-06-11
 4. 포트 계약
 5. DialoguePlayer 실행 또는 data 평가 규칙
 6. 저장/재로드 왕복 검증
+
+### Project Integration Dependency
+
+- `state_condition` Dialogue Data 노드는 단일 게임 저장소의
+  `Assets/Script/gds/world_state/condition/`에 있는 `ConditionSet`과 `ConditionEvaluator`를 직접 사용한다.
+- 따라서 이 노드가 추가된 이후 DialogueTool addon은 World State condition 모듈에 의존한다. 별도 독립
+  addon 배포는 현재 목표가 아니며, Dialogue runtime은 여전히 `/root`를 직접 조회하지 않고 주입된 read
+  provider만 evaluator에 전달한다([[ADR-009-State-Condition-Dialogue-Consumption]]).
 
 ## Related
 
