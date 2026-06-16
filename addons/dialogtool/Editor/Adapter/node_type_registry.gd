@@ -35,6 +35,10 @@ static func _ensure_registered() -> void:
 	_adapters[&"portrait_show"] = portrait_adapter
 	_adapters[&"portrait_hide"] = portrait_adapter
 	_adapters[&"portrait_expression"] = portrait_adapter
+	# State Set/Add도 같은 어댑터를 공유한다(노출 타입/값 필드는 노드 type으로 결정 — DT-009 Step 3).
+	var state_effect_adapter = load(_ADAPTER_DIR + "state_effect_editor_adapter.gd").new()
+	_adapters[&"state_set"] = state_effect_adapter
+	_adapters[&"state_add"] = state_effect_adapter
 
 
 static func get_adapter(type: StringName) -> Variant:

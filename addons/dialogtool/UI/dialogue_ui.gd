@@ -22,8 +22,9 @@ var _say_lines: PackedStringArray = PackedStringArray()
 var _say_line_index: int = -1
 var _say_visible_text: String = ""
 
-# deferred 시작 대기 요청 {resource, provider}. 같은 프레임에 play()가 여러 번 호출되면 마지막
-# 요청만 시작한다(latest-wins). provider와 resource를 한 쌍으로 묶어 분리되지 않게 한다.
+# deferred 시작 대기 요청 {resource, read_provider, mutation_provider}. 같은 프레임에 play()가
+# 여러 번 호출되면 마지막 요청만 시작한다(latest-wins). resource/read/mutation provider를 한 묶음으로
+# 묶어 분리되지 않게 한다(ADR-010 D9 — 폐기된 대화가 잘못된 provider로 mutation하지 못하게 함).
 var _pending_start: Dictionary = {}
 var _start_scheduled: bool = false
 
@@ -41,28 +42,34 @@ func _ready() -> void:
 # 게임 코드용 진입점: 리소스 하나를 넘겨 대화를 시작한다.
 # (자식 player의 _ready가 끝난 뒤 시작하도록 deferred — 첫 노드 유실 방지.)
 # read_state_provider(선택)는 DialoguePlayer에 주입할 read 상태 provider다(DT-005 Step 5).
-func play(dialogue_resource: DialogueGraphResource, read_state_provider = null) -> void:
+# mutation_state_provider(선택)는 state_* Effect가 사용할 mutation provider다(DT-009 Step 2, ADR-010 D1).
+func play(dialogue_resource: DialogueGraphResource, read_state_provider = null, mutation_state_provider = null) -> void:
 	visible = true
 	# 새 대화 시작 전 이전 Portrait 상태를 정리한다(같은 UI가 재사용되는 경우 방어).
 	_clear_portraits()
 	_clear_say_lines()
-	# resource와 provider를 한 쌍으로 묶어 deferred 시작한다. provider만 즉시 공유 필드에 저장하면
+	# resource와 두 provider를 한 묶음으로 deferred 시작한다. provider만 즉시 공유 필드에 저장하면
 	# 같은 프레임의 다음 play()가 그 필드를 덮어써, 먼저 큐된 시작이 잘못된 provider로 평가된다.
 	# 같은 프레임 연속 호출은 마지막 요청만 시작한다(latest-wins).
-	_pending_start = {"resource": dialogue_resource, "provider": read_state_provider}
+	_pending_start = {
+		"resource": dialogue_resource,
+		"read_provider": read_state_provider,
+		"mutation_provider": mutation_state_provider,
+	}
 	if not _start_scheduled:
 		_start_scheduled = true
 		_deferred_start.call_deferred()
 
 
-# deferred 단일 dispatcher: 마지막 pending 요청만 provider+resource를 함께 바인딩해 시작한다.
+# deferred 단일 dispatcher: 마지막 pending 요청만 resource+read+mutation provider를 함께 바인딩해 시작한다.
 func _deferred_start() -> void:
 	_start_scheduled = false
 	if _pending_start.is_empty():
 		return
 	var req: Dictionary = _pending_start
 	_pending_start = {}
-	dialogue_player.set_read_state_provider(req["provider"])
+	dialogue_player.set_read_state_provider(req["read_provider"])
+	dialogue_player.set_mutation_state_provider(req["mutation_provider"])
 	dialogue_player.start_dialogue(req["resource"])
 
 

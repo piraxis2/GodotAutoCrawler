@@ -181,6 +181,13 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
+    "30_Tasks/DT-009-State-Mutation-Dialogue-Effects.md.tmp.46096.f8a90acba5ef",
+    "30_Tasks/DT-009-State-Mutation-Dialogue-Effects.md.tmp.46096.e7b2ccf92deb",
+    "00_Index/Current-State.md.tmp.46096.22e8fbf96b85",
+    "30_Tasks/DT-009-State-Mutation-Dialogue-Effects.md.tmp.16836.eb3505095c48",
+    "40_Decisions/ADR-010-State-Mutation-Dialogue-Effects.md",
+    "40_Decisions/ADR-010-State-Mutation-Dialogue-Effects.md.tmp.16836.fb5dc22ea29f",
+    "30_Tasks/DT-009-State-Mutation-Dialogue-Effects.md",
     "50_Reviews/DT-008-Choice-Integration-Review.md.tmp.34612.34ab98a0de8d",
     "20_Systems/World-State-System.md.tmp.34612.a1a44d5afd60",
     "00_Index/Open-Tasks.md.tmp.34612.1ae343c58ce1",
@@ -197,14 +204,9 @@
     "50_Reviews/DT-006-WorldState-Runtime-Review.md.tmp.41472.6cc4e2fa04e7",
     "20_Systems/World-State-System.md.tmp.41472.70fb812283c4",
     "30_Tasks/DT-006-WorldState-Runtime-Integration.md.tmp.41472.90df327150c7",
-    "00_Index/Current-State.md.tmp.41472.e323e58822af",
     "40_Decisions/ADR-007-WorldState-Runtime-Lifecycle.md",
     "30_Tasks/DT-005-StateSchema-WorldStateStore.md",
     "50_Reviews/DT-005-WorldState-Review.md",
-    "30_Tasks/DT-005-StateSchema-WorldStateStore.md.tmp.41472.019b6124f2e5",
-    "20_Systems/World-State-System.md.tmp.34512.6683dae951c1",
-    "30_Tasks/DT-005-StateSchema-WorldStateStore.md.tmp.34512.be3b6a7ffa49",
-    "30_Tasks/DT-005-StateSchema-WorldStateStore.md.tmp.34512.d5f41d952855",
     "90_Templates/Design-Review-Prompt.md",
     "90_Templates/Implementation-Prompt.md",
     "20_Systems/BehaviorTree-System.md",
@@ -214,8 +216,6 @@
     "20_Systems/Turn-System.md",
     "10_Architecture/Project-Overview.md",
     "10_Architecture/Runtime-Data-Flow.md",
-    "00_Index/Home.md",
-    "30_Tasks/DT-002-Portrait-State.md",
-    "30_Tasks/DT-003-Say-Line-Paging.md"
+    "00_Index/Home.md"
   ]
 }

@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-06-15
+updated: 2026-06-16
 ---
 
 # Current State
@@ -28,13 +28,13 @@ updated: 2026-06-15
 ## World State
 
 - 타입 안전 World State 기반 DT-005 Step 1~6이 완료됐다([[DT-005-WorldState-Review]], 판정: 완료).
-- `Assets/Script/gds/world_state/`: `StateDefinition`/`StateSchema`(선언·validation·lookup),
+- `addons/dialogtool/world_state/`: `StateDefinition`/`StateSchema`(선언·validation·lookup),
   `WorldStateStore`(read/write/reset/`value_changed`, SAVE/SESSION lifetime + `reset_lifetime`,
   JSON snapshot export/import replace-load, atomic `apply_batch`, read/mutation provider facade).
 - `DialoguePlayer`는 read 상태 provider를 주입받는다(`DialogueManager`→`DialogueUI`→`DialoguePlayer`).
   `/root`/PlayerData/save를 직접 조회하지 않고 주입 provider로만 상태를 읽는다.
 - 허용 타입은 bool/int/float/String/StringName, snapshot INT는 JSON-safe `±(2^53-1)`로 제한.
-- 헤드리스 테스트 `Assets/Script/gds/world_state/tests/dt005_step1~6_*`로 검증(ALL PASS).
+- 헤드리스 테스트 `addons/dialogtool/world_state/tests/dt005_step1~6_*`로 검증(ALL PASS).
 - 실제 Schema 작성과 Store API 사용법은 [[World-State-User-Guide]]에 정리돼 있다.
 - 런타임 통합 DT-006 Step 0~5 완료([[DT-006-WorldState-Runtime-Review]], 판정: 완료).
   - `WorldState` autoload(`/root/WorldState`): 유효 6-key bootstrap Schema(`world_state_schema.tres`)로
@@ -44,10 +44,42 @@ updated: 2026-06-15
     실패 시 기존 상태 보존), `capture_world_state()`는 SAVE-only. SESSION은 새 게임/load에서만 default.
   - 결정: [[ADR-007-WorldState-Runtime-Lifecycle]]. autoload 이름은 class_name 충돌 회피로 `WorldState`.
 - State Condition Dialogue 통합은 DT-008에서 완료됐다(아래 DT-008 항목,
-  [[DT-008-State-Condition-Dialogue-Integration]]). 미구현(후속): 실제 SaveGame file/slot 시스템
-  (DT-006 adapter 소비), State Read/Set Dialogue 노드와 mutation provider, full int64.
+  [[DT-008-State-Condition-Dialogue-Integration]]). State Set/Add Effect와 명시적 mutation provider는
+  DT-009에서 완료됐다([[DT-009-State-Mutation-Dialogue-Effects]], [[DT-009-State-Mutation-Review]],
+  [[ADR-010-State-Mutation-Dialogue-Effects]] accepted). 미구현(후속): 실제 SaveGame file/slot 시스템
+  (DT-006 adapter 소비), State Read Dialogue 노드.
+  Step 1 구현·리뷰 완료: `WorldStateStore.add_state(key, delta) -> Dictionary`
+  보고형 원자 Add API. INT/FLOAT strict, JSON-safe 도메인·overflow 거부, 값/signal 불변 실패, 실제 변경 시
+  `value_changed` 1회. `dt009_step1_add_state_test` 20케이스 ALL PASS.
+  Step 2 구현·리뷰 완료: `DialogueManager/UI.play(resource, read, mutation)` 세 번째 선택 인자 +
+  `DialoguePlayer._mutation_state_provider`(read 권한 자동 승격 없음). `_run_effects`가 타입 디스패치로
+  `portrait_*`는 UI 요청, `state_set`/`state_add`는 mutation provider 호출 + `state_mutation_evaluated`
+  report signal(commit 후 1회, deep copy). provider 계약 = `{apply_state_batch, add_state}` duck-type 검증,
+  누락(genuine null)은 `provider_missing`, 공급됐지만 못 쓰는 provider(freed/non-Object/arity/반환형 위반)는
+  `provider_contract_invalid`, 모두 Flow 계속(SCRIPT ERROR 없음 — 호출 전 typeof/is_instance_valid/reflection
+  arity+인자타입+typed array 원소타입(`Array[Dictionary]`만), 호출 후 반환 Dictionary+스키마 검증). mutation
+  provider는 effect chain 시작 시 고정(listener 교체 무영향). Set은 `apply_state_batch` 재사용(authoritative diff),
+  Add는 `add_state`. `EFFECT_TARGET_TYPES`에 `state_set/state_add` 추가(런타임·에디터 공유).
+  `dt009_step2_runtime_mutation_test` 22케이스 ALL PASS, DT-004/005/006/008 회귀 ALL PASS.
+  Step 3 구현·리뷰 완료: `StateSetDef`/`StateAddDef`(공통 추상 `StateEffectDef`, 비대기 leaf Effect
+  노드) + 공유 `state_effect_editor_adapter`(key + type OptionButton + value/delta LineEdit + Effect 입력 포트).
+  StateSet=5타입, StateAdd=INT/FLOAT만. literal은 capture에서 엄격 파싱(잘못된 입력은 String으로 보존),
+  저장 검증이 타입 불일치를 차단하고 런타임은 변환 없이 Store가 `type_mismatch` 거부(조용한 0/false 변환 없음).
+  `node_type_registry` 등록, 노드 목록 자동 노출("StateSet"/"StateAdd"). `dt009_step3_editor_roundtrip_test`
+  (실제 `dialoguetool_main.tscn` fixture, A~F) ALL PASS: 목록 노출, 포트, capture→save→reload→recapture에서
+  Definition typeof 직접 단언/연결(Say 소스 포함) 보존, authored 그래프 런타임 실행(gold 100→set 200→add 205),
+  잘못된 literal 저장 차단+런타임 거부.
+  Step 3b 구현·리뷰 완료: **Choice 항목별 Effect authoring**. Choice 출력 포트 = flow + 항목별 effect +
+  **전용 공통 effect 포트**(flow/data index 보존). 항목별 연결만 `choice_index` 보존, 선택 시 해당 항목 + 공통
+  Effect만 실행. 공통 연결은 전용 공통 포트로 정규화돼 저장/재로드/재캡처 후에도 choice_index 없이 유지(항목0
+  오염 방지 — Step 3b 리뷰 P1 수정), 잘못된 choice_index는 fallback 없이 건너뜀. resize 시 항목별·공통 연결
+  모두 remap 보존. `dt009_step3b_per_choice_effect_test`(A~G) ALL PASS, DT-004/DT-008 Choice 회귀 유지.
+  Step 4 구현·리뷰 완료(제품 코드 변경 없음): 실제 `DialogueManager→UI→Player→WorldStateStore`
+  전체 경로 e2e(`dt009_step4_e2e_completion_test` A~G)로 Choice 선택→항목별 mutation→Branch(state_condition)가
+  변경값을 즉시 읽는 흐름, 반복/latest-wins(폐기 provider mutation 0회)/provider 누락/read-only 실패(값 불변+Flow
+  계속)/에디터 authored 왕복 실행을 검증. 전체 회귀 matrix 30 scene ALL PASS(DT-004~009), `--import` 0 오류.
 - DT-007 Step 1~4 구현·검증·리뷰 완료([[DT-007-Condition-Review]], 판정: 수정 후 완료).
-  - `Assets/Script/gds/world_state/condition/`: `ConditionClause`(@abstract base),
+  - `addons/dialogtool/world_state/condition/`: `ConditionClause`(@abstract base),
     `StateCondition`(leaf), `ConditionGroup`(ALL/ANY/NOT, recursive `Array[ConditionClause]`),
     `ConditionSet`(top-level asset), `ConditionValidator`(구조 검증), `ConditionEvaluator`(pure-read 평가).
   - Step 1 validator는 iterative DFS로 null/unknown/empty/NOT arity/cycle/alias/depth(64)/node(4096)/key/
@@ -116,7 +148,52 @@ updated: 2026-06-15
   연결을 잘못 재배치하지 않으며 사라진 항목 연결만 드롭함을 검증하고, (2) 복합 `Branch(state_condition) +
   conditional Choice`가 실제 `WorldStateStore` 상태에 따라 같은 evaluator 계약으로 동작함을 e2e로 확인했다
   (`dt008_step5_completion_test`). 전체 회귀 26/26 GREEN(DT-004~008), editor `--import` 0 오류.
-  Step 1~4 판정 수정 후 완료, Step 5 완료 판정 리뷰 대기([[DT-008-Choice-Integration-Review]]).
+  Step 1~4 판정 수정 후 완료, Step 5 Approved after design fixes([[DT-008-Choice-Integration-Review]]).
+- DT-010 deferred: DialogueTool 에디터 Play에서 WorldState provider를 주입해 `WorldStateCondition`과
+  `StateSet`/`StateAdd`를 직접 확인하는 debug preview 작업([[DT-010-Dialogue-Debug-WorldState-Preview]]).
+  현재 에디터 Play는 별도 Godot 프로세스에 `--dialogue_resource`만 넘기고 `DialoguePlayer.start_dialogue()`를
+  호출하므로 read/mutation provider가 주입되지 않는다. 다만 다른 프로젝트 재사용을 위해
+  [[DT-011-DialogueWorldState-Addon-Packaging]]을 먼저 진행하고, 새 addon 구조 기준으로 재개한다.
+- DT-011 Step 0 설계 리뷰 완료(판정: Approved after design fixes,
+  [[ADR-011-DialogueWorldState-Addon-Packaging]] accepted). 결합 표면 확정: 제품 코드 결합은 condition
+  `class_name` 하나(경로 독립)뿐, mutation/store/runtime은 provider 주입으로 decoupled. 결정: 후보 B
+  (`addons/dialogtool/world_state/` 하위모듈), 런타임 autoload 3종은 호스트 수동 등록(순서 보장),
+  addon은 example schema만 포함.
+- **DT-011 Step 1 구현 완료 — 리뷰 대기.** WorldState 폐쇄집합(state_definition/state_schema/store
+  (.gd/.tscn)/runtime/condition/* + WorldState·Condition tests)을 `git mv`로
+  `Assets/Script/gds/world_state/` → `addons/dialogtool/world_state/`로 **이동**(복사·shim 없음,
+  `.uid` 동반, 원본 디렉터리 제거 확인). path rewrite: `project.godot` autoload 2종, store.tscn/
+  schema.tres ext_resource, 이동한 테스트 `.tscn`/`.tres` ext_resource + `.gd` const
+  (`SCHEMA_PATH`/`STORE_SCENE`/`RUNTIME_SCRIPT`/`CLAUSE_SCRIPT`), addon dt008_step1/3/5 `SCHEMA_PATH`,
+  `affinity_ge_10.tres`(Step 1 당시 `addons/dialogtool/Test/`, Step 2에서 `examples/`로 이동) condition
+  ext_resource. schema.tres uid
+  `uid://urle8xa2dmc` 보존. headless `--import` 0 parse 에러 + class_name 중복 0, 회귀 20 scene
+  (DT-005×6, DT-006×5, DT-007×5, DT-008 step1/3/5, DT-009 step4) ALL PASS. 제품 코드/테스트/리소스에
+  stale path 0(`.godot`/`.idea` 캐시 제외).
+- **DT-011 Step 2 구현 완료 — 리뷰 대기.** dialogtool path 정규화. addon 테스트 `SCHEMA_PATH`는 Step 1에서
+  이미 정규화됐고, 고유 작업은 example ConditionSet 이동: `addons/dialogtool/Test/affinity_ge_10.tres`
+  → `addons/dialogtool/examples/affinity_ge_10.tres`(`git mv`, uid `uid://bwsq70tpasvaw` 보존). 비게 된
+  `Test/` 디렉터리 제거, 루트 샘플 `test.tres`의 ext_resource path 갱신. 파일 내부 condition ext_resource는
+  Step 1에서 이미 새 경로. headless `--import` 0 parse 에러, DT-004/008/009 회귀 15 scene
+  (DT-004 step1~4+pipeline, DT-008 step1~5+spike, DT-009 step2/3/3b/4) ALL PASS.
+- **DT-011 Step 3 구현 완료 — 리뷰 대기.** examples/migration/docs. (1) example schema 개명: `git mv`
+  `world_state/world_state_schema.tres` → `examples/world_state_schema_example.tres`(uid `uid://urle8xa2dmc`
+  보존), store.tscn + 테스트 6개 `SCHEMA_PATH` 재작성. store.tscn이 example을 가리켜 out-of-box 부팅 유지,
+  게임 schema는 호스트가 교체(ADR-011 D5). (2) sample dialogue: 루트 `test.tres` 채택 →
+  `examples/sample_dialogues/sample_world_state_dialogue.tres`(state_condition 분기 + state_add(+50 affinity)
+  데모, example schema·ConditionSet 소비). (3) `addons/dialogtool/README.md` 신규: 설치(autoload 순서
+  DialogueManager→WorldState→WorldStateRuntime, DialogueToolUtil은 플러그인 자동등록)·게임 schema 교체·기존
+  프로젝트 마이그레이션 문서. headless `--import` 0 parse 에러, 명시적 load check(sample 8 nodes/schema
+  valid 6 keys/ConditionSet ok) + schema 의존 회귀 8 scene ALL PASS.
+- **DT-011 Step 4 구현 완료 — 완료 판정 대기(제품 코드 변경 없음).** 통합 matrix + 수용 검증. 전체 DT-004~009
+  **32/32 scene ALL PASS** + `--import` 0 parse 에러(stale 경로 0, `.godot`/`.idea` 캐시 제외). **Fresh-project
+  수용 테스트**: 임시 빈 프로젝트에 `addons/dialogtool/`만 복사+autoload 등록+plugin enable → `--import` 0 에러
+  → 수용 회귀 7/7 PASS(autoload boot, ConditionSet 분기, StateAdd/Set, Choice→state_add→Branch 전체 경로) →
+  검증 후 삭제. autoload 실패 시나리오 크래시 0(잘못된 순서도 Godot 4.6.3 batch _ready로 store 해석됨, WorldState
+  누락 시 graceful not-ready, provider_missing fail-closed). **발견**: `dialogue_player/manager.gd`가
+  `DialogueToolUtil` autoload에 parse-time 의존(기존 설계) → 순수 헤드리스/CI 설치는 이 autoload도 등록해야
+  parse됨 → README "헤드리스/CI 주의"로 문서화. DT-010 재개 구조 확정(addon 내부 example provider로 자급).
+  **DT-011 Step 1~4 구현·검증 완료, 최종 완료 판정 대기.**
 
 ## Known Gaps
 

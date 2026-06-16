@@ -25,7 +25,9 @@ var _ui: DialogueUI = null
 
 # 리소스 하나를 넘겨 대화를 시작한다. 진행 중이던 대화는 정리된다.
 # read_state_provider(선택)는 DialoguePlayer까지 전달할 read 상태 provider다(DT-005 Step 5).
-func play(dialogue_resource: DialogueGraphResource, read_state_provider = null) -> void:
+# mutation_state_provider(선택)는 state_* Effect가 사용할 mutation provider다(DT-009 Step 2, ADR-010 D1).
+# 일반 게임 경로에서는 같은 WorldState Store를 양쪽에 전달할 수 있다(권한 자동 승격은 없음).
+func play(dialogue_resource: DialogueGraphResource, read_state_provider = null, mutation_state_provider = null) -> void:
 	if dialogue_resource == null:
 		push_error("DialogueManager: dialogue_resource is null.")
 		return
@@ -47,7 +49,7 @@ func play(dialogue_resource: DialogueGraphResource, read_state_provider = null) 
 	# 종료 신호에 발신 UI를 바인딩 — 교체된 이전 대화의 지연 신호를 식별해 무시한다.
 	_ui.dialogue_end.connect(_on_end.bind(_ui))
 
-	_ui.play(dialogue_resource, read_state_provider)
+	_ui.play(dialogue_resource, read_state_provider, mutation_state_provider)
 
 
 # 현재 대화가 표시 중인지.

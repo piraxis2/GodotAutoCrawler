@@ -16,6 +16,15 @@ signal current_node_changed(node_id: int)
 # - report: ConditionEvaluator가 deep copy로 반환한 detached 사본(변조해도 다음 평가에 영향 없음).
 # UI/Branch는 report를 재평가하거나 변조하지 않는다. 후속 trace inspector/DialogueHistory의 seam이다.
 signal condition_evaluated(condition_node_id: int, consumer_node_id: int, report: Dictionary)
+# State mutation 결과 seam (DT-009 Step 2, ADR-010 D10).
+# state_set/state_add Effect를 실행할 때마다(성공/실패/provider 오류 포함) 실행 1회당 정확히 1회
+# 발행한다.
+# - effect_node_id: 실행한 state_* Effect 노드 id.
+# - report: mutation commit 후 캡처한 authoritative 결과의 detached deep copy(변조해도 Store/Flow 불변).
+#   { applied: bool, operation: "set"|"add", key: StringName, old_value: Variant,
+#     new_value: Variant, error: StringName }
+# listener가 report를 변조하거나 play()를 재진입해도 이미 commit된 결과와 이후 독립 Effect를 못 바꾼다.
+signal state_mutation_evaluated(effect_node_id: int, report: Dictionary)
 
 var current_node_id: int = -1
 var waiting_for: StringName = &"none"
@@ -30,8 +39,12 @@ var _choice_visible_map: Array = []
 # Dialogue runtime은 save file/PlayerData/전역 singleton을 직접 알지 않는다. 조건 평가 계층이
 # 사용할 read 상태는 외부에서 주입된 read provider를 통해서만 접근한다(/root를 직접 조회하지 않음).
 # read provider 계약(duck-typed): has_state(key) / read_state(key) / try_read_state(key, fallback).
-# mutation provider는 이 Step에서 주입하지 않는다(소비하는 노드/Effect가 아직 없음 — 후속 Task).
 var _read_state_provider = null
+
+# mutation provider seam (DT-009 Step 2, ADR-010 D1/D2). read provider와 별도 필드에 보관해
+# 권한을 분리한다 — mutation provider가 없다고 read provider를 mutation으로 승격하지 않는다.
+# state_set/state_add Effect가 소비하는 계약(duck-typed): apply_state_batch(changes) / add_state(key, delta).
+var _mutation_state_provider = null
 
 
 func _ready() -> void:
@@ -63,6 +76,21 @@ func get_read_state_provider():
 
 func has_read_state_provider() -> bool:
 	return _read_state_provider != null
+
+
+# --- mutation 상태 provider seam (DT-009 Step 2, ADR-010 D1/D2) ------
+# DialogueUI/DialogueManager 또는 테스트가 mutation provider를 주입한다. start_dialogue 전에 호출한다.
+# read provider와 독립이며, 미주입 시 state_* Effect는 provider_missing report로 fail-closed된다.
+func set_mutation_state_provider(provider) -> void:
+	_mutation_state_provider = provider
+
+
+func get_mutation_state_provider():
+	return _mutation_state_provider
+
+
+func has_mutation_state_provider() -> bool:
+	return _mutation_state_provider != null
 
 
 # 조건 평가 계층(후속 ConditionEvaluator/노드)이 사용할 read seam. provider가 없으면 안전 기본값을
@@ -131,8 +159,9 @@ func select_choice(visible_index: int) -> void:
 	waiting_for = &"none"
 	_choice_visible_map = []
 
-	# 이 Choice 노드를 떠나기 전에 연결된 Effect를 실행한 뒤 주 Flow로 이동한다(ADR-005).
-	_run_effects(current_node_id)
+	# 이 Choice 노드를 떠나기 전에 *선택한 항목*의 Effect(+ 공통 Effect)만 실행한 뒤 주 Flow로 이동한다
+	# (ADR-005/010 Step 3b). original_port(= 선택 항목 index)를 choice_index로 넘겨 해당 항목 Effect만 발행한다.
+	_run_effects(current_node_id, original_port)
 
 	var next_id = dialogue_resource.get_runtime_next_node_id(current_node_id, original_port)
 	if next_id == -1:
@@ -454,12 +483,17 @@ func _go_to_next_node(port: int) -> void:
 # Effect는 실행 커서를 옮기지 않고 wait state를 만들지 않으며, 정규화된 비대기
 # UI 요청만 발행한다. Effect 노드가 다시 Effect를 연결하면 체인을 따라가되,
 # visited 셋으로 순환을 차단하고 Portrait 외 대상은 경고 후 건너뛴다.
-func _run_effects(from_node_id: int) -> void:
-	var queue: Array = dialogue_resource.get_runtime_effect_node_ids(from_node_id)
+# choice_index(Step 3b): Choice 선택 시 선택 항목 + 공통 Effect만 실행한다(기본 -1 = 비-Choice, 전부).
+# Effect→Effect 체인의 자식은 Effect 노드에서 나가므로 항목 구분이 없다(choice_index -1, 전부).
+func _run_effects(from_node_id: int, choice_index: int = -1) -> void:
+	var queue: Array = dialogue_resource.get_runtime_effect_node_ids(from_node_id, choice_index)
 	if queue.is_empty():
 		return
 
 	var visited: Array = []
+	# Effect chain 시작 시 mutation provider를 한 번 고정한다(ADR-010 D10 재진입 방어). report listener가
+	# 실행 도중 set_mutation_state_provider()로 교체해도 이 chain의 뒤 Effect는 영향받지 않는다.
+	var mutation_provider = _mutation_state_provider
 	while not queue.is_empty():
 		var effect_id: int = queue.pop_front()
 		if effect_id == -1:
@@ -482,11 +516,214 @@ func _run_effects(from_node_id: int) -> void:
 			push_warning("DialoguePlayer: node %d type '%s' is not a valid effect target; skipping." % [effect_id, str(node_type)])
 			continue
 
-		ui_request.emit(_build_portrait_request(node_type, node_data.get("params", {})))
+		# 타입별 디스패치(ADR-010 런타임 디스패치 제약): portrait_*는 UI 요청을 발행하고,
+		# state_*는 mutation provider를 호출한 뒤 report signal을 발행한다(garbage Portrait 요청 방지).
+		var params = node_data.get("params", {})
+		match node_type:
+			&"portrait_show", &"portrait_hide", &"portrait_expression":
+				ui_request.emit(_build_portrait_request(node_type, params))
+			&"state_set", &"state_add":
+				_run_state_effect(effect_id, node_type, params, mutation_provider)
 
 		# Effect-to-Effect 체인: 이 Effect 노드에 연결된 Effect들을 저장 순서대로 잇는다.
 		for child in dialogue_resource.get_runtime_effect_node_ids(effect_id):
 			queue.append(child)
+
+
+# state_set/state_add Effect 하나를 주입된 mutation provider로 실행하고 report를 1회 발행한다.
+# 각 Effect는 독립 transaction이다(ADR-010 D6). 실패(provider 누락/계약 위반/Store 오류)는
+# 값 불변으로 fail-closed하고 SCRIPT ERROR 없이 구조화 report로만 노출한다(D5). Flow는 계속된다.
+func _run_state_effect(effect_id: int, node_type: StringName, params: Dictionary, provider) -> void:
+	var operation := "set" if node_type == &"state_set" else "add"
+	var key := _coerce_effect_key(params.get("key", &""))
+	var report: Dictionary = {
+		"applied": false,
+		"operation": operation,
+		"key": key,
+		"old_value": null,
+		"new_value": null,
+		"error": &"",
+	}
+
+	# provider 권한 분리(D2): mutation provider 미주입(genuine null)만 provider_missing이다.
+	# freed Object는 `== null`이 true가 되므로 typeof로 좁혀, 공급은 됐지만 못 쓰는 provider(freed 등)는
+	# 아래 계약 검증의 provider_contract_invalid로 분류한다. provider는 chain 시작 시 고정된 값이다.
+	if typeof(provider) == TYPE_NIL:
+		report["error"] = &"provider_missing"
+		_emit_mutation_report(effect_id, report)
+		return
+	# 소비 계약 표면 = { apply_state_batch, add_state } 둘 다 검증(D4, duck-typed).
+	if not _is_valid_mutation_provider(provider):
+		report["error"] = &"provider_contract_invalid"
+		_emit_mutation_report(effect_id, report)
+		return
+
+	if operation == "set":
+		_apply_set_effect(provider, key, params, report)
+	else:
+		_apply_add_effect(provider, key, params, report)
+
+	_emit_mutation_report(effect_id, report)
+
+
+# mutation provider 계약 검증(D4/D8). SCRIPT ERROR 없이 호출하기 위해 호출 전에 다음을 모두 확인한다:
+# 살아있는 Object인가, 두 메서드를 모두 구현하는가, 각 메서드가 우리가 넘기는 인자 수+타입으로 호출
+# 가능한가. (잘못된 arity나 인자 타입 호출은 SCRIPT ERROR를 내므로 reflection으로 사전 검사한다.
+# 반환 형태/스키마는 호출부에서 검증.)
+# 우리가 넘기는 값: apply_state_batch(Array[Dictionary]), add_state(StringName key, Variant delta).
+func _is_valid_mutation_provider(provider) -> bool:
+	# freed instance에 'is Object'를 쓰면 그 자체가 SCRIPT ERROR다. typeof로 Object인지 먼저 보고
+	# is_instance_valid로 freed를 거른다(둘 다 freed에 안전).
+	if typeof(provider) != TYPE_OBJECT:
+		return false
+	if not is_instance_valid(provider):
+		return false
+	if not (provider.has_method("apply_state_batch") and provider.has_method("add_state")):
+		return false
+	# 각 인자는 untyped이거나 우리가 넘기는 타입과 호환돼야 한다. changes는 untyped Array 또는 정확히
+	# Array[Dictionary](typed array의 원소 타입까지 검사)만 허용한다. delta는 임의 Variant를 넘기므로
+	# untyped(Variant) 파라미터만 허용한다(types=[] = 명시 타입 불가).
+	return _method_accepts(provider, "apply_state_batch", [{"types": [TYPE_ARRAY], "element": "Dictionary"}]) \
+		and _method_accepts(provider, "add_state", [{"types": [TYPE_STRING_NAME, TYPE_STRING]}, {"types": []}])
+
+
+# reflection으로 메서드가 arg_specs.size()개 인자로 호출 가능하고 각 인자 타입이 호환되는지 확인한다.
+# arg_specs[i] = { "types": Array[int], "element": String(optional, typed array 원소 타입) }.
+# default 인자를 고려해 required <= arg_count <= total 이어야 한다.
+func _method_accepts(obj: Object, method_name: String, arg_specs: Array) -> bool:
+	var arg_count: int = arg_specs.size()
+	for m in obj.get_method_list():
+		if m.get("name") != method_name:
+			continue
+		var args: Array = m.get("args", [])
+		var defaults: int = (m.get("default_args", []) as Array).size()
+		var total: int = args.size()
+		var required: int = total - defaults
+		if arg_count < required or arg_count > total:
+			return false
+		for i in arg_count:
+			if not _arg_compatible(args[i], arg_specs[i]):
+				return false
+		return true
+	return false
+
+
+# 인자 PropertyInfo가 spec과 호환되는가. untyped(선언 타입 TYPE_NIL)는 임의 값을 받으므로 항상 허용한다.
+# typed array 인자는 element 제약을 만족해야 한다: 우리가 넘기는 Array[Dictionary]는 untyped Array
+# (hint != ARRAY_TYPE) 또는 원소 타입이 정확히 일치하는 typed array에만 안전하게 전달된다.
+func _arg_compatible(arg_info: Dictionary, spec: Dictionary) -> bool:
+	var declared: int = arg_info.get("type", TYPE_NIL)
+	if declared == TYPE_NIL:
+		return true   # untyped(Variant)
+	if not (declared in (spec.get("types", []) as Array)):
+		return false
+	if declared == TYPE_ARRAY and spec.has("element"):
+		# typed array면 원소 타입이 정확히 일치해야 하고, untyped Array면 임의 원소 허용.
+		if arg_info.get("hint", 0) == PROPERTY_HINT_ARRAY_TYPE:
+			return String(arg_info.get("hint_string", "")) == spec["element"]
+	return true
+
+
+# 손상된 runtime snapshot 방어: key가 String/StringName가 아니면 빈 key로 좁힌다(StringName(int) 등
+# 런타임 오류 방지). 빈 key는 Store가 unknown_key로 fail-closed한다.
+func _coerce_effect_key(raw: Variant) -> StringName:
+	var t := typeof(raw)
+	if t == TYPE_STRING or t == TYPE_STRING_NAME:
+		return StringName(raw)
+	return &""
+
+
+# State Set: 신규 Store API 없이 기존 apply_state_batch([{key, value}])를 재사용한다(ADR-010 D4).
+# 값이 바뀌면 diff가 authoritative {old, new}를 주고, same-value면 applied && diff 비어 있음이
+# old == new == value를 보장한다(Store가 stored == value를 보장 — 사후 read 불필요).
+func _apply_set_effect(provider, key: StringName, params: Dictionary, report: Dictionary) -> void:
+	var value: Variant = params.get("value")
+	# apply_state_batch는 Array[Dictionary]를 요구한다. provider가 duck-typed라 정적 변환이 없으므로
+	# 호출 전에 명시적으로 typed array를 만든다(미변환 시 SCRIPT ERROR — D5 위반).
+	var changes: Array[Dictionary] = [{"key": key, "value": value}]
+	# 반환 형태 검증(D4/D8): 계약을 어긴 provider가 Dictionary가 아닌 값을 돌려주면 Dictionary 대입에서
+	# SCRIPT ERROR가 나므로 Variant로 받아 형태를 확인한다.
+	var raw: Variant = provider.apply_state_batch(changes)
+	if not (raw is Dictionary):
+		report["error"] = &"provider_contract_invalid"
+		return
+	var batch_report: Dictionary = raw
+	# 반환 스키마 검증(D4/D8): applied는 반드시 bool(truthy 거짓 승인 금지). 손상 시 provider_contract_invalid.
+	var applied_v: Variant = batch_report.get("applied")
+	if typeof(applied_v) != TYPE_BOOL:
+		report["error"] = &"provider_contract_invalid"
+		return
+	if applied_v:
+		# diff는 Array여야 한다(잘못된 타입은 typed Array 대입에서 SCRIPT ERROR).
+		var diff_v: Variant = batch_report.get("diff")
+		if typeof(diff_v) != TYPE_ARRAY:
+			report["error"] = &"provider_contract_invalid"
+			return
+		var diff: Array = diff_v
+		if diff.is_empty():
+			# same-value: old == new == value (authoritative, D4).
+			report["old_value"] = value
+			report["new_value"] = value
+		else:
+			var d0: Variant = diff[0]
+			if typeof(d0) != TYPE_DICTIONARY or not (d0.has("old") and d0.has("new")):
+				report["error"] = &"provider_contract_invalid"
+				return
+			report["old_value"] = d0["old"]
+			report["new_value"] = d0["new"]
+		report["applied"] = true
+	else:
+		# 실패: errors[0].reason(apply_batch 계약상 String)을 D10 StringName으로 정규화한다.
+		# errors가 없거나 항목 구조가 손상되면 provider_contract_invalid.
+		var errors_v: Variant = batch_report.get("errors")
+		if typeof(errors_v) != TYPE_ARRAY or (errors_v as Array).is_empty():
+			report["error"] = &"provider_contract_invalid"
+			return
+		var e0: Variant = (errors_v as Array)[0]
+		if typeof(e0) != TYPE_DICTIONARY or not e0.has("reason"):
+			report["error"] = &"provider_contract_invalid"
+			return
+		var reason: Variant = e0["reason"]
+		if typeof(reason) != TYPE_STRING and typeof(reason) != TYPE_STRING_NAME:
+			report["error"] = &"provider_contract_invalid"
+			return
+		report["error"] = StringName(reason)
+
+
+# State Add: Store 소유 원자 API add_state(key, delta)를 호출하고 authoritative old/new를 그대로 쓴다.
+func _apply_add_effect(provider, key: StringName, params: Dictionary, report: Dictionary) -> void:
+	var delta: Variant = params.get("delta")
+	# 반환 형태 검증(D4/D8): 비-Dictionary 반환은 provider_contract_invalid로 fail-closed한다.
+	var raw: Variant = provider.add_state(key, delta)
+	if not (raw is Dictionary):
+		report["error"] = &"provider_contract_invalid"
+		return
+	var add_report: Dictionary = raw
+	# 반환 스키마 검증(D4/D10): applied는 bool, 성공 시 old/new 존재, 실패 시 error는 StringName이어야 한다.
+	var applied_v: Variant = add_report.get("applied")
+	if typeof(applied_v) != TYPE_BOOL:
+		report["error"] = &"provider_contract_invalid"
+		return
+	if applied_v:
+		if not (add_report.has("old_value") and add_report.has("new_value")):
+			report["error"] = &"provider_contract_invalid"
+			return
+		report["applied"] = true
+		report["old_value"] = add_report["old_value"]
+		report["new_value"] = add_report["new_value"]
+	else:
+		# add_state 계약(D10): error는 StringName. String 등 다른 타입은 계약 위반이다.
+		var err_v: Variant = add_report.get("error")
+		if typeof(err_v) != TYPE_STRING_NAME:
+			report["error"] = &"provider_contract_invalid"
+			return
+		report["error"] = err_v
+
+
+# mutation commit 후 1회 발행(D10). 실제 변경은 provider 안에서 이미 동기 commit됐으므로 report는
+# authoritative하다. listener 변조/재진입 방어를 위해 signal에는 deep copy를 넘긴다.
+func _emit_mutation_report(effect_id: int, report: Dictionary) -> void:
+	state_mutation_evaluated.emit(effect_id, report.duplicate(true))
 
 
 func _end_dialogue() -> void:

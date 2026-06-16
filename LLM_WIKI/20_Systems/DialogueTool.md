@@ -2,7 +2,7 @@
 type: system
 system: DialogueTool
 status: active
-updated: 2026-06-15
+updated: 2026-06-16
 ---
 
 # DialogueTool
@@ -28,6 +28,8 @@ updated: 2026-06-15
 | `portrait_show` | Portrait 표시 요청(비대기) 발행 후 다음 Flow로 진행 |
 | `portrait_hide` | Portrait 숨김 요청(비대기) 발행 후 다음 Flow로 진행 |
 | `portrait_expression` | Portrait 표정 변경 요청(비대기) 발행 후 다음 Flow로 진행 |
+| `state_set` | 명시적 mutation provider로 World State key를 절대값 변경(비대기 Effect) |
+| `state_add` | 명시적 mutation provider로 INT/FLOAT World State key에 delta 더하기(비대기 Effect) |
 | `end` | 대화 종료 |
 | `variable` | 정적 값 또는 random range 제공 |
 | `expression` | 연결된 Data 입력으로 Expression 평가 |
@@ -62,6 +64,23 @@ updated: 2026-06-15
   입력 포트를 직접 소유한 Branch/Choice/Expression id). report는 evaluator의 detached deep copy다.
 - 자세한 결정은 [[ADR-009-State-Condition-Dialogue-Consumption]], 검증은 [[DT-008-Choice-Integration-Review]].
 
+## State Mutation Effects (DT-009)
+
+- `state_set`/`state_add`는 비대기 Effect 노드다. Flow를 기다리지 않고 현재 실행 지점의 Effect 순서대로
+  mutation provider를 호출한 뒤 주 Flow가 진행된다.
+- 실행 경로는 `DialogueManager.play(resource, read_provider, mutation_provider)` ->
+  `DialogueUI.play(...)` -> `DialoguePlayer.set_mutation_state_provider(...)`다. read provider는 mutation 권한으로
+  자동 승격되지 않는다.
+- `state_set`은 provider의 `apply_state_batch([{key, value}])`를 사용하고, `state_add`는
+  `add_state(key, delta)`를 사용한다. Set은 bool/int/float/String/StringName, Add는 INT/FLOAT strict 타입만
+  지원한다.
+- `state_mutation_evaluated(effect_node_id, report)` signal을 Effect 평가 1회당 발행한다. report는 commit 후
+  deep copy이며 `{applied, changed, operation, key, old_value, new_value, error}` 형태다.
+- Choice는 항목별 Effect 포트와 전용 공통 Effect 포트를 갖는다. 선택 시 해당 항목의 Effect와 공통 Effect만
+  실행한다. 공통 연결은 `choice_index`가 없고, 손상된 `choice_index` 타입은 fail-closed로 건너뛴다.
+- provider 누락/계약 위반/Store 오류는 구조화 report로 남기고 Flow는 계속한다. 값은 Store 계약에 따라 불변이다.
+  검증과 판정은 [[DT-009-State-Mutation-Review]].
+
 ## Say Line Paging
 
 - Say 텍스트의 줄바꿈은 같은 Say 노드 안의 페이지 경계로 처리한다.
@@ -82,7 +101,7 @@ updated: 2026-06-15
 - 연결 endpoint가 존재해야 한다.
 - Flow, Value(Data/Boolean), Effect 포트 카테고리가 다른 연결은 저장을 중단한다.
 - 한 Flow 출력 포트에 주 Flow 대상이 둘 이상이면 저장을 중단한다.
-- Portrait가 아닌 Effect 대상과 Effect 순환은 저장을 중단한다.
+- Portrait/State mutation이 아닌 Effect 대상과 Effect 순환은 저장을 중단한다.
 - 치명적 연결 오류에는 node id, runtime type, output/input port를 표시한다.
 - 도달 불가능한 Flow와 Start의 연결 누락은 warning이다.
 
@@ -99,15 +118,23 @@ updated: 2026-06-15
 
 ### Project Integration Dependency
 
-- `state_condition` Dialogue Data 노드는 단일 게임 저장소의
-  `Assets/Script/gds/world_state/condition/`에 있는 `ConditionSet`과 `ConditionEvaluator`를 직접 사용한다.
-- 따라서 이 노드가 추가된 이후 DialogueTool addon은 World State condition 모듈에 의존한다. 별도 독립
-  addon 배포는 현재 목표가 아니며, Dialogue runtime은 여전히 `/root`를 직접 조회하지 않고 주입된 read
-  provider만 evaluator에 전달한다([[ADR-009-State-Condition-Dialogue-Consumption]]).
+- `state_condition` Dialogue Data 노드는 현재 `addons/dialogtool/world_state/condition/`에 있는
+  `ConditionSet`과 `ConditionEvaluator`를 직접 사용한다(`class_name` 참조 — 경로 독립).
+- `state_set`/`state_add` Dialogue Effect 노드는 `WorldStateStore` mutation provider 계약
+  (`apply_state_batch`, `add_state`)을 소비한다.
+- 따라서 이 노드들이 추가된 이후 DialogueTool addon은 World State condition/mutation 모듈에 의존한다.
+  Dialogue runtime은 여전히 `/root`를 직접 조회하지 않고 주입된 read/mutation provider만 사용한다
+  ([[ADR-009-State-Condition-Dialogue-Consumption]], [[ADR-010-State-Mutation-Dialogue-Effects]]).
+- **DT-011 패키징(accepted, [[ADR-011-DialogueWorldState-Addon-Packaging]]):** 이 의존을 깨지지 않게
+  하려고 World State 폐쇄집합(코어/condition/store/runtime)을 `addons/dialogtool/world_state/`
+  하위모듈로 **이동 완료**(DT-011 Step 1, 후보 B). 이제 `addons/dialogtool/`만 복사하면 World State 코드가
+  함께 따라온다. DialogueTool과 World State를 **별도** 독립 addon으로 쪼개 배포하는 것은 목표가 아니다
+  (둘을 한 폴더로 함께 배포). 게임 schema/save는 호스트 소유. example/schema 분리·설치 문서는 Step 2~3 범위.
 
 ## Related
 
 - [[DialogueTool-User-Guide]]
 - [[DialogueTool-Architecture]]
 - [[DT-002-Portrait-State]]
+- [[DT-009-State-Mutation-Review]]
 - [[DialogueTool-Step-1-to-8]]

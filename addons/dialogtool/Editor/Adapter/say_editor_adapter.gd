@@ -22,7 +22,7 @@ func apply_params(node: DialogueNode, params: Dictionary) -> void:
 	var effect_label := Label.new()
 	effect_label.text = "effect"
 	effect_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	effect_label.tooltip_text = "비대기 Effect 출력(주황): 연결된 Portrait 명령을 실행한 뒤 주 Flow로 진행합니다. 일반 Flow 포트와 다릅니다."
+	effect_label.tooltip_text = "비대기 Effect 출력(주황): 연결된 Portrait/State 명령을 실행한 뒤 주 Flow로 진행합니다. 일반 Flow 포트와 다릅니다."
 	node.add_child(effect_label)
 	node.set_slot(2, false, 0, Color.WHITE, true, DialogueNode.port_type.effect, DialogueNode.EFFECT_PORT_COLOR)
 	node.set_meta(WIDGET_META, widget)

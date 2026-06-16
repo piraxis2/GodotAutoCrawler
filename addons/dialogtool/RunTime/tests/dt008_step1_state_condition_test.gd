@@ -19,7 +19,7 @@ extends Node
 const OP := StateCondition.Operator
 const LG := ConditionGroup.Logic
 const SVT := StateDefinition.StateValueType
-const SCHEMA_PATH := "res://Assets/Script/gds/world_state/world_state_schema.tres"
+const SCHEMA_PATH := "res://addons/dialogtool/examples/world_state_schema_example.tres"
 
 var _failures: int = 0
 

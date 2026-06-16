@@ -1,0 +1,270 @@
+[gd_resource type="Resource" script_class="DialogueGraphResource" format=3 uid="uid://cftqpfmkv6y0p"]
+
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_wjiom"]
+[ext_resource type="Script" uid="uid://cg1ti1whyl5sm" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/choice_def.gd" id="2_05ey8"]
+[ext_resource type="Script" uid="uid://d3ax6cbn0kha7" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/branch_def.gd" id="3_a7wtu"]
+[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="4_lwo30"]
+[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="5_kg8mt"]
+[ext_resource type="Resource" uid="uid://bwsq70tpasvaw" path="res://addons/dialogtool/examples/affinity_ge_10.tres" id="6_n87su"]
+[ext_resource type="Script" uid="uid://c5kp03thlsxwa" path="res://addons/dialogtool/Resource/NodeDefinitions/Data/world_state_condition_def.gd" id="7_hyxlp"]
+[ext_resource type="Script" uid="uid://cqiyjs7osagci" path="res://addons/dialogtool/Resource/NodeDefinitions/State/state_add_def.gd" id="8_8frqp"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/dialogtool/Resource/dialogue_graph_resource.gd" id="9_kh6m1"]
+
+[sub_resource type="Resource" id="Resource_34mvg"]
+script = ExtResource("1_wjiom")
+node_id = 0
+
+[sub_resource type="Resource" id="Resource_2l0cp"]
+script = ExtResource("2_05ey8")
+choice_dic = {
+"Leave": {},
+"Take": {}
+}
+choices = Array[String](["Take", "Leave"])
+node_id = 7
+
+[sub_resource type="Resource" id="Resource_ro23f"]
+script = ExtResource("3_a7wtu")
+node_id = 9
+
+[sub_resource type="Resource" id="Resource_iaj0f"]
+script = ExtResource("4_lwo30")
+speaker = "1"
+say_text = "Rich"
+node_id = 12
+
+[sub_resource type="Resource" id="Resource_s65t5"]
+script = ExtResource("5_kg8mt")
+node_id = 11
+
+[sub_resource type="Resource" id="Resource_c432c"]
+script = ExtResource("4_lwo30")
+speaker = "2"
+say_text = "Poor"
+node_id = 13
+
+[sub_resource type="Resource" id="Resource_ywq5l"]
+script = ExtResource("7_hyxlp")
+condition_set = ExtResource("6_n87su")
+node_id = 8
+
+[sub_resource type="Resource" id="Resource_jvosv"]
+script = ExtResource("8_8frqp")
+delta = 50
+key = &"actor.example.affinity"
+node_id = 6
+
+[resource]
+script = ExtResource("9_kh6m1")
+nodes = {
+0: {
+"definition": SubResource("Resource_34mvg"),
+"id": 0,
+"name": &"0",
+"position_offset": Vector2(0, 0),
+"size": Vector2(100, 100.00009)
+},
+6: {
+"definition": SubResource("Resource_jvosv"),
+"id": 6,
+"name": &"6",
+"position_offset": Vector2(700, 260),
+"size": Vector2(308.0004, 153.00009)
+},
+7: {
+"definition": SubResource("Resource_2l0cp"),
+"id": 7,
+"name": &"7",
+"position_offset": Vector2(226.39006, -103.94413),
+"size": Vector2(351, 262)
+},
+8: {
+"definition": SubResource("Resource_ywq5l"),
+"id": 8,
+"name": &"8",
+"position_offset": Vector2(360, -280),
+"size": Vector2(349, 69)
+},
+9: {
+"definition": SubResource("Resource_ro23f"),
+"id": 9,
+"name": &"9",
+"position_offset": Vector2(840, -100),
+"size": Vector2(178.00006, 195.00002)
+},
+11: {
+"definition": SubResource("Resource_s65t5"),
+"id": 11,
+"name": &"11",
+"position_offset": Vector2(1900, 0),
+"size": Vector2(100, 100.00003)
+},
+12: {
+"definition": SubResource("Resource_iaj0f"),
+"id": 12,
+"name": &"12",
+"position_offset": Vector2(1080, -300),
+"size": Vector2(594.0001, 305)
+},
+13: {
+"definition": SubResource("Resource_c432c"),
+"id": 13,
+"name": &"13",
+"position_offset": Vector2(1080, 40),
+"size": Vector2(594.0001, 305.0001)
+}
+}
+connections = Array[Dictionary]([{
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 7,
+"to_port": 0
+}, {
+"choice_index": 0,
+"from_node_id": 7,
+"from_port": 2,
+"kind": "effect",
+"to_node_id": 6,
+"to_port": 0
+}, {
+"from_node_id": 7,
+"from_port": 0,
+"to_node_id": 9,
+"to_port": 1
+}, {
+"from_node_id": 7,
+"from_port": 1,
+"to_node_id": 9,
+"to_port": 1
+}, {
+"from_node_id": 9,
+"from_port": 1,
+"to_node_id": 13,
+"to_port": 0
+}, {
+"from_node_id": 9,
+"from_port": 0,
+"to_node_id": 12,
+"to_port": 0
+}, {
+"from_node_id": 13,
+"from_port": 0,
+"to_node_id": 11,
+"to_port": 0
+}, {
+"from_node_id": 12,
+"from_port": 0,
+"to_node_id": 11,
+"to_port": 0
+}, {
+"from_node_id": 8,
+"from_port": 0,
+"to_node_id": 9,
+"to_port": 0
+}])
+next_node_id = 14
+runtime_nodes = {
+0: {
+"id": 0,
+"params": {},
+"type": &"start"
+},
+6: {
+"id": 6,
+"params": {
+"delta": 50,
+"key": &"actor.example.affinity"
+},
+"type": &"state_add"
+},
+7: {
+"id": 7,
+"params": {
+"choices": Array[String](["Take", "Leave"])
+},
+"type": &"choice"
+},
+8: {
+"id": 8,
+"params": {
+"condition_set": ExtResource("6_n87su")
+},
+"type": &"state_condition"
+},
+9: {
+"id": 9,
+"params": {},
+"type": &"branch"
+},
+11: {
+"id": 11,
+"params": {},
+"type": &"end"
+},
+12: {
+"id": 12,
+"params": {
+"portrait": "empty",
+"speaker": "1",
+"text": "Rich"
+},
+"type": &"say"
+},
+13: {
+"id": 13,
+"params": {
+"portrait": "empty",
+"speaker": "2",
+"text": "Poor"
+},
+"type": &"say"
+}
+}
+runtime_connections = Array[Dictionary]([{
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 7,
+"to_port": 0
+}, {
+"choice_index": 0,
+"from_node_id": 7,
+"from_port": 2,
+"kind": "effect",
+"to_node_id": 6,
+"to_port": 0
+}, {
+"from_node_id": 7,
+"from_port": 0,
+"to_node_id": 9,
+"to_port": 1
+}, {
+"from_node_id": 7,
+"from_port": 1,
+"to_node_id": 9,
+"to_port": 1
+}, {
+"from_node_id": 9,
+"from_port": 1,
+"to_node_id": 13,
+"to_port": 0
+}, {
+"from_node_id": 9,
+"from_port": 0,
+"to_node_id": 12,
+"to_port": 0
+}, {
+"from_node_id": 13,
+"from_port": 0,
+"to_node_id": 11,
+"to_port": 0
+}, {
+"from_node_id": 12,
+"from_port": 0,
+"to_node_id": 11,
+"to_port": 0
+}, {
+"from_node_id": 8,
+"from_port": 0,
+"to_node_id": 9,
+"to_port": 0
+}])

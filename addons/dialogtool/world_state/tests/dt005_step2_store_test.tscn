@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dt005step2test01"]
+
+[ext_resource type="Script" path="res://addons/dialogtool/world_state/tests/dt005_step2_store_test.gd" id="1"]
+
+[node name="DT005Step2Test" type="Node"]
+script = ExtResource("1")

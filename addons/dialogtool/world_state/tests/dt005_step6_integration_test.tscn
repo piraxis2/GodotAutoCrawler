@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cnif54m64tmqq"]
+
+[ext_resource type="Script" uid="uid://ckhn2oryo0hpt" path="res://addons/dialogtool/world_state/tests/dt005_step6_integration_test.gd" id="1"]
+
+[node name="DT005Step6Test" type="Node" unique_id=813423853]
+script = ExtResource("1")

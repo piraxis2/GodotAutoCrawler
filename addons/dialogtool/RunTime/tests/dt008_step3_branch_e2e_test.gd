@@ -19,7 +19,7 @@ extends Node
 
 const OP := StateCondition.Operator
 const LG := ConditionGroup.Logic
-const SCHEMA_PATH := "res://Assets/Script/gds/world_state/world_state_schema.tres"
+const SCHEMA_PATH := "res://addons/dialogtool/examples/world_state_schema_example.tres"
 
 var _failures: int = 0
 var _stores: Array = []   # 만든 Store를 추적해 정리.

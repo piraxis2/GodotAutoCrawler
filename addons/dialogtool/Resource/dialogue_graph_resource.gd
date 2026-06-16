@@ -84,10 +84,15 @@ func get_runtime_start_node_id() -> int:
 # 기존 Flow/Data 규칙으로 해석한다(이전 리소스 호환).
 const CONNECTION_KIND_EFFECT := "effect"
 
-# Effect 연결의 대상으로 허용하는 노드 런타임 타입(화이트리스트, ADR-005).
-# 현재는 Portrait 명령만 비대기 Effect로 실행할 수 있다. Say/Choice/Branch/End/Data 등
-# wait state를 만들거나 데이터인 노드는 Effect 대상이 될 수 없다.
-const EFFECT_TARGET_TYPES: Array = [&"portrait_show", &"portrait_hide", &"portrait_expression"]
+# Effect 연결의 대상으로 허용하는 노드 런타임 타입(화이트리스트, ADR-005 / ADR-010).
+# Portrait 명령(UI 상태)과 State mutation(state_set/state_add)을 비대기 Effect로 실행한다.
+# Say/Choice/Branch/End/Data 등 wait state를 만들거나 데이터인 노드는 Effect 대상이 될 수 없다.
+# 런타임 _run_effects는 이 타입들을 타입별로 디스패치한다(portrait_*는 UI 요청,
+# state_*는 mutation provider 호출 + report signal — ADR-010 런타임 디스패치 제약).
+const EFFECT_TARGET_TYPES: Array = [
+	&"portrait_show", &"portrait_hide", &"portrait_expression",
+	&"state_set", &"state_add",
+]
 
 
 static func is_effect_target_type(type: StringName) -> bool:
@@ -114,12 +119,30 @@ func get_runtime_next_node_id(from_node_id: int, from_port: int = 0) -> int:
 # 한 노드(from_node_id)에서 나가는 Effect 대상들을 저장 순서대로 반환한다.
 # Effect는 전용 Effect 출력 포트(별도 port index)로 발행되므로 port로 거르지 않고
 # kind=="effect"로만 식별한다. 저장된 연결 순서가 곧 Effect 실행 순서다(ADR-005).
-func get_runtime_effect_node_ids(from_node_id: int) -> Array:
+#
+# choice_index(ADR-010 Step 3b): Choice 선택 시 선택 항목의 Effect만 실행하기 위한 필터.
+# - choice_index < 0(기본, 비-Choice 노드): 모든 Effect 연결을 반환한다(Start/Say 등).
+# - choice_index >= 0(Choice 선택): 해당 항목(connection.choice_index == choice_index)과
+#   choice_index가 없는 공통 Effect(레거시/의도된 shared, choice_index < 0)만 반환한다.
+func get_runtime_effect_node_ids(from_node_id: int, choice_index: int = -1) -> Array:
 	var active_connections = runtime_connections if not runtime_connections.is_empty() else connections
 	var results: Array = []
 	for connection in active_connections:
 		if connection.get("from_node_id") == from_node_id and _is_effect_connection(connection):
-			results.append(connection.get("to_node_id", -1))
+			if choice_index < 0:
+				results.append(connection.get("to_node_id", -1))
+			else:
+				# choice_index 계약(에디터 load와 동일):
+				# - 필드 없음 → 공통(shared): 어느 선택지에서도 실행.
+				# - 유효한 int → 해당 항목(== choice_index) 또는 명시적 공통(< 0).
+				# - 필드는 있으나 null/String/Dictionary 등 → fail-closed로 건너뜀(손상 .tres 방어).
+				# `has`로 부재와 명시적 null을 구분한다(typed int 대입 회피로 런타임 SCRIPT ERROR도 방지).
+				if not connection.has("choice_index"):
+					results.append(connection.get("to_node_id", -1))
+				else:
+					var raw_ci: Variant = connection["choice_index"]
+					if typeof(raw_ci) == TYPE_INT and (raw_ci == choice_index or raw_ci < 0):
+						results.append(connection.get("to_node_id", -1))
 
 	return results
 

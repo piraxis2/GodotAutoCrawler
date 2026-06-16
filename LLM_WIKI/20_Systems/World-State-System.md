@@ -2,7 +2,7 @@
 type: system
 system: WorldState
 status: complete
-updated: 2026-06-14
+updated: 2026-06-16
 ---
 
 # World State System
@@ -32,16 +32,17 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
   Store 모두 파일 경로와 slot을 모른다.
 - 조건 데이터 모델/검증/pure-read 평가기와 실제 `WorldStateStore` 통합 및 end-to-end 검증
   (DT-007 Step 1~4)은 완료됐다(아래 Condition Model). 이를 소비하는 State Condition Dialogue 노드와
-  조건부 Branch/Choice는 DT-008에서 완료됐다(아래 Condition 소비 절). State Read/Set Dialogue 노드와
-  mutation provider, 실제 SaveGame file/slot 시스템은 아직 없다.
+  조건부 Branch/Choice는 DT-008에서 완료됐다(아래 Condition 소비 절). State Set/Add Dialogue Effect와
+  명시적 mutation provider는 DT-009에서 완료됐다(아래 State Mutation 절). 아직 없는 것은 State Read
+  Dialogue 노드와 실제 SaveGame file/slot 시스템이다.
 
-- `Assets/Script/gds/world_state/state_definition.gd` — `StateDefinition` Resource.
+- `addons/dialogtool/world_state/state_definition.gd` — `StateDefinition` Resource.
   - 필드: `key: StringName`, `value_type`, `default_value: Variant`, `lifetime`,
     `writable: bool`, `description`, `tags: Array[StringName]`.
   - enum: `StateValueType { BOOL, INT, FLOAT, STRING, STRING_NAME }`,
     `StateLifetime { SAVE, SESSION }` (Godot에 전역 enum이 없어 클래스 내부에 둔다).
   - static helper: `builtin_type_for(vt)`, `is_known_value_type(vt)`, `is_known_lifetime(lt)`.
-- `Assets/Script/gds/world_state/state_schema.gd` — `StateSchema` Resource.
+- `addons/dialogtool/world_state/state_schema.gd` — `StateSchema` Resource.
   - 필드: `schema_version: int`, `definitions: Array[StateDefinition]`.
   - `validate() -> { valid, errors[{code,index,key,message}], error_codes[], key_count }`.
   - lookup API: `is_valid()`, `has_key(key)`, `get_definition(key)`, `keys()`, `last_result()`.
@@ -57,9 +58,9 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
   암시적 변환(int->float, String<->StringName, null)을 거부한다.
 - 검출 오류 code: `schema_version_invalid`, `definition_null`, `value_type_invalid`,
   `lifetime_invalid`, `key_empty`, `key_invalid_format`, `key_duplicate`, `default_type_mismatch`.
-- 검증: `Assets/Script/gds/world_state/tests/dt005_step1_schema_test.tscn` 헤드리스 테스트가
+- 검증: `addons/dialogtool/world_state/tests/dt005_step1_schema_test.tscn` 헤드리스 테스트가
   validation 행렬과 `.tres` 저장/재로드 왕복을 확인한다(ALL PASS).
-- `Assets/Script/gds/world_state/world_state_store.gd` — `WorldStateStore` (Node).
+- `addons/dialogtool/world_state/world_state_store.gd` — `WorldStateStore` (Node).
   - `@export var schema: StateSchema`, `initialize() -> bool`, `is_store_ready() -> bool`.
     유효 schema일 때만 ready가 되고 default로 runtime 값을 채운다.
   - 계약 compile: `initialize()`가 타입/default/writable을 private `_contract` map으로 스냅샷하고,
@@ -92,7 +93,8 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
   - `signal value_changed(key, old, new)` — 값이 실제로 바뀔 때만 발행(같은 값은 무발행).
   - provider 계약 facade(DT-005 Step 5): read(`has_state`/`read_state`/`try_read_state`)와
     mutation(`set_state`/`apply_state_batch`)을 분리해 Store의 좁은 view로 노출(native API에 위임).
-  - `world_state_store.tscn`: 외부 `world_state_schema.tres`(유효 6-key bootstrap Schema)를 `schema`로
+  - `world_state_store.tscn`: 외부 `examples/world_state_schema_example.tres`(유효 6-key bootstrap
+    예제 Schema)를 `schema`로
     참조한다. DT-006 Step 2에서 `WorldState` autoload(`/root/WorldState`)로 등록돼 부팅 시
     `is_store_ready()==true`다. autoload 이름은 class_name `WorldStateStore`와 충돌을 피하려 `WorldState`다.
 - 검증: `tests/dt005_step2_store_test.tscn`, `dt005_step3_snapshot_test.tscn`,
@@ -100,13 +102,15 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
 
 ## Runtime Lifecycle (DT-006 완료)
 
-- `Assets/Script/gds/world_state/world_state_schema.tres` — schema_version 1의 유효한 6-key bootstrap Schema.
+- `addons/dialogtool/examples/world_state_schema_example.tres` — schema_version 1의 유효한 6-key bootstrap
+  예제 Schema(DT-011 Step 3에서 `world_state/world_state_schema.tres`를 이동·개명, uid 보존). 게임 schema는
+  호스트가 소유하고 이 example을 자기 것으로 교체한다(ADR-011 D5).
   다섯 value type, SAVE/SESSION lifetime, writable/read-only 계약을 통합 검증하기 위한 최소 집합이며
   제품 quest/actor 계약이 확정되면 확장한다.
 - `project.godot` autoload 순서:
-  1. `WorldState="*res://Assets/Script/gds/world_state/world_state_store.tscn"`
-  2. `WorldStateRuntime="*res://Assets/Script/gds/world_state/world_state_runtime.gd"`
-- `Assets/Script/gds/world_state/world_state_runtime.gd` — lifecycle coordinator.
+  1. `WorldState="*res://addons/dialogtool/world_state/world_state_store.tscn"`
+  2. `WorldStateRuntime="*res://addons/dialogtool/world_state/world_state_runtime.gd"`
+- `addons/dialogtool/world_state/world_state_runtime.gd` — lifecycle coordinator.
   - `_ready()`에서 이미 등록된 `/root/WorldState`를 한 번 해석한다. 테스트에서는 `set_store()`로
     주입할 수 있으며 주입 Store와 autoload를 섞지 않는다.
   - `is_store_ready()`는 Schema/Store 부팅 준비, `is_session_ready()`는 새 게임 또는 load 완료를 뜻한다.
@@ -127,9 +131,14 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
 
 - `DialoguePlayer`는 read 상태 provider를 주입받는다(`set_read_state_provider`). `/root`/PlayerData/
   save를 직접 조회하지 않고, `has_state`/`read_state`/`try_read_state`로만 상태를 읽는다(미지정 시
-  false/null/fallback). mutation provider는 아직 주입하지 않는다(소비 노드 없음).
-- 전달 경로: `DialogueManager.play(resource, provider)` → `DialogueUI.play(resource, provider)` →
-  `DialoguePlayer.set_read_state_provider(provider)`. WorldStateStore를 그대로 주입할 수 있다.
+  false/null/fallback).
+- **mutation provider도 별도로 주입한다(`set_mutation_state_provider`, DT-009 Step 2).** read 권한과 분리되며
+  자동 승격이 없다(미주입 시 `state_*` Effect는 `provider_missing`으로 fail-closed, Flow는 계속). 소비 계약은
+  `{apply_state_batch, add_state}`(호출 전 typeof/is_instance_valid/arity+인자타입 reflection, 호출 후 반환
+  Dictionary+스키마 검증으로 SCRIPT ERROR 없이 `provider_contract_invalid` 처리).
+- 전달 경로: `DialogueManager.play(resource, read_provider, mutation_provider)` →
+  `DialogueUI.play(resource, read_provider, mutation_provider)` → `DialoguePlayer.set_read/mutation_state_provider`.
+  WorldStateStore를 양쪽에 그대로 주입할 수 있다(권한 자동 승격 없음).
 - 기존 Variable/Expression/Branch 데이터 평가는 provider와 독립적으로 유지된다.
 - 수명주기: UI.play는 resource+provider를 한 쌍으로 묶어 deferred 시작하고 같은 프레임 연속 호출은
   마지막만 시작한다(latest-wins). Manager가 UI를 교체하면 폐기 UI의 대기 시작을 취소해 폐기된
@@ -138,7 +147,7 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
 
 ## Condition Model (DT-007 Step 1~4 완료 — [[DT-007-Condition-Review]])
 
-- `Assets/Script/gds/world_state/condition/`에 조건 데이터 모델과 구조 검증기가 있다
+- `addons/dialogtool/world_state/condition/`에 조건 데이터 모델과 구조 검증기가 있다
   ([[DT-007-ConditionSet-ConditionEvaluator]] Step 1, [[ADR-008-Structured-Condition-Evaluation]]).
   - `ConditionClause`(@abstract base), `StateCondition`(leaf: key/operator/expected_value),
     `ConditionGroup`(ALL/ANY/NOT + recursive `Array[ConditionClause]`), `ConditionSet`(top-level asset).
@@ -165,15 +174,37 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
 ## Condition 소비: Dialogue 통합 (DT-008 완료)
 
 - [[DT-008-State-Condition-Dialogue-Integration]] Step 1~5가 위 `ConditionSet`/`ConditionEvaluator`를
-  Dialogue Data Flow에 연결했다(Step 1~4 수정 후 완료, Step 5 완료 판정 리뷰 대기 —
+  Dialogue Data Flow에 연결했다(Step 1~4 수정 후 완료, Step 5 Approved after design fixes —
   [[DT-008-Choice-Integration-Review]]). `state_condition` Data 노드가 주입된 원본 read provider로
   evaluator를 호출해 boolean을 내고, Branch와 조건부 Choice가 같은 계약으로 fail-closed(error-dominance
   전파 포함) 동작한다. 평가 결과 `report`는 `condition_evaluated` signal로 노출된다. evaluator/Store는
   여전히 Dialogue를 모르며 provider 주입 경계가 유지된다. 상세 동작은 [[DialogueTool]] State Condition 절.
 
+## State Mutation Dialogue Effect (DT-009 완료)
+
+- `WorldStateStore.add_state(key, delta) -> Dictionary`: 보고형 원자 Add(Step 1). INT/FLOAT strict,
+  JSON-safe 도메인/overflow 거부, 값/signal 불변 실패, 실제 변경 시 `value_changed` 1회.
+- 런타임(Step 2): `DialoguePlayer._run_effects`가 타입 디스패치로 `state_set`은 `apply_state_batch` 재사용,
+  `state_add`는 `add_state` 호출 + `state_mutation_evaluated(effect_node_id, report)` 발행(commit 후 1회,
+  deep copy). mutation provider는 effect chain 시작 시 고정(listener 교체 무영향). 실패는 모두 구조화 report +
+  Flow 계속(`provider_missing`/`provider_contract_invalid`/`read_only`/`type_mismatch`/`out_of_domain`/
+  `store_busy`/`store_not_ready`).
+- 에디터(Step 3): `StateSetDef`(5타입)/`StateAddDef`(INT/FLOAT) + 공유 `state_effect_editor_adapter`
+  (key + type + value/delta + Effect 입력 포트). literal은 capture 시 엄격히 파싱하고 typeof가 어긋나면
+  저장 검증이 차단한다(조용한 0/false 변환 금지). 런타임은 값을 변환하지 않고 Store가 strict 거부한다.
+  `EFFECT_TARGET_TYPES`에 `state_set`/`state_add` 등록(런타임·에디터 validation 공유).
+- Choice 항목별 Effect(Step 3b): Choice 출력 포트 = flow + 항목별 effect + 전용 공통 effect 포트. 항목별 연결만
+  `choice_index`를 보존하고, 선택 시 `get_runtime_effect_node_ids(from, choice_index)`로 해당 항목 + 공통
+  (choice_index 없는) Effect만 실행한다(선택 결과에 따른 상태 변경). 공통 연결은 전용 공통 포트로 정규화돼
+  왕복 후에도 choice_index 없이 유지된다(항목0 오염 방지). resize 시 항목별·공통 연결 모두 remap 유지.
+- End-to-end(Step 4): 실제 `DialogueManager -> DialogueUI -> DialoguePlayer -> WorldStateStore` 경로에서
+  Choice 선택이 `state_add`를 실행하고, 바로 다음 Branch `state_condition`이 변경된 값을 읽는 흐름을 검증했다.
+  provider 누락/read-only 실패는 값 불변 + 구조화 report + Flow 계속, same-frame 교체는 폐기 provider mutation
+  0회다. 완료 판정은 [[DT-009-State-Mutation-Review]].
+
 ## Planned Components (미구현)
 
-- State Read/Set Dialogue 노드와 Response Selector(조건부 Choice는 DT-008에서 완료)
+- State Read Dialogue 노드와 Response Selector(조건부 Choice는 DT-008에서 완료)
 - SaveGame file/slot, backup, autosave 정책(`capture_world_state`/`restore_world_state` adapter 소비)
 - schema migration/key alias와 full int64 snapshot wire
 
@@ -187,7 +218,7 @@ set_value
 reset_value / reset_lifetime
 export_snapshot / import_snapshot
 peek_snapshot_compatibility
-apply_batch
+apply_batch / add_state
 value_changed / state_reset / snapshot_imported
 
 # WorldStateRuntime (/root/WorldStateRuntime)
@@ -215,8 +246,8 @@ world_state_ready / world_state_failed
 
 ## Future Consumers
 
-- ConditionEvaluator
-- Set/Add State Effect
+- ConditionEvaluator / State Condition Dialogue node
+- State Set/Add Dialogue Effect
 - Response Selector
 - Quest system
 - DialogueHistory와 State Inspector

@@ -12,7 +12,7 @@
 extends Node
 
 const MAIN_SCENE := "res://addons/dialogtool/dialoguetool_main.tscn"
-const SCHEMA_PATH := "res://Assets/Script/gds/world_state/world_state_schema.tres"
+const SCHEMA_PATH := "res://addons/dialogtool/examples/world_state_schema_example.tres"
 const OP := StateCondition.Operator
 const BOOLEAN := DialogueNode.port_type.boolean
 const DATA := DialogueNode.port_type.data

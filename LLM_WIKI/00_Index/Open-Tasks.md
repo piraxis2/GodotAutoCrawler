@@ -1,7 +1,7 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-06-14
+updated: 2026-06-16
 ---
 
 # Open Tasks
@@ -10,7 +10,16 @@ updated: 2026-06-14
 
 - SaveGame file/slot system: DT-006 snapshot adapter(`capture_world_state`/`restore_world_state`)를
   소비해 실제 파일, 슬롯, 백업 정책을 구현한다(DT-006 후속, [[DT-006-WorldState-Runtime-Review]]).
-- State Read / Set·Add State Effect Dialogue 노드: DT-005 provider/`apply_batch`를 실제 소비하는 노드.
+- [[DT-011-DialogueWorldState-Addon-Packaging]]: DialogueTool + WorldState를 다른 프로젝트에서도 재사용 가능한
+  addon 경계로 묶는다. **Step 0~4 구현·검증 완료, 최종 완료 판정 대기**
+  ([[ADR-011-DialogueWorldState-Addon-Packaging]] accepted). WorldState 코어/condition을
+  `addons/dialogtool/world_state/`로 이동, example schema/ConditionSet/sample dialogue를
+  `addons/dialogtool/examples/`에 배치, `addons/dialogtool/README.md` 설치/마이그레이션 문서. 전체 DT-004~009
+  32/32 + fresh-project 수용 7/7 PASS.
+- [[DT-010-Dialogue-Debug-WorldState-Preview]]: DialogueTool 에디터 Play에서 WorldState read/mutation provider를
+  주입하는 작업. DT-011 패키징 완료로 재개 가능(addon 내부 `examples/world_state_schema_example.tres`로
+  provider 자급 — DT-011 Step 4에서 재개 구조 확정).
+- State Read Data 노드: 범용 typed state 값을 Dialogue Data Flow에 제공한다(DT-009 범위 밖).
 - Say 줄 누적 표시 실제 UI 회귀 검증: 한 줄/여러 줄/빈 줄/CRLF의 클릭 순서와 Flow 진행을 Godot에서 확인한다.
 - Dialogue 통합 회귀 그래프 작성: Start, Say, Choice, Expression, Branch, End를 한 리소스에서 검증한다.
 - DialogueManager 반복 실행/교체/연속 실행 테스트를 자동화한다.

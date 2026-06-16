@@ -167,6 +167,12 @@ func capture_current_graphedit() -> DialogueGraphResource:
 			if from_g != null and c.from_port < from_g.get_output_port_count():
 				if from_g.get_output_port_type(c.from_port) == effect_type:
 					connection["kind"] = DialogueGraphResource.CONNECTION_KIND_EFFECT
+					# Choice의 항목별 Effect 출력은 choice_index를 보존한다(ADR-010 Step 3b).
+					# 항목 index를 모르는(공통) Effect는 choice_index를 기록하지 않아 shared로 동작한다.
+					if from_g.has_method("effect_choice_index_for_port"):
+						var ci: int = from_g.effect_choice_index_for_port(c.from_port)
+						if ci >= 0:
+							connection["choice_index"] = ci
 			connections_data.append(connection)
 	
 	graph_resource.connections = connections_data
@@ -257,9 +263,9 @@ func _validate_runtime_snapshot(graph_resource: DialogueGraphResource) -> bool:
 				flow_groups[key] = {"from_id": from_id, "from_port": c.from_port, "from_type": from_type, "targets": []}
 			flow_groups[key]["targets"].append({"id": to_id, "port": c.to_port, "type": to_type})
 		elif out_type == effect_type:
-			# (B) Effect 대상 type whitelist: Portrait만 허용.
+			# (B) Effect 대상 type whitelist: Portrait + State mutation(state_set/state_add)만 허용.
 			if not DialogueGraphResource.is_effect_target_type(to_type):
-				push_error("DialogueTool 검증: Effect 대상이 Portrait가 아닙니다 — %s. Effect는 Portrait만 허용합니다." % _format_port_edge(from_id, from_type, c.from_port, to_id, to_type, c.to_port))
+				push_error("DialogueTool 검증: 허용되지 않은 Effect 대상입니다 — %s. Effect는 Portrait 또는 State Set/Add만 허용합니다." % _format_port_edge(from_id, from_type, c.from_port, to_id, to_type, c.to_port))
 				fatal = true
 			# 순환 검사용 Effect 간선(포트 포함).
 			effect_adj.get_or_add(from_id, []).append({"to": to_id, "from_port": c.from_port, "to_port": c.to_port})
@@ -323,6 +329,16 @@ func _validate_runtime_snapshot(graph_resource: DialogueGraphResource) -> bool:
 			var def = nodes[nid].get("definition")
 			if def is FlowDefinition and not (def is StartDef) and not reachable.has(nid):
 				push_warning("DialogueTool 검증: 도달 불가능한 Flow 노드 (id %s, type %s)." % [str(nid), str(def.get_runtime_type())])
+
+	# State Set/Add literal 타입 검증(DT-009 Step 3). 잘못된 literal(예: INT value에 "abc")은
+	# 타입 불일치 값으로 캡처되므로 저장을 차단한다 — 런타임에서 조용히 0/false로 변환되지 않게 한다.
+	for nid in nodes:
+		var sdef = nodes[nid].get("definition")
+		if sdef is StateEffectDef:
+			var lit_err: String = sdef.validate_literal()
+			if not lit_err.is_empty():
+				push_error("DialogueTool 검증: State 노드 (id %s) — %s." % [str(nid), lit_err])
+				fatal = true
 
 	return not fatal
 
@@ -465,10 +481,23 @@ func load_resource(resource: DialogueGraphResource) -> void:
 		if connection.get("kind", "") == DialogueGraphResource.CONNECTION_KIND_EFFECT:
 			var from_g: DialogueNode = get_node_or_null(NodePath(from_name))
 			var to_g: DialogueNode = get_node_or_null(NodePath(to_name))
-			var effect_out := _find_effect_port(from_g, true)
 			var effect_in := _find_effect_port(to_g, false)
+			# Effect 출력 포트 정규화(ADR-010 Step 3b):
+			# - choice_index 있음: 유효한 int면 해당 항목 effect 포트. 잘못된 타입/범위는 첫 포트로
+			#   fallback하지 않고(공통→항목0 오염 방지) 오류 후 연결을 건너뛴다.
+			# - choice_index 없음: Choice면 전용 공통 effect 포트, 비-Choice(Start/Say)면 첫 effect 포트.
+			var effect_out := -1
+			if connection.has("choice_index"):
+				var ci: Variant = connection["choice_index"]
+				if typeof(ci) == TYPE_INT and from_g != null and from_g.has_method("effect_port_for_choice_index"):
+					effect_out = from_g.effect_port_for_choice_index(ci)
+			else:
+				if from_g != null and from_g.has_method("common_effect_port"):
+					effect_out = from_g.common_effect_port()
+				else:
+					effect_out = _find_effect_port(from_g, true)
 			if effect_out == -1 or effect_in == -1:
-				push_error("DialogueTool: Effect 연결을 매핑할 Effect 포트가 없습니다 — node %s → node %s. 연결을 건너뜁니다." % [str(connection.from_node_id), str(connection.to_node_id)])
+				push_error("DialogueTool: Effect 연결을 매핑할 Effect 포트가 없습니다(잘못된 choice_index 포함) — node %s → node %s. 연결을 건너뜁니다." % [str(connection.from_node_id), str(connection.to_node_id)])
 				continue
 			from_port = effect_out
 			to_port = effect_in
