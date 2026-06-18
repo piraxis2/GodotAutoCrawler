@@ -33,8 +33,11 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
 - 조건 데이터 모델/검증/pure-read 평가기와 실제 `WorldStateStore` 통합 및 end-to-end 검증
   (DT-007 Step 1~4)은 완료됐다(아래 Condition Model). 이를 소비하는 State Condition Dialogue 노드와
   조건부 Branch/Choice는 DT-008에서 완료됐다(아래 Condition 소비 절). State Set/Add Dialogue Effect와
-  명시적 mutation provider는 DT-009에서 완료됐다(아래 State Mutation 절). 아직 없는 것은 State Read
-  Dialogue 노드와 실제 SaveGame file/slot 시스템이다.
+  명시적 mutation provider는 DT-009에서 완료됐다(아래 State Mutation 절). 단일 key 값을 Data로 읽는 State Read
+  Dialogue 노드(`state_read`)는 DT-013에서 완료됐다: 주입된 read provider(`has_state`/`read_state`)로 strict
+  typeof read, 실패는 구조화 report + Data error-dominance로 fail-closed, editor authoring/저장 validation은
+  `StateSchema.KEY_PATTERN`을 재사용한다([[DT-013-State-Read-Data-Node]], [[ADR-015-State-Read-Data-Node]]).
+  아직 없는 것은 실제 SaveGame file/slot 시스템이다.
 
 - `addons/dialogtool/world_state/state_definition.gd` — `StateDefinition` Resource.
   - 필드: `key: StringName`, `value_type`, `default_value: Variant`, `lifetime`,
@@ -207,7 +210,7 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
 
 ## Planned Components (미구현)
 
-- State Read Dialogue 노드와 Response Selector(조건부 Choice는 DT-008에서 완료)
+- Response Selector(단일 값 read는 DT-013 State Read, 조건부 Choice는 DT-008에서 완료)
 - SaveGame file/slot, backup, autosave 정책(`capture_world_state`/`restore_world_state` adapter 소비)
 - schema migration/key alias와 full int64 snapshot wire
 

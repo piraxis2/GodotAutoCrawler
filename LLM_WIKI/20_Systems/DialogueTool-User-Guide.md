@@ -260,6 +260,37 @@ State Condition
   description을 Inspector에서 바꾼 뒤의 즉시 갱신은 범위 밖이며, 노드를 다시 적용하거나 그래프를 재로드하면
   반영된다. inline ConditionSet tree editor와 schema-aware key picker는 후속 작업이다.
 
+### State Read (DT-013)
+
+World State 단일 key 값을 그대로 Data로 읽어 Branch/Choice 조건과 Expression 입력에 공급한다. 노드 목록에서
+**WorldStateRead**로 보인다(설계상 개념 이름은 "State Read"). 조건만 내는 State Condition과 달리 값 자체를
+재사용할 수 있다.
+
+노드 필드:
+
+- **key**: 읽을 World State key(예: `player.gold`, `quest.main.stage`). 형식은 `StateSchema`의 key 규칙
+  (`소문자.점.경로`, 최소 두 segment)을 따른다.
+- **type**: 기대 타입 OptionButton(`BOOL`/`INT`/`FLOAT`/`STRING`/`STRING_NAME`). 런타임에서 읽은 값의 타입이
+  이 타입과 정확히 일치할 때만 성공한다.
+- summary label은 `<key> : <TYPE>`(예: `player.gold : INT`), key가 없으면 `No State Key`(빨강)로 표시된다.
+
+```text
+State Read("quest.main.stage", INT) -> Expression("x > 5") -> Branch (true/false Flow)
+State Read("session.intro.seen", BOOL) -> Branch / Choice 항목 i Data 입력(port i+1)
+```
+
+- output 포트는 generic **Value(data)** 하나다. BOOL이어도 boolean 포트로 바뀌지 않으며, Value↔Boolean 호환으로
+  Branch/Choice의 boolean 조건 입력에 연결된다.
+- 평가는 게임 코드가 주입한 read 상태 provider(예: `WorldStateStore`)로만 수행한다(`/root` 직접 조회 없음).
+  State Read는 값을 **읽기만** 하며 상태를 바꾸지 않는다.
+- 다음은 모두 조용히 true/0이 되지 않고 fail-closed된다(Branch false / Choice 항목 숨김 / Expression 오류 전파):
+  provider 미주입, key 형식이 손상된 snapshot, schema에 없는 key(`state_missing`), 읽은 값 타입이 type과 다름
+  (`actual_type_mismatch` — `int`와 `float`, `String`과 `StringName`을 섞지 않는다).
+- 평가 결과는 `state_read_evaluated(read_node_id, consumer_node_id, report)` signal로 노출된다(디버거/후속
+  inspector용).
+- **저장 validation**: key가 비었거나 형식이 틀리거나 type이 허용 5타입 밖이면 저장이 중단된다. schema에 key가
+  실제로 있는지는 저장 시 검사하지 않고 런타임 provider가 판정한다(에디터는 게임 schema를 모름).
+
 ## 7. Portrait 노드
 
 Portrait는 Say와 독립된 상태 명령이다. DialoguePlayer는 요청만 발행하고, 실제 상태와 Texture 렌더링은

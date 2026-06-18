@@ -34,6 +34,7 @@ updated: 2026-06-16
 | `variable` | 정적 값 또는 random range 제공 |
 | `expression` | 연결된 Data 입력으로 Expression 평가 |
 | `state_condition` | 주입된 read provider로 `ConditionSet`을 평가해 boolean Data 제공(DT-008) |
+| `state_read` | 주입된 read provider로 단일 World State key 값을 strict typeof로 읽어 Data 제공(DT-013) |
 
 ## Portrait Nodes (DT-002 MVP)
 
@@ -88,6 +89,33 @@ updated: 2026-06-16
 - provider 누락/계약 위반/Store 오류는 구조화 report로 남기고 Flow는 계속한다. 값은 Store 계약에 따라 불변이다.
   검증과 판정은 [[DT-009-State-Mutation-Review]].
 
+## State Read (DT-013)
+
+- `state_read` Data 노드(`WorldStateReadDef`)는 World State 단일 key 값을 `bool/int/float/String/StringName`
+  Data로 공급하는 leaf Data 노드다. `ConditionSet`처럼 boolean만 내지 않고 값 자체를 Branch/Choice 조건과
+  Expression 입력에 재사용할 수 있다. 노드 표시 이름은 명명 규칙상 "WorldStateRead"다(ADR의 "State Read"는
+  개념 명칭).
+- params: `key: StringName`, `value_type: int`(Variant.Type — `TYPE_BOOL/INT/FLOAT/STRING/STRING_NAME` 중 하나).
+  output port는 항상 generic `data` 1개이고 input은 없다. BOOL도 boolean port로 바꾸지 않으며, editor의
+  data↔boolean 호환으로 Branch/Choice boolean 조건 입력에 연결된다(ADR-015 D2).
+- 런타임 평가는 `DialoguePlayer._eval_data`의 `state_read` 분기가 주입된 **원본** read provider
+  (`_read_state_provider`)를 직접 소비해 수행한다(facade 재포장 금지). `has_state(key)`가 true일 때만
+  `read_state(key)`를 호출하고, 값의 `typeof()`가 `value_type`과 **정확히 일치**할 때만 성공이다
+  (int↔float, String↔StringName 암시 변환 없음).
+- 실패는 `{value: null, errored: true}`로 fail-closed하고 SCRIPT ERROR를 내지 않는다. 종류: `provider_missing`
+  (null), `provider_contract_invalid`(non-Object/freed/메서드 누락/arity·첫 인자 타입 불일치/has_state non-bool —
+  `read_state` 계약 위반도 호출 전 차단), `key_invalid`(String/StringName 외 손상 key Variant), `state_missing`
+  (`has_state==false`, read 0회), `actual_type_mismatch`. Branch/Choice/Expression은 errored를 우선해 false/숨김으로
+  닫는다(ADR-008 error-dominance).
+- `state_read_evaluated(read_node_id, consumer_node_id, report)` signal을 평가 1회당 발행한다(consumer는 입력
+  포트를 직접 소유한 Branch/Choice/Expression id). report는 detached deep copy
+  `{ok, key, expected_type, actual_type, value, error}`다. 값 미읽기 실패는 `actual_type=TYPE_NIL/value=null`로
+  고정하고, type mismatch는 실제 읽은 타입/값을 보존한다(반환 Data value는 errored로 null).
+- 저장 validation은 provider-free 구조 검사만 한다: `value_type`이 허용 5타입 밖이거나 key가 비었거나
+  `StateSchema.KEY_PATTERN`(ConditionValidator와 동일 source)과 맞지 않으면 저장을 중단한다. schema에 key가
+  실제로 있는지는 runtime provider가 판정한다(ADR-015 D6).
+- 결정은 [[ADR-015-State-Read-Data-Node]], 검증은 [[DT-013-State-Read-Data-Node-Review]].
+
 ## Debug WorldState Preview (DT-010)
 
 - DialogueTool 에디터 Play/debug 실행의 `DialoguePlayer._ready()` debug 분기는 저장된 dialogue resource를
@@ -141,6 +169,8 @@ updated: 2026-06-16
   `ConditionSet`과 `ConditionEvaluator`를 직접 사용한다(`class_name` 참조 — 경로 독립).
 - `state_set`/`state_add` Dialogue Effect 노드는 `WorldStateStore` mutation provider 계약
   (`apply_state_batch`, `add_state`)을 소비한다.
+- `state_read` Dialogue Data 노드는 read provider 계약(`has_state`, `read_state`)을 소비하고, 저장 validation은
+  `StateSchema.KEY_PATTERN`을 key 형식 source of truth로 재사용한다(DT-013).
 - 따라서 이 노드들이 추가된 이후 DialogueTool addon은 World State condition/mutation 모듈에 의존한다.
   Dialogue runtime은 여전히 `/root`를 직접 조회하지 않고 주입된 read/mutation provider만 사용한다
   ([[ADR-009-State-Condition-Dialogue-Consumption]], [[ADR-010-State-Mutation-Dialogue-Effects]]).

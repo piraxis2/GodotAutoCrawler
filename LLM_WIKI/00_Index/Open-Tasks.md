@@ -8,7 +8,6 @@ updated: 2026-06-18
 
 ## Next
 
-- State Read Data 노드: 범용 typed state 값을 Dialogue Data Flow에 제공한다(DT-009 범위 밖).
 - Say 줄 누적 표시 실제 UI 회귀 검증: 한 줄/여러 줄/빈 줄/CRLF의 클릭 순서와 Flow 진행을 Godot에서 확인한다.
 - Dialogue 통합 회귀 그래프 작성: Start, Say, Choice, Expression, Branch, End를 한 리소스에서 검증한다.
 - DialogueManager 반복 실행/교체/연속 실행 테스트를 자동화한다.
@@ -19,6 +18,9 @@ updated: 2026-06-18
   주입하는 toggle. parse-safe하게 구현 가능(autoload는 `get_node_or_null` 런타임 lookup,
   [[ADR-012-Dialogue-Debug-Preview-Provider]] D1/D2). 현재는 game schema key가 preview에서
   state_missing/unknown_key로 fail-closed됨([[DT-010-Dialogue-Debug-WorldState-Preview]] Step 3 한계).
+- 노드 display name/alias 시스템: 현재 노드 목록/그래프 타이틀은 `class_name`에서 "Def"를 떼어 도출하므로
+  공백 포함 표시 이름(예: "State Read")이 불가하다. 노드별 표시 이름을 Definition이 선언하게 하면
+  `WorldStateRead` → "State Read"처럼 ADR 개념 명칭과 사용자 라벨을 일치시킬 수 있다(DT-013 Step 2 P3 후속).
 - schema-aware key/operator picker, inline ConditionSet tree editor, condition trace inspector —
   DT-012 후속(현재는 외부 `.tres`/inline ConditionSet 지정 + provider-free readable summary 표시까지.
   편집 UI·schema 연동·평가 trace 시각화는 범위 밖).
@@ -50,6 +52,11 @@ updated: 2026-06-18
 
 완료 작업의 상세 사실/판정은 Current-State와 각 Review가 보존한다. 여기는 최근 완료 포인터만 둔다.
 
+- **DT-013 State Read Data 노드 완료**(Step 0~4, [[DT-013-State-Read-Data-Node-Review]] 판정: 완료): 단일 World
+  State key 값을 strict typeof로 읽어 Branch/Choice/Expression에 공급하는 `state_read` leaf Data 노드. 주입
+  read provider만 소비(fail-closed report + Data error-dominance), editor authoring/저장 validation은
+  `StateSchema.KEY_PATTERN` 재사용. 노드 라벨은 "WorldStateRead"(display name/alias 후속은 위 Later).
+  결정 [[ADR-015-State-Read-Data-Node]], 사실 [[DialogueTool]]/[[World-State-System]]/[[DialogueTool-User-Guide]].
 - **SaveGame SG-001~003 완료**: core(`SaveSection`/`SaveGameManager`, slot save/load/list/delete + 한 세대
   백업/복구 + WorldState adapter) → `SaveFlow` facade(metadata provider + caller override + save gate) →
   host save slot UI integration contract(문서 + test-only fake host flow). 사용법 [[SaveGame-User-Guide]],

@@ -340,6 +340,16 @@ func _validate_runtime_snapshot(graph_resource: DialogueGraphResource) -> bool:
 				push_error("DialogueTool 검증: State 노드 (id %s) — %s." % [str(nid), lit_err])
 				fatal = true
 
+	# State Read 구조 검증(DT-013 Step 2, ADR-015 D6). key empty/형식 불일치, value_type이 허용 5타입
+	# 밖이면 저장을 차단한다. schema에 key가 실제로 있는지는 검사하지 않는다(runtime provider가 판정).
+	for nid in nodes:
+		var rdef = nodes[nid].get("definition")
+		if rdef is WorldStateReadDef:
+			var read_err: String = rdef.validate_structure()
+			if not read_err.is_empty():
+				push_error("DialogueTool 검증: State Read 노드 (id %s) — %s." % [str(nid), read_err])
+				fatal = true
+
 	return not fatal
 
 

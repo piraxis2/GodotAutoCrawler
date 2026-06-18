@@ -185,6 +185,15 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
+    "50_Reviews/DT-013-State-Read-Data-Node-Review.md.tmp.40468.c613b17952d7",
+    "00_Index/Open-Tasks.md.tmp.40468.f091d91966a8",
+    "20_Systems/World-State-System.md.tmp.40468.ed0cf343699b",
+    "20_Systems/DialogueTool.md.tmp.40468.8ba0549b11d1",
+    "00_Index/Current-State.md.tmp.40468.8ab240ff5a04",
+    "30_Tasks/DT-013-State-Read-Data-Node.md.tmp.40468.4569cf182e57",
+    "50_Reviews/DT-013-State-Read-Data-Node-Review.md",
+    "40_Decisions/ADR-015-State-Read-Data-Node.md",
+    "30_Tasks/DT-013-State-Read-Data-Node.md",
     "20_Systems/SaveGame-User-Guide.md.tmp.42272.268a13c53cb5",
     "40_Decisions/ADR-014-SaveFlow-Facade-And-Metadata-Provider.md",
     "40_Decisions/ADR-002-Editor-Adapter.md",
@@ -194,7 +203,6 @@
     "00_Index/Open-Tasks.md.tmp.43832.56e936062012",
     "20_Systems/SaveGame-System.md.tmp.43832.a05256e34746",
     "20_Systems/SaveGame-System.md.tmp.43832.5585818076fc",
-    "30_Tasks/SG-002-SaveFlow-Facade-Metadata-Provider.md.tmp.43832.389ab305b9ee",
     "50_Reviews/DT-002-Portrait-Review.md",
     "50_Reviews/DialogueTool-Step-1-to-8.md",
     "50_Reviews/DT-011-DialogueWorldState-Addon-Packaging-Review.md",
@@ -212,14 +220,6 @@
     "40_Decisions/ADR-011-DialogueWorldState-Addon-Packaging.md",
     "90_Templates/ADR.md",
     "90_Templates/Implementation-Prompt.md",
-    "90_Templates/Design-Review-Prompt.md",
-    "90_Templates/Review.md",
-    "50_Reviews/DT-009-State-Mutation-Review.md",
-    "40_Decisions/ADR-012-Dialogue-Debug-Preview-Provider.md",
-    "30_Tasks/DT-009-State-Mutation-Dialogue-Effects.md.tmp.46096.f8a90acba5ef",
-    "30_Tasks/DT-009-State-Mutation-Dialogue-Effects.md.tmp.46096.e7b2ccf92deb",
-    "00_Index/Current-State.md.tmp.46096.22e8fbf96b85",
-    "30_Tasks/DT-009-State-Mutation-Dialogue-Effects.md.tmp.16836.eb3505095c48",
-    "40_Decisions/ADR-010-State-Mutation-Dialogue-Effects.md.tmp.16836.fb5dc22ea29f"
+    "90_Templates/Design-Review-Prompt.md"
   ]
 }

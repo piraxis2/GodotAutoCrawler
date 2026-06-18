@@ -25,6 +25,16 @@ signal condition_evaluated(condition_node_id: int, consumer_node_id: int, report
 #     new_value: Variant, error: StringName }
 # listener가 report를 변조하거나 play()를 재진입해도 이미 commit된 결과와 이후 독립 Effect를 못 바꾼다.
 signal state_mutation_evaluated(effect_node_id: int, report: Dictionary)
+# State Read 평가 결과 seam (DT-013 Step 1, ADR-015 D5).
+# state_read Data 노드를 평가할 때마다(성공/실패/provider 오류 포함) 평가 1회당 정확히 1회 발행한다.
+# - read_node_id: 평가한 state_read Data 노드 id.
+# - consumer_node_id: 이 Data 노드의 입력 포트를 직접 소유한 소비 노드 id
+#   (Branch=branch id, expression 중첩=expression id, Choice=choice id, 호출 consumer 없음=-1).
+# - report: 평가 결과의 detached deep copy(변조해도 반환값/다음 평가에 영향 없음).
+#   { ok: bool, key: StringName, expected_type: int, actual_type: int, value: Variant, error: StringName }
+# 값 미읽기 실패는 actual_type=TYPE_NIL/value=null로 고정하고, type mismatch는 실제 타입/값을 보존한다.
+# 이 seam은 후속 trace inspector/DialogueHistory가 소비할 수 있고, privacy filter가 없는 내부 debug seam이다.
+signal state_read_evaluated(read_node_id: int, consumer_node_id: int, report: Dictionary)
 
 var current_node_id: int = -1
 var waiting_for: StringName = &"none"
@@ -414,6 +424,8 @@ func _eval_data(node_id: int, consumer_node_id: int = -1, visited: Array = []) -
 			return _evaluate_expression(node_id, params, visited + [node_id])
 		&"state_condition":
 			return _evaluate_state_condition(node_id, consumer_node_id, params)
+		&"state_read":
+			return _evaluate_state_read(node_id, consumer_node_id, params)
 		_:
 			push_warning("DialoguePlayer: data node %d type '%s' is not evaluable; failing closed." % [node_id, str(node_data.get("type", &"unknown"))])
 			return {"value": null, "errored": true}
@@ -439,6 +451,85 @@ func _evaluate_state_condition(node_id: int, consumer_node_id: int, params: Dict
 	var errored: bool = not bool(report.get("valid", false))   # invalid report -> errored 전파
 	condition_evaluated.emit(node_id, consumer_node_id, report.duplicate(true))
 	return {"value": passed, "errored": errored}
+
+
+# state_read Data 노드를 평가한다(DT-013 Step 1, ADR-015 D1~D5).
+# 주입된 read provider(_read_state_provider)에서 단일 key 값을 strict typeof로 읽어 Data value로 공급한다.
+# DialoguePlayer.read_state() facade로 재포장하지 않고 _read_state_provider를 직접 검증·소비한다
+# (provider 미지정이 state_missing이 아니라 provider_missing으로 fail-closed되게 함, ADR-015 D3).
+# 평가 1회당 state_read_evaluated를 정확히 1회 발행하고 {value, errored}를 반환한다.
+# 실패(provider 누락/계약 위반/key invalid/state missing/type mismatch)는 {value: null, errored: true}로
+# fail-closed하고 SCRIPT ERROR를 내지 않는다. Branch/Choice/Expression은 errored를 우선해 닫힌다(D4).
+func _evaluate_state_read(node_id: int, consumer_node_id: int, params: Dictionary) -> Dictionary:
+	var expected_type: int = int(params.get("value_type", TYPE_NIL))
+	var report: Dictionary = {
+		"ok": false,
+		"key": &"",
+		"expected_type": expected_type,
+		"actual_type": TYPE_NIL,
+		"value": null,
+		"error": &"",
+	}
+
+	# key 정규화(ADR-015 / 손상 snapshot 방어): String/StringName만 StringName으로 정규화하고,
+	# int/Dictionary 등 그 외 Variant는 변환하지 않고 key_invalid로 fail-closed한다(StringName(int) 등
+	# 런타임 오류 방지). 값을 읽지 않은 실패이므로 actual_type=TYPE_NIL/value=null sentinel을 유지한다.
+	var raw_key: Variant = params.get("key", &"")
+	var raw_t := typeof(raw_key)
+	if raw_t != TYPE_STRING and raw_t != TYPE_STRING_NAME:
+		report["error"] = &"key_invalid"
+		return _finish_state_read(node_id, consumer_node_id, report)
+	var key := StringName(raw_key)
+	report["key"] = key
+
+	# provider 권한 경계(ADR-009/ADR-015 D3): genuine null만 provider_missing이다(freed Object는
+	# == null이 true가 될 수 있어 typeof로 좁힌다 — 공급됐지만 못 쓰는 provider는 아래 계약 검증으로 분류).
+	if typeof(_read_state_provider) == TYPE_NIL:
+		report["error"] = &"provider_missing"
+		return _finish_state_read(node_id, consumer_node_id, report)
+
+	# 계약 사전 검증(D3): non-Object/freed/has_state·read_state method missing/arity mismatch/
+	# first-arg type mismatch/has_state 선언 반환형을 호출 전에 모두 막아 SCRIPT ERROR 없이 fail-closed한다.
+	# read_state 계약 위반도 has_state==true 경로에서 read_state가 호출되기 전에 여기서 차단된다.
+	if not _is_valid_read_provider(_read_state_provider):
+		report["error"] = &"provider_contract_invalid"
+		return _finish_state_read(node_id, consumer_node_id, report)
+
+	# has_state 런타임 반환형 방어(D3): 미선언/Variant 반환이 non-bool을 돌려줘도 암시적 truthy로 새지
+	# 않도록 typeof로 확인한다(arg 타입/arity는 위 계약 검증이 보장).
+	var has_raw: Variant = _read_state_provider.has_state(key)
+	if typeof(has_raw) != TYPE_BOOL:
+		report["error"] = &"provider_contract_invalid"
+		return _finish_state_read(node_id, consumer_node_id, report)
+	if not has_raw:
+		# state missing: read_state는 호출하지 않는다(D3).
+		report["error"] = &"state_missing"
+		return _finish_state_read(node_id, consumer_node_id, report)
+
+	# 값 읽기 + strict typeof 검사(D2). int↔float, String↔StringName 암시 변환 없음.
+	var read_value: Variant = _read_state_provider.read_state(key)
+	if typeof(read_value) != expected_type:
+		# 값을 읽은 뒤 실패: sentinel 정책상 실제 타입/값을 report에 보존한다(반환 Data value는 null).
+		report["actual_type"] = typeof(read_value)
+		report["value"] = read_value
+		report["error"] = &"actual_type_mismatch"
+		return _finish_state_read(node_id, consumer_node_id, report)
+
+	report["ok"] = true
+	report["actual_type"] = typeof(read_value)
+	report["value"] = read_value
+	return _finish_state_read(node_id, consumer_node_id, report)
+
+
+# state_read 평가를 마무리한다: 발행 전에 반환값을 확정해 동기 listener가 분기/값을 못 바꾸게 하고,
+# state_read_evaluated를 detached deep copy로 정확히 1회 발행한 뒤 {value, errored}를 반환한다.
+# 성공은 {value: read_value, errored: false}, 실패는 {value: null, errored: true}다(report["value"]가
+# type mismatch에서 read_value를 보존하더라도 errored 반환 value는 항상 null).
+func _finish_state_read(node_id: int, consumer_node_id: int, report: Dictionary) -> Dictionary:
+	var ok: bool = bool(report.get("ok", false))
+	var value: Variant = report["value"] if ok else null
+	state_read_evaluated.emit(node_id, consumer_node_id, report.duplicate(true))
+	return {"value": value, "errored": not ok}
 
 
 # expression data 노드를 평가한다. 각 입력 포트 i는 변수 keys[i]에 바인딩되고,
@@ -609,6 +700,38 @@ func _is_valid_mutation_provider(provider) -> bool:
 	# untyped(Variant) 파라미터만 허용한다(types=[] = 명시 타입 불가).
 	return _method_accepts(provider, "apply_state_batch", [{"types": [TYPE_ARRAY], "element": "Dictionary"}]) \
 		and _method_accepts(provider, "add_state", [{"types": [TYPE_STRING_NAME, TYPE_STRING]}, {"types": []}])
+
+
+# read provider 계약 검증(ADR-015 D3). state_set/state_add mutation 검증과 같은 안전 패턴을 쓴다:
+# `as Object` 캐스트를 쓰지 않는다(freed Object 캐스트는 그 자체로 SCRIPT ERROR다). typeof + is_instance_valid로
+# Variant에 직접 검사한 뒤 reflection으로 두 메서드의 arity/첫 인자 타입을 호출 전에 확인한다.
+# 우리가 넘기는 값: has_state(StringName), read_state(StringName). 둘 다 정확히 1개 인자, 첫 인자는
+# StringName이거나 untyped(Variant)여야 한다(typed int/String 등은 호출 시 SCRIPT ERROR이므로 사전 차단).
+# has_state의 선언 반환형은 bool 또는 미선언/Variant만 허용한다(런타임 반환 타입은 호출부에서 재확인).
+func _is_valid_read_provider(provider) -> bool:
+	if typeof(provider) != TYPE_OBJECT:
+		return false
+	if not is_instance_valid(provider):
+		return false
+	if not (provider.has_method("has_state") and provider.has_method("read_state")):
+		return false
+	if not _method_accepts(provider, "has_state", [{"types": [TYPE_STRING_NAME]}]):
+		return false
+	if not _method_accepts(provider, "read_state", [{"types": [TYPE_STRING_NAME]}]):
+		return false
+	return _method_returns_bool_or_untyped(provider, "has_state")
+
+
+# 메서드의 선언 반환형이 bool이거나 미선언/Variant(정적 판단 불가, 허용)면 true.
+# int 등 구체적 비-bool을 선언했으면 false(런타임 truthy 누수 방지 — 호출부가 실제 반환 타입도 재확인).
+func _method_returns_bool_or_untyped(obj: Object, method_name: String) -> bool:
+	for m in obj.get_method_list():
+		if m.get("name") != method_name:
+			continue
+		var ret: Dictionary = m.get("return", {})
+		var rtype: int = int(ret.get("type", TYPE_NIL))
+		return rtype == TYPE_BOOL or rtype == TYPE_NIL
+	return false
 
 
 # reflection으로 메서드가 arg_specs.size()개 인자로 호출 가능하고 각 인자 타입이 호환되는지 확인한다.

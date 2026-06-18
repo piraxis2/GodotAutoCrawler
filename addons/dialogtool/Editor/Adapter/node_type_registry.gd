@@ -26,6 +26,7 @@ static func _ensure_registered() -> void:
 	_adapters[&"variable"] = load(_ADAPTER_DIR + "variable_editor_adapter.gd").new()
 	_adapters[&"expression"] = load(_ADAPTER_DIR + "expression_editor_adapter.gd").new()
 	_adapters[&"state_condition"] = load(_ADAPTER_DIR + "world_state_condition_editor_adapter.gd").new()
+	_adapters[&"state_read"] = load(_ADAPTER_DIR + "world_state_read_editor_adapter.gd").new()
 	_adapters[&"autoload"] = load(_ADAPTER_DIR + "autoload_editor_adapter.gd").new()
 	_adapters[&"scene_function"] = load(_ADAPTER_DIR + "scene_function_editor_adapter.gd").new()
 	_adapters[&"description"] = load(_ADAPTER_DIR + "description_editor_adapter.gd").new()

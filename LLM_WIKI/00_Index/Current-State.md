@@ -46,8 +46,8 @@ updated: 2026-06-18
 - State Condition Dialogue 통합은 DT-008에서 완료됐다(아래 DT-008 항목,
   [[DT-008-State-Condition-Dialogue-Integration]]). State Set/Add Effect와 명시적 mutation provider는
   DT-009에서 완료됐다([[DT-009-State-Mutation-Dialogue-Effects]], [[DT-009-State-Mutation-Review]],
-  [[ADR-010-State-Mutation-Dialogue-Effects]] accepted). 미구현(후속): 실제 SaveGame file/slot 시스템
-  (DT-006 adapter 소비), State Read Dialogue 노드.
+  [[ADR-010-State-Mutation-Dialogue-Effects]] accepted). 단일 key 값을 Data로 읽는 State Read Dialogue 노드는
+  DT-013에서 완료됐다(아래 DT-013 항목). 미구현(후속): 실제 SaveGame file/slot 시스템(DT-006 adapter 소비).
   Step 1 구현·리뷰 완료: `WorldStateStore.add_state(key, delta) -> Dictionary`
   보고형 원자 Add API. INT/FLOAT strict, JSON-safe 도메인·overflow 거부, 값/signal 불변 실패, 실제 변경 시
   `value_changed` 1회. `dt009_step1_add_state_test` 20케이스 ALL PASS.
@@ -273,6 +273,59 @@ updated: 2026-06-18
   **19/19 scene ALL PASS**, `--import` 0 parse 에러. 2026-06-17 완료 리뷰에서 DT-012 step1/step2 +
   dt007_step1/2 + dt008_step2/5 + dt010_step3 선택 회귀 7/7 PASS, headless `--import` exit 0을 재확인했다.
   **DT-012 완료**([[DT-012-Condition-Authoring-UX-Review]]).
+- **DT-013 State Read Data 노드 Step 0 설계 리뷰 완료(판정 Approved after design fixes, design fixes 반영 완료).**
+  목표는 WorldState 단일 key 값을 Dialogue Data Flow에 공급하는 `state_read` leaf Data node다
+  ([[DT-013-State-Read-Data-Node]], [[ADR-015-State-Read-Data-Node]]). 설계상 output port는 현재 그래프 타입
+  체계에 맞춰 generic `data`로 고정하고, `value_type`이 런타임 strict expected type 역할을 한다. provider는
+  ADR-009와 동일하게 주입된 read provider만 소비하며, 실패는 구조화 report + Data error-dominance로
+  fail-closed한다. 리뷰 후 `read_state` 호출 전 계약 검증, report sentinel(`TYPE_NIL/null`), `StateSchema.KEY_PATTERN`
+  기반 key validation, 손상 key Variant fail-closed 테스트 조건을 설계에 반영했다.
+  **DT-013 Step 1(Runtime State Read Evaluator) 구현 완료 — 리뷰 대기.** `DialoguePlayer`만 변경
+  (editor/Definition/Adapter/Registry/`.tscn`/`.tres` 무변경, Step 2 범위 유지). `state_read_evaluated(read_node_id,
+  consumer_node_id, report)` signal + `_eval_data`의 `state_read` 분기 + `_evaluate_state_read`/`_finish_state_read`
+  helper 추가. read provider 계약은 주입된 `_read_state_provider`만 직접 소비하고(facade 재포장 없음),
+  `state_set/state_add`와 같은 **`as Object` 캐스트 없는** 안전 패턴(`_is_valid_read_provider`: typeof +
+  is_instance_valid + reflection arity/첫 인자 타입 + has_state 선언 반환형, 런타임 non-bool은 호출부 재확인)으로
+  검증한다(`ConditionEvaluator._read_provider_contract_error`는 freed Object를 `p as Object`로 캐스트해 SCRIPT
+  ERROR가 나므로 재사용 안 함). 검사 순서 = key 정규화(String/StringName만 StringName, 그 외 `key_invalid`,
+  provider 미접촉) → null `provider_missing` → 계약 `provider_contract_invalid`(read_state 위반도 호출 전 차단) →
+  has_state 런타임 bool → `state_missing`(read_state 호출 0) → read_state + strict typeof(`actual_type_mismatch`,
+  암시 변환 없음). 실패={value:null, errored:true}로 Branch/Choice/Expression error-dominance fail-closed, 성공=
+  {value, errored:false}. signal은 평가당 1회 `report.duplicate(true)`(반환값은 발행 전 확정 — listener 변조
+  무영향). report sentinel: 값 미읽기 실패 `actual_type=TYPE_NIL/value=null`, type mismatch는 실제 타입/값 보존
+  (반환 Data value는 null). 검증: `dt013_step1_state_read_test`(A~N 14 시나리오) ALL PASS, SCRIPT ERROR 0,
+  실제 `WorldStateStore` 5타입 success 포함. 회귀 dt008_step1/4/5·dt009_step2·dt010_step1 ALL PASS, `--import`
+  0 parse error.
+  **DT-013 Step 2(Editor Authoring and Resource Round-Trip) 구현 완료 — 리뷰 대기.** editor authoring 표면만
+  추가(런타임 무변경). `WorldStateReadDef`(Data Definition, `key`/`value_type`, `get_runtime_params -> {key,
+  value_type}`, provider-free `validate_structure` = value_type 허용 5타입 + key empty/`StateSchema.KEY_PATTERN`
+  형식, `type_label`/`READ_VALUE_TYPES`), `WorldStateReadNode`(key LineEdit + type OptionButton + summary
+  `<key> : <TYPE>`/`No State Key`), `world_state_read_editor_adapter`(generic data output slot + params↔노드 접근자),
+  `node_type_registry`에 `state_read` 등록, `editor.gd._validate_runtime_snapshot`에 `WorldStateReadDef.validate_structure`
+  저장 차단 분기 추가(StateEffectDef literal 검증과 동일 패턴). output port는 generic `data` 1개 고정(ADR-015 D2),
+  `editor.gd` data↔boolean 호환으로 Branch/Choice boolean 입력에 연결. key validation source of truth =
+  `StateSchema.KEY_PATTERN`(ConditionValidator 재사용). **명명**: 노드 목록/타이틀은 class_name에서 "Def"를 떼어
+  도출되므로 "State Read"(공백) 불가 — WorldState 계열 규칙대로 `WorldStateReadDef → "WorldStateRead"`로 노출
+  (ADR "State Read"는 개념 명칭). 검증: `dt013_step2_editor_roundtrip_test`(A~F: 노드 목록/registry, key·type
+  params 보존, data output 1개 + data↔boolean + Branch 입력 연결, invalid key matrix(`quest`/`Quest.main`/
+  `quest..main`/`1quest.main`/"")·value_type 차단, summary, `.tres` cache-ignore 왕복) ALL PASS, SCRIPT ERROR 0.
+  회귀 dt013_step1·dt009_step3·dt008_step2/step5·dt012_step2 ALL PASS, `--import` 0 parse error.
+  **DT-013 Step 3(End-to-End Integration) 구현 완료 — 리뷰 대기. 제품 코드 변경 없음(통합 검증).** 실제
+  `DialogueManager → DialogueUI → DialoguePlayer` provider 주입 경로에서 state_read가 값 supplier로 동작함을
+  e2e로 확인(`dt013_step3_e2e_test` A~G ALL PASS, SCRIPT ERROR 0): `State Read(INT)→Expression("x>5")→Branch`
+  (7→TRUE/5→FALSE, consumer=expression), `State Read(BOOL)→Branch`(true/false), `State Read(BOOL)→Choice 항목
+  조건`(true→["A","B"]/false→["B"]), provider 미지정 `provider_missing` fail-closed, unknown key `state_missing`
+  + store 불변, type mismatch(FLOAT를 INT로) `actual_type_mismatch` + store 불변, **debug preview store**
+  (`make_preview_store()`)에서 example key 읽힘 + 없는 game key는 `state_missing`으로 닫힘(DT-010 read provider와
+  충돌 없음). type mismatch는 errored Data를 Branch에 직접 공급해 검증(비교 연산자가 null에 닿는 Expression
+  경로의 error-dominance는 dt013_step1[K] or/not로 별도 검증 — 모든 null Data 입력 공통 엔진 동작). 회귀
+  dt013_step1/step2·dt008_step3·dt009_step4·dt010_step3 ALL PASS, `--import` 0 parse error.
+  **DT-013 Step 4(Documentation and Completion Review) 완료 — DT-013 전체 완료**([[DT-013-State-Read-Data-Node-Review]]
+  Completion Review 판정: 완료). [[DialogueTool]](runtime node 표 + State Read 절 + integration dependency),
+  [[World-State-System]](State Read 완료 사실), [[DialogueTool-User-Guide]](§6 State Read 절) 갱신. 최종 회귀
+  매트릭스 11/11 GREEN(DT-013 step1/2/3, DT-008 step1/4/5, DT-009 step2/4, DT-010 step1/3, DT-012 step2), 실제
+  `SCRIPT ERROR:` 0건, `--import` 0 parse error. 남은 후속은 노드 display name/alias 시스템(Step 2 P3 수용,
+  "WorldStateRead" → "State Read" 표시 — [[Open-Tasks]] Later)뿐이다.
 
 ## SaveGame
 
