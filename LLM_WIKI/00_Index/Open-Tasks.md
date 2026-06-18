@@ -1,24 +1,13 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-06-16
+updated: 2026-06-18
 ---
 
 # Open Tasks
 
 ## Next
 
-- SaveGame file/slot system: DT-006 snapshot adapter(`capture_world_state`/`restore_world_state`)를
-  소비해 실제 파일, 슬롯, 백업 정책을 구현한다(DT-006 후속, [[DT-006-WorldState-Runtime-Review]]).
-- [[DT-011-DialogueWorldState-Addon-Packaging]]: DialogueTool + WorldState를 다른 프로젝트에서도 재사용 가능한
-  addon 경계로 묶는다. **Step 0~4 구현·검증 완료, 최종 완료 판정 대기**
-  ([[ADR-011-DialogueWorldState-Addon-Packaging]] accepted). WorldState 코어/condition을
-  `addons/dialogtool/world_state/`로 이동, example schema/ConditionSet/sample dialogue를
-  `addons/dialogtool/examples/`에 배치, `addons/dialogtool/README.md` 설치/마이그레이션 문서. 전체 DT-004~009
-  32/32 + fresh-project 수용 7/7 PASS.
-- [[DT-010-Dialogue-Debug-WorldState-Preview]]: DialogueTool 에디터 Play에서 WorldState read/mutation provider를
-  주입하는 작업. DT-011 패키징 완료로 재개 가능(addon 내부 `examples/world_state_schema_example.tres`로
-  provider 자급 — DT-011 Step 4에서 재개 구조 확정).
 - State Read Data 노드: 범용 typed state 값을 Dialogue Data Flow에 제공한다(DT-009 범위 밖).
 - Say 줄 누적 표시 실제 UI 회귀 검증: 한 줄/여러 줄/빈 줄/CRLF의 클릭 순서와 Flow 진행을 Godot에서 확인한다.
 - Dialogue 통합 회귀 그래프 작성: Start, Say, Choice, Expression, Branch, End를 한 리소스에서 검증한다.
@@ -26,8 +15,13 @@ updated: 2026-06-16
 
 ## Later
 
-- schema-aware key/operator picker와 inline ConditionSet tree editor — DT-008 후속(현재는 외부
-  `.tres` ConditionSet 지정 중심, runtime provider 검증만).
+- DT-010 옵션 C: 에디터 debug Play preview에서 고정 example schema 대신 게임 schema 경로를 debug 설정으로
+  주입하는 toggle. parse-safe하게 구현 가능(autoload는 `get_node_or_null` 런타임 lookup,
+  [[ADR-012-Dialogue-Debug-Preview-Provider]] D1/D2). 현재는 game schema key가 preview에서
+  state_missing/unknown_key로 fail-closed됨([[DT-010-Dialogue-Debug-WorldState-Preview]] Step 3 한계).
+- schema-aware key/operator picker, inline ConditionSet tree editor, condition trace inspector —
+  DT-012 후속(현재는 외부 `.tres`/inline ConditionSet 지정 + provider-free readable summary 표시까지.
+  편집 UI·schema 연동·평가 trace 시각화는 범위 밖).
 - 조건 평가 trace inspector UI와 disabled-choice + reason UI — DT-008 `condition_evaluated` seam 소비.
 - Response Selector와 weighted/random response
 - DialogueHistory 및 State Inspector
@@ -43,6 +37,25 @@ updated: 2026-06-16
 - Emit Event 노드
 - Wait 및 Sound 연출 노드
 - Entry Point 또는 named entry 지원
+- SaveGame 후속(SG-001~003 범위 밖): 실제 production save menu UI scene(SG-003은 host integration contract
+  문서 + test-only fake host flow까지만, 실제 위젯/theme/localization/input focus는 host 소유),
+  autosave/quicksave 구현, thumbnail/capture image, 다세대 백업 history, compression/encryption,
+  schema/section version migration registry, Dialogue SaveEffect(저장 트리거는 game/event layer 우선).
+- `addons/world_core/` umbrella 패키징 이동(별도 Task): SaveGame core/통합 adapter/world_state/dialogtool을
+  `addons/world_core/` 하위 sibling으로 `git mv`. ADR-013 migration trigger(두 번째 core 소비자 / 외부 독립
+  배포 / 설치 문서 오해) 충족 시 착수([[ADR-013-WorldCore-Umbrella-Packaging]]). 현재 interim 위치:
+  core=`addons/save_game/`, 통합 adapter=`addons/save_game_world_state/`.
+
+## Recently Completed
+
+완료 작업의 상세 사실/판정은 Current-State와 각 Review가 보존한다. 여기는 최근 완료 포인터만 둔다.
+
+- **SaveGame SG-001~003 완료**: core(`SaveSection`/`SaveGameManager`, slot save/load/list/delete + 한 세대
+  백업/복구 + WorldState adapter) → `SaveFlow` facade(metadata provider + caller override + save gate) →
+  host save slot UI integration contract(문서 + test-only fake host flow). 사용법 [[SaveGame-User-Guide]],
+  현재 사실 [[SaveGame-System]], 판정 [[SG-001-SaveGame-Core-Section-System-Review]] /
+  [[SG-002-SaveFlow-Facade-Metadata-Provider-Review]] / [[SG-003-SaveSlot-UI-Host-Integration-Review]].
+  실제 production save menu UI 등 후속은 위 Later 참고.
 
 ## Deferred Architecture
 

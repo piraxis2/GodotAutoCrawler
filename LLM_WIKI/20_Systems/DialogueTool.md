@@ -51,6 +51,13 @@ updated: 2026-06-16
 
 - `state_condition` Data 노드(`WorldStateConditionDef`)는 `ConditionSet` 하나를 보유하고 boolean Data를
   낸다. 에디터 노드는 boolean output 포트 + ConditionSet `.tres` 드롭 picker를 갖는다.
+- (DT-012 완료, [[DT-012-Condition-Authoring-UX-Review]]) 에디터 노드는 picker path 아래에 provider-free
+  `ConditionSummary.summarize()` 결과를
+  `SummaryLabel`로 표시한다. leaf `key 기호 literal` / group `ALL·ANY·NOT(...)` 자동 요약, structural
+  valid일 때만 `description` 우선, null/invalid는 `No ConditionSet`/`Invalid: <code>`로 빨강 계열 구분,
+  full 요약·path·오류는 tooltip. `ConditionSummary`는 `ConditionValidator.validate`를 먼저 호출하는
+  validate-first helper로 provider를 읽지 않으며 표시 문자열은 ADR-008 trace 안정 계약과 분리된다.
+  요약 갱신은 drop/clear/load·재로드 시점(live external edit 구독 없음).
 - 런타임 평가는 `DialoguePlayer._eval_data`가 주입된 **원본** read provider를 `ConditionEvaluator.evaluate`에
   그대로 전달해 수행한다(facade 재포장 금지). 내부 Data 평가는 `{value, errored}`로 전파되어, 조건/구조
   오류(invalid report·중첩 Expression 입력 오류·순환·parse/execute 실패)는 단순 false와 구분된 errored로
@@ -80,6 +87,18 @@ updated: 2026-06-16
   실행한다. 공통 연결은 `choice_index`가 없고, 손상된 `choice_index` 타입은 fail-closed로 건너뛴다.
 - provider 누락/계약 위반/Store 오류는 구조화 report로 남기고 Flow는 계속한다. 값은 Store 계약에 따라 불변이다.
   검증과 판정은 [[DT-009-State-Mutation-Review]].
+
+## Debug WorldState Preview (DT-010)
+
+- DialogueTool 에디터 Play/debug 실행의 `DialoguePlayer._ready()` debug 분기는 저장된 dialogue resource를
+  self-start하기 전에 `DialogueDebugPreviewProvider`로 preview 전용 `WorldStateStore`를 구성해 read/mutation
+  provider 양쪽에 주입한다([[DT-010-Dialogue-Debug-WorldState-Preview-Review]]).
+- provider source는 addon 동봉 `examples/world_state_schema_example.tres`다. `/root/WorldState` autoload를
+  bare 식별자로 참조하지 않아 fresh-project parse-safety를 유지하고, 실제 game/save state를 오염시키지 않는다.
+- Play마다 별도 Godot 프로세스가 뜨므로 preview state는 매 실행 example default에서 시작하고, 한 run 안의
+  mutation은 누적되어 이후 Branch/Condition이 읽는다.
+- 고정 example schema에 없는 게임 schema key는 preview에서 `state_missing`/`unknown_key`로 fail-closed한다.
+  게임 schema 경로를 debug 설정으로 주입하는 옵션 C는 후속 범위다.
 
 ## Say Line Paging
 
@@ -125,11 +144,13 @@ updated: 2026-06-16
 - 따라서 이 노드들이 추가된 이후 DialogueTool addon은 World State condition/mutation 모듈에 의존한다.
   Dialogue runtime은 여전히 `/root`를 직접 조회하지 않고 주입된 read/mutation provider만 사용한다
   ([[ADR-009-State-Condition-Dialogue-Consumption]], [[ADR-010-State-Mutation-Dialogue-Effects]]).
-- **DT-011 패키징(accepted, [[ADR-011-DialogueWorldState-Addon-Packaging]]):** 이 의존을 깨지지 않게
+- **DT-011 패키징(완료, [[ADR-011-DialogueWorldState-Addon-Packaging]],
+  [[DT-011-DialogueWorldState-Addon-Packaging-Review]]):** 이 의존을 깨지지 않게
   하려고 World State 폐쇄집합(코어/condition/store/runtime)을 `addons/dialogtool/world_state/`
-  하위모듈로 **이동 완료**(DT-011 Step 1, 후보 B). 이제 `addons/dialogtool/`만 복사하면 World State 코드가
-  함께 따라온다. DialogueTool과 World State를 **별도** 독립 addon으로 쪼개 배포하는 것은 목표가 아니다
-  (둘을 한 폴더로 함께 배포). 게임 schema/save는 호스트 소유. example/schema 분리·설치 문서는 Step 2~3 범위.
+  하위모듈로 **이동 완료**했다(후보 B). 이제 `addons/dialogtool/`만 복사하면 World State 코드가 함께 따라온다.
+  DialogueTool과 World State를 **별도** 독립 addon으로 쪼개 배포하는 것은 목표가 아니다(둘을 한 폴더로 함께
+  배포). 게임 schema/save는 호스트 소유이며, addon은 `examples/world_state_schema_example.tres`,
+  `examples/affinity_ge_10.tres`, sample dialogue와 설치/마이그레이션 README를 포함한다.
 
 ## Related
 

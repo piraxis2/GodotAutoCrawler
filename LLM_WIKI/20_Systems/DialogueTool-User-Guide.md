@@ -92,10 +92,10 @@ Start -> Say -> End
 
 - 색상: 주황색
 - 역할: 실행 커서를 이동시키지 않는 비대기 명령
-- 현재 Effect 출력은 Start와 Say에 있다.
-- 현재 Effect 입력은 Portrait Show/Hide/Expression에 있다.
-- 하나의 Effect 출력에 여러 Portrait를 연결할 수 있다.
-- 연결 저장 순서가 Effect 실행 순서다.
+- 현재 Effect 출력은 Start, Say, Choice(항목별 + 공통)에 있다.
+- 현재 Effect 입력은 Portrait Show/Hide/Expression, StateSet, StateAdd에 있다.
+- 하나의 Effect 출력에 여러 Effect 대상을 연결할 수 있다.
+- 연결 저장 순서가 Effect 실행 순서다(Choice 항목별 Effect는 §14, 상태 변경 Effect는 §14 참고).
 
 ## 5. Flow 노드
 
@@ -232,6 +232,33 @@ State Condition("actor.example.affinity >= 10") -> Choice 항목 i Data 입력(p
   fail-closed된다(Branch false / Choice 숨김). 평가 `report`는 디버거/후속 inspector가 쓸 수 있는
   `condition_evaluated` signal로 노출된다.
 - ConditionSet 작성법(leaf/group/ALL·ANY·NOT, operator, 타입 규칙)은 [[World-State-User-Guide]]를 따른다.
+
+#### 그래프 위 조건 요약 표시 (DT-012)
+
+State Condition 노드는 picker의 `.tres` 경로 아래에 **사람이 읽을 수 있는 조건 요약 label**을 보여 준다.
+리소스를 따로 열지 않아도 노드만 보고 조건 의미를 알 수 있다.
+
+```text
+State Condition
+  res://.../affinity_ge_10.tres        <- picker(참조 path 유지)
+  actor.example.affinity >= 10         <- summary label(자동 요약)
+```
+
+- **자동 요약**: leaf는 `key 기호 literal`(예: `actor.example.affinity >= 10`), group은 `ALL(...)` /
+  `ANY(...)` / `NOT(...)`로 표시한다. 표시용 operator 기호(`==`,`!=`,`<`,`<=`,`>`,`>=`)는 평가 trace
+  문자열(`greater_equal` 등)과 별개다.
+- **literal 표기 구분**: INT `10`과 FLOAT `10.0`, String `"calm"`과 StringName `&"calm"`, bool
+  `true`/`false`를 구분해 보여 준다. 문자열 안의 따옴표·줄바꿈은 escape되어 한 줄로 안전하게 표시된다.
+- **description 우선**: `ConditionSet.description`을 쓰면 **structural valid일 때만** 그 설명이 요약으로
+  우선 표시되고, 자동 구조 요약은 tooltip에 함께 보인다.
+- **invalid/null은 항상 구분**: ConditionSet이 없으면 `No ConditionSet`, 구조가 깨졌으면
+  `Invalid: <코드>`(예: `root_null`, `cycle_detected`, `group_empty`)를 빨강 계열로 표시한다.
+  description이 있어도 invalid/null을 가리지 않는다.
+- **tooltip**: 잘리지 않은 full 요약, 외부 `.tres` 경로, invalid면 오류 코드/메시지를 tooltip으로 확인한다.
+  긴 요약은 label에서 잘려 노드 폭이 과도하게 커지지 않는다.
+- **갱신 시점**: 요약은 ConditionSet 드롭/clear/그래프 load·재로드 시 갱신된다. 외부 `.tres`나
+  description을 Inspector에서 바꾼 뒤의 즉시 갱신은 범위 밖이며, 노드를 다시 적용하거나 그래프를 재로드하면
+  반영된다. inline ConditionSet tree editor와 schema-aware key picker는 후속 작업이다.
 
 ## 7. Portrait 노드
 
@@ -464,6 +491,46 @@ Dialogue 화면의 실행 기능은 선택한 Scene과 저장된 Dialogue 리소
 디버그 실행 중 DialoguePlayer가 `current_node_changed`를 발행하고 원격 디버거가 해당 node ID를
 에디터에 전달한다. GraphEdit은 현재 실행 노드를 강조하고 대화 종료 시 강조를 해제한다.
 
+### 에디터 Play로 WorldState 미리보기 테스트하기 (DT-010)
+
+State Condition / StateSet / StateAdd가 들어간 대화를 에디터 Play로 바로 확인할 수 있다. 게임 코드처럼
+`DialogueManager.play(dialogue, WorldState, WorldState)`로 provider를 직접 넘기지 않아도 된다.
+
+동작:
+
+- debug Play 서브프로세스의 DialoguePlayer가 addon 동봉 example schema
+  (`addons/dialogtool/examples/world_state_schema_example.tres`)로 **preview 전용 `WorldStateStore`**를
+  구성해 read·mutation provider 양쪽으로 자동 주입한다.
+- 따라서 example schema의 key(예: `actor.example.affinity` INT, `quest.main.stage` INT 등)를 사용하는
+  대화는 Play에서 condition 분기와 state 변경이 실제로 동작한다.
+- 동봉 sample `examples/sample_dialogues/sample_world_state_dialogue.tres`를 Play하면
+  `Take -> StateAdd(actor.example.affinity, +50) -> Branch(affinity >= 10) -> Rich`,
+  `Leave -> 변경 없음 -> Poor`를 재현한다.
+
+lifecycle:
+
+- Play마다 별도 Godot 프로세스가 뜨므로 preview 상태는 매번 example schema default에서 시작한다(결정론적).
+- 한 번의 Play 안에서 일어난 mutation은 누적되어 이후 Branch/Condition이 변경값을 읽는다.
+- preview store는 게임 `/root/WorldState`(있다면)와 별도 인스턴스라 실제 save 상태를 건드리지 않는다.
+
+진단 로그:
+
+- example schema load 실패 / 형식 오류 / 초기화 실패 시 명확한 `push_error`를 남기고 provider를 주입하지
+  않는다. 이 경우 기존 fail-closed 계약을 유지한다(condition은 false, mutation은 `provider_missing`).
+  자동으로 true가 되거나 자동으로 mutation이 성공 처리되는 일은 없다.
+- 이 로그는 `--remote-debug`를 통해 에디터 Output/Debugger 패널로 전달된다.
+
+**고정 example schema 한계(중요).** preview store는 **고정된 example schema**만 사용한다. 사용자가 자기
+게임 schema의 key로 작성한 대화는 preview store에 그 key가 없으므로:
+
+- State Condition은 `state_missing`으로 **fail-closed(false)** 된다.
+- StateSet/StateAdd는 `unknown_key` report로 변경되지 않는다.
+
+게임 schema key를 에디터 Play로 미리보기하려면 현재는 그 key를 example schema에 추가해야 한다. 게임 schema
+경로를 debug 설정으로 직접 주입하는 옵션(옵션 C)은 parse-safe하게 구현 가능하지만(autoload는
+`get_node_or_null` 런타임 lookup) 범위 초과로 **후속 작업**으로 미뤘다([[DT-010-Dialogue-Debug-WorldState-Preview]],
+[[ADR-012-Dialogue-Debug-Preview-Provider]] D1).
+
 ## 14. State Condition과 State Effect
 
 ### 상태로 Branch/Choice 제어하기
@@ -497,6 +564,10 @@ DialogueManager.play(dialogue, WorldState, WorldState)
 
 mutation 결과를 관찰하려면 `DialoguePlayer.state_mutation_evaluated(effect_node_id, report)`를 구독한다.
 report에는 `operation`, `key`, `old_value`, `new_value`, `error`가 포함된다.
+
+> 에디터 Play(디버그 실행)에서는 provider를 직접 넘기지 않아도 addon example schema 기반 preview store가
+> 자동 주입된다. 자세한 내용과 고정 example schema 한계는 13절 "에디터 Play로 WorldState 미리보기
+> 테스트하기"를 참고한다.
 
 ## 15. 현재 미완성 또는 제한된 기능
 

@@ -14,6 +14,12 @@
 script = ExtResource("1_wjiom")
 node_id = 0
 
+[sub_resource type="Resource" id="Resource_jvosv"]
+script = ExtResource("8_8frqp")
+delta = 50
+key = &"actor.example.affinity"
+node_id = 6
+
 [sub_resource type="Resource" id="Resource_2l0cp"]
 script = ExtResource("2_05ey8")
 choice_dic = {
@@ -23,9 +29,18 @@ choice_dic = {
 choices = Array[String](["Take", "Leave"])
 node_id = 7
 
+[sub_resource type="Resource" id="Resource_ywq5l"]
+script = ExtResource("7_hyxlp")
+condition_set = ExtResource("6_n87su")
+node_id = 8
+
 [sub_resource type="Resource" id="Resource_ro23f"]
 script = ExtResource("3_a7wtu")
 node_id = 9
+
+[sub_resource type="Resource" id="Resource_s65t5"]
+script = ExtResource("5_kg8mt")
+node_id = 11
 
 [sub_resource type="Resource" id="Resource_iaj0f"]
 script = ExtResource("4_lwo30")
@@ -33,26 +48,11 @@ speaker = "1"
 say_text = "Rich"
 node_id = 12
 
-[sub_resource type="Resource" id="Resource_s65t5"]
-script = ExtResource("5_kg8mt")
-node_id = 11
-
 [sub_resource type="Resource" id="Resource_c432c"]
 script = ExtResource("4_lwo30")
 speaker = "2"
 say_text = "Poor"
 node_id = 13
-
-[sub_resource type="Resource" id="Resource_ywq5l"]
-script = ExtResource("7_hyxlp")
-condition_set = ExtResource("6_n87su")
-node_id = 8
-
-[sub_resource type="Resource" id="Resource_jvosv"]
-script = ExtResource("8_8frqp")
-delta = 50
-key = &"actor.example.affinity"
-node_id = 6
 
 [resource]
 script = ExtResource("9_kh6m1")
@@ -60,16 +60,16 @@ nodes = {
 0: {
 "definition": SubResource("Resource_34mvg"),
 "id": 0,
-"name": &"0",
+"name": &"@GraphNode@31452",
 "position_offset": Vector2(0, 0),
-"size": Vector2(100, 100.00009)
+"size": Vector2(100, 100.00006)
 },
 6: {
 "definition": SubResource("Resource_jvosv"),
 "id": 6,
 "name": &"6",
 "position_offset": Vector2(700, 260),
-"size": Vector2(308.0004, 153.00009)
+"size": Vector2(308.0004, 153.00012)
 },
 7: {
 "definition": SubResource("Resource_2l0cp"),
@@ -90,14 +90,14 @@ nodes = {
 "id": 9,
 "name": &"9",
 "position_offset": Vector2(840, -100),
-"size": Vector2(178.00006, 195.00002)
+"size": Vector2(178.00003, 195.00003)
 },
 11: {
 "definition": SubResource("Resource_s65t5"),
 "id": 11,
 "name": &"11",
 "position_offset": Vector2(1900, 0),
-"size": Vector2(100, 100.00003)
+"size": Vector2(100, 100.00006)
 },
 12: {
 "definition": SubResource("Resource_iaj0f"),
@@ -111,7 +111,7 @@ nodes = {
 "id": 13,
 "name": &"13",
 "position_offset": Vector2(1080, 40),
-"size": Vector2(594.0001, 305.0001)
+"size": Vector2(594.0001, 305.00012)
 }
 }
 connections = Array[Dictionary]([{

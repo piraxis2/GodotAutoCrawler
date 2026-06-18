@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://sg002step1saveflowtest"]
+
+[ext_resource type="Script" path="res://addons/save_game/tests/sg002_step1_save_flow_test.gd" id="1"]
+
+[node name="SG002Step1SaveFlowTest" type="Node"]
+script = ExtResource("1")

@@ -54,10 +54,34 @@ func _ready() -> void:
 		dialogue_end.connect(_on_debug_end)
 		var resource_path = DialogueToolUtil.cmd_arguments.get("dialogue_resource", "")
 		if not resource_path.is_empty():
+			# Debug Play preview: WorldStateCondition / state_set / state_add가 provider_missing 없이
+			# 동작하도록 addon example store를 read/mutation provider로 주입한다(DT-010 Step 1, ADR-012).
+			# set은 동기, start는 deferred이므로 start 전에 provider가 확정된다(ADR-012 D3 순서 안전).
+			_inject_debug_preview_provider()
 			# 자식 _ready가 부모 UI의 _ready보다 먼저 실행되므로, 여기서 바로
 			# 시작하면 DialogueUI가 핸들러를 연결하기 전에 첫 ui_request가 emit되어
 			# 첫 노드를 놓친다. 모든 노드(UI 포함)의 _ready가 끝난 뒤 시작하도록 미룬다.
 			start_dialogue.call_deferred(ResourceLoader.load(resource_path))
+
+
+# Debug Play 서브프로세스 전용 preview provider 주입(DT-010 Step 1, ADR-012 D1/D3/D5/D6).
+# addon 동봉 example schema로 구성한 preview 전용 WorldStateStore를 read·mutation provider 양쪽으로
+# 주입한다(같은 인스턴스 — store facade가 두 계약을 모두 만족). 실제 게임 /root/WorldState save state를
+# 오염시키지 않는 별도 인스턴스이며, parse-safe하게 class_name으로만 접근한다(bare autoload 식별자 없음).
+# 이 분기는 is_dialogue_debug_hint() 서브프로세스 전용이라 일반 게임 실행 경로(DialogueManager.play)에는
+# 영향이 없다.
+func _inject_debug_preview_provider() -> void:
+	# 누군가 이미 provider를 세팅한 경로(보통 debug self-start player는 새 인스턴스라 null)는 덮어쓰지 않는다.
+	if has_read_state_provider() or has_mutation_state_provider():
+		return
+	var store := DialogueDebugPreviewProvider.make_preview_store()
+	if store == null:
+		# helper가 이미 구체 사유를 push_error로 남겼다. provider 미주입 → 기존 fail-closed 유지
+		# (condition false / mutation provider_missing). 자동 true/자동 mutation 없음(ADR-012 D6).
+		push_warning("DialoguePlayer: debug preview WorldState provider unavailable; state condition/effects will fail-closed.")
+		return
+	set_read_state_provider(store)
+	set_mutation_state_provider(store)
 
 
 func init_dialogue(dialogue: DialogueGraphResource) -> void:

@@ -11,10 +11,14 @@
             "id": "541893579710ee26",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "그래프 뷰"
+              "type": "markdown",
+              "state": {
+                "file": "STEP_REVIEW_WORKFLOW.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "STEP_REVIEW_WORKFLOW"
             }
           }
         ]
@@ -74,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 508.5
   },
   "right": {
     "id": "e8b7355c1ee7c1f7",
@@ -181,41 +185,41 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
+    "20_Systems/SaveGame-User-Guide.md.tmp.42272.268a13c53cb5",
+    "40_Decisions/ADR-014-SaveFlow-Facade-And-Metadata-Provider.md",
+    "40_Decisions/ADR-002-Editor-Adapter.md",
+    "40_Decisions/ADR-001-Runtime-Snapshot.md",
+    "30_Tasks/SG-003-SaveSlot-UI-Host-Integration.md",
+    "30_Tasks/SG-002-SaveFlow-Facade-Metadata-Provider.md.tmp.43832.64c01b796dd3",
+    "00_Index/Open-Tasks.md.tmp.43832.56e936062012",
+    "20_Systems/SaveGame-System.md.tmp.43832.a05256e34746",
+    "20_Systems/SaveGame-System.md.tmp.43832.5585818076fc",
+    "30_Tasks/SG-002-SaveFlow-Facade-Metadata-Provider.md.tmp.43832.389ab305b9ee",
+    "50_Reviews/DT-002-Portrait-Review.md",
+    "50_Reviews/DialogueTool-Step-1-to-8.md",
+    "50_Reviews/DT-011-DialogueWorldState-Addon-Packaging-Review.md",
+    "50_Reviews/DT-012-Condition-Authoring-UX-Review.md",
+    "50_Reviews/SG-001-SaveGame-Core-Section-System-Review.md",
+    "50_Reviews/SG-002-SaveFlow-Facade-Metadata-Provider-Review.md",
+    "STEP_REVIEW_WORKFLOW.md",
+    "Related Document.md",
+    "30_Tasks/SG-002-SaveFlow-Facade-Metadata-Provider.md",
+    "20_Systems/World-State-User-Guide.md",
+    "20_Systems/World-State-System.md",
+    "40_Decisions/ADR-007-WorldState-Runtime-Lifecycle.md",
+    "40_Decisions/ADR-009-State-Condition-Dialogue-Consumption.md",
+    "40_Decisions/ADR-010-State-Mutation-Dialogue-Effects.md",
+    "40_Decisions/ADR-011-DialogueWorldState-Addon-Packaging.md",
+    "90_Templates/ADR.md",
+    "90_Templates/Implementation-Prompt.md",
+    "90_Templates/Design-Review-Prompt.md",
+    "90_Templates/Review.md",
+    "50_Reviews/DT-009-State-Mutation-Review.md",
+    "40_Decisions/ADR-012-Dialogue-Debug-Preview-Provider.md",
     "30_Tasks/DT-009-State-Mutation-Dialogue-Effects.md.tmp.46096.f8a90acba5ef",
     "30_Tasks/DT-009-State-Mutation-Dialogue-Effects.md.tmp.46096.e7b2ccf92deb",
     "00_Index/Current-State.md.tmp.46096.22e8fbf96b85",
     "30_Tasks/DT-009-State-Mutation-Dialogue-Effects.md.tmp.16836.eb3505095c48",
-    "40_Decisions/ADR-010-State-Mutation-Dialogue-Effects.md",
-    "40_Decisions/ADR-010-State-Mutation-Dialogue-Effects.md.tmp.16836.fb5dc22ea29f",
-    "30_Tasks/DT-009-State-Mutation-Dialogue-Effects.md",
-    "50_Reviews/DT-008-Choice-Integration-Review.md.tmp.34612.34ab98a0de8d",
-    "20_Systems/World-State-System.md.tmp.34612.a1a44d5afd60",
-    "00_Index/Open-Tasks.md.tmp.34612.1ae343c58ce1",
-    "50_Reviews/DT-008-Choice-Integration-Review.md",
-    "00_Index/Open-Tasks.md",
-    "00_Index/Current-State.md",
-    "20_Systems/World-State-User-Guide.md",
-    "40_Decisions/ADR-009-State-Condition-Dialogue-Consumption.md",
-    "30_Tasks/DT-008-State-Condition-Dialogue-Integration.md",
-    "30_Tasks/DT-007-ConditionSet-ConditionEvaluator.md",
-    "20_Systems/World-State-System.md",
-    "30_Tasks/DT-006-WorldState-Runtime-Integration.md",
-    "50_Reviews/DT-006-WorldState-Runtime-Review.md",
-    "50_Reviews/DT-006-WorldState-Runtime-Review.md.tmp.41472.6cc4e2fa04e7",
-    "20_Systems/World-State-System.md.tmp.41472.70fb812283c4",
-    "30_Tasks/DT-006-WorldState-Runtime-Integration.md.tmp.41472.90df327150c7",
-    "40_Decisions/ADR-007-WorldState-Runtime-Lifecycle.md",
-    "30_Tasks/DT-005-StateSchema-WorldStateStore.md",
-    "50_Reviews/DT-005-WorldState-Review.md",
-    "90_Templates/Design-Review-Prompt.md",
-    "90_Templates/Implementation-Prompt.md",
-    "20_Systems/BehaviorTree-System.md",
-    "20_Systems/Article-Status-System.md",
-    "20_Systems/DialogueTool.md",
-    "20_Systems/DialogueTool-User-Guide.md",
-    "20_Systems/Turn-System.md",
-    "10_Architecture/Project-Overview.md",
-    "10_Architecture/Runtime-Data-Flow.md",
-    "00_Index/Home.md"
+    "40_Decisions/ADR-010-State-Mutation-Dialogue-Effects.md.tmp.16836.fb5dc22ea29f"
   ]
 }

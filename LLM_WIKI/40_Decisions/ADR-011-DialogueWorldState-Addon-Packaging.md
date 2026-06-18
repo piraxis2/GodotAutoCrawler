@@ -37,6 +37,10 @@ WorldState 코어가 `res://Assets/Script/gds/world_state` 아래 있어 `addons
 plugin / main.tscn preload / icon)는 변경하지 않아 마이그레이션 표면을 최소화한다.
 복사 1폴더로 동작한다는 1순위 재사용 목표를 만족한다.
 
+Amendment: [[ADR-013-WorldCore-Umbrella-Packaging]]은 SaveGame처럼 DialogueTool 밖 core 소비자가 추가되는
+장기 목표로 `addons/world_core/` umbrella root를 accepted했다. ADR-011 D1은 DT-011 완료 시점의 현재
+패키징 사실로 유지하며, `world_core` 이동은 ADR-013의 migration trigger를 만족할 때 별도 Task로 수행한다.
+
 ### D2. Addon 필수 폐쇄집합
 
 addon 자급에 필요한 WorldState 파일은 다음을 **모두** 포함한다:
@@ -121,5 +125,6 @@ move-not-copy + path 인벤토리, D4 autoload 순서, D5 schema 분리).
 - [[ADR-007-WorldState-Runtime-Lifecycle]]
 - [[ADR-009-State-Condition-Dialogue-Consumption]]
 - [[ADR-010-State-Mutation-Dialogue-Effects]]
+- [[ADR-013-WorldCore-Umbrella-Packaging]]
 - [[DialogueTool]]
 - [[World-State-System]]

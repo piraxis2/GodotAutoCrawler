@@ -133,6 +133,16 @@ func capture_world_state() -> Dictionary:
 	return _store.export_snapshot()
 
 
+## peek: snapshot envelope/schema 호환성을 비파괴로 점검한다(값/시그널 불변). Store의
+## peek_snapshot_compatibility()를 감싸는 얇은 public adapter다(ADR-007 D5). 외부 SaveGame 계층
+## (예: WorldStateSaveSection.validate_save)이 restore 전에 호환성을 확인할 때 쓴다. Store 내부 API를
+## SaveGame이 직접 알 필요가 없다. 반환: { "ok": bool, "reason": String }.
+func peek_world_state_compatibility(snapshot: Dictionary) -> Dictionary:
+	if not is_store_ready():
+		return {"ok": false, "reason": "store_not_ready"}
+	return _store.peek_snapshot_compatibility(snapshot)
+
+
 ## restore: 외부 저장 계층이 역직렬화한 snapshot으로 복원하는 adapter 진입점.
 ## Step 3 transactional restore lifecycle(restore_game)을 그대로 경유한다 — envelope 점검 통과 시에만
 ## default 재초기화 후 SAVE import, 실패 시 기존 상태 보존·미성공 보고. capture_world_state와 짝을 이루는

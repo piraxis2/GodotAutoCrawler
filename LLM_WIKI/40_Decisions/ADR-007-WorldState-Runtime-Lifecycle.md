@@ -90,14 +90,23 @@ SAVE/SESSION 값이 이미 소실된다.
 
 ### D5. Snapshot Adapter 소유권 — coordinator
 
-SaveGame 시스템이 아직 없으므로 이번 범위에서는 최소 계약만 coordinator(`WorldStateRuntime`)에 둔다.
+SaveGame core는 WorldState를 몰라야 하므로 WorldState snapshot의 capture/restore/compatibility adapter는
+coordinator(`WorldStateRuntime`)에 둔다. Runtime은 SaveGame을 참조하지 않고 WorldState Store 계약만 감싼다.
 
 ```text
-capture_world_state() -> Dictionary          # Store의 SAVE snapshot 반환(파일 미작성)
-restore_world_state(snapshot) -> report       # Step 3 lifecycle 경유 복원
+capture_world_state() -> Dictionary                   # Store의 SAVE snapshot 반환(파일 미작성)
+peek_world_state_compatibility(snapshot) -> Dictionary # Store의 비파괴 snapshot compatibility 점검
+restore_world_state(snapshot) -> report                # lifecycle 경유 복원
 ```
 
-실제 `FileAccess` 저장·slot·백업은 Store와 coordinator 밖의 별도 후속 SaveGame Task로 둔다.
+`peek_world_state_compatibility()`는 Store의 `peek_snapshot_compatibility()`를 호출하는 얇은 public adapter다.
+`WorldStateSaveSection.validate_save()`는 이 API를 사용해 restore 전에 snapshot envelope/schema 호환성을 확인한다.
+이를 위해 SaveGame 쪽이 Store 내부 API를 직접 알 필요는 없다.
+
+`capture_world_state()`가 파일 저장 가능성을 보장하지는 않는다. SaveGame adapter는 capture 전에 Store ready와
+session ready를 확인해야 하며, 준비되지 않은 경우 실패 report를 반환하고 빈 payload를 저장하지 않는다.
+
+실제 `FileAccess` 저장·slot·백업은 Store와 coordinator 밖의 별도 SaveGame Task로 둔다.
 
 ### D6. Bootstrap Schema — 최소 canonical key
 

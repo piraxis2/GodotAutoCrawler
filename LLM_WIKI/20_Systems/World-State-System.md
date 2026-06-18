@@ -123,7 +123,10 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
   - 성공은 `world_state_ready(mode, report)`, 실패는 `world_state_failed(mode, report)`로 알리며 반환값과
     signal report는 서로 독립된 deep copy다.
   - `capture_world_state()`는 SAVE-only JSON 호환 Dictionary를 반환한다. `restore_world_state()`는
-    transactional restore의 외부 SaveGame-facing 별칭이다.
+    transactional restore의 외부 SaveGame-facing 별칭이다. `peek_world_state_compatibility(snapshot)`는
+    Store의 `peek_snapshot_compatibility()`를 감싸는 비파괴 호환성 점검 adapter다(SG-001 Step 3 추가,
+    `WorldStateSaveSection.validate_save`가 restore 전에 호출). Store 내부 wire 복원(`_coerce_wire_value`)이
+    JSON round-trip의 정수형 float/String↔StringName를 schema 타입으로 되돌리므로 파일 저장 왕복이 무손실이다.
 - SESSION은 새 게임과 SAVE load에서만 default로 시작한다. scene 교체나 Dialogue 종료에서는 reset하지 않는다.
 - 검증: `tests/dt006_step1~5_*`와 DT-005/DT-004 전체 16개 headless 테스트 및 editor import가 통과했다.
 
