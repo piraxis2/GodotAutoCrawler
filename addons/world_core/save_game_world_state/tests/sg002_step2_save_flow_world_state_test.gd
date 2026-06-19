@@ -9,7 +9,8 @@
 # - load backup recovery의 recovered_from_backup/source/restore가 SaveFlow.load_manual에서 손실되지 않음.
 #
 # 이 테스트는 의도적으로 SaveGame ↔ WorldState 경계를 넘는다(domain 결합). 따라서 domain-free를 유지해야
-# 하는 addons/save_game/tests/가 아니라 통합 adapter와 같은 addons/save_game_world_state/tests/에 둔다.
+# 하는 addons/world_core/save_game/tests/가 아니라 통합 adapter와 같은
+# addons/world_core/save_game_world_state/tests/에 둔다.
 #
 # 주의: Godot JSON은 number를 float로 읽는다. WorldStateStore.import_snapshot이 schema 타입으로 복원하므로
 # typeof/값 동등성을 함께 단언한다.
