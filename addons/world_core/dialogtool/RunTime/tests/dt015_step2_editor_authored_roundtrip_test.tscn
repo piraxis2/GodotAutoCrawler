@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://dt015step2editorrt"]
+[gd_scene format=3 uid="uid://c8wixkydiku46"]
 
 [ext_resource type="Script" path="res://addons/world_core/dialogtool/RunTime/tests/dt015_step2_editor_authored_roundtrip_test.gd" id="1"]
 

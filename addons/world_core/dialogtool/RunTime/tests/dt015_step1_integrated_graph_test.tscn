@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://dt015step1intgraph"]
+[gd_scene format=3 uid="uid://c8wiwpan4nd2t"]
 
 [ext_resource type="Script" path="res://addons/world_core/dialogtool/RunTime/tests/dt015_step1_integrated_graph_test.gd" id="1"]
 

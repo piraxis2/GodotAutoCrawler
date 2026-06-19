@@ -166,6 +166,24 @@ updated: 2026-06-19
   - `dt015_step1_integrated_graph_test`: in-memory 및 임시 `.tres` 저장/재로드(cache-ignore) 환경에서 Strong/Weak/Leave 3가지 경로(각각 true branch, false branch, branch 우회 직결) 실행과, 입력 포트 미연결 시 error-dominance fail-closed를 검증한다.
   - `dt015_step2_editor_authored_roundtrip_test`: 실제 `dialoguetool_main.tscn` 에디터 씬 상에서 노드를 배치 및 포트 연결하여 캡처(`capture_current_graphedit`)하고, 저장 및 재로드한 뒤 3개 경로를 런타임 e2e 실행하여 동일한 출력을 내는지 검증한다.
 
+## DialogueManager Lifecycle Regression (DT-016)
+
+- 게임 코드 진입점 `DialogueManager.play(...)`의 수명주기 계약(반복 실행/교체/same-frame latest-wins/
+  callback 재진입/stale signal 차단/provider tuple isolation)이 전용 headless matrix로 고정되어 있다
+  ([[DT-016-DialogueManager-Lifecycle-Regression-Review]] 판정: 완료, **제품 코드 변경 없음**).
+- `dt016_step1_manager_lifecycle_test`(8 시나리오)는 runtime-only `DialogueGraphResource`를 코드에서
+  만들고(영구 `.tres` 없음), 진행은 `_ui.dialogue_player.advance()`/`select_choice(0)`로, 관찰은
+  `DialogueManager.ui_request`/`dialogue_started`/`dialogue_end` log/count로만 한다(렌더 텍스트·Button
+  클릭 비의존).
+- 검증 표면: (1) 반복 실행 시 이전 UI/Player/대기 상태 무누수, (2) Say/Choice 대기 중 교체 후 stale old
+  player 호출이 active Manager signal로 안 섞임(`_on_ui_request`/`_on_end`의 `source_ui != _ui` guard),
+  (3) 같은 프레임 연속 `play()`에서 `_dismiss()`의 `cancel_pending_start()` + `DialogueUI._pending_start`
+  latest-wins로 OLD deferred start 미실행, (4) `ui_request`/`dialogue_end` callback 재진입에서
+  `_on_end()`의 `_dismiss()` 후 `emit()` 순서로 새 대화 보존, (5) test-only spy mutation provider로
+  OLD/NEW provider tuple 격리.
+- stale old player 호출은 교체/`_dismiss()` 직후 같은 프레임 valid window(`is_instance_valid` true 단언
+  후 즉시 호출)에서 수행해 source guard를 의미 있게 검증한다(`queue_free`는 프레임 종료에 해제).
+
 ## Extension Rules
 
 새 노드는 최소한 다음을 정의한다.

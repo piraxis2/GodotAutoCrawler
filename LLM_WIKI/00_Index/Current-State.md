@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-06-18
+updated: 2026-06-19
 ---
 
 # Current State
@@ -337,6 +337,24 @@ updated: 2026-06-18
   또한, Expression 입력 미연결 시 `errored` 전파로 인해 Branch가 Godot Expression ERROR 로그는 발생하지만 SCRIPT ERROR 없이 graceful하게 false 분기(`Strong fail`)로 fail-closed됨을 검증했다.
   에디터 authored Expression의 자동 변수명 `A` 및 Choice 리스트, 포트 연결 정보 보존을 단언하고 런타임 e2e 실행을 완벽히 매칭했다.
   테스트 100% 통과(ALL PASS, SCRIPT ERROR 0) 및 지정 회귀(`dt008_step1_state_condition_test`, `dt014_step1_say_paging_ui_test`)의 무회귀 통과를 확인했다.
+- **DT-016 DialogueManager Lifecycle Regression 완료(Step 1~2, 판정: 완료 —
+  [[DT-016-DialogueManager-Lifecycle-Regression-Review]]). 제품 코드 변경 없음.**
+  게임 코드 진입점 `DialogueManager.play(...)`의 반복 실행/교체/same-frame latest-wins/callback 재진입/
+  stale signal 차단/provider tuple isolation 계약을 전용 headless matrix(`dt016_step1_manager_lifecycle_test`,
+  8 시나리오)로 고정했다. graph는 runtime-only `DialogueGraphResource`를 코드에서 만들고(영구 `.tres` 없음),
+  진행은 `_ui.dialogue_player.advance()`/`select_choice(0)`, 관찰은 `DialogueManager.ui_request`/
+  `dialogue_started`/`dialogue_end` log·count로만 한다(렌더 텍스트·Button 클릭 비의존).
+  검증: (1) 반복 실행 무누수(2회차 `waiting_for==&"text"`·Say 노드·count == run 수), (2) Say/Choice 대기 중
+  교체에서 same-frame valid window(`is_instance_valid(old_player)` true 단언 후 즉시 stale
+  `advance()`/`select_choice(0)`)로 호출해도 `_on_ui_request`/`_on_end`의 `source_ui != _ui` guard가
+  Manager log를 안 늘림, (3) 같은 프레임 연속 `play()`에서 `cancel_pending_start()` + `_pending_start`
+  latest-wins로 OLD 미실행(request log NEW만), (4) `ui_request`/`dialogue_end` callback 재진입에서 새 대화
+  보존(`_on_end()`의 `_dismiss()`→`emit()` 순서, one-shot listener), (5) test-only untyped spy mutation
+  provider로 same-frame 교체 시 OLD provider 0회 / NEW 1회 격리.
+  완료 회귀 matrix 4/4 ALL PASS(`dt016_step1`, `dt015_step1`, `dt004_step4`, `dt009_step4`), 실제
+  `SCRIPT ERROR:` 0, `--import` exit 0. 예상 경고는 시나리오 [5]의 빈 `texture_path` `portrait_show`
+  경고 1회뿐(portrait 렌더 Non-Goal). `play(null)` negative case는 Godot `ERROR` 로그 회피 위해 기본
+  matrix 제외.
 
 ## SaveGame
 
