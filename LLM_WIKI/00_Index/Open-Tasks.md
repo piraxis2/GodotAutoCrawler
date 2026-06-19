@@ -8,7 +8,7 @@ updated: 2026-06-18
 
 ## Next
 
-- Say 줄 누적 표시 실제 UI 회귀 검증: 한 줄/여러 줄/빈 줄/CRLF의 클릭 순서와 Flow 진행을 Godot에서 확인한다.
+
 - Dialogue 통합 회귀 그래프 작성: Start, Say, Choice, Expression, Branch, End를 한 리소스에서 검증한다.
 - DialogueManager 반복 실행/교체/연속 실행 테스트를 자동화한다.
 
@@ -52,6 +52,7 @@ updated: 2026-06-18
 
 완료 작업의 상세 사실/판정은 Current-State와 각 Review가 보존한다. 여기는 최근 완료 포인터만 둔다.
 
+- **DT-014 Say Line Paging UI Regression 완료**(Step 0~2, [[DT-014-Say-Line-Paging-UI-Regression-Review]] 판정: 완료): 실제 UI `Dialogue_UI.tscn` 클릭 경로에서 DT-003 Say 줄 누적 표시 기능의 headless 회귀 검증. 타이핑 효과의 `set_process(false)` 비활성화로 가변 프레임 델타로 인한 비결정성을 근본적으로 제거하였고, Case 6.2 Choice flow 출력 포트 오배선도 수정함.
 - **DT-013 State Read Data 노드 완료**(Step 0~4, [[DT-013-State-Read-Data-Node-Review]] 판정: 완료): 단일 World
   State key 값을 strict typeof로 읽어 Branch/Choice/Expression에 공급하는 `state_read` leaf Data 노드. 주입
   read provider만 소비(fail-closed report + Data error-dominance), editor authoring/저장 validation은

@@ -76,7 +76,11 @@ tags: [task, dialogue-tool, say, ui]
 
 ## Follow-ups
 
-- Godot 실행 환경에서 한 줄/여러 줄/빈 줄/CRLF Say의 실제 클릭 회귀 검증.
+- ~~Godot 실행 환경에서 한 줄/여러 줄/빈 줄/CRLF Say의 실제 클릭 회귀 검증.~~ → **완료(DT-014)**:
+  실제 `Dialogue_UI.tscn` 클릭 경로(`Button.pressed.emit()`)에서 한 줄/여러 줄 LF/중간·끝 빈 줄/CRLF·CR
+  누적·클릭 순서·Flow 진행·노드 전환 reset·반복 교체 무누수를 headless 테스트
+  `dt014_step1_say_paging_ui_test`로 회귀 검증했다([[DT-014-Say-Line-Paging-UI-Regression]],
+  [[DT-014-Say-Line-Paging-UI-Regression-Review]] 판정: 완료).
 - 긴 누적 텍스트가 대화창 높이를 넘을 때의 스크롤 또는 페이지 제한 정책은 별도 UX 작업으로 다룬다.
 
 ## Related

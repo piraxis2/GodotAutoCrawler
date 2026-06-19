@@ -185,6 +185,12 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
+    "30_Tasks/DT-014-Say-Line-Paging-UI-Regression.md.tmp.19276.deadea5a09f9",
+    "50_Reviews/DT-014-Say-Line-Paging-UI-Regression-Review.md.tmp.19276.e7f9e5b8ab61",
+    "50_Reviews/DT-014-Say-Line-Paging-UI-Regression-Review.md",
+    "00_Index/Current-State.md.tmp.19276.baa98fd03f8a",
+    "30_Tasks/DT-014-Say-Line-Paging-UI-Regression.md",
+    "30_Tasks/DT-014-Say-Line-Paging-UI-Regression.md.tmp.19276.b4d55d5f8717",
     "50_Reviews/DT-013-State-Read-Data-Node-Review.md.tmp.40468.c613b17952d7",
     "00_Index/Open-Tasks.md.tmp.40468.f091d91966a8",
     "20_Systems/World-State-System.md.tmp.40468.ed0cf343699b",
@@ -199,10 +205,6 @@
     "40_Decisions/ADR-002-Editor-Adapter.md",
     "40_Decisions/ADR-001-Runtime-Snapshot.md",
     "30_Tasks/SG-003-SaveSlot-UI-Host-Integration.md",
-    "30_Tasks/SG-002-SaveFlow-Facade-Metadata-Provider.md.tmp.43832.64c01b796dd3",
-    "00_Index/Open-Tasks.md.tmp.43832.56e936062012",
-    "20_Systems/SaveGame-System.md.tmp.43832.a05256e34746",
-    "20_Systems/SaveGame-System.md.tmp.43832.5585818076fc",
     "50_Reviews/DT-002-Portrait-Review.md",
     "50_Reviews/DialogueTool-Step-1-to-8.md",
     "50_Reviews/DT-011-DialogueWorldState-Addon-Packaging-Review.md",
@@ -218,8 +220,6 @@
     "40_Decisions/ADR-009-State-Condition-Dialogue-Consumption.md",
     "40_Decisions/ADR-010-State-Mutation-Dialogue-Effects.md",
     "40_Decisions/ADR-011-DialogueWorldState-Addon-Packaging.md",
-    "90_Templates/ADR.md",
-    "90_Templates/Implementation-Prompt.md",
-    "90_Templates/Design-Review-Prompt.md"
+    "90_Templates/ADR.md"
   ]
 }

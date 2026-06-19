@@ -134,6 +134,13 @@ updated: 2026-06-16
 - 첫 줄부터 타이핑하고 이전 줄은 같은 대화창에 유지한다. 클릭 시 현재 줄 완성 -> 다음 줄 누적 표시
   -> 마지막 줄 이후 다음 Flow 순서로 진행한다.
 - 줄바꿈이 없는 기존 Say는 기존과 동일하게 현재 문장 완성 후 다음 클릭에 Flow를 진행한다.
+- 빈 줄(중간/끝)은 `split("\n", true)`로 보존되어 각자 한 페이지를 차지하고, CRLF/CR은 LF로 정규화된다.
+- **DT-014 실제 UI 회귀 검증 완료**([[DT-014-Say-Line-Paging-UI-Regression]],
+  [[DT-014-Say-Line-Paging-UI-Regression-Review]] 판정: 완료): 페이징 로직은 `dialogue_ui.gd`에 있고,
+  실제 `Dialogue_UI.tscn` 클릭 경로(`Button.pressed.emit()` → `_on_button_pressed`)에서 한 줄/여러 줄 LF/
+  중간·끝 빈 줄/CRLF·CR 누적·클릭 순서·"마지막 줄 이후에만 Flow 진행"·Say↔Choice↔End 전환 시 페이징 상태
+  초기화·반복/교체 무누수를 headless 테스트 `dt014_step1_say_paging_ui_test`로 고정했다. 테스트 결정성은
+  타이핑 애니메이션(`type_effect.gd`)을 정지(`ui.say.set_process(false)`)시켜 확보한다.
 
 ## Editor-Only or Incomplete Nodes
 

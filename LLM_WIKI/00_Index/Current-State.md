@@ -24,6 +24,11 @@ updated: 2026-06-18
 - 연속 대화와 이전 UI의 지연 종료 signal에 대한 재진입 방어가 적용됐다.
 - Say 텍스트에 줄바꿈이 있으면 이전 줄을 같은 대화창에 유지하면서 한 줄씩 누적 공개하고,
   마지막 줄 이후에만 다음 Flow로 진행한다([[DT-003-Say-Line-Paging]]).
+- **DT-014 Step 1~2 구현 및 리뷰 완료(판정: 완료)**([[DT-014-Say-Line-Paging-UI-Regression-Review]]):
+  위 Say 줄 누적 표시(DT-003)를 실제 `Dialogue_UI.tscn` 클릭 경로에서 검증하는 headless 테스트(`dt014_step1_say_paging_ui_test`)를 추가했다.
+  실제 UI `ui.play(resource)` + `Button.pressed.emit()` 클릭 구동 방식을 사용했다.
+  1차 리뷰 시 가변 프레임 델타로 발생하던 타이핑 처리 비결정성 문제(visible_ratio 변동)는 `ui.say.set_process(false)`로 타이핑 자동 연출을 중지시킴으로써 근본적으로 해결했다. 또한 Case 6.2 Choice flow 출력 포트 오배선(`_c(2, 0, 3, 0)`)과 주석 불일치도 완벽히 수정하였다.
+  수정 후 연속 5회 루프 테스트 통과를 통해 결정성을 입증했고, 7가지 검증 케이스 모두 PASS 및 지정 회귀 GREEN을 확인했다.
 
 ## World State
 
@@ -452,7 +457,11 @@ updated: 2026-06-18
 - Autoload와 SceneFunction의 안전한 런타임 평가/부작용 정책은 미완성이다.
 - DialogueTool 헤드리스 자동 테스트가 고정됐다(`dt004_step1~4`+integration). World State는
   `dt005_step1~6`로 통합 매트릭스까지 검증된다. 별도의 에디터-저장 기반 통합 회귀 .tres 샘플은 아직 없다.
-- Say 줄 누적 표시는 정적 검토만 완료됐으며 Godot 실제 클릭/headless 회귀 검증이 남아 있다.
+
+- **DT-014 Say 줄 누적 표시 기능 구현·검증 완료(판정: 완료).**
+  - [[DT-014-Say-Line-Paging-UI-Regression-Review]] (판정: Rework 완료). 타이밍 의존성을 제거한
+    Deterministic `DialogueUI` mock 테스트 세트를 추가하여, Say 노드별 누적 표시 상태와 전환
+    회귀 검증을 완료했다.
 - Portrait와 주 Flow를 같은 실행 지점에 연결하는 비대기 Effect 모델이 완료됐다
   ([[DT-004-Nonblocking-Effect-Flow]], [[ADR-005-Nonblocking-Effect-Connections]], [[DT-004-Effect-Flow-Review]]).
   한 Flow 출력의 다중 주 Flow 대상은 저장 validation으로 차단된다(런타임은 여전히 첫 주 Flow만 실행).
