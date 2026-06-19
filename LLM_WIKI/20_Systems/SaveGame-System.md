@@ -25,16 +25,15 @@ production save/load UI scene/theme를 제공하지 않고, host가 `SaveFlow` r
 
 ## 위치
 
-- `addons/save_game/save_section.gd` — `class_name SaveSection`(domain-free core)
-- `addons/save_game/save_game_manager.gd` — `class_name SaveGameManager`(domain-free core)
-- `addons/save_game/save_flow.gd` — `class_name SaveFlow`(domain-free thin facade, SG-002 Step 1)
-- `addons/save_game/tests/` — core + facade 헤드리스 테스트
-- `addons/save_game_world_state/world_state_save_section.gd` — `class_name WorldStateSaveSection`
+- `addons/world_core/save_game/save_section.gd` — `class_name SaveSection`(domain-free core)
+- `addons/world_core/save_game/save_game_manager.gd` — `class_name SaveGameManager`(domain-free core)
+- `addons/world_core/save_game/save_flow.gd` — `class_name SaveFlow`(domain-free thin facade, SG-002 Step 1)
+- `addons/world_core/save_game/tests/` — core + facade 헤드리스 테스트
+- `addons/world_core/save_game_world_state/world_state_save_section.gd` — `class_name WorldStateSaveSection`
   (SaveGame ↔ WorldState 통합 adapter)
-- `addons/save_game_world_state/tests/` — 통합 헤드리스 테스트
+- `addons/world_core/save_game_world_state/tests/` — 통합 헤드리스 테스트
 
-interim 위치다. ADR-013은 장기적으로 `addons/world_core/save_game/`와 `addons/world_core/save_game_world_state/`를
-목표로 하지만, path migration은 두 번째 core 소비자 등장 시 별도 Task로 수행한다. core(`save_game/`)는
+ADR-013에 따라 `addons/world_core/save_game/`와 `addons/world_core/save_game_world_state/`로 이동되었다. core(`world_core/save_game/`)는
 domain-free를 유지하고, WorldState 결합은 별도 디렉터리(`save_game_world_state/`)의 adapter에만 격리된다.
 
 ## SaveSection
@@ -206,9 +205,9 @@ domain-free이고, `save_flow.gd`도 정적 가드(`sg002_step1_static_guard_tes
   `delete_slot()`/`list_slots()`(display formatting 없음)/`has_slot()`은 manager 위임.
 - 검증: `sg002_step1_save_flow_test`(A~T 20 시나리오, non-Object provider fail-closed 포함)·
   `sg002_step1_static_guard_test` ALL PASS. **Step 2(통합 usage test, 제품 코드 변경 없음)**:
-  `addons/save_game_world_state/tests/sg002_step2_save_flow_world_state_test`(A~D)로 `SaveFlow`가
+  `addons/world_core/save_game_world_state/tests/sg002_step2_save_flow_world_state_test`(A~D)로 `SaveFlow`가
   `SaveGameManager + WorldStateSaveSection` 조합에서 실제 slot 왕복(타입 보존/SESSION default/metadata
-  merge/manager report passthrough), store·session not-ready capture 실패의 원본 manager report 전달,
+  merge/manager report passthrough), store·session not-ready capture 실패 of 원본 manager report 전달,
   backup recovery report(`recovered_from_backup`/`source`/`restore`) 보존을 검증한다. 회귀 SG-001 step3/4,
   DT-006 step3/4 ALL PASS, `--import` 0 에러. User Guide/README는 Step 3.
 
@@ -225,7 +224,7 @@ contract 문서 + test-only fake host flow다(제품 helper/scene 없음). **SG-
   `recovered_from_backup`/`source`/`restore` 보존, metadata `{}`/unknown/wrong-type fallback + raw 보존.
 - load/delete report는 실패 종류에 따라 키(`slot_id`/`recovered_from_backup`/`source`/`restore`)가 빠질 수
   있으므로 host는 `report.get(key, default)`로 소비한다.
-- 검증: `addons/save_game/tests/sg003_step2_host_flow_test`(테스트 내부 `FakeSaveSlotHostController`,
+- 검증: `addons/world_core/save_game/tests/sg003_step2_host_flow_test`(테스트 내부 `FakeSaveSlotHostController`,
   제품 코드/helper 추가 0)가 실제 `SaveFlow + SaveGameManager` 위에서 list 분류·per-slot 격리·metadata
   fallback·gate fail-closed·save 6키·load recovery·delete refresh를 ALL PASS로 검증한다.
 

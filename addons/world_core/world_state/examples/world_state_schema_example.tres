@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="StateSchema" format=3 uid="uid://urle8xa2dmc"]
+
+[ext_resource type="Script" uid="uid://cou6wwhk8mkcw" path="res://addons/world_core/world_state/state_definition.gd" id="1_gngts"]
+[ext_resource type="Script" uid="uid://m3kqghfe8hu0" path="res://addons/world_core/world_state/state_schema.gd" id="2_nofyg"]
+
+[sub_resource type="Resource" id="Resource_ru0or"]
+script = ExtResource("1_gngts")
+key = &"quest.main.stage"
+value_type = 1
+default_value = 0
+
+[sub_resource type="Resource" id="Resource_tmuyx"]
+script = ExtResource("1_gngts")
+key = &"actor.example.affinity"
+value_type = 1
+default_value = 0
+
+[sub_resource type="Resource" id="Resource_rner3"]
+script = ExtResource("1_gngts")
+key = &"player.health"
+value_type = 2
+default_value = 100.0
+
+[sub_resource type="Resource" id="Resource_kc57x"]
+script = ExtResource("1_gngts")
+key = &"player.display_name"
+value_type = 3
+default_value = ""
+
+[sub_resource type="Resource" id="Resource_kfclw"]
+script = ExtResource("1_gngts")
+key = &"world.build.channel"
+value_type = 4
+default_value = &"dev"
+writable = false
+
+[sub_resource type="Resource" id="Resource_taixi"]
+script = ExtResource("1_gngts")
+key = &"session.intro.seen"
+default_value = false
+lifetime = 1
+
+[resource]
+script = ExtResource("2_nofyg")
+definitions = Array[ExtResource("1_gngts")]([SubResource("Resource_ru0or"), SubResource("Resource_tmuyx"), SubResource("Resource_rner3"), SubResource("Resource_kc57x"), SubResource("Resource_kfclw"), SubResource("Resource_taixi")])

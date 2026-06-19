@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=6 format=3 uid="uid://ta0omslqpm1p"]
 
-[ext_resource type="Script" uid="uid://dvf5d00wm4el5" path="res://addons/dialogtool/Resource/NodeDefinitions/description_def.gd" id="1_a0yul"]
-[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="2_ftmt0"]
-[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/dialogtool/Resource/dialogue_graph_resource.gd" id="3_m40gp"]
+[ext_resource type="Script" uid="uid://dvf5d00wm4el5" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/description_def.gd" id="1_a0yul"]
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="2_ftmt0"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/world_core/dialogtool/Resource/dialogue_graph_resource.gd" id="3_m40gp"]
 
 [sub_resource type="Resource" id="Resource_hsfpo"]
 script = ExtResource("1_a0yul")

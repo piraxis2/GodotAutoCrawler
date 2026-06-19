@@ -9,12 +9,12 @@ updated: 2026-06-11
 ## Agent Brief
 
 - 책임: 대화 그래프 편집, 직렬화, 런타임 실행, UI 표시, 게임 통합
-- 에디터 진입점: `addons/dialogtool/dialoguetool.gd`
-- 그래프 에디터: `addons/dialogtool/Editor/editor.gd`
-- 리소스: `addons/dialogtool/Resource/dialogue_graph_resource.gd`
-- 실행기: `addons/dialogtool/RunTime/dialogue_player.gd`
-- 전역 API: `addons/dialogtool/RunTime/dialogue_manager.gd`
-- UI: `addons/dialogtool/UI/dialogue_ui.gd`
+- 에디터 진입점: `addons/world_core/dialogtool/dialoguetool.gd`
+- 그래프 에디터: `addons/world_core/dialogtool/Editor/editor.gd`
+- 리소스: `addons/world_core/dialogtool/Resource/dialogue_graph_resource.gd`
+- 실행기: `addons/world_core/dialogtool/RunTime/dialogue_player.gd`
+- 전역 API: `addons/world_core/dialogtool/RunTime/dialogue_manager.gd`
+- UI: `addons/world_core/dialogtool/UI/dialogue_ui.gd`
 - 알려진 위험: 편집 데이터와 런타임 스냅샷의 불일치, 포트 순서, 지연 signal, 이전 리소스 호환
 
 ## Layers

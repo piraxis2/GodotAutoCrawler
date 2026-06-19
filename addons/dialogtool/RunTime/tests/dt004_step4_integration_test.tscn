@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://n7p1xbcm3hf1"]
-
-[ext_resource type="Script" path="res://addons/dialogtool/RunTime/tests/dt004_step4_integration_test.gd" id="1"]
-
-[node name="DT004Step4Integration" type="Node"]
-script = ExtResource("1")

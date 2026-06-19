@@ -180,7 +180,7 @@ manager.has_slot(&"slot_1")
 
 ## 7. WorldState 저장 (WorldStateSaveSection)
 
-WorldState SAVE snapshot을 slot에 저장하려면 `WorldStateSaveSection`(`addons/save_game_world_state/`)을
+WorldState SAVE snapshot을 slot에 저장하려면 `WorldStateSaveSection`(`addons/world_core/save_game_world_state/`)을
 등록한다. 이 adapter만 SaveGame과 WorldState 양쪽을 알고, core와 WorldStateRuntime은 서로를 모른다.
 
 ```gdscript
@@ -199,7 +199,7 @@ manager.register_section(ws)
 
 ## 8. SaveFlow facade (SG-002)
 
-`SaveFlow`(`addons/save_game/save_flow.gd`, `class_name SaveFlow extends Node`)는 `SaveGameManager` 위의 얇은
+`SaveFlow`(`addons/world_core/save_game/save_flow.gd`, `class_name SaveFlow extends Node`)는 `SaveGameManager` 위의 얇은
 호출 계층이다. 게임 UI/메뉴/디버그 도구/이벤트 레이어가 envelope/backup 내부 정책을 몰라도 의도 중심 API로
 저장/로드를 호출할 수 있게 한다. **UI는 제공하지 않는다** — raw report만 반환하므로 각 게임이 자기 slot menu를
 만들어 소비한다. core와 동일하게 domain-free다(WorldState/DialogTool 직접 참조 없음).
@@ -314,14 +314,14 @@ thumbnail, localized display text, UI sort label은 SG-002 범위 밖이다.
 
 SaveGame은 플러그인이 autoload를 자동 등록하지 않는다(WorldState와 동일 정책). 호스트가 직접 등록한다.
 
-1. `addons/save_game/`(core)와, WorldState를 저장한다면 `addons/save_game_world_state/`를 프로젝트에 둔다.
+1. `addons/world_core/save_game/`(core)와, WorldState를 저장한다면 `addons/world_core/save_game_world_state/`를 프로젝트에 둔다.
 2. 최초 실행 시 `godot --headless --path <project> --import`로 uid/클래스 캐시를 생성한다.
 3. `SaveGameManager`를 autoload로 등록한다(권장 이름 `SaveGame`). 이름은 `class_name SaveGameManager`와
    달라야 한다(autoload 이름 = class_name이면 "hides an autoload singleton" 파싱 오류).
 
    | 이름 | 경로 |
    | --- | --- |
-   | `SaveGame` | `res://addons/save_game/save_game_manager.gd` |
+   | `SaveGame` | `res://addons/world_core/save_game/save_game_manager.gd` |
 
 4. game-specific section은 host가 배치/등록한다. WorldState를 저장한다면 `WorldStateSaveSection`을
    `SaveGame`에 등록하고, `WorldStateRuntime` autoload가 먼저 ready인지 확인한다([[World-State-User-Guide]] 8절).

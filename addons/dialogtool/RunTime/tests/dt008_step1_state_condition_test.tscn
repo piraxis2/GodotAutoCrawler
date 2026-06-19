@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dt008step1sctest01"]
-
-[ext_resource type="Script" path="res://addons/dialogtool/RunTime/tests/dt008_step1_state_condition_test.gd" id="1"]
-
-[node name="DT008Step1Test" type="Node"]
-script = ExtResource("1")

@@ -28,7 +28,11 @@ updated: 2026-06-11
 ### Editor Addons
 
 - `addons/behaviortree`: C# BehaviorTree 및 에디터
-- `addons/dialogtool`: 대화 그래프 에디터, 런타임, UI, 디버거
+- `addons/world_core/`: WorldCore 우산 패키지
+  - `dialogtool/`: 대화 그래프 에디터, 런타임, UI, 디버거
+  - `world_state/`: World State (코어 + condition)
+  - `save_game/`: Save Game 코어 시스템
+  - `save_game_world_state/`: Save Game ↔ World State 어댑터
 - `addons/devconsole`: 런타임 개발자 콘솔
 
 ## Runtime Flow

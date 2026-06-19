@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="DialogueGraphResource" format=3 uid="uid://cv0vpkp0aor7k"]
 
-[ext_resource type="Script" uid="uid://cg1ti1whyl5sm" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/choice_def.gd" id="1_6y7fw"]
-[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_t0hpo"]
-[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="2_6y7fw"]
-[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="3_ui7pn"]
-[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/dialogtool/Resource/dialogue_graph_resource.gd" id="4_igy2m"]
-[ext_resource type="Script" uid="uid://dvgsv2wrv1p2u" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/portrait_show_def.gd" id="5_ui7pn"]
-[ext_resource type="Script" uid="uid://dt2ufkq0gq5f" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/portrait_hide_def.gd" id="6_igy2m"]
+[ext_resource type="Script" uid="uid://cg1ti1whyl5sm" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/choice_def.gd" id="1_6y7fw"]
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_t0hpo"]
+[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="2_6y7fw"]
+[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="3_ui7pn"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/world_core/dialogtool/Resource/dialogue_graph_resource.gd" id="4_igy2m"]
+[ext_resource type="Script" uid="uid://dvgsv2wrv1p2u" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/portrait_show_def.gd" id="5_ui7pn"]
+[ext_resource type="Script" uid="uid://dt2ufkq0gq5f" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/portrait_hide_def.gd" id="6_igy2m"]
 
 [sub_resource type="Resource" id="Resource_b4ylq"]
 script = ExtResource("2_6y7fw")

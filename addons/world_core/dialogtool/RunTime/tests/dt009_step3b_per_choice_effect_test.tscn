@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dt009step3bchoice01"]
+
+[ext_resource type="Script" path="res://addons/world_core/dialogtool/RunTime/tests/dt009_step3b_per_choice_effect_test.gd" id="1"]
+
+[node name="DT009Step3bTest" type="Node"]
+script = ExtResource("1")

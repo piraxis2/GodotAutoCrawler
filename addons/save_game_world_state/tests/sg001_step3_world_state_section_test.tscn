@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://sg001step3wstest"]
-
-[ext_resource type="Script" path="res://addons/save_game_world_state/tests/sg001_step3_world_state_section_test.gd" id="1"]
-
-[node name="SG001Step3WorldStateSectionTest" type="Node"]
-script = ExtResource("1")

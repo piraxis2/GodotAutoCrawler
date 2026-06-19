@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://sg001step2slottest"]
-
-[ext_resource type="Script" path="res://addons/save_game/tests/sg001_step2_slot_store_test.gd" id="1"]
-
-[node name="SG001Step2SlotStoreTest" type="Node"]
-script = ExtResource("1")

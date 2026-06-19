@@ -43,15 +43,12 @@ updated: 2026-06-18
   문서 + test-only fake host flow까지만, 실제 위젯/theme/localization/input focus는 host 소유),
   autosave/quicksave 구현, thumbnail/capture image, 다세대 백업 history, compression/encryption,
   schema/section version migration registry, Dialogue SaveEffect(저장 트리거는 game/event layer 우선).
-- `addons/world_core/` umbrella 패키징 이동(별도 Task): SaveGame core/통합 adapter/world_state/dialogtool을
-  `addons/world_core/` 하위 sibling으로 `git mv`. ADR-013 migration trigger(두 번째 core 소비자 / 외부 독립
-  배포 / 설치 문서 오해) 충족 시 착수([[ADR-013-WorldCore-Umbrella-Packaging]]). 현재 interim 위치:
-  core=`addons/save_game/`, 통합 adapter=`addons/save_game_world_state/`.
 
 ## Recently Completed
 
 완료 작업의 상세 사실/판정은 Current-State와 각 Review가 보존한다. 여기는 최근 완료 포인터만 둔다.
 
+- **WC-001 WorldCore Umbrella Migration 완료**(Step 1~4, [[WC-001-WorldCore-Umbrella-Migration]] 판정: 완료): `DialogueTool`, `WorldState`, `SaveGame` 및 관련 어댑터 모듈을 `addons/world_core/` 하위 sibling 구조로 안전히 이전하고, 모든 프로젝트 경로 및 리소스 내 구 경로 치환 완료. 18종 WorldState/SaveGame 및 23종 DialogueTool 회귀 테스트 ALL PASS.
 - **DT-014 Say Line Paging UI Regression 완료**(Step 0~2, [[DT-014-Say-Line-Paging-UI-Regression-Review]] 판정: 완료): 실제 UI `Dialogue_UI.tscn` 클릭 경로에서 DT-003 Say 줄 누적 표시 기능의 headless 회귀 검증. 타이핑 효과의 `set_process(false)` 비활성화로 가변 프레임 델타로 인한 비결정성을 근본적으로 제거하였고, Case 6.2 Choice flow 출력 포트 오배선도 수정함.
 - **DT-013 State Read Data 노드 완료**(Step 0~4, [[DT-013-State-Read-Data-Node-Review]] 판정: 완료): 단일 World
   State key 값을 strict typeof로 읽어 Branch/Choice/Expression에 공급하는 `state_read` leaf Data 노드. 주입

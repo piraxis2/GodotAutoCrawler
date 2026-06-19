@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=15 format=3 uid="uid://cab34fpqqegb0"]
 
-[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_ipowr"]
-[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="2_lb6ay"]
-[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="3_c2fou"]
-[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/dialogtool/Resource/dialogue_graph_resource.gd" id="4_88yt2"]
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_ipowr"]
+[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="2_lb6ay"]
+[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="3_c2fou"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/world_core/dialogtool/Resource/dialogue_graph_resource.gd" id="4_88yt2"]
 
 [sub_resource type="Resource" id="Resource_rf3nk"]
 resource_local_to_scene = true

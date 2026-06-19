@@ -221,7 +221,7 @@ print("registered keys: ", schema.keys())
 게임용 Schema는 호스트가 별도로 작성해 이 example을 교체한다(ADR-011 D5).
 
 ```text
-res://addons/dialogtool/examples/world_state_schema_example.tres
+res://addons/world_core/world_state/examples/world_state_schema_example.tres
 ```
 
 bootstrap key는 다음과 같다. 이 목록은 런타임 통합을 증명하는 최소 placeholder이며 제품 상태가
@@ -672,8 +672,8 @@ Schema의 validation 오류를 확인해야 한다.
 통합 기준 테스트:
 
 ```text
-res://addons/dialogtool/world_state/tests/dt005_step6_integration_test.tscn
-res://addons/dialogtool/world_state/tests/dt006_step5_integration_test.tscn
+res://addons/world_core/world_state/tests/dt005_step6_integration_test.tscn
+res://addons/world_core/world_state/tests/dt006_step5_integration_test.tscn
 ```
 
 세부 테스트:
@@ -791,10 +791,10 @@ func check_gate() -> void:
 ### 검증 테스트
 
 ```text
-res://addons/dialogtool/world_state/condition/tests/dt007_step1_validation_test.tscn   # 구조 검증
-res://addons/dialogtool/world_state/condition/tests/dt007_step2_evaluator_test.tscn    # fake provider 평가
-res://addons/dialogtool/world_state/condition/tests/dt007_step3_store_integration_test.tscn # 실제 Store
-res://addons/dialogtool/world_state/condition/tests/dt007_step4_e2e_test.tscn          # .tres+trace e2e
+res://addons/world_core/world_state/condition/tests/dt007_step1_validation_test.tscn   # 구조 검증
+res://addons/world_core/world_state/condition/tests/dt007_step2_evaluator_test.tscn    # fake provider 평가
+res://addons/world_core/world_state/condition/tests/dt007_step3_store_integration_test.tscn # 실제 Store
+res://addons/world_core/world_state/condition/tests/dt007_step4_e2e_test.tscn          # .tres+trace e2e
 ```
 
 ## Related

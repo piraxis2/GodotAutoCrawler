@@ -28,9 +28,9 @@ SoundManager="*res://Assets/Script/gds/sound_manager.gd"
 Test="*res://test.gd"
 PlayerData="*res://Assets/Script/gds/player_data.gd"
 WindowManager="*res://Assets/Script/WindowManager.cs"
-DialogueManager="*res://addons/dialogtool/RunTime/dialogue_manager.gd"
-WorldState="*res://addons/dialogtool/world_state/world_state_store.tscn"
-WorldStateRuntime="*res://addons/dialogtool/world_state/world_state_runtime.gd"
+DialogueManager="*res://addons/world_core/dialogtool/RunTime/dialogue_manager.gd"
+WorldState="*res://addons/world_core/world_state/world_state_store.tscn"
+WorldStateRuntime="*res://addons/world_core/world_state/world_state_runtime.gd"
 DialogueToolUtil="*uid://bg2wpsw3ggue7"
 
 [debug]
@@ -53,4 +53,4 @@ project/assembly_name="AutoCrawler"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/behaviortree/plugin.cfg", "res://addons/devconsole/plugin.cfg", "res://addons/dialogtool/plugin.cfg", "res://addons/godot-vim/plugin.cfg")
+enabled=PackedStringArray("res://addons/behaviortree/plugin.cfg", "res://addons/devconsole/plugin.cfg", "res://addons/world_core/dialogtool/plugin.cfg", "res://addons/godot-vim/plugin.cfg")

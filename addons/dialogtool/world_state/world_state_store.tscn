@@ -1,8 +1,0 @@
-[gd_scene format=3 uid="uid://4rfxlermberk"]
-
-[ext_resource type="Script" uid="uid://cq747dwoyymb" path="res://addons/dialogtool/world_state/world_state_store.gd" id="1"]
-[ext_resource type="Resource" path="res://addons/dialogtool/examples/world_state_schema_example.tres" id="2"]
-
-[node name="WorldStateStore" type="Node" unique_id=2010339340]
-script = ExtResource("1")
-schema = ExtResource("2")

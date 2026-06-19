@@ -39,13 +39,13 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
   `StateSchema.KEY_PATTERN`을 재사용한다([[DT-013-State-Read-Data-Node]], [[ADR-015-State-Read-Data-Node]]).
   아직 없는 것은 실제 SaveGame file/slot 시스템이다.
 
-- `addons/dialogtool/world_state/state_definition.gd` — `StateDefinition` Resource.
+- `addons/world_core/world_state/state_definition.gd` — `StateDefinition` Resource.
   - 필드: `key: StringName`, `value_type`, `default_value: Variant`, `lifetime`,
     `writable: bool`, `description`, `tags: Array[StringName]`.
   - enum: `StateValueType { BOOL, INT, FLOAT, STRING, STRING_NAME }`,
     `StateLifetime { SAVE, SESSION }` (Godot에 전역 enum이 없어 클래스 내부에 둔다).
   - static helper: `builtin_type_for(vt)`, `is_known_value_type(vt)`, `is_known_lifetime(lt)`.
-- `addons/dialogtool/world_state/state_schema.gd` — `StateSchema` Resource.
+- `addons/world_core/world_state/state_schema.gd` — `StateSchema` Resource.
   - 필드: `schema_version: int`, `definitions: Array[StateDefinition]`.
   - `validate() -> { valid, errors[{code,index,key,message}], error_codes[], key_count }`.
   - lookup API: `is_valid()`, `has_key(key)`, `get_definition(key)`, `keys()`, `last_result()`.
@@ -61,9 +61,9 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
   암시적 변환(int->float, String<->StringName, null)을 거부한다.
 - 검출 오류 code: `schema_version_invalid`, `definition_null`, `value_type_invalid`,
   `lifetime_invalid`, `key_empty`, `key_invalid_format`, `key_duplicate`, `default_type_mismatch`.
-- 검증: `addons/dialogtool/world_state/tests/dt005_step1_schema_test.tscn` 헤드리스 테스트가
+- 검증: `addons/world_core/world_state/tests/dt005_step1_schema_test.tscn` 헤드리스 테스트가
   validation 행렬과 `.tres` 저장/재로드 왕복을 확인한다(ALL PASS).
-- `addons/dialogtool/world_state/world_state_store.gd` — `WorldStateStore` (Node).
+- `addons/world_core/world_state/world_state_store.gd` — `WorldStateStore` (Node).
   - `@export var schema: StateSchema`, `initialize() -> bool`, `is_store_ready() -> bool`.
     유효 schema일 때만 ready가 되고 default로 runtime 값을 채운다.
   - 계약 compile: `initialize()`가 타입/default/writable을 private `_contract` map으로 스냅샷하고,
@@ -105,15 +105,15 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
 
 ## Runtime Lifecycle (DT-006 완료)
 
-- `addons/dialogtool/examples/world_state_schema_example.tres` — schema_version 1의 유효한 6-key bootstrap
+- `addons/world_core/world_state/examples/world_state_schema_example.tres` — schema_version 1의 유효한 6-key bootstrap
   예제 Schema(DT-011 Step 3에서 `world_state/world_state_schema.tres`를 이동·개명, uid 보존). 게임 schema는
   호스트가 소유하고 이 example을 자기 것으로 교체한다(ADR-011 D5).
   다섯 value type, SAVE/SESSION lifetime, writable/read-only 계약을 통합 검증하기 위한 최소 집합이며
   제품 quest/actor 계약이 확정되면 확장한다.
 - `project.godot` autoload 순서:
-  1. `WorldState="*res://addons/dialogtool/world_state/world_state_store.tscn"`
-  2. `WorldStateRuntime="*res://addons/dialogtool/world_state/world_state_runtime.gd"`
-- `addons/dialogtool/world_state/world_state_runtime.gd` — lifecycle coordinator.
+  1. `WorldState="*res://addons/world_core/world_state/world_state_store.tscn"`
+  2. `WorldStateRuntime="*res://addons/world_core/world_state/world_state_runtime.gd"`
+- `addons/world_core/world_state/world_state_runtime.gd` — lifecycle coordinator.
   - `_ready()`에서 이미 등록된 `/root/WorldState`를 한 번 해석한다. 테스트에서는 `set_store()`로
     주입할 수 있으며 주입 Store와 autoload를 섞지 않는다.
   - `is_store_ready()`는 Schema/Store 부팅 준비, `is_session_ready()`는 새 게임 또는 load 완료를 뜻한다.
@@ -153,7 +153,7 @@ Store, SAVE/SESSION lifetime + snapshot, atomic mutation batch, Dialogue read pr
 
 ## Condition Model (DT-007 Step 1~4 완료 — [[DT-007-Condition-Review]])
 
-- `addons/dialogtool/world_state/condition/`에 조건 데이터 모델과 구조 검증기가 있다
+- `addons/world_core/world_state/condition/`에 조건 데이터 모델과 구조 검증기가 있다
   ([[DT-007-ConditionSet-ConditionEvaluator]] Step 1, [[ADR-008-Structured-Condition-Evaluation]]).
   - `ConditionClause`(@abstract base), `StateCondition`(leaf: key/operator/expected_value),
     `ConditionGroup`(ALL/ANY/NOT + recursive `Array[ConditionClause]`), `ConditionSet`(top-level asset).

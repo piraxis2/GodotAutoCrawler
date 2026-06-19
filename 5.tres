@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=6 format=3 uid="uid://c3lhe8l5imvy"]
 
-[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_ixbsx"]
-[ext_resource type="Script" uid="uid://dvwqdiyirh54x" path="res://addons/dialogtool/Resource/NodeDefinitions/Data/variable_def.gd" id="2_xlf0g"]
-[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/dialogtool/Resource/dialogue_graph_resource.gd" id="3_ddxxf"]
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_ixbsx"]
+[ext_resource type="Script" uid="uid://dvwqdiyirh54x" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Data/variable_def.gd" id="2_xlf0g"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/world_core/dialogtool/Resource/dialogue_graph_resource.gd" id="3_ddxxf"]
 
 [sub_resource type="Resource" id="Resource_dj215"]
 resource_local_to_scene = true

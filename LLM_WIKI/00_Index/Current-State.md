@@ -33,13 +33,13 @@ updated: 2026-06-18
 ## World State
 
 - 타입 안전 World State 기반 DT-005 Step 1~6이 완료됐다([[DT-005-WorldState-Review]], 판정: 완료).
-- `addons/dialogtool/world_state/`: `StateDefinition`/`StateSchema`(선언·validation·lookup),
+- `addons/world_core/world_state/`: `StateDefinition`/`StateSchema`(선언·validation·lookup),
   `WorldStateStore`(read/write/reset/`value_changed`, SAVE/SESSION lifetime + `reset_lifetime`,
   JSON snapshot export/import replace-load, atomic `apply_batch`, read/mutation provider facade).
 - `DialoguePlayer`는 read 상태 provider를 주입받는다(`DialogueManager`→`DialogueUI`→`DialoguePlayer`).
   `/root`/PlayerData/save를 직접 조회하지 않고 주입 provider로만 상태를 읽는다.
 - 허용 타입은 bool/int/float/String/StringName, snapshot INT는 JSON-safe `±(2^53-1)`로 제한.
-- 헤드리스 테스트 `addons/dialogtool/world_state/tests/dt005_step1~6_*`로 검증(ALL PASS).
+- 헤드리스 테스트 `addons/world_core/world_state/tests/dt005_step1~6_*`로 검증(ALL PASS).
 - 실제 Schema 작성과 Store API 사용법은 [[World-State-User-Guide]]에 정리돼 있다.
 - 런타임 통합 DT-006 Step 0~5 완료([[DT-006-WorldState-Runtime-Review]], 판정: 완료).
   - `WorldState` autoload(`/root/WorldState`): 유효 6-key bootstrap Schema(`world_state_schema.tres`)로
@@ -84,7 +84,7 @@ updated: 2026-06-18
   변경값을 즉시 읽는 흐름, 반복/latest-wins(폐기 provider mutation 0회)/provider 누락/read-only 실패(값 불변+Flow
   계속)/에디터 authored 왕복 실행을 검증. 전체 회귀 matrix 30 scene ALL PASS(DT-004~009), `--import` 0 오류.
 - DT-007 Step 1~4 구현·검증·리뷰 완료([[DT-007-Condition-Review]], 판정: 수정 후 완료).
-  - `addons/dialogtool/world_state/condition/`: `ConditionClause`(@abstract base),
+  - `addons/world_core/world_state/condition/`: `ConditionClause`(@abstract base),
     `StateCondition`(leaf), `ConditionGroup`(ALL/ANY/NOT, recursive `Array[ConditionClause]`),
     `ConditionSet`(top-level asset), `ConditionValidator`(구조 검증), `ConditionEvaluator`(pure-read 평가).
   - Step 1 validator는 iterative DFS로 null/unknown/empty/NOT arity/cycle/alias/depth(64)/node(4096)/key/
@@ -115,7 +115,7 @@ updated: 2026-06-18
     동기 signal listener가 분기를 못 바꾸도록 `passed`를 발행 전에 캡처하고 signal에는 `report.duplicate(true)`
     deep copy를 넘긴다(1차 리뷰 P1 수정). provider 미지정/null·invalid set/missing key/타입 오류는 모두
     false이고 구조 오류는 read_count==0이다.
-  - 헤드리스 `addons/dialogtool/RunTime/tests/dt008_step1_state_condition_test`(15 사례, P1 회귀 O 포함)
+  - 헤드리스 `addons/world_core/dialogtool/RunTime/tests/dt008_step1_state_condition_test`(15 사례, P1 회귀 O 포함)
     ALL PASS.
 - DT-008 Step 2(Editor Authoring and Resource Round-trip) 구현·리뷰 완료(판정: 수정 후 완료).
   - `WorldStateConditionNode`(전용 GraphNode 씬) + `condition_set_picker`(ConditionSet `.tres` 드롭) +
@@ -166,9 +166,9 @@ updated: 2026-06-18
   coordinator 없음). 고정 example schema 한계(게임 schema key 미해결)는 옵션 C로 보완 예정
   ([[DT-010-Dialogue-Debug-WorldState-Preview]]).
 - **DT-010 Step 1 구현·리뷰 완료(판정: 완료).** debug Play 서브프로세스에서 preview WorldState provider를
-  주입하는 코드 경로 추가. 신규 `addons/dialogtool/RunTime/dialogue_debug_preview_provider.gd`
+  주입하는 코드 경로 추가. 신규 `addons/world_core/dialogtool/RunTime/dialogue_debug_preview_provider.gd`
   (`DialogueDebugPreviewProvider.make_preview_store(schema_path)` static helper, ADR-012 D5 = 신규 helper
-  파일 확정)가 `examples/world_state_schema_example.tres`로 preview 전용 `WorldStateStore`를 구성하고,
+  파일 확정)가 `addons/world_core/world_state/examples/world_state_schema_example.tres`로 preview 전용 `WorldStateStore`를 구성하고,
   `DialoguePlayer._ready()` debug 분기가 `start_dialogue` 직전 `_inject_debug_preview_provider()`로 read·
   mutation provider 양쪽에 같은 인스턴스를 주입한다. schema load/타입/init 실패는 `push_error`+null로
   fail-closed(provider 미주입), parse-safe(bare `WorldState` autoload 식별자 0건, `class_name`/string path만).
@@ -199,22 +199,22 @@ updated: 2026-06-18
 - DT-011 Step 0 설계 리뷰 완료(판정: Approved after design fixes,
   [[ADR-011-DialogueWorldState-Addon-Packaging]] accepted). 결합 표면 확정: 제품 코드 결합은 condition
   `class_name` 하나(경로 독립)뿐, mutation/store/runtime은 provider 주입으로 decoupled. 결정: 후보 B
-  (`addons/dialogtool/world_state/` 하위모듈), 런타임 autoload 3종은 호스트 수동 등록(순서 보장),
+  (`addons/world_core/world_state/` 하위모듈), 런타임 autoload 3종은 호스트 수동 등록(순서 보장),
   addon은 example schema만 포함.
 - **DT-011 Step 1 구현 완료 — 리뷰 대기.** WorldState 폐쇄집합(state_definition/state_schema/store
   (.gd/.tscn)/runtime/condition/* + WorldState·Condition tests)을 `git mv`로
-  `Assets/Script/gds/world_state/` → `addons/dialogtool/world_state/`로 **이동**(복사·shim 없음,
+  `Assets/Script/gds/world_state/` → `addons/world_core/world_state/`로 **이동**(복사·shim 없음,
   `.uid` 동반, 원본 디렉터리 제거 확인). path rewrite: `project.godot` autoload 2종, store.tscn/
   schema.tres ext_resource, 이동한 테스트 `.tscn`/`.tres` ext_resource + `.gd` const
   (`SCHEMA_PATH`/`STORE_SCENE`/`RUNTIME_SCRIPT`/`CLAUSE_SCRIPT`), addon dt008_step1/3/5 `SCHEMA_PATH`,
-  `affinity_ge_10.tres`(Step 1 당시 `addons/dialogtool/Test/`, Step 2에서 `examples/`로 이동) condition
+  `affinity_ge_10.tres`(Step 1 당시 `addons/dialogtool/Test/`, Step 2에서 `examples/`를 거쳐, WC-001에서 `addons/world_core/dialogtool/examples/`로 이동) condition
   ext_resource. schema.tres uid
   `uid://urle8xa2dmc` 보존. headless `--import` 0 parse 에러 + class_name 중복 0, 회귀 20 scene
   (DT-005×6, DT-006×5, DT-007×5, DT-008 step1/3/5, DT-009 step4) ALL PASS. 제품 코드/테스트/리소스에
   stale path 0(`.godot`/`.idea` 캐시 제외).
 - **DT-011 Step 2 구현 완료 — 리뷰 대기.** dialogtool path 정규화. addon 테스트 `SCHEMA_PATH`는 Step 1에서
   이미 정규화됐고, 고유 작업은 example ConditionSet 이동: `addons/dialogtool/Test/affinity_ge_10.tres`
-  → `addons/dialogtool/examples/affinity_ge_10.tres`(`git mv`, uid `uid://bwsq70tpasvaw` 보존). 비게 된
+  → `addons/world_core/dialogtool/examples/affinity_ge_10.tres`(`git mv`, uid `uid://bwsq70tpasvaw` 보존). 비게 된
   `Test/` 디렉터리 제거, 루트 샘플 `test.tres`의 ext_resource path 갱신. 파일 내부 condition ext_resource는
   Step 1에서 이미 새 경로. headless `--import` 0 parse 에러, DT-004/008/009 회귀 15 scene
   (DT-004 step1~4+pipeline, DT-008 step1~5+spike, DT-009 step2/3/3b/4) ALL PASS.
@@ -223,13 +223,13 @@ updated: 2026-06-18
   보존), store.tscn + 테스트 6개 `SCHEMA_PATH` 재작성. store.tscn이 example을 가리켜 out-of-box 부팅 유지,
   게임 schema는 호스트가 교체(ADR-011 D5). (2) sample dialogue: 루트 `test.tres` 채택 →
   `examples/sample_dialogues/sample_world_state_dialogue.tres`(state_condition 분기 + state_add(+50 affinity)
-  데모, example schema·ConditionSet 소비). (3) `addons/dialogtool/README.md` 신규: 설치(autoload 순서
+  데모, example schema·ConditionSet 소비). (3) `addons/world_core/dialogtool/README.md` 신규: 설치(autoload 순서
   DialogueManager→WorldState→WorldStateRuntime, DialogueToolUtil은 플러그인 자동등록)·게임 schema 교체·기존
   프로젝트 마이그레이션 문서. headless `--import` 0 parse 에러, 명시적 load check(sample 8 nodes/schema
   valid 6 keys/ConditionSet ok) + schema 의존 회귀 8 scene ALL PASS.
 - **DT-011 Step 4 구현·최종 리뷰 완료(판정: 완료, 제품 코드 변경 없음).** 통합 matrix + 수용 검증. 전체 DT-004~009
   **32/32 scene ALL PASS** + `--import` 0 parse 에러(stale 경로 0, `.godot`/`.idea` 캐시 제외). **Fresh-project
-  수용 테스트**: 임시 빈 프로젝트에 `addons/dialogtool/`만 복사+autoload 등록+plugin enable → `--import` 0 에러
+  수용 테스트**: 임시 빈 프로젝트에 `addons/world_core/dialogtool/`만 복사+autoload 등록+plugin enable → `--import` 0 에러
   → 수용 회귀 7/7 PASS(autoload boot, ConditionSet 분기, StateAdd/Set, Choice→state_add→Branch 전체 경로) →
   검증 후 삭제. autoload 실패 시나리오 크래시 0(잘못된 순서도 Godot 4.6.3 batch _ready로 store 해석됨, WorldState
   누락 시 graceful not-ready, provider_missing fail-closed). **발견**: `dialogue_player/manager.gd`가
@@ -244,7 +244,7 @@ updated: 2026-06-18
   노드 폭이 폭주하지 않도록 잘림+tooltip으로 처리한다. inline ConditionSet tree editor, schema-aware picker,
   trace inspector는 후속 범위로 둔다([[DT-012-Condition-Authoring-UX]]).
 - **DT-012 Step 1(Condition Summary Formatter) 구현·리뷰 완료(판정: 수정 후 완료).** provider-free helper
-  `ConditionSummary`(`addons/dialogtool/world_state/condition/condition_summary.gd`)를 추가했다.
+  `ConditionSummary`(`addons/world_core/world_state/condition/condition_summary.gd`)를 추가했다.
   public/static `ConditionSummary.summarize(condition_set, options := {}) -> Dictionary`,
   반환 `{ valid, summary, full_summary, tooltip, error_codes, errors }`. validate-first로
   `ConditionValidator.validate`를 먼저 호출하고 null/invalid면 트리를 순회하지 않는다(`condition_set==null`
@@ -337,7 +337,7 @@ updated: 2026-06-18
 - **SG-001 SaveGame Core 완료**(Step 0~5; Step 1~4 수정 후 완료, Step 5 문서 완료 —
   [[SG-001-SaveGame-Core-Section-System-Review]], 사용법 [[SaveGame-User-Guide]],
   [[SaveGame-System]], [[ADR-013-WorldCore-Umbrella-Packaging]]).
-- `addons/save_game/`(interim 위치, dialogtool/world_state와 분리, world_core migration 미수행):
+- `addons/world_core/save_game/`(dialogtool/world_state와 분리, SaveGame Core):
   `SaveSection`(Node base: section_id/section_version/restore_order/required + capture/validate/restore_save
   보고형 override)와 `SaveGameManager`(명시 `register_section` 1순위 + 보조 `discover_sections` subtree/group
   helper, deterministic ordering=restore_order→id lexical, `capture_all`/`validate_envelope`/`restore_all`,
@@ -358,7 +358,7 @@ updated: 2026-06-18
   인스턴스 `JSON.parse()`로 엔진 로그 오염 없이 조용히 실패, list_slots는 구조 손상(metadata 비-Dictionary 등)도
   corrupt로 격리. backup(.bak)은 Step 4.
 - core는 WorldState/DialogTool을 직접 참조하지 않는다(정적 가드 테스트로 보존). WorldState 통합은 별도
-  `addons/save_game_world_state/world_state_save_section.gd`(`class_name WorldStateSaveSection extends SaveSection`,
+  `addons/world_core/save_game_world_state/world_state_save_section.gd`(`class_name WorldStateSaveSection extends SaveSection`,
   Step 3)에만 격리: `section_id=&"world_state"`, NodePath/주입으로 `WorldStateRuntime` duck-type 호출
   (capture는 store+session ready 선확인, validate=`peek_world_state_compatibility`, restore=`restore_world_state`).
   int/float·String↔StringName 정규화는 Store `import_snapshot`이 처리(adapter 무정규화). `WorldStateRuntime`에
@@ -377,7 +377,7 @@ updated: 2026-06-18
   metadata provider(base) + caller metadata override, optional save gate provider다. gate 오류 fail-closed,
   `list_slots()` manager unavailable 단일 실패 entry shape, `save_flow.gd` domain-free 정적 가드가 Step 1
   요구사항에 포함됐다.
-- **SG-002 Step 1(SaveFlow Core) 구현 완료 — 리뷰 대기.** `addons/save_game/save_flow.gd`
+- **SG-002 Step 1(SaveFlow Core) 구현 완료 — 리뷰 대기.** `addons/world_core/save_game/save_flow.gd`
   (`class_name SaveFlow extends Node`) 추가. manager를 소유하지 않고 호출마다 lazy resolve(주입 우선 →
   `manager_path` 기본 `/root/SaveGame`, 매번 `is_instance_valid`+`is SaveGameManager` 재확인, 미해석 시
   일반 report `manager_unavailable` / `list_slots()`만 단일 실패 entry `{ ok:false, slot_id:&"", error:&"manager_unavailable" }` /
@@ -395,18 +395,18 @@ updated: 2026-06-18
   저장 변수·`_provider_usable`을 Variant 경계로 열고 검사 순서를 `null→non-Object→freed→method`로 재정렬해
   non-Object provider도 타입 오류 없이 unavailable로 fail-closed(D2/I2 회귀 추가).
 - **SG-002 Step 2(WorldState Integration Usage Test) 구현 완료 — 리뷰 대기. 제품 코드 변경 없음(통합 테스트만).**
-  `addons/save_game_world_state/tests/sg002_step2_save_flow_world_state_test`(A~D): `SaveFlow`를
+  `addons/world_core/save_game_world_state/tests/sg002_step2_save_flow_world_state_test`(A~D): `SaveFlow`를
   `SaveGameManager + WorldStateSaveSection`에 주입해 (A) store/session ready 시 `save_manual` 성공 + `load_manual`
   SAVE snapshot 파일 왕복(타입 보존, SESSION default, metadata provider+caller override merge, manager report
   passthrough), (B) store not-ready / (C) session not-ready capture 실패가 manager `capture_failed` +
   `section_reason` 원본으로 전달·파일 미작성, (D) `.bak` 회전 후 primary 제거 시 `load_manual`이
   `recovered_from_backup=true`/`source=&"backup"`/`restore`를 손실 없이 전달하고 bak 값으로 복원됨을 검증.
   ALL PASS, 실제 SCRIPT ERROR 0. 회귀: SG-001 step3/4, DT-006 step3/4, SG-002 step1 ALL PASS, `--import` 0 에러.
-  도메인 결합 테스트라 `addons/save_game/tests/`(domain-free)가 아닌 `addons/save_game_world_state/tests/`에 둠.
+  도메인 결합 테스트라 `addons/world_core/save_game/tests/`(domain-free)가 아닌 `addons/world_core/save_game_world_state/tests/`에 둠.
 - **SG-002 Step 3(Documentation and Completion Review) 완료 — SG-002 전체 완료**(제품 코드 변경 없음). 문서:
   [[SaveGame-User-Guide]] §8 "SaveFlow facade" 신규(manager 해석/metadata provider/save gate/save_manual 6키
   shape/권장 metadata key/UI raw report 소비 가이드)·§9 설치에 SaveFlow autoload·§10 reason 표에 facade reason 추가,
-  `addons/save_game/README.md` "SaveFlow facade" 절, [[SaveGame-System]] 현재 사실 갱신. 완료 리뷰
+  `addons/world_core/save_game/README.md` "SaveFlow facade" 절, [[SaveGame-System]] 현재 사실 갱신. 완료 리뷰
   [[SG-002-SaveFlow-Facade-Metadata-Provider-Review]] **판정: 완료**(Step 1~3 완료 조건 충족, Step 1 [P2]
   non-Object fail-closed 수정 확인, P0/P1 없음). 최종 검증 매트릭스 10/10 GREEN(SG-002 step1/step2, SG-001
   step1~4, DT-006 step3/4), 실제 SCRIPT ERROR 0, `--import` 0 에러. 후속(실제 save UI, autosave/quicksave,
@@ -419,14 +419,14 @@ updated: 2026-06-18
   Step 2 테스트 조건에 추가했다.
 - **SG-003 Step 1(Host Integration Guide) 구현 완료 — 리뷰 대기. 문서 전용(제품 코드 변경 없음).**
   [[SaveGame-User-Guide]] §12 "Host Save Slot UI Integration" 신규(slot list 분류, manual save/load/delete flow,
-  metadata fallback, list/save/load/delete report consumption matrix, 검증 경계)와 `addons/save_game/README.md`
+  metadata fallback, list/save/load/delete report consumption matrix, 검증 경계)와 `addons/world_core/save_game/README.md`
   host UI 통합 요약 추가. 실제 `SaveFlow`/`SaveGameManager` report shape와 대조해 작성: whole-list
   `manager_unavailable` vs non-empty `slot_id` per-slot `parse_error`/`corrupt`, save 6키 shape + provider/gate
   fail-closed(미저장), load report 키가 실패 종류별로 다름(`recovered_from_backup`/`source`/`restore`/`slot_id`
   일부 누락 → `report.get` 소비), delete primary+`.bak` 동시 제거. `rg`로 핵심 용어 반영 확인,
   `git diff` 제품 코드 0. Godot headless는 문서 전용 Step이라 미실행. 다음은 Step 2 Reference Host Flow Test.
 - **SG-003 Step 2(Reference Host Flow Test) 구현·검증 완료 — 리뷰 대기. 제품 코드/helper 추가 없음(테스트 전용).**
-  `addons/save_game/tests/sg003_step2_host_flow_test.gd`/`.tscn` 신규. 테스트 파일 내부 test-only
+  `addons/world_core/save_game/tests/sg003_step2_host_flow_test.gd`/`.tscn` 신규. 테스트 파일 내부 test-only
   `FakeSaveSlotHostController`(`extends RefCounted`, public API 아님)가 §12 host contract 상태 모델
   (`list_state`/`slot_cards`/`selected_slot_id`/`can_save_state`/`last_action`)을 흉내 내고, 실제
   `SaveFlow + SaveGameManager`(+`SpyManager` save 호출 카운트, duck-type gate provider)로 검증한다. 헤드리스

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ConditionSet" format=3 uid="uid://bwsq70tpasvaw"]
+
+[ext_resource type="Script" uid="uid://dk7y3scet8t3l" path="res://addons/world_core/world_state/condition/condition_set.gd" id="1_2i8rv"]
+[ext_resource type="Script" uid="uid://wia3owmi58vi" path="res://addons/world_core/world_state/condition/state_condition.gd" id="1_32046"]
+
+[sub_resource type="Resource" id="Resource_jt1kl"]
+script = ExtResource("1_32046")
+key = &"actor.example.affinity"
+operator = 5
+expected_value = 10
+metadata/_custom_type_script = "uid://wia3owmi58vi"
+
+[resource]
+script = ExtResource("1_2i8rv")
+root = SubResource("Resource_jt1kl")
+metadata/_custom_type_script = "uid://dk7y3scet8t3l"

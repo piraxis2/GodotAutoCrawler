@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://sg001step1coretest"]
-
-[ext_resource type="Script" path="res://addons/save_game/tests/sg001_step1_core_test.gd" id="1"]
-
-[node name="SG001Step1CoreTest" type="Node"]
-script = ExtResource("1")

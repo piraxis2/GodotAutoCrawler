@@ -172,7 +172,7 @@ updated: 2026-06-16
 
 ### Project Integration Dependency
 
-- `state_condition` Dialogue Data 노드는 현재 `addons/dialogtool/world_state/condition/`에 있는
+- `state_condition` Dialogue Data 노드는 현재 `addons/world_core/world_state/condition/`에 있는
   `ConditionSet`과 `ConditionEvaluator`를 직접 사용한다(`class_name` 참조 — 경로 독립).
 - `state_set`/`state_add` Dialogue Effect 노드는 `WorldStateStore` mutation provider 계약
   (`apply_state_batch`, `add_state`)을 소비한다.
@@ -183,8 +183,8 @@ updated: 2026-06-16
   ([[ADR-009-State-Condition-Dialogue-Consumption]], [[ADR-010-State-Mutation-Dialogue-Effects]]).
 - **DT-011 패키징(완료, [[ADR-011-DialogueWorldState-Addon-Packaging]],
   [[DT-011-DialogueWorldState-Addon-Packaging-Review]]):** 이 의존을 깨지지 않게
-  하려고 World State 폐쇄집합(코어/condition/store/runtime)을 `addons/dialogtool/world_state/`
-  하위모듈로 **이동 완료**했다(후보 B). 이제 `addons/dialogtool/`만 복사하면 World State 코드가 함께 따라온다.
+  하려고 World State 폐쇄집합(코어/condition/store/runtime)을 `addons/world_core/world_state/`
+  하위모듈로 **이동 완료**했다(후보 B). 이제 `addons/world_core/dialogtool/`만 복사하면 World State 코드가 함께 따라온다.
   DialogueTool과 World State를 **별도** 독립 addon으로 쪼개 배포하는 것은 목표가 아니다(둘을 한 폴더로 함께
   배포). 게임 schema/save는 호스트 소유이며, addon은 `examples/world_state_schema_example.tres`,
   `examples/affinity_ge_10.tres`, sample dialogue와 설치/마이그레이션 README를 포함한다.
