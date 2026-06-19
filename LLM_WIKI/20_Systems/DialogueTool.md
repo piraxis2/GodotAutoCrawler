@@ -2,7 +2,7 @@
 type: system
 system: DialogueTool
 status: active
-updated: 2026-06-16
+updated: 2026-06-19
 ---
 
 # DialogueTool
@@ -158,6 +158,13 @@ updated: 2026-06-16
 - Portrait/State mutation이 아닌 Effect 대상과 Effect 순환은 저장을 중단한다.
 - 치명적 연결 오류에는 node id, runtime type, output/input port를 표시한다.
 - 도달 불가능한 Flow와 Start의 연결 누락은 warning이다.
+
+## Regression & Integration Testing (DT-015)
+
+- **Canonical Integrated Regression Graph:** `Start + Say + Choice + Variable + Expression + Branch + End` 조합을 한 리소스 안에서 검증하는 통합 회귀 검증이 자동화되어 있다.
+- **테스트 커버리지:**
+  - `dt015_step1_integrated_graph_test`: in-memory 및 임시 `.tres` 저장/재로드(cache-ignore) 환경에서 Strong/Weak/Leave 3가지 경로(각각 true branch, false branch, branch 우회 직결) 실행과, 입력 포트 미연결 시 error-dominance fail-closed를 검증한다.
+  - `dt015_step2_editor_authored_roundtrip_test`: 실제 `dialoguetool_main.tscn` 에디터 씬 상에서 노드를 배치 및 포트 연결하여 캡처(`capture_current_graphedit`)하고, 저장 및 재로드한 뒤 3개 경로를 런타임 e2e 실행하여 동일한 출력을 내는지 검증한다.
 
 ## Extension Rules
 

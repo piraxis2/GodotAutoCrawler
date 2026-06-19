@@ -1,7 +1,7 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-06-18
+updated: 2026-06-19
 ---
 
 # Open Tasks
@@ -9,7 +9,7 @@ updated: 2026-06-18
 ## Next
 
 
-- Dialogue 통합 회귀 그래프 작성: Start, Say, Choice, Expression, Branch, End를 한 리소스에서 검증한다.
+
 - DialogueManager 반복 실행/교체/연속 실행 테스트를 자동화한다.
 
 ## Later
@@ -48,6 +48,7 @@ updated: 2026-06-18
 
 완료 작업의 상세 사실/판정은 Current-State와 각 Review가 보존한다. 여기는 최근 완료 포인터만 둔다.
 
+- **DT-015 Dialogue Integrated Regression Graph 완료**(Step 1~2, [[DT-015-Dialogue-Integrated-Regression-Graph-Review]] 판정: 완료): DialogueTool의 기본 대화 조합을 검증하는 canonical regression graph를 작성하고 Step 1(Runtime) 및 Step 2(Editor authored round-trip) 검증을 완료함.
 - **WC-001 WorldCore Umbrella Migration 완료**(Step 1~4, [[WC-001-WorldCore-Umbrella-Migration]] 판정: 완료): `DialogueTool`, `WorldState`, `SaveGame` 및 관련 어댑터 모듈을 `addons/world_core/` 하위 sibling 구조로 안전히 이전하고, 모든 프로젝트 경로 및 리소스 내 구 경로 치환 완료. 18종 WorldState/SaveGame 및 23종 DialogueTool 회귀 테스트 ALL PASS.
 - **DT-014 Say Line Paging UI Regression 완료**(Step 0~2, [[DT-014-Say-Line-Paging-UI-Regression-Review]] 판정: 완료): 실제 UI `Dialogue_UI.tscn` 클릭 경로에서 DT-003 Say 줄 누적 표시 기능의 headless 회귀 검증. 타이핑 효과의 `set_process(false)` 비활성화로 가변 프레임 델타로 인한 비결정성을 근본적으로 제거하였고, Case 6.2 Choice flow 출력 포트 오배선도 수정함.
 - **DT-013 State Read Data 노드 완료**(Step 0~4, [[DT-013-State-Read-Data-Node-Review]] 판정: 완료): 단일 World

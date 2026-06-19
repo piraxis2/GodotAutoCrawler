@@ -331,6 +331,12 @@ updated: 2026-06-18
   매트릭스 11/11 GREEN(DT-013 step1/2/3, DT-008 step1/4/5, DT-009 step2/4, DT-010 step1/3, DT-012 step2), 실제
   `SCRIPT ERROR:` 0건, `--import` 0 parse error. 남은 후속은 노드 display name/alias 시스템(Step 2 P3 수용,
   "WorldStateRead" → "State Read" 표시 — [[Open-Tasks]] Later)뿐이다.
+- **DT-015 Dialogue Integrated Regression Graph 완료(판정: 완료):**
+  `Start + Say + Choice + Variable + Expression + Branch + End` 조합을 한 리소스 안에서 검증하는 headless Step 1 테스트(`dt015_step1_integrated_graph_test`) 및 에디터 노드 구성 및 캡처, round-trip을 검증하는 Step 2 테스트(`dt015_step2_editor_authored_roundtrip_test`)를 추가했다.
+  수동 advance와 select_choice를 사용해 Strong/Weak/Leave 3가지 선택 경로의 Say sequence 및 End 도달을 성공적으로 검증했고, 임시 `.tres` 저장/재로드 후 Choice 포트 배선과 Leave 경로의 Branch 우회 여부, 그리고 reloaded 리소스를 이용한 3개 경로 재수행을 완벽히 단언했다.
+  또한, Expression 입력 미연결 시 `errored` 전파로 인해 Branch가 Godot Expression ERROR 로그는 발생하지만 SCRIPT ERROR 없이 graceful하게 false 분기(`Strong fail`)로 fail-closed됨을 검증했다.
+  에디터 authored Expression의 자동 변수명 `A` 및 Choice 리스트, 포트 연결 정보 보존을 단언하고 런타임 e2e 실행을 완벽히 매칭했다.
+  테스트 100% 통과(ALL PASS, SCRIPT ERROR 0) 및 지정 회귀(`dt008_step1_state_condition_test`, `dt014_step1_say_paging_ui_test`)의 무회귀 통과를 확인했다.
 
 ## SaveGame
 
@@ -456,7 +462,7 @@ updated: 2026-06-18
     speaker 기반 자동 선택. [[Open-Tasks]] 참고.
 - Autoload와 SceneFunction의 안전한 런타임 평가/부작용 정책은 미완성이다.
 - DialogueTool 헤드리스 자동 테스트가 고정됐다(`dt004_step1~4`+integration). World State는
-  `dt005_step1~6`로 통합 매트릭스까지 검증된다. 별도의 에디터-저장 기반 통합 회귀 .tres 샘플은 아직 없다.
+  `dt005_step1~6`로 통합 매트릭스까지 검증된다. 영구적인 .tres 파일 형태의 에디터-저장 기반 통합 회귀 샘플은 없으나, DT-015 작업을 통해 임시 .tres 생성 및 에디터-저장 round-trip과 런타임 e2e 실행을 자동 검증하는 헤드리스 테스트(`dt015_step2_editor_authored_roundtrip_test`)가 구축되어 있다.
 
 - **DT-014 Say 줄 누적 표시 기능 구현·검증 완료(판정: 완료).**
   - [[DT-014-Say-Line-Paging-UI-Regression-Review]] (판정: Rework 완료). 타이밍 의존성을 제거한
