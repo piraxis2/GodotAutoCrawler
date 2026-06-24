@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree;
@@ -52,6 +52,12 @@ public abstract partial class BehaviorTree_Node : Node
         }
         _elapsedTime = (long)(_elapsedTime + delta);
         _status = OnBehave(delta, owner);
+        
+        if (Tree != null && Tree.DebugEnabled)
+        {
+            string relativePath = Tree.GetPathTo(this).ToString();
+            Tree.ReportNodeExecution(relativePath, Name.ToString(), GetType().Name, _status, _elapsedTime);
+        }
         
 #if TOOLS
         Util.BehaviorLog behaviorLog = new Util.BehaviorLog

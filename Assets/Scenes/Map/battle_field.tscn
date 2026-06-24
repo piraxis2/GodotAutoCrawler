@@ -305,7 +305,6 @@ ArticleStatus = SubResource("Resource_8ious")
 [node name="TurnHelper" type="Node" parent="." unique_id=1463199549 node_paths=PackedStringArray("_articlesContainer")]
 script = ExtResource("1_25g81")
 _articlesContainer = NodePath("../Articles")
-Speed = 5.0
 
 [node name="InputHelper" type="Node" parent="." unique_id=83738491]
 script = ExtResource("19_fajhp")

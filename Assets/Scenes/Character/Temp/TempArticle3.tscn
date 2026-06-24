@@ -1,4 +1,4 @@
-[gd_scene load_steps=83 format=3 uid="uid://cbtoxh6imusjm"]
+[gd_scene format=3 uid="uid://cbtoxh6imusjm"]
 
 [ext_resource type="Script" uid="uid://dfo7fcc4ivngo" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_x3swm"]
 [ext_resource type="Script" uid="uid://dt641onuentr8" path="res://Assets/Script/Article/Status/Element/StatusElement.cs" id="2_y7hsj"]
@@ -705,15 +705,15 @@ script = ExtResource("16_y7hsj")
 _maxDamage = 150
 metadata/_custom_type_script = "uid://x5t3hrh74wu7"
 
-[node name="Character" type="Node2D"]
+[node name="Character" type="Node2D" unique_id=244761795]
 script = ExtResource("1_x3swm")
 ArticleStatus = SubResource("Resource_7e21v")
 
-[node name="AnimationTree" type="AnimationTree" parent="."]
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=1528334393]
 tree_root = SubResource("AnimationNodeBlendSpace2D_fwt52")
 parameters/blend_position = Vector2(-0.00198412, 0.0163934)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=428910253]
 texture_filter = 1
 material = ExtResource("9_fnr2j")
 sprite_frames = SubResource("SpriteFrames_ovkpk")
@@ -722,30 +722,32 @@ speed_scale = 2.0
 offset = Vector2(0, -6)
 script = ExtResource("10_wtn77")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="AnimatedSprite2D"]
-libraries = {
-&"": SubResource("AnimationLibrary_hfvbi")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="AnimatedSprite2D" unique_id=1444418918]
+libraries/ = SubResource("AnimationLibrary_hfvbi")
 
-[node name="BehaviorTree" type="Node" parent="."]
+[node name="BehaviorTree" type="Node" parent="." unique_id=995280640]
 script = ExtResource("10_0m0e6")
 
-[node name="BehaviorTree_Selector_Root" type="Node" parent="BehaviorTree"]
+[node name="BehaviorTree_Selector_Root" type="Node" parent="BehaviorTree" unique_id=418451175]
 script = ExtResource("11_mm1bq")
+metadata/bt_graph_position = Vector2(400, 50)
 
-[node name="BehaviorTree_FIndOpponent" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
+[node name="BehaviorTree_FIndOpponent" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root" unique_id=158771126]
 script = ExtResource("12_v8t08")
+metadata/bt_graph_position = Vector2(270, 230)
 
-[node name="BehaviorTree_MultipleMove" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent"]
+[node name="BehaviorTree_MultipleMove" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root/BehaviorTree_FIndOpponent" unique_id=1347152107]
 script = ExtResource("13_ad5g1")
+metadata/bt_graph_position = Vector2(400, 410)
 
-[node name="BehaviorTree_TurnAction(MagicBolt)" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
+[node name="BehaviorTree_TurnAction(MagicBolt)" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root" unique_id=1166640272]
 script = ExtResource("14_45j83")
 TurnAction = SubResource("Resource_7jual")
+metadata/bt_graph_position = Vector2(530, 230)
 
-[node name="HealthBar" parent="." instance=ExtResource("16_2sfhm")]
+[node name="HealthBar" parent="." unique_id=1738088231 instance=ExtResource("16_2sfhm")]
 offset_top = -22.0
 offset_bottom = -20.0
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=2034223006]
 pitch_scale = 0.95

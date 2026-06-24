@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-06-19
+updated: 2026-06-20
 ---
 
 # Current State
@@ -401,6 +401,8 @@ updated: 2026-06-19
   metadata provider(base) + caller metadata override, optional save gate provider다. gate 오류 fail-closed,
   `list_slots()` manager unavailable 단일 실패 entry shape, `save_flow.gd` domain-free 정적 가드가 Step 1
   요구사항에 포함됐다.
+  - **[DebuggerTree.cs](file:///f:/beestation/GodotAutoCrawler/addons/behaviortree/debugger/DebuggerTree.cs)**: 시나리오 D(노드 삭제/씬 교체) 중 발생하던 freed 인스턴스 접근 및 `Root == null` 크래시(NullReferenceException) 조치 완료.
+  - **[BehaviorTreeValidationTest.cs](file:///f:/beestation/GodotAutoCrawler/addons/behaviortree/tests/BehaviorTreeValidationTest.cs)** / **[bt_validation_test.tscn](file:///f:/beestation/GodotAutoCrawler/addons/behaviortree/tests/bt_validation_test.tscn)**: C# 헤드리스 단위 테스트(6개 위반 사례 검증) 성공 확인.
 - **SG-002 Step 1(SaveFlow Core) 구현 완료 — 리뷰 대기.** `addons/world_core/save_game/save_flow.gd`
   (`class_name SaveFlow extends Node`) 추가. manager를 소유하지 않고 호출마다 lazy resolve(주입 우선 →
   `manager_path` 기본 `/root/SaveGame`, 매번 `is_instance_valid`+`is SaveGameManager` 재확인, 미해석 시
@@ -508,6 +510,53 @@ updated: 2026-06-19
     헤드리스 5개 테스트(`dt004_step1~4_*`)로 검증했다. P0/P1 없음([[DT-004-Effect-Flow-Review]]).
 - Definition이 Adapter 조회를 중계하는 점진적 호환 계층이 남아 있다.
 - 전투 시스템에는 게임오버 후속 처리와 일부 null 방어 과제가 남아 있다.
+
+## BehaviorTree
+
+- **BT-001 Step 1: Read-only Graph Viewer 구현 완료 (판정: 완료)**
+  - 에디터 내 Inspector에서 `🌵 Open Behavior Tree Editor` 버튼을 복구하여 BehaviorTree 및 BT node 선택 시 디버거 윈도우를 열 수 있는 진입점을 마련함.
+  - 디버거 윈도우에 `HSplitContainer`를 배치하여 좌측에는 기존 `DebuggerTree`(Tree 위젯), 우측에는 새로 구현한 GraphEdit 기반 `BehaviorTreeGraphView`를 동시에 표시함.
+  - raw `GetChildren()` 필터링 방식으로 노드 트리를 탐색해 parent-child 관계를 GraphEdit connection으로 렌더링하고, sibling order를 노드 내부에 시각화함.
+  - Composite, Decorator, Action 노드의 스타일에 시각적 차이를 두고(포트 색상 및 헤더/모듈레이트 색상), 너비 우선 계층 배치 알고리즘(Auto-layout)을 적용해 노드 겹침을 방지함.
+  - `BehaviorTreeValidation.cs`를 구현하여 루트 부재, 루트 타입 위반, Decorator 자식 초과, Action 자식 존재, RatingSelector의 비-RatingDecorator 자식 경고 등의 구조적 유효성을 분석하고 노드 내에 상세 Reason을 노출함.
+  - C# 헤드리스 테스트(`BehaviorTreeValidationTest.cs` + `bt_validation_test.tscn`)를 통해 6가지 유효성 위반 시나리오에 대해 에러 식별 동작을 완벽히 단언(ALL PASS)하고 regression이 없음을 확인.
+- **BT-001 Step 2: Basic Authoring 구현 완료 (판정: 완료)**
+  - GraphEdit 상에서 노드 생성/삭제, 연결/해제 및 Sibling Order 이동 조작을 지원하고 씬 트리에 실시간 반영하여 씬 저장 시 영구 보존되도록 구현함.
+  - **연결선 차단 규칙**: `connection_request` 시점에 Decorator 자식 1개 제한, Action 자식 연결 금지, Cycle 순환 참조 차단, 다중 부모(Multiple parents) 차단을 사전에 검증하여 잘못된 조작을 사전 차단함.
+  - **컨텍스트 메뉴**: GraphEdit 빈 공간 우클릭 시 PopupMenu를 띄워 Selector, Sequence, RatingSelector 및 프로젝트 C# 스크립트 노드를 생성할 수 있는 메뉴를 제공하며, 마우스 클릭 오프셋 위치를 노드 좌표 메타데이터(`bt_graph_position`)에 영구 반영함.
+  - **노드 삭제 및 자식 구출**: GraphNode 내 `✕` 삭제 버튼 클릭 시 노드를 삭제하되, 산하의 자식 서브트리가 함께 파괴되는 것을 방지하기 위해 자식 노드들을 `BehaviorTree` 루트의 독립된 자식 노드로 분리 reparent(구출)한 뒤 삭제하도록 안전 장치를 탑재함.
+  - **실행 순서 Up/Down 버튼**: GraphNode 내 `▲`, `▼` 버튼을 탑재하여 부모 내에서의 Sibling 인덱스 순서(`MoveChild`)를 갱신하고 `Order: N` 라벨에 실시간 스왑 반영함.
+  - **잔여 항목 개선**: `NoRoot` 경고 등급에 맞춰 empty-state 노드의 modulate 색상을 Gold(Warning)로 변경하고, `BehaviorInspectorPlugin` 내의 사용하지 않는 `_node` 멤버 변수를 완전히 제거함.
+- **BT-001 Step 3: Inspector 연동 및 설정 UX 구현 완료 (판정: 완료)**
+  - **Inspector 연동 (Step 3)**: GraphEdit 상에서 노드 선택 시 `EditorInterface.Singleton.EditNode(node)`를 호출하여 Godot 메인 인스펙터 뷰에 속성이 즉시 연동되도록 구현함. 노드 이름 변경 시 `Renamed` 시그널로 그래프를 실시간 갱신하며, 노드 이동/추가/삭제/연결/해제 시 `MarkSceneAsUnsaved()`를 명시적으로 호출해 변경 정보(`bt_graph_position` 메타데이터)가 디스크에 유실 없이 저장(`Ctrl+S`)되도록 보장함.
+  - **직렬화 문제 해결**: `TempArticle3.tscn`이 에디터 버전 드리프트로 인해 광범위하게 재직렬화되었던 오류(P1-1)를 씬 revert 후 메타데이터(`bt_graph_position`) 필드만 선택적으로 정규화 이식하는 방식으로 해결하여 포맷 드리프트를 완전히 제거함.
+- **BT-001 Step 4a: Remote Debug Channel + Gating + Discovery 구현 완료 (판정: 완료)**
+  - **Dispatcher 및 Registry**: `BehaviorTree` play `_Ready()` 시 registry 등록 및 `register` 알림 송신, `_ExitTree()` 시 `unregister` 및 registry 해제를 통해 active-debugger play discovery 목록을 지원하도록 구현함. 첫 `BehaviorTree` ready 시 `RegisterMessageCapture` dispatcher를 1회만 등록함.
+  - **Gating 및 Zero Allocation**: 에디터의 `start` / `stop` 신호에 따라 해당 `BehaviorTree` 인스턴스의 `DebugEnabled` 값을 켜고 끄며, 게이트가 비활성화된 경우 `BehaviorTree_Node.Behave()` 게이트가 조기에 단락되어 디버깅 연산 및 문자열/딕셔너리 할당이 완전히 차단(Zero allocation)되도록 최적화함.
+  - **Structure 및 Tick**: `start` 수신 시 `behavior_tree:structure` 페이로드가 1회 전송되어 raw `GetChildren()` 기반 노드 구조를 반환하고, 매 physics tick마다 최적화된 `{ node_path, status, elapsed_time }` 리포트만을 배치 전송함.
+  - **검증**: `BehaviorTreeValidationTest.cs` 헤드리스 C# 단위 테스트(K~N 케이스)를 설계 및 병합하여 registry 라이프사이클, 게이트 단락, start/stop 라우팅 및 payload 라운드트립이 오류 없이 완벽하게 PASS됨을 검증함.
+- **BT-001 Step 4b: Payload-built Debug Graph + Highlight 구현 완료 (판정: 완료)**
+  - **원격 그래프 뷰 격리**: 로컬 authoring 뷰와 격리된 원격 디버그 그래프 전용 `BehaviorTreeDebugGraphView.cs`를 구현하여 structure 페이로드에서 노드/연결/배치(auto-layout fallback)를 자체 구성하도록 설계함.
+  - **실시간 하이라이트 및 Stale clear**: 틱 보고에 맞춰 초록(Success)/빨강(Failure)/파랑(Running) 색상을 실시간 변경하고 elapsed_time을 표출하며, 틱 갱신 시작 시 미보고 노드를 디폴트 중립 색상으로 원복(`ResetHighlights()`)함으로써 잔상 누적을 방지함. 타입별 색상은 캐싱해 성능을 확보함.
+  - **수동 스모크 및 라이프사이클**: `DebuggerWindow.cs`를 `tree_path` 기반 탭 라우팅으로 교체하고 탭 종료 시 `StopDebugging`을 자동 역송신하게 연동하였으며, 임시 발견 OptionButton UI 패널(TEMP)을 추가해 F5 플레이 스모크 테스트 연동을 완수하고 unregister 시 회색조 Stale 잠금 처리를 확인함.
+  - **검증**: C# 단위 테스트(O~Q 케이스)를 병합하여 structure 복원 배치, 하이라이트/복구, structure 누락 틱 방어 동작이 성공함을 확인(ALL PASS).
+  - **2026-06-20 P1 포워딩 수정**: `BehaviorTreeEditor.HandleDebugMessage`가 tick만 넘기던 4a stub 상태를 고쳐,
+    `register`/`unregister`/`structure`/`tick` 4종을 모두 `DebuggerWindow.HandleDebugMessage(message, payload)`로
+    위임한다. 원격 메시지 수신 시 창이 없으면 `EnsureDebuggerWindow()`로 자동 생성하고, 최초 `register`에서
+    창을 표시한다. 회귀 테스트 R 케이스(editor -> window forwarding) 추가, A~R ALL PASS.
+- **BT-001 Step 5: Battle Debug Integration 구현 완료 — 리뷰 대기**
+  - `DebuggerWindow`의 TEMP discovery 패널을 정식 BehaviorTree target selector로 정리했다. 목록은
+    `index. articleName — tree_path`로 표시해 같은 article 이름의 다중 인스턴스를 구분한다.
+  - `BehaviorTreeEditor.StartDebugging/StopDebugging`은 송신 직전 `BtDebuggerPlugin.RegisterAvailableSessions()`로
+    현재 `EditorDebuggerSession`을 재수집하고, `_Capture`도 수신 session을 등록한다.
+  - 런타임 dispatcher는 `behavior_tree:start|stop`과 Godot capture-local `start|stop`을 모두 허용한다.
+  - 원격 탭 close는 해당 `tree_path` 하나에만 stop을 보내며, stale title 중복 추가를 방지한다.
+  - `DebuggerTree`는 로컬 에디터 scene Node 구조 보기 전용으로 유지하고, 원격 payload graph/status는
+    `BehaviorTreeDebugGraphView`가 담당한다.
+  - 검증: `dotnet build` 경고/오류 0, `bt_validation_test.tscn` A~T ALL PASS. 실제 `battle_field.tscn` F5 smoke에서
+    register discovery, Start 후 remote graph 생성, Stop 후 `[STALE]` 정지를 확인했다. 현 battle smoke에서는
+    discovery 대상이 1개라 둘째 캐릭터 수동 Start/시각 multi-tab 확인은 불가했고, tick 색상/elapsed 변화 및 natural
+    death unregister stale는 자동 테스트(P/R/S/T)로 보강했다.
 
 ## Verification Baseline
 
