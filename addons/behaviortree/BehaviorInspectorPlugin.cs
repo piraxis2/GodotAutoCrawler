@@ -1,4 +1,4 @@
-﻿#if TOOLS
+#if TOOLS
 using Godot;
 namespace AutoCrawler.addons.behaviortree;
 
@@ -6,7 +6,6 @@ namespace AutoCrawler.addons.behaviortree;
 public partial class BehaviorInspectorPlugin : EditorInspectorPlugin
 {
     
-    private node.BehaviorTree_Node _node;
     private BehaviorTreeEditor _editor = null;
     private Button _button;
 
@@ -21,22 +20,39 @@ public partial class BehaviorInspectorPlugin : EditorInspectorPlugin
         {
             return node.Tree != null;
         }
+        if (@object is BehaviorTree)
+        {
+            return true;
+        }
         return false;
     }
 
     public override void _ParseBegin(GodotObject @object)
     {
-        // _node = @object as node.BehaviorTree_Node;
-        // _button = new Button();
-        // _button.Text = "Open Behavior Tree Editor";
-        // _button.Pressed += OnButtonPressed;
-        // AddCustomControl(_button);
-    }
-    
-    private void OnButtonPressed()
-    {
-        _node.Tree.GenerateMermaidGraph();
-        _editor.ShowDebuggerWindow(_node.Tree);
+        BehaviorTree tree = null;
+        if (@object is node.BehaviorTree_Node node)
+        {
+            tree = node.Tree;
+        }
+        else if (@object is BehaviorTree bt)
+        {
+            tree = bt;
+        }
+
+        if (tree == null) return;
+
+        _button = new Button();
+        _button.Text = "🌵 Open Behavior Tree Editor";
+        _button.Pressed += () =>
+        {
+            if (!GodotObject.IsInstanceValid(tree))
+            {
+                GD.PrintErr("BehaviorInspectorPlugin: BehaviorTree is invalid or has been freed.");
+                return;
+            }
+            _editor.ShowDebuggerWindow(tree);
+        };
+        AddCustomControl(_button);
     }
 }
 #endif

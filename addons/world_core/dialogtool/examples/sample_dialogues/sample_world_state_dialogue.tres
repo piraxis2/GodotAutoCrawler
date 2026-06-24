@@ -10,10 +10,6 @@
 [ext_resource type="Script" uid="uid://cqiyjs7osagci" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/State/state_add_def.gd" id="8_8frqp"]
 [ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/world_core/dialogtool/Resource/dialogue_graph_resource.gd" id="9_kh6m1"]
 
-[sub_resource type="Resource" id="Resource_34mvg"]
-script = ExtResource("1_wjiom")
-node_id = 0
-
 [sub_resource type="Resource" id="Resource_jvosv"]
 script = ExtResource("8_8frqp")
 delta = 50
@@ -54,64 +50,68 @@ speaker = "2"
 say_text = "Poor"
 node_id = 13
 
+[sub_resource type="Resource" id="Resource_34mvg"]
+script = ExtResource("1_wjiom")
+node_id = 0
+
 [resource]
 script = ExtResource("9_kh6m1")
 nodes = {
 0: {
 "definition": SubResource("Resource_34mvg"),
 "id": 0,
-"name": &"@GraphNode@31452",
+"name": &"_GraphNode_31452",
 "position_offset": Vector2(0, 0),
-"size": Vector2(100, 100.00006)
+"size": Vector2(111.00003, 101)
 },
 6: {
 "definition": SubResource("Resource_jvosv"),
 "id": 6,
 "name": &"6",
-"position_offset": Vector2(700, 260),
-"size": Vector2(308.0004, 153.00012)
+"position_offset": Vector2(700, 200),
+"size": Vector2(322.0006, 229)
 },
 7: {
 "definition": SubResource("Resource_2l0cp"),
 "id": 7,
 "name": &"7",
 "position_offset": Vector2(226.39006, -103.94413),
-"size": Vector2(351, 262)
+"size": Vector2(391, 334.00006)
 },
 8: {
 "definition": SubResource("Resource_ywq5l"),
 "id": 8,
 "name": &"8",
 "position_offset": Vector2(360, -280),
-"size": Vector2(349, 69)
+"size": Vector2(422, 143)
 },
 9: {
 "definition": SubResource("Resource_ro23f"),
 "id": 9,
 "name": &"9",
 "position_offset": Vector2(840, -100),
-"size": Vector2(178.00003, 195.00003)
+"size": Vector2(192.00085, 222)
 },
 11: {
 "definition": SubResource("Resource_s65t5"),
 "id": 11,
 "name": &"11",
 "position_offset": Vector2(1900, 0),
-"size": Vector2(100, 100.00006)
+"size": Vector2(100.00061, 100.00006)
 },
 12: {
 "definition": SubResource("Resource_iaj0f"),
 "id": 12,
 "name": &"12",
 "position_offset": Vector2(1080, -300),
-"size": Vector2(594.0001, 305)
+"size": Vector2(640, 343)
 },
 13: {
 "definition": SubResource("Resource_c432c"),
 "id": 13,
-"name": &"13",
+"name": &"_GraphNode_23822",
 "position_offset": Vector2(1080, 40),
-"size": Vector2(594.0001, 305.00012)
+"size": Vector2(640, 343)
 }
 }
 connections = Array[Dictionary]([{
