@@ -8,11 +8,15 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="AutoCrawler"
-run/main_scene="res://Assets/Scenes/Map/battle_field.tscn"
-config/features=PackedStringArray("4.4", "C#", "Forward Plus")
+run/main_scene="uid://dv7r53qteumxi"
+config/features=PackedStringArray("4.6", "C#", "Forward Plus")
 config/icon="res://Assets/Textures/icon.svg"
 
 [autoload]
@@ -21,9 +25,26 @@ DamageFloater="*res://Assets/Script/gds/damage_floater.gd"
 CheatManager="*res://Assets/Script/CheatManager.cs"
 GdsCheatManager="*res://Assets/Script/gds/gds_cheat_manager.gd"
 SoundManager="*res://Assets/Script/gds/sound_manager.gd"
+Test="*res://test.gd"
+PlayerData="*res://Assets/Script/gds/player_data.gd"
+WindowManager="*res://Assets/Script/WindowManager.cs"
+DialogueManager="*res://addons/world_core/dialogtool/RunTime/dialogue_manager.gd"
+WorldState="*res://addons/world_core/world_state/world_state_store.tscn"
+WorldStateRuntime="*res://addons/world_core/world_state/world_state_runtime.gd"
+DialogueToolUtil="*uid://bg2wpsw3ggue7"
+
+[debug]
+
+settings/gdscript/always_track_call_stacks=true
+settings/gdscript/always_track_local_variables=true
 
 [display]
 
+window/size/viewport_width=1440
+window/size/viewport_height=960
+window/size/resizable=false
+window/size/minimize_disabled=true
+window/size/maximize_disabled=true
 window/subwindows/embed_subwindows=false
 
 [dotnet]
@@ -32,4 +53,4 @@ project/assembly_name="AutoCrawler"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/behaviortree/plugin.cfg", "res://addons/devconsole/plugin.cfg")
+enabled=PackedStringArray("res://addons/behaviortree/plugin.cfg", "res://addons/devconsole/plugin.cfg", "res://addons/world_core/dialogtool/plugin.cfg", "res://addons/godot-vim/plugin.cfg")

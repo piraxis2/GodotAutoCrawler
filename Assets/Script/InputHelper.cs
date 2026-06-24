@@ -11,10 +11,10 @@ public partial class InputHelper : Node
         // 현재 씬 가져오기
         if (@event is InputEventMouseButton { Pressed: true } mouseEvent)
         {
-            var tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(this);
+            var tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap; 
             if (tileMapLayer != null)
             {
-                Vector2 mousePosition = mouseEvent.Position;
+                Vector2 mousePosition = mouseEvent.GlobalPosition;
                 // tileMapLayer.
                 Vector2I tilePosition = tileMapLayer.LocalToMap(tileMapLayer.ToLocal(tileMapLayer.ToGlobal(mousePosition)));
 

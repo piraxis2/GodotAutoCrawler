@@ -27,7 +27,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 
         if (owner is not CharacterArticle) return null;
 
-        var articlesContainer = GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(owner);
+        var articlesContainer = BattleFieldScene.BattleField.Articles; 
         if (articlesContainer == null) return null;
 
         var opponentList = articlesContainer.GetOpponentArticles(owner);
@@ -46,8 +46,14 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
 
         if (targetPointList.Count == 0) return null;
 
-        targetPointList.Sort((a, b) => (a - owner.TilePosition).LengthSquared().CompareTo((b - owner.TilePosition).LengthSquared()));
-        var path = _aStar2D.GetIdPath(owner.TilePosition, targetPointList[0], true);
+        _aStar2D.SetPointSolid(owner.TilePosition, false);
+        var path = targetPointList
+            .Select(targetPoint => _aStar2D.GetIdPath(owner.TilePosition, targetPoint, true))
+            .Where(candidatePath => candidatePath.Count >= 2)
+            .OrderBy(candidatePath => candidatePath.Count)
+            .ThenBy(candidatePath => (candidatePath[candidatePath.Count - 1] - owner.TilePosition).LengthSquared())
+            .FirstOrDefault();
+        if (path == null) return null;
 
         owner.ArticleStatus.StatusElementsDictionary.TryGetValue(typeof(Mobility), out var mobility);
         int mobilityValue = ((mobility as Mobility)?.Value ?? 2) + 1;
@@ -71,7 +77,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
                     Width = 1.0f
                 };
 
-                GlobalUtil.GetBattleField(owner).AddChild(_line2D);
+                BattleFieldScene.BattleField.AddChild(_line2D);
             }
         }
 #endif
@@ -114,7 +120,7 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
             return BtStatus.Running;
         }
 
-        var tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(article);
+        var tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap; 
         if (tileMapLayer == null) throw new NullReferenceException("TileMapLayer is null");
 
         _moveTweenQueue.Clear();

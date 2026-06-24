@@ -31,8 +31,8 @@ public partial class TurnAction_ChainLightning : TurnActionBase
 
     protected override void OnInit(Node owner)
     {
-        _tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
-        _fxPlayer = GlobalUtil.GetBattleFieldCoreNode<FxPlayer>(owner);
+        _tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap;
+        _fxPlayer = BattleFieldScene.BattleField.FxPlayer; 
         ActionQueue.Enqueue(StartPhase);
         ActionQueue.Enqueue(CastPhase);
 

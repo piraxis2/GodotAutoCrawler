@@ -1,0 +1,269 @@
+[gd_resource type="Resource" script_class="DialogueGraphResource" format=3 uid="uid://cv0vpkp0aor7k"]
+
+[ext_resource type="Script" uid="uid://cg1ti1whyl5sm" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/choice_def.gd" id="1_6y7fw"]
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_t0hpo"]
+[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="2_6y7fw"]
+[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="3_ui7pn"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/world_core/dialogtool/Resource/dialogue_graph_resource.gd" id="4_igy2m"]
+[ext_resource type="Script" uid="uid://dvgsv2wrv1p2u" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/portrait_show_def.gd" id="5_ui7pn"]
+[ext_resource type="Script" uid="uid://dt2ufkq0gq5f" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/portrait_hide_def.gd" id="6_igy2m"]
+
+[sub_resource type="Resource" id="Resource_b4ylq"]
+script = ExtResource("2_6y7fw")
+speaker = "2"
+say_text = "2"
+
+[sub_resource type="Resource" id="Resource_da3iy"]
+script = ExtResource("3_ui7pn")
+
+[sub_resource type="Resource" id="Resource_ui7pn"]
+script = ExtResource("1_6y7fw")
+choice_dic = {
+"2": {},
+"3": {}
+}
+choices = Array[String](["2", "3"])
+node_id = 6
+
+[sub_resource type="Resource" id="Resource_igy2m"]
+script = ExtResource("2_6y7fw")
+speaker = "3"
+say_text = "3"
+node_id = 9
+
+[sub_resource type="Resource" id="Resource_xsfy0"]
+script = ExtResource("2_6y7fw")
+speaker = "1"
+say_text = "1
+2
+3"
+
+[sub_resource type="Resource" id="Resource_llf28"]
+script = ExtResource("6_igy2m")
+slot = "left"
+node_id = 11
+
+[sub_resource type="Resource" id="Resource_rf3nk"]
+resource_local_to_scene = true
+script = ExtResource("1_t0hpo")
+metadata/_custom_type_script = "uid://cqwgrh0esffof"
+
+[sub_resource type="Resource" id="Resource_nihao"]
+script = ExtResource("5_ui7pn")
+slot = "left"
+texture_path = "res://Assets/Textures/Portraits/Noabel.png"
+node_id = 10
+
+[resource]
+script = ExtResource("4_igy2m")
+nodes = {
+0: {
+"definition": SubResource("Resource_rf3nk"),
+"id": 0,
+"name": &"_GraphNode_41831",
+"position_offset": Vector2(-480, 60),
+"size": Vector2(100.00003, 100.00018)
+},
+1: {
+"definition": SubResource("Resource_xsfy0"),
+"id": 1,
+"name": &"1",
+"position_offset": Vector2(-160, -60),
+"size": Vector2(603, 280.0001)
+},
+2: {
+"definition": SubResource("Resource_b4ylq"),
+"id": 2,
+"name": &"2",
+"position_offset": Vector2(1140, -280),
+"size": Vector2(603, 280)
+},
+3: {
+"definition": SubResource("Resource_da3iy"),
+"id": 3,
+"name": &"3",
+"position_offset": Vector2(1880, 60),
+"size": Vector2(100.00049, 100.00003)
+},
+6: {
+"definition": SubResource("Resource_ui7pn"),
+"id": 6,
+"name": &"6",
+"position_offset": Vector2(680, -40),
+"size": Vector2(360.00003, 190)
+},
+9: {
+"definition": SubResource("Resource_igy2m"),
+"id": 9,
+"name": &"9",
+"position_offset": Vector2(1160, 60),
+"size": Vector2(603.00024, 280.00003)
+},
+10: {
+"definition": SubResource("Resource_nihao"),
+"id": 10,
+"name": &"10",
+"position_offset": Vector2(-160, -280),
+"size": Vector2(308.00006, 207.00005)
+},
+11: {
+"definition": SubResource("Resource_llf28"),
+"id": 11,
+"name": &"11",
+"position_offset": Vector2(720, -180),
+"size": Vector2(308.00006, 108.00006)
+}
+}
+connections = Array[Dictionary]([{
+"from_node_id": 2,
+"from_port": 0,
+"to_node_id": 3,
+"to_port": 0
+}, {
+"from_node_id": 6,
+"from_port": 0,
+"to_node_id": 2,
+"to_port": 0
+}, {
+"from_node_id": 6,
+"from_port": 1,
+"to_node_id": 9,
+"to_port": 0
+}, {
+"from_node_id": 9,
+"from_port": 0,
+"to_node_id": 3,
+"to_port": 0
+}, {
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 10,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 0,
+"to_node_id": 11,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 0,
+"to_node_id": 6,
+"to_port": 0
+}, {
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 1,
+"to_port": 0
+}])
+next_node_id = 12
+runtime_nodes = {
+0: {
+"id": 0,
+"params": {},
+"type": &"start"
+},
+1: {
+"id": 1,
+"params": {
+"portrait": "empty",
+"speaker": "1",
+"text": "1
+2
+3"
+},
+"type": &"say"
+},
+2: {
+"id": 2,
+"params": {
+"portrait": "empty",
+"speaker": "2",
+"text": "2"
+},
+"type": &"say"
+},
+3: {
+"id": 3,
+"params": {},
+"type": &"end"
+},
+6: {
+"id": 6,
+"params": {
+"choices": Array[String](["2", "3"])
+},
+"type": &"choice"
+},
+9: {
+"id": 9,
+"params": {
+"portrait": "empty",
+"speaker": "3",
+"text": "3"
+},
+"type": &"say"
+},
+10: {
+"id": 10,
+"params": {
+"actor": "",
+"expression": "",
+"slot": "left",
+"texture_path": "res://Assets/Textures/Portraits/Noabel.png",
+"transition": "none"
+},
+"type": &"portrait_show"
+},
+11: {
+"id": 11,
+"params": {
+"actor": "",
+"expression": "",
+"slot": "left",
+"texture_path": "",
+"transition": "none"
+},
+"type": &"portrait_hide"
+}
+}
+runtime_connections = Array[Dictionary]([{
+"from_node_id": 2,
+"from_port": 0,
+"to_node_id": 3,
+"to_port": 0
+}, {
+"from_node_id": 6,
+"from_port": 0,
+"to_node_id": 2,
+"to_port": 0
+}, {
+"from_node_id": 6,
+"from_port": 1,
+"to_node_id": 9,
+"to_port": 0
+}, {
+"from_node_id": 9,
+"from_port": 0,
+"to_node_id": 3,
+"to_port": 0
+}, {
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 10,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 0,
+"to_node_id": 11,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 0,
+"to_node_id": 6,
+"to_port": 0
+}, {
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 1,
+"to_port": 0
+}])

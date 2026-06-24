@@ -1,0 +1,35 @@
+[gd_resource type="Theme" format=3 uid="uid://bqrysn554oj2a"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rwo2f"]
+texture_margin_left = 20.0
+texture_margin_top = 15.0
+texture_margin_right = 20.0
+texture_margin_bottom = 15.0
+draw_center = false
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0rtm5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_popxo"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ywstp"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hk1tt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a0noc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fwmpj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ysqph"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vj7dy"]
+
+[resource]
+RichTextLabel/styles/normal = SubResource("StyleBoxTexture_rwo2f")
+TabContainer/styles/normal = SubResource("StyleBoxEmpty_0rtm5")
+TabContainer/styles/panel = SubResource("StyleBoxEmpty_popxo")
+TabContainer/styles/tab_disabled = SubResource("StyleBoxEmpty_ywstp")
+TabContainer/styles/tab_focus = SubResource("StyleBoxEmpty_hk1tt")
+TabContainer/styles/tab_hovered = SubResource("StyleBoxEmpty_a0noc")
+TabContainer/styles/tab_selected = SubResource("StyleBoxEmpty_fwmpj")
+TabContainer/styles/tab_unselected = SubResource("StyleBoxEmpty_ysqph")
+TabContainer/styles/tabbar_background = SubResource("StyleBoxEmpty_vj7dy")

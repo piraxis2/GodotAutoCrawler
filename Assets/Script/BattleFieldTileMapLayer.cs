@@ -8,7 +8,7 @@ namespace AutoCrawler.Assets.Script;
 public partial class BattleFieldTileMapLayer : TileMapLayer
 {
 	private readonly Dictionary<Vector2I, ArticleBase> _placedArticles = new();
-
+	[Export] private ArticlesContainer _articlesContainer;
 
 	public ArticleBase GetArticle(Vector2I position)
 	{
@@ -21,10 +21,9 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 	}
 	public override void _Ready()
 	{
-        ArticlesContainer articlesContainer = GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(this);
-        if (articlesContainer == null) return;
+        if (_articlesContainer == null) return;
         
-        foreach (var (key, value) in articlesContainer.Articles!)
+        foreach (var (key, value) in _articlesContainer.Articles!)
         {
 	        foreach (var article in value)
 	        {
@@ -35,7 +34,7 @@ public partial class BattleFieldTileMapLayer : TileMapLayer
 		        article.OnDead += OnArticleDead;
 		        _placedArticles[article.TilePosition] = article;
 				
-		        GD.Print(article.Name + " is placed at " + article.GlobalPosition);
+		        GD.Print(article.Name + " is placed at " + article.TilePosition);
 	        }
         }
 	}

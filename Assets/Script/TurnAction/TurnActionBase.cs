@@ -55,7 +55,7 @@ public abstract partial class TurnActionBase : Resource
     {
         ArticleBase ownerArticle = (ArticleBase)((BehaviorTree_Action)owner).Tree.GetParent();
         List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + ownerArticle.TilePosition).ToList();
-        BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
+        BattleFieldTileMapLayer tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap; 
         ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(ownerArticle));
         if (target != null) ownerArticle.DecisionFlipH(target.TilePosition);
         return target;

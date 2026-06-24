@@ -1,0 +1,160 @@
+[gd_resource type="Resource" script_class="DialogueGraphResource" format=3 uid="uid://btnl77cys1l70"]
+
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_wow46"]
+[ext_resource type="Script" uid="uid://cg1ti1whyl5sm" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/choice_def.gd" id="2_4mg0d"]
+[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="3_gbd8m"]
+[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="4_y21bs"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/world_core/dialogtool/Resource/dialogue_graph_resource.gd" id="5_wjiom"]
+
+[sub_resource type="Resource" id="Resource_05ey8"]
+script = ExtResource("1_wow46")
+node_id = 0
+
+[sub_resource type="Resource" id="Resource_a7wtu"]
+script = ExtResource("2_4mg0d")
+choices = Array[String](["A", "B"])
+node_id = 1
+
+[sub_resource type="Resource" id="Resource_lwo30"]
+script = ExtResource("3_gbd8m")
+say_text = "A"
+node_id = 2
+
+[sub_resource type="Resource" id="Resource_kg8mt"]
+script = ExtResource("3_gbd8m")
+say_text = "B"
+node_id = 3
+
+[sub_resource type="Resource" id="Resource_n87su"]
+script = ExtResource("4_y21bs")
+node_id = 4
+
+[resource]
+script = ExtResource("5_wjiom")
+nodes = {
+0: {
+"definition": SubResource("Resource_05ey8"),
+"id": 0,
+"name": &"@GraphNode@23224",
+"position_offset": Vector2(0, 0),
+"size": Vector2(100.00012, 100.00006)
+},
+1: {
+"definition": SubResource("Resource_a7wtu"),
+"id": 1,
+"name": &"1",
+"position_offset": Vector2(140, -60),
+"size": Vector2(351, 262)
+},
+2: {
+"definition": SubResource("Resource_lwo30"),
+"id": 2,
+"name": &"2",
+"position_offset": Vector2(700, -140),
+"size": Vector2(594.0001, 305.00006)
+},
+3: {
+"definition": SubResource("Resource_kg8mt"),
+"id": 3,
+"name": &"3",
+"position_offset": Vector2(700, 200),
+"size": Vector2(594.0001, 305.00003)
+},
+4: {
+"definition": SubResource("Resource_n87su"),
+"id": 4,
+"name": &"4",
+"position_offset": Vector2(1671.579, 39.48585),
+"size": Vector2(100, 100)
+}
+}
+connections = Array[Dictionary]([{
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 1,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 0,
+"to_node_id": 2,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 1,
+"to_node_id": 3,
+"to_port": 0
+}, {
+"from_node_id": 2,
+"from_port": 0,
+"to_node_id": 4,
+"to_port": 0
+}, {
+"from_node_id": 3,
+"from_port": 0,
+"to_node_id": 4,
+"to_port": 0
+}])
+next_node_id = 5
+runtime_nodes = {
+0: {
+"id": 0,
+"params": {},
+"type": &"start"
+},
+1: {
+"id": 1,
+"params": {
+"choices": Array[String](["A", "B"])
+},
+"type": &"choice"
+},
+2: {
+"id": 2,
+"params": {
+"portrait": "empty",
+"speaker": "",
+"text": "A"
+},
+"type": &"say"
+},
+3: {
+"id": 3,
+"params": {
+"portrait": "empty",
+"speaker": "",
+"text": "B"
+},
+"type": &"say"
+},
+4: {
+"id": 4,
+"params": {},
+"type": &"end"
+}
+}
+runtime_connections = Array[Dictionary]([{
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 1,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 0,
+"to_node_id": 2,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 1,
+"to_node_id": 3,
+"to_port": 0
+}, {
+"from_node_id": 2,
+"from_port": 0,
+"to_node_id": 4,
+"to_port": 0
+}, {
+"from_node_id": 3,
+"from_port": 0,
+"to_node_id": 4,
+"to_port": 0
+}])

@@ -1,0 +1,72 @@
+[gd_scene load_steps=3 format=3 uid="uid://b01mjaqgpwrnq"]
+
+[ext_resource type="Texture2D" uid="uid://6nctta0sds4j" path="res://Assets/Textures/Portraits/Noabel.png" id="1_6h5my"]
+[ext_resource type="Script" uid="uid://d3bqnsh5wk0if" path="res://Assets/Script/UI/Window/GameWindow.cs" id="1_ek28r"]
+
+[node name="Inspector" type="Window"]
+oversampling_override = 1.0
+title = "Info"
+initial_position = 1
+size = Vector2i(400, 600)
+unresizable = true
+popup_window = true
+min_size = Vector2i(400, 600)
+max_size = Vector2i(400, 600)
+script = ExtResource("1_ek28r")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="HSplitContainer" type="HSplitContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+dragging_enabled = false
+dragger_visibility = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/HSplitContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Portrait" type="TextureRect" parent="MarginContainer/VBoxContainer/HSplitContainer/VBoxContainer/CenterContainer"]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 2
+texture = ExtResource("1_6h5my")
+expand_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "이름 "
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/HSplitContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "직업"
+horizontal_alignment = 1
+
+[node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer/HSplitContainer"]
+layout_mode = 2
+current_tab = 0
+
+[node name="TabBar" type="TabBar" parent="MarginContainer/VBoxContainer/HSplitContainer/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="TabBar2" type="TabBar" parent="MarginContainer/VBoxContainer/HSplitContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1

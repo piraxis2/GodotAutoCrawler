@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://cwuxealkh5uu4"]
+
+[node name="Popup" type="PopupPanel"]
+oversampling_override = 1.0
+size = Vector2i(76, 60)
+visible = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 72.0
+offset_bottom = 56.0
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer"]
+layout_mode = 2
+placeholder_text = "타입 검색..."
+
+[node name="Tree" type="Tree" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+hide_root = true

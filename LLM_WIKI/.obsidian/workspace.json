@@ -1,0 +1,225 @@
+{
+  "main": {
+    "id": "1b850122dd7c5453",
+    "type": "split",
+    "children": [
+      {
+        "id": "789b816e84a31e72",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "541893579710ee26",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "STEP_REVIEW_WORKFLOW.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "STEP_REVIEW_WORKFLOW"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "1804af12e4b20272",
+    "type": "split",
+    "children": [
+      {
+        "id": "256fbf680c2283b2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7bb4b179a162ae2b",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "파일 탐색기"
+            }
+          },
+          {
+            "id": "2ea979c230ae7968",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "검색"
+            }
+          },
+          {
+            "id": "d896ae312b8dc10a",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "북마크"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 508.5
+  },
+  "right": {
+    "id": "e8b7355c1ee7c1f7",
+    "type": "split",
+    "children": [
+      {
+        "id": "a522a5f1fc0162fb",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0848bc74c4c5bc6a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "20_Systems/BehaviorTree-System.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "BehaviorTree-System 의 백링크"
+            }
+          },
+          {
+            "id": "bbfb4489de175469",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "20_Systems/BehaviorTree-System.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "BehaviorTree-System 의 나가는 링크"
+            }
+          },
+          {
+            "id": "a7a6aa50912c9640",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "태그"
+            }
+          },
+          {
+            "id": "4056c56da880dac3",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "모든 속성"
+            }
+          },
+          {
+            "id": "96a1f6349387a85a",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "20_Systems/BehaviorTree-System.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "BehaviorTree-System 의 개요"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:빠른 전환기 열기": false,
+      "graph:그래프 뷰 열기": false,
+      "canvas:새 캔버스 만들기": false,
+      "daily-notes:오늘의 일일 노트 열기": false,
+      "templates:템플릿 삽입": false,
+      "command-palette:명령어 팔레트 열기": false,
+      "bases:새 베이스 생성하기": false
+    }
+  },
+  "active": "541893579710ee26",
+  "lastOpenFiles": [
+    "30_Tasks/DT-014-Say-Line-Paging-UI-Regression.md.tmp.19276.deadea5a09f9",
+    "50_Reviews/DT-014-Say-Line-Paging-UI-Regression-Review.md.tmp.19276.e7f9e5b8ab61",
+    "50_Reviews/DT-014-Say-Line-Paging-UI-Regression-Review.md",
+    "00_Index/Current-State.md.tmp.19276.baa98fd03f8a",
+    "30_Tasks/DT-014-Say-Line-Paging-UI-Regression.md",
+    "30_Tasks/DT-014-Say-Line-Paging-UI-Regression.md.tmp.19276.b4d55d5f8717",
+    "50_Reviews/DT-013-State-Read-Data-Node-Review.md.tmp.40468.c613b17952d7",
+    "00_Index/Open-Tasks.md.tmp.40468.f091d91966a8",
+    "20_Systems/World-State-System.md.tmp.40468.ed0cf343699b",
+    "20_Systems/DialogueTool.md.tmp.40468.8ba0549b11d1",
+    "00_Index/Current-State.md.tmp.40468.8ab240ff5a04",
+    "30_Tasks/DT-013-State-Read-Data-Node.md.tmp.40468.4569cf182e57",
+    "50_Reviews/DT-013-State-Read-Data-Node-Review.md",
+    "40_Decisions/ADR-015-State-Read-Data-Node.md",
+    "30_Tasks/DT-013-State-Read-Data-Node.md",
+    "20_Systems/SaveGame-User-Guide.md.tmp.42272.268a13c53cb5",
+    "40_Decisions/ADR-014-SaveFlow-Facade-And-Metadata-Provider.md",
+    "40_Decisions/ADR-002-Editor-Adapter.md",
+    "40_Decisions/ADR-001-Runtime-Snapshot.md",
+    "30_Tasks/SG-003-SaveSlot-UI-Host-Integration.md",
+    "50_Reviews/DT-002-Portrait-Review.md",
+    "50_Reviews/DialogueTool-Step-1-to-8.md",
+    "50_Reviews/DT-011-DialogueWorldState-Addon-Packaging-Review.md",
+    "50_Reviews/DT-012-Condition-Authoring-UX-Review.md",
+    "50_Reviews/SG-001-SaveGame-Core-Section-System-Review.md",
+    "50_Reviews/SG-002-SaveFlow-Facade-Metadata-Provider-Review.md",
+    "STEP_REVIEW_WORKFLOW.md",
+    "Related Document.md",
+    "30_Tasks/SG-002-SaveFlow-Facade-Metadata-Provider.md",
+    "20_Systems/World-State-User-Guide.md",
+    "20_Systems/World-State-System.md",
+    "40_Decisions/ADR-007-WorldState-Runtime-Lifecycle.md",
+    "40_Decisions/ADR-009-State-Condition-Dialogue-Consumption.md",
+    "40_Decisions/ADR-010-State-Mutation-Dialogue-Effects.md",
+    "40_Decisions/ADR-011-DialogueWorldState-Addon-Packaging.md",
+    "90_Templates/ADR.md"
+  ]
+}

@@ -31,10 +31,10 @@ public partial class TurnAction_MagicBolt : TurnAction_Cast
 
     protected override ActionState Shot(double delta, ArticleBase owner)
     {
-        BattleFieldTileMapLayer tileMapLayer = GlobalUtil.GetBattleFieldCoreNode<BattleFieldTileMapLayer>(owner);
+        BattleFieldTileMapLayer tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap; 
         ArticleBase target = tileMapLayer?.GetArticle(_targetPosition);
         owner.AnimationPlayer.Play("Idle");
-        var spriteFx = GlobalUtil.GetBattleFieldCoreNode<FxPlayer>(owner);
+        var spriteFx = BattleFieldScene.BattleField.FxPlayer; 
         var targetGlobalPosition = tileMapLayer?.ToGlobal(tileMapLayer.MapToLocal(_targetPosition));
         spriteFx.PlaySpriteFx("IceBolt", targetGlobalPosition.GetValueOrDefault());
         

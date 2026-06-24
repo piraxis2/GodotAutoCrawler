@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=6 format=3 uid="uid://c3lhe8l5imvy"]
+
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_ixbsx"]
+[ext_resource type="Script" uid="uid://dvwqdiyirh54x" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Data/variable_def.gd" id="2_xlf0g"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/world_core/dialogtool/Resource/dialogue_graph_resource.gd" id="3_ddxxf"]
+
+[sub_resource type="Resource" id="Resource_dj215"]
+resource_local_to_scene = true
+script = ExtResource("1_ixbsx")
+metadata/_custom_type_script = "uid://cqwgrh0esffof"
+
+[sub_resource type="Resource" id="Resource_25wdd"]
+script = ExtResource("2_xlf0g")
+variable = null
+
+[resource]
+script = ExtResource("3_ddxxf")
+nodes = {
+0: {
+"definition": SubResource("Resource_dj215"),
+"id": 0,
+"name": &"0",
+"position_offset": Vector2(100, 100),
+"size": Vector2(100, 100)
+},
+1: {
+"definition": SubResource("Resource_25wdd"),
+"id": 1,
+"name": &"1",
+"position_offset": Vector2(197, 187),
+"size": Vector2(232, 88)
+}
+}
+start_node_id = -1
+next_node_id = 2

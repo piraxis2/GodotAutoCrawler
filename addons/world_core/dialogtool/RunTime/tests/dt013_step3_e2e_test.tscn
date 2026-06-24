@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dt013step3srtest01"]
+
+[ext_resource type="Script" path="res://addons/world_core/dialogtool/RunTime/tests/dt013_step3_e2e_test.gd" id="1"]
+
+[node name="DT013Step3Test" type="Node"]
+script = ExtResource("1")

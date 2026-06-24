@@ -1,0 +1,144 @@
+[gd_scene load_steps=14 format=3 uid="uid://cdycn86x3utc5"]
+
+[ext_resource type="PackedScene" uid="uid://bphpfky14sujp" path="res://addons/world_core/dialogtool/Node/dialogue_node.tscn" id="1_xt7ni"]
+[ext_resource type="Script" uid="uid://cnuesn83vmqfu" path="res://addons/world_core/dialogtool/Node/variable_node.gd" id="2_bfnj5"]
+[ext_resource type="Script" uid="uid://dvwqdiyirh54x" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Data/variable_def.gd" id="3_su8w8"]
+[ext_resource type="Texture2D" uid="uid://dla0i26w0moj3" path="res://addons/world_core/dialogtool/Icon/random_icon.png" id="4_roaqb"]
+
+[sub_resource type="Resource" id="Resource_roaqb"]
+script = ExtResource("3_su8w8")
+variable = null
+metadata/_custom_type_script = "uid://dvwqdiyirh54x"
+
+[sub_resource type="DPITexture" id="DPITexture_roaqb"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"12\"><path fill=\"#e0e0e0\" d=\"M8 2v2h2V2zm3 0v5a3 3 0 0 0 3 3h1V8h-1a1 1 0 0 1-1-1V2zM1 4v6h2V6h1a1 1 0 0 1 1 1v3h2V7a3 3 0 0 0-3-3zm7 2v4h2V6z\"/></svg>
+"
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(1, 0.87, 0.4, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_oqsn3"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#6f91f0\" d=\"M0 4v8h2a3 3 0 0 0 2.5-1.346 3 3 0 0 0 4.5.578 3 3 0 0 0 4.5-.578A3 3 0 0 0 16 12v-2a1 1 0 0 1-1-1V4h-2v2.77a3 3 0 0 0-4 0 3 3 0 0 0-4.5.578A3 3 0 0 0 2 6V4zm2 4a1 1 0 0 1 0 2zm5 0a1 1 0 0 1 0 2 1 1 0 0 1 0-2zm4 0a1 1 0 0 1 0 2 1 1 0 0 1 0-2z\"/></svg>
+"
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(1, 0.87, 0.4, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_crsnc"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"12\"><path fill=\"#5abbef\" d=\"m1 2v2h2v-2zm11 0v5a3 3 0 0 0 3 3h1v-2h-1a1 1 0 0 1 -1-1v-1h2v-2h-2v-2zm-8 2v6h2v-4h1a1 1 0 0 1 1 1v3h2v-3a3 3 0 0 0 -3-3h-1zm-3 2v4h2v-4z\"/></svg>
+"
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(1, 0.87, 0.4, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_q5xc3"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#35d4f4\" d=\"M3 4a3 3 0 0 0-3 3v5h2v-2h2V8H2V7a1 1 0 0 1 1-1h1V4zm3 0v5a3 3 0 0 0 3 3h1v-2H9a1 1 0 0 1-1-1V4zm6 0v5a3 3 0 0 0 3 3h1v-2h-1a1 1 0 0 1-1-1V8h2V6h-2V4z\"/></svg>
+"
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(1, 0.87, 0.4, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_60rlq"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"12\"><path fill=\"#4593ec\" d=\"M7 2H4a2.5 2.5 0 0 0 0 5 .5.5 0 0 1 0 1H1v2h3a2.5 2.5 0 0 0 0-5 .5.5 0 0 1 0-1h3zm1 0v5a3 3 0 0 0 3 3V8a1 1 0 0 1-1-1V6h1V4h-1V2zm4 8h2V7a1 1 0 0 1 1-1V4a3 3 0 0 0-3 3z\"/></svg>
+"
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(1, 0.87, 0.4, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_ys88q"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"12\"><path fill=\"#ac73f1\" d=\"M12 2v2h1a1 1 0 0 1 0 2 2 2 0 0 0-2 2v2h5V8h-3a3 3 0 0 0 0-6zM1 4v6h2a3 3 0 0 0 3-3V4H4v3a1 1 0 0 1-1 1V4zm9 6V8H9a1 1 0 0 1 0-2h1V4H9a3 3 0 0 0 0 6z\"/><path fill=\"#fff\" fill-opacity=\".4\" d=\"M12 2v2h1a1 1 0 0 1 0 2 2 2 0 0 0-2 2v2h5V8h-3a3 3 0 0 0 0-6z\"/></svg>
+"
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(1, 0.87, 0.4, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_lqfj0"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"12\"><path fill=\"#de66f0\" d=\"M11 2v2h2a1 1 0 0 1-1 1v2a1 1 0 0 1 0 2h-1v2h1a3 3 0 0 0 2.232-5A3 3 0 0 0 15 4V2zM1 4v6h2a3 3 0 0 0 3-3V4H4v3a1 1 0 0 1-1 1V4zm9 6V8H9a1 1 0 0 1 0-2h1V4H9a3 3 0 0 0 0 6z\"/><path fill=\"#fff\" fill-opacity=\".4\" d=\"M11 2v2h2a1 1 0 0 1-1 1v2a1 1 0 0 1 0 2h-1v2h1a3 3 0 0 0 2.232-5A3 3 0 0 0 15 4V2z\"/></svg>
+"
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(1, 0.87, 0.4, 1)
+}
+
+[sub_resource type="DPITexture" id="DPITexture_5x0xv"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"12\"><path fill=\"#ff5f5f\" d=\"M4 4a3 3 0 0 0 0 6h1V8H4a1 1 0 0 1 0-2h1V4z\"/><path fill=\"#5fff97\" d=\"M6 2v5a3 3 0 0 0 3 3h1V8H9a1 1 0 0 1-1-1V2z\"/><path fill=\"#5fb2ff\" d=\"M14 4a3 3 0 0 0-3 3v3h2V7a1 1 0 0 1 1-1h1V4z\"/></svg>
+"
+color_map = {
+Color(1, 0.37254903, 0.37254903, 1): Color(1, 0.47, 0.42, 1),
+Color(0.37254903, 1, 0.5921569, 1): Color(0.45, 0.95, 0.5, 1),
+Color(1, 0.8666667, 0.39607844, 1): Color(1, 0.87, 0.4, 1)
+}
+
+[node name="DialogueNode" instance=ExtResource("1_xt7ni")]
+custom_minimum_size = Vector2(0, 0)
+offset_right = 165.0
+offset_bottom = 88.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+title = "Variable"
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = true
+slot/1/right_type = 1
+slot/1/right_color = Color(1, 0.078431375, 0.5764706, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+script = ExtResource("2_bfnj5")
+definition = SubResource("Resource_roaqb")
+is_dynamic_slot = false
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." index="2"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="OptionButton" type="OptionButton" parent="HBoxContainer" index="0"]
+layout_mode = 2
+selected = 0
+item_count = 9
+popup/item_0/text = "Nil"
+popup/item_0/icon = SubResource("DPITexture_roaqb")
+popup/item_0/id = 0
+popup/item_1/text = "bool"
+popup/item_1/icon = SubResource("DPITexture_oqsn3")
+popup/item_1/id = 1
+popup/item_2/text = "int"
+popup/item_2/icon = SubResource("DPITexture_crsnc")
+popup/item_2/id = 2
+popup/item_3/text = "float"
+popup/item_3/icon = SubResource("DPITexture_q5xc3")
+popup/item_3/id = 3
+popup/item_4/text = "String"
+popup/item_4/icon = SubResource("DPITexture_60rlq")
+popup/item_4/id = 4
+popup/item_5/text = "Vector2"
+popup/item_5/icon = SubResource("DPITexture_ys88q")
+popup/item_5/id = 5
+popup/item_6/text = "Vector3"
+popup/item_6/icon = SubResource("DPITexture_lqfj0")
+popup/item_6/id = 6
+popup/item_7/text = "Color"
+popup/item_7/icon = SubResource("DPITexture_5x0xv")
+popup/item_7/id = 7
+popup/item_8/text = "RANDOM"
+popup/item_8/icon = ExtResource("4_roaqb")
+popup/item_8/id = 8
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer" index="1"]
+layout_mode = 2
+size_flags_horizontal = 0

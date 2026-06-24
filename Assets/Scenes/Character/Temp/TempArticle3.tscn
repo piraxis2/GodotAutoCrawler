@@ -14,7 +14,7 @@
 [ext_resource type="Script" uid="uid://bi51owx2orvu5" path="res://Assets/Script/gds/fx/article_sprite_hit.gd" id="10_wtn77"]
 [ext_resource type="AudioStream" uid="uid://cm7wog7mmni22" path="res://Assets/Audio/Charge.mp3" id="10_y7hsj"]
 [ext_resource type="Script" uid="uid://cfc212lal43iq" path="res://addons/behaviortree/node/BehaviorTree_Selector.cs" id="11_mm1bq"]
-[ext_resource type="Script" uid="uid://cm4wshnybyy74" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FIndOpponent.cs" id="12_v8t08"]
+[ext_resource type="Script" uid="uid://cm4wshnybyy74" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FindOpponent.cs" id="12_v8t08"]
 [ext_resource type="Script" uid="uid://c7js0inhhipcp" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="13_ad5g1"]
 [ext_resource type="Script" uid="uid://bwx0oup5d1dc" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="14_45j83"]
 [ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/health_bar.tscn" id="16_2sfhm"]
@@ -700,11 +700,9 @@ _data = {
 &"Walk": SubResource("Animation_0audv")
 }
 
-[sub_resource type="Resource" id="Resource_y7hsj"]
-resource_local_to_scene = true
+[sub_resource type="Resource" id="Resource_7jual"]
 script = ExtResource("16_y7hsj")
-_maxDamage = 30
-_chainCount = 3
+_maxDamage = 150
 metadata/_custom_type_script = "uid://x5t3hrh74wu7"
 
 [node name="Character" type="Node2D"]
@@ -743,7 +741,7 @@ script = ExtResource("13_ad5g1")
 
 [node name="BehaviorTree_TurnAction(MagicBolt)" type="Node" parent="BehaviorTree/BehaviorTree_Selector_Root"]
 script = ExtResource("14_45j83")
-TurnAction = SubResource("Resource_y7hsj")
+TurnAction = SubResource("Resource_7jual")
 
 [node name="HealthBar" parent="." instance=ExtResource("16_2sfhm")]
 offset_top = -22.0

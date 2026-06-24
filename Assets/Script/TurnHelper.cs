@@ -14,12 +14,11 @@ public partial class TurnHelper : Node
     private ITurnAffectedArticle<ArticleBase> _currentTurnArticle;
 
     private FxPlayer _fxPlayer;
-    private FxPlayer FxPlayer => _fxPlayer ??= GlobalUtil.GetBattleFieldCoreNode<FxPlayer>(this);
+    private FxPlayer FxPlayer => _fxPlayer ??= BattleFieldScene.BattleField.FxPlayer;
+    
+    [Export] private ArticlesContainer _articlesContainer;
 
-    private ArticlesContainer _articlesContainer;
-    private ArticlesContainer ArticlesContainer => _articlesContainer ??= GlobalUtil.GetBattleFieldCoreNode<ArticlesContainer>(this);
-
-    private bool IsGameOver => _turnAffectedArticleList.Count <= 1 || _currentTurnArticle == null || ArticlesContainer.Articles["Opponent"].Count == 0 || ArticlesContainer.Articles["Ally"].Count == 0;
+    private bool IsGameOver => _turnAffectedArticleList.Count <= 1 || _currentTurnArticle == null || _articlesContainer.Articles["Opponent"].Count == 0 || _articlesContainer.Articles["Ally"].Count == 0;
     private bool IsPaused => Speed == 0;
 
     [Export] public float Speed { get; private set; } = 1.0f;
@@ -27,7 +26,11 @@ public partial class TurnHelper : Node
 
     public override void _Ready()
     {
-        foreach (var (key, value) in ArticlesContainer?.Articles!)
+        var articles = _articlesContainer?.Articles;
+        if (articles == null)
+            return;
+        
+        foreach (var (key, value) in articles)
         {
             foreach (var articleBase in value)
             {
@@ -51,14 +54,14 @@ public partial class TurnHelper : Node
     {
         if (IsPaused) return;
         
+        FxPlayer?.Tick(delta);
+        
         if (IsGameOver)
         {
             // todo : 게임 오버 처리 
-            GetTree().ReloadCurrentScene();
             return;
         }
 
-        FxPlayer?.Tick(delta);
 
         if (_currentTurnArticle is ArticleBase { IsAlive: false })
         {

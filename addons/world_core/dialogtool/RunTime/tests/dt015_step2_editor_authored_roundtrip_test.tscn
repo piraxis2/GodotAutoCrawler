@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c8wixkydiku46"]
+
+[ext_resource type="Script" path="res://addons/world_core/dialogtool/RunTime/tests/dt015_step2_editor_authored_roundtrip_test.gd" id="1"]
+
+[node name="DT015Step2Test" type="Node"]
+script = ExtResource("1")

@@ -1,0 +1,186 @@
+[gd_resource type="Resource" script_class="DialogueGraphResource" load_steps=15 format=3 uid="uid://cab34fpqqegb0"]
+
+[ext_resource type="Script" uid="uid://cqwgrh0esffof" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/start_def.gd" id="1_ipowr"]
+[ext_resource type="Script" uid="uid://df6h8ox0lrqjg" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/say_def.gd" id="2_lb6ay"]
+[ext_resource type="Script" uid="uid://bwh1ey68je3iy" path="res://addons/world_core/dialogtool/Resource/NodeDefinitions/Flow/end_def.gd" id="3_c2fou"]
+[ext_resource type="Script" uid="uid://db21ay5ebcqaq" path="res://addons/world_core/dialogtool/Resource/dialogue_graph_resource.gd" id="4_88yt2"]
+
+[sub_resource type="Resource" id="Resource_rf3nk"]
+resource_local_to_scene = true
+script = ExtResource("1_ipowr")
+metadata/_custom_type_script = "uid://cqwgrh0esffof"
+
+[sub_resource type="Resource" id="Resource_srs5m"]
+script = ExtResource("2_lb6ay")
+speaker = "엘리자베스"
+say_text = "잠시 어색한 침묵이 흐른 뒤 두 친구는 다른 식구들이 있는 곳으로 돌아갔다. "
+node_id = 1
+
+[sub_resource type="Resource" id="Resource_rnaa1"]
+script = ExtResource("2_lb6ay")
+speaker = "엘리자베스"
+say_text = "샬럿은 잠시 후에 떠났고, [color=blue]엘리자베스[/color]는 혼자 남아서 샬럿이 했던 말을 곱씹어 보고 있었다."
+node_id = 2
+
+[sub_resource type="Resource" id="Resource_xcetn"]
+script = ExtResource("2_lb6ay")
+speaker = "엘리자베스"
+say_text = "두 사람이 전혀 어울리지 않는 상대라는 생각을 접기까지에는 꽤 오랜 시간이 걸렸다."
+node_id = 3
+
+[sub_resource type="Resource" id="Resource_jl7j4"]
+script = ExtResource("2_lb6ay")
+speaker = "엘리자베스"
+say_text = "콜린스가 겨우 사흘 동안에 두 여자에게 청혼을 했다는 사실은 그의 청혼을 샬럿이 수락했다는 사실에 비하면 전혀 놀라운 일이 아니었다.  "
+node_id = 4
+
+[sub_resource type="Resource" id="Resource_xrqjc"]
+script = ExtResource("2_lb6ay")
+speaker = "엘리자베스"
+say_text = "[color=blue]엘리자베스[/color]는 평소에 결혼에 대한 샬럿의 생각이 자신의 생각과 똑같지 않다는 건 알고 있었다."
+node_id = 5
+
+[sub_resource type="Resource" id="Resource_ldwkm"]
+script = ExtResource("2_lb6ay")
+speaker = "엘리자베스"
+say_text = "그러나 샬럿이 막상 결혼을 결정하는 순간에 세속적인 유익을 위해 그보다 중요한 모든 감정을 희생할 수 있을 거라고는 생각하지 못했다. "
+node_id = 6
+
+[sub_resource type="Resource" id="Resource_2baf6"]
+script = ExtResource("2_lb6ay")
+speaker = "엘리자베스"
+say_text = "콜린스의 아내가 된 샬럿의 모습은 너무도 굴욕적인 그림이었다."
+node_id = 7
+
+[sub_resource type="Resource" id="Resource_c3f3j"]
+script = ExtResource("2_lb6ay")
+speaker = "엘리자베"
+say_text = "[color=blue]엘리자베스[/color]는 친구가 수치스러운 선택을 해서 자신을 실망시킨 것이 너무 가슴아팠다. 
+그러나 그보다 더 고통스러운 건 샬럿이 스스로 선택한 운명을 행스복하게 살아 낼 수 없을 거라는 우울한 확신이었다."
+node_id = 8
+
+[sub_resource type="Resource" id="Resource_qon8t"]
+script = ExtResource("3_c2fou")
+node_id = 9
+
+[resource]
+script = ExtResource("4_88yt2")
+nodes = {
+0: {
+"definition": SubResource("Resource_rf3nk"),
+"id": 0,
+"name": &"_GraphNode_37514",
+"position_offset": Vector2(0, 0),
+"size": Vector2(100, 100.000244)
+},
+1: {
+"definition": SubResource("Resource_srs5m"),
+"id": 1,
+"name": &"1",
+"position_offset": Vector2(120, -100),
+"size": Vector2(584.00024, 280.00006)
+},
+2: {
+"definition": SubResource("Resource_rnaa1"),
+"id": 2,
+"name": &"2",
+"position_offset": Vector2(740, -100),
+"size": Vector2(584, 280)
+},
+3: {
+"definition": SubResource("Resource_xcetn"),
+"id": 3,
+"name": &"3",
+"position_offset": Vector2(1360, -100),
+"size": Vector2(584.00024, 280)
+},
+4: {
+"definition": SubResource("Resource_jl7j4"),
+"id": 4,
+"name": &"4",
+"position_offset": Vector2(120, 220),
+"size": Vector2(584, 280.00003)
+},
+5: {
+"definition": SubResource("Resource_xrqjc"),
+"id": 5,
+"name": &"5",
+"position_offset": Vector2(760, 220),
+"size": Vector2(584, 280.00003)
+},
+6: {
+"definition": SubResource("Resource_ldwkm"),
+"id": 6,
+"name": &"6",
+"position_offset": Vector2(1400, 220),
+"size": Vector2(584.0001, 280.00003)
+},
+7: {
+"definition": SubResource("Resource_2baf6"),
+"id": 7,
+"name": &"7",
+"position_offset": Vector2(120, 520),
+"size": Vector2(584, 280)
+},
+8: {
+"definition": SubResource("Resource_c3f3j"),
+"id": 8,
+"name": &"8",
+"position_offset": Vector2(780, 520),
+"size": Vector2(584, 280)
+},
+9: {
+"definition": SubResource("Resource_qon8t"),
+"id": 9,
+"name": &"9",
+"position_offset": Vector2(1460, 620),
+"size": Vector2(100, 100)
+}
+}
+connections = Array[Dictionary]([{
+"from_node_id": 0,
+"from_port": 0,
+"to_node_id": 1,
+"to_port": 0
+}, {
+"from_node_id": 1,
+"from_port": 0,
+"to_node_id": 2,
+"to_port": 0
+}, {
+"from_node_id": 2,
+"from_port": 0,
+"to_node_id": 3,
+"to_port": 0
+}, {
+"from_node_id": 3,
+"from_port": 0,
+"to_node_id": 4,
+"to_port": 0
+}, {
+"from_node_id": 4,
+"from_port": 0,
+"to_node_id": 5,
+"to_port": 0
+}, {
+"from_node_id": 5,
+"from_port": 0,
+"to_node_id": 6,
+"to_port": 0
+}, {
+"from_node_id": 6,
+"from_port": 0,
+"to_node_id": 7,
+"to_port": 0
+}, {
+"from_node_id": 7,
+"from_port": 0,
+"to_node_id": 8,
+"to_port": 0
+}, {
+"from_node_id": 8,
+"from_port": 0,
+"to_node_id": 9,
+"to_port": 0
+}])
+next_node_id = 10

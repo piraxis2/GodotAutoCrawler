@@ -5,7 +5,7 @@ using Godot.Collections;
 
 namespace AutoCrawler.Assets.Script;
 
-public partial class FxPlayer : Node2D
+public partial class FxPlayer : Node 
 {
     [Export] private Godot.Collections.Dictionary<StringName, PackedScene> _spriteFxScenes = new();
     [Export] private Godot.Collections.Dictionary<StringName, PackedScene> _lineFxScenes = new();

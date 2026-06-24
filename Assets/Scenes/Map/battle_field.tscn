@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=4 uid="uid://dv7r53qteumxi"]
+[gd_scene format=4 uid="uid://dv7r53qteumxi"]
 
 [ext_resource type="Script" uid="uid://doh5xcdvrrn7g" path="res://Assets/Script/BattleFieldScene.cs" id="1_8td0i"]
 [ext_resource type="Script" uid="uid://bofxi10iwp1bf" path="res://Assets/Script/TurnHelper.cs" id="1_25g81"]
@@ -17,6 +17,7 @@
 [ext_resource type="Script" uid="uid://kxwtxub32atc" path="res://Assets/Script/FxPlayer.cs" id="16_3bkig"]
 [ext_resource type="PackedScene" uid="uid://5jaympibmkwm" path="res://Assets/FxScene/IceBolt.tscn" id="17_4m0c6"]
 [ext_resource type="PackedScene" uid="uid://dgjogfc7xujst" path="res://Assets/FxScene/Lightning.tscn" id="18_enjqk"]
+[ext_resource type="Script" uid="uid://b55u2i73bs0x5" path="res://Assets/Script/gds/damage_floater.gd" id="18_f5ues"]
 [ext_resource type="PackedScene" uid="uid://csamidlr34g7s" path="res://Assets/FxScene/SoundFx/sound_fx_scene.tscn" id="18_fajhp"]
 [ext_resource type="Script" uid="uid://b5oowkl1j6sbv" path="res://Assets/Script/InputHelper.cs" id="19_fajhp"]
 
@@ -42,7 +43,7 @@ resource_local_to_scene = true
 script = ExtResource("8_ry6v4")
 Value = 2
 
-[sub_resource type="Resource" id="Resource_jw18j"]
+[sub_resource type="Resource" id="Resource_f5ues"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
 StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_dewjv"), SubResource("Resource_dxsyy"), SubResource("Resource_icvma"), SubResource("Resource_lo22a"), SubResource("Resource_uddro")])
@@ -69,7 +70,7 @@ resource_local_to_scene = true
 script = ExtResource("8_ry6v4")
 Value = 2
 
-[sub_resource type="Resource" id="Resource_erjmy"]
+[sub_resource type="Resource" id="Resource_v4f5j"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
 StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_26pw6"), SubResource("Resource_vdgyl"), SubResource("Resource_kmlyk"), SubResource("Resource_7lwu5"), SubResource("Resource_qnp2s")])
@@ -96,7 +97,7 @@ resource_local_to_scene = true
 script = ExtResource("8_ry6v4")
 Value = 2
 
-[sub_resource type="Resource" id="Resource_5ik5c"]
+[sub_resource type="Resource" id="Resource_fv452"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
 StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_fajhp"), SubResource("Resource_0ovk8"), SubResource("Resource_4kslh"), SubResource("Resource_b4tol"), SubResource("Resource_rpkph")])
@@ -123,7 +124,7 @@ resource_local_to_scene = true
 script = ExtResource("8_ry6v4")
 Value = 2
 
-[sub_resource type="Resource" id="Resource_lwoqy"]
+[sub_resource type="Resource" id="Resource_7o1qe"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
 StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_81x2m"), SubResource("Resource_38hap"), SubResource("Resource_wcjbh"), SubResource("Resource_1g6wm"), SubResource("Resource_ak8v2")])
@@ -150,7 +151,7 @@ resource_local_to_scene = true
 script = ExtResource("8_ry6v4")
 Value = 2
 
-[sub_resource type="Resource" id="Resource_lsfeo"]
+[sub_resource type="Resource" id="Resource_8ious"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
 StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_cshov"), SubResource("Resource_1okoo"), SubResource("Resource_rujwq"), SubResource("Resource_u7i10"), SubResource("Resource_mjwh7")])
@@ -264,53 +265,52 @@ custom_data_layer_0/name = "FixedArticle"
 custom_data_layer_0/type = 24
 sources/3 = SubResource("TileSetAtlasSource_fla71")
 
-[node name="BattleField" type="Node2D" node_paths=PackedStringArray("TileMapLayer", "TurnHelper", "Articles", "FxPlayer")]
+[node name="BattleField" type="Node2D" unique_id=1554462748 node_paths=PackedStringArray("_battleFieldTileMap", "_turnHelper", "_articles", "_fxPlayer", "_damageFloater")]
 y_sort_enabled = true
 script = ExtResource("1_8td0i")
-TileMapLayer = NodePath("TileMapLayer")
-TurnHelper = NodePath("TurnHelper")
-Articles = NodePath("Articles")
-FxPlayer = NodePath("FxPlayer")
+_battleFieldTileMap = NodePath("TileMapLayer")
+_turnHelper = NodePath("TurnHelper")
+_articles = NodePath("Articles")
+_fxPlayer = NodePath("FxPlayer")
+_damageFloater = NodePath("DamageFloater")
 
-[node name="Articles" type="Node2D" parent="."]
-y_sort_enabled = true
+[node name="Articles" type="Node2D" parent="." unique_id=393788407]
 script = ExtResource("2_q3ikk")
 
-[node name="Neutral" type="Node2D" parent="Articles"]
-y_sort_enabled = true
+[node name="Neutral" type="Node2D" parent="Articles" unique_id=1456247373]
 
-[node name="Ally" type="Node2D" parent="Articles"]
-y_sort_enabled = true
+[node name="Ally" type="Node2D" parent="Articles" unique_id=1509658396]
 
-[node name="Character" parent="Articles/Ally" instance=ExtResource("3_fajhp")]
+[node name="Character" parent="Articles/Ally" unique_id=1386758331 instance=ExtResource("3_fajhp")]
 position = Vector2(-80, 40)
-ArticleStatus = SubResource("Resource_jw18j")
+ArticleStatus = SubResource("Resource_f5ues")
 
-[node name="Opponent" type="Node2D" parent="Articles"]
-y_sort_enabled = true
+[node name="Opponent" type="Node2D" parent="Articles" unique_id=1272859551]
 
-[node name="Character" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
+[node name="Character" parent="Articles/Opponent" unique_id=650052817 instance=ExtResource("11_hv0hd")]
 position = Vector2(48, -24)
-ArticleStatus = SubResource("Resource_erjmy")
+ArticleStatus = SubResource("Resource_v4f5j")
 
-[node name="Character2" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
-ArticleStatus = SubResource("Resource_5ik5c")
+[node name="Character2" parent="Articles/Opponent" unique_id=558788869 instance=ExtResource("11_hv0hd")]
+ArticleStatus = SubResource("Resource_fv452")
 
-[node name="Character3" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
+[node name="Character3" parent="Articles/Opponent" unique_id=616552741 instance=ExtResource("11_hv0hd")]
 position = Vector2(48, -56)
-ArticleStatus = SubResource("Resource_lwoqy")
+ArticleStatus = SubResource("Resource_7o1qe")
 
-[node name="Character4" parent="Articles/Opponent" instance=ExtResource("11_hv0hd")]
+[node name="Character4" parent="Articles/Opponent" unique_id=642260940 instance=ExtResource("11_hv0hd")]
 position = Vector2(16, -22)
-ArticleStatus = SubResource("Resource_lsfeo")
+ArticleStatus = SubResource("Resource_8ious")
 
-[node name="TurnHelper" type="Node" parent="."]
+[node name="TurnHelper" type="Node" parent="." unique_id=1463199549 node_paths=PackedStringArray("_articlesContainer")]
 script = ExtResource("1_25g81")
+_articlesContainer = NodePath("../Articles")
+Speed = 5.0
 
-[node name="InputHelper" type="Node" parent="."]
+[node name="InputHelper" type="Node" parent="." unique_id=83738491]
 script = ExtResource("19_fajhp")
 
-[node name="FxPlayer" type="Node2D" parent="."]
+[node name="FxPlayer" type="Node" parent="." unique_id=393605340]
 script = ExtResource("16_3bkig")
 _spriteFxScenes = Dictionary[StringName, PackedScene]({
 &"IceBolt": ExtResource("17_4m0c6")
@@ -320,11 +320,15 @@ _lineFxScenes = Dictionary[StringName, PackedScene]({
 })
 _soundFxScene = ExtResource("18_fajhp")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
+[node name="DamageFloater" type="Node" parent="." unique_id=552329607]
+script = ExtResource("18_f5ues")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1855249842 node_paths=PackedStringArray("_articlesContainer")]
 position = Vector2(16, -104)
 tile_map_data = PackedByteArray("AAAAAAAAAwAAAAMAAAABAAAAAwAAAAMAAAABAAEAAwAAAAMAAAAAAAEAAwAAAAMAAAAAAAIAAwAAAAMAAAAAAAMAAwAAAAMAAAAAAAQAAwAAAAMAAAAAAAUAAwAAAAMAAAAAAAYAAwAAAAMAAAAAAAcAAwAAAAMAAAAAAAgAAwAAAAMAAAAAAAkAAwAAAAMAAAAAAAoAAwAAAAMAAAAAAAsAAwAAAAMAAAAAAAwAAwAAAAMAAAAAAA0AAwAAAAMAAAAAAA4AAwAAAAMAAAABAAIAAwAAAAMAAAABAAMAAwAAAAMAAAABAAQAAwAAAAMAAAABAAUAAwAAAAMAAAABAAYAAwAAAAMAAAABAAcAAwAAAAMAAAABAAgAAwAAAAMAAAABAAkAAwAAAAMAAAABAAoAAwAAAAMAAAABAAsAAwAAAAMAAAABAAwAAwAAAAMAAAABAA0AAwAAAAMAAAABAA4AAwAAAAMAAAACAAAAAwAAAAMAAAACAAEAAwAAAAMAAAACAAIAAwAAAAMAAAACAAMAAwAAAAMAAAACAAQAAwAAAAMAAAACAAUAAwAAAAMAAAACAAYAAwAAAAMAAAACAAcAAwAAAAMAAAACAAgAAwAAAAMAAAACAAkAAwAAAAMAAAACAAoAAwAAAAMAAAACAAsAAwAAAAMAAAACAAwAAwAAAAMAAAACAA0AAwAAAAMAAAACAA4AAwAAAAMAAAADAAAAAwAAAAMAAAADAAEAAwAAAAMAAAADAAIAAwAAAAMAAAADAAMAAwAAAAMAAAADAAQAAwAAAAMAAAADAAUAAwAAAAMAAAADAAYAAwAAAAMAAAADAAcAAwAAAAMAAAADAAgAAwAAAAMAAAADAAkAAwAAAAMAAAADAAoAAwAAAAMAAAADAAsAAwAAAAMAAAADAAwAAwAAAAMAAAADAA0AAwAAAAMAAAADAA4AAwAAAAMAAAAEAAAAAwAAAAMAAAAEAAEAAwAAAAMAAAAEAAIAAwAAAAMAAAAEAAMAAwAAAAMAAAAEAAQAAwAAAAMAAAAEAAUAAwAAAAMAAAAEAAYAAwAAAAMAAAAEAAcAAwAAAAMAAAAEAAgAAwAAAAMAAAAEAAkAAwAAAAMAAAAEAAoAAwAAAAMAAAAEAAsAAwAAAAMAAAAEAAwAAwAAAAMAAAAEAA0AAwAAAAMAAAAEAA4AAwAAAAMAAAAFAAAAAwAAAAMAAAAFAAEAAwAAAAMAAAAFAAQAAwAAAAMAAAAFAAUAAwAAAAMAAAAFAAYAAwAAAAMAAAAFAAcAAwAAAAMAAAAFAAgAAwAAAAMAAAAFAAkAAwAAAAMAAAAFAAoAAwAAAAMAAAAFAAsAAwAAAAMAAAAFAAwAAwAAAAMAAAAFAA0AAwAAAAMAAAAFAA4AAwAAAAMAAAAGAAAAAwAAAAMAAAAGAAEAAwAAAAMAAAAGAAIAAwAAAAMAAAAGAAMAAwAAAAMAAAAGAAQAAwAAAAMAAAAGAAUAAwAAAAMAAAAGAAYAAwAAAAMAAAAGAAcAAwAAAAMAAAAGAAgAAwAAAAMAAAAGAAkAAwAAAAMAAAAGAAoAAwAAAAMAAAAGAAsAAwAAAAMAAAAGAAwAAwAAAAMAAAAGAA0AAwAAAAMAAAAGAA4AAwAAAAMAAAAHAAAAAwAAAAMAAAAHAAEAAwAAAAMAAAAHAAIAAwAAAAMAAAAHAAMAAwAAAAMAAAAHAAQAAwAAAAMAAAAHAAUAAwAAAAMAAAAHAAYAAwAAAAMAAAAHAAcAAwAAAAMAAAAHAAgAAwAAAAMAAAAHAAkAAwAAAAMAAAAHAAoAAwAAAAMAAAAHAAsAAwAAAAMAAAAHAAwAAwAAAAMAAAAHAA0AAwAAAAMAAAAHAA4AAwAAAAMAAAAIAAAAAwAAAAMAAAAIAAEAAwAAAAMAAAAIAAIAAwAAAAMAAAAIAAMAAwAAAAMAAAAIAAQAAwAAAAMAAAAIAAUAAwAAAAMAAAAIAAYAAwAAAAMAAAAIAAcAAwAAAAMAAAAIAAgAAwAAAAMAAAAIAAkAAwAAAAMAAAAIAAoAAwAAAAMAAAAIAAsAAwAAAAMAAAAIAAwAAwAAAAMAAAAIAA0AAwAAAAMAAAAIAA4AAwAAAAMAAAAJAAAAAwAAAAMAAAAJAAEAAwAAAAMAAAAJAAIAAwAAAAMAAAAJAAMAAwAAAAMAAAAJAAQAAwAAAAMAAAAJAAUAAwAAAAMAAAAJAAYAAwAAAAMAAAAJAAcAAwAAAAMAAAAJAAgAAwAAAAMAAAAJAAoAAwAAAAMAAAAJAAsAAwAAAAMAAAAJAAwAAwAAAAMAAAAJAA0AAwAAAAMAAAAJAA4AAwAAAAMAAAAKAAAAAwAAAAMAAAAKAAEAAwAAAAMAAAAKAAIAAwAAAAMAAAAKAAMAAwAAAAMAAAAKAAQAAwAAAAMAAAAKAAUAAwAAAAMAAAAKAAYAAwAAAAMAAAAKAAcAAwAAAAMAAAAKAAgAAwAAAAMAAAAKAAkAAwAAAAMAAAAKAAoAAwAAAAMAAAAKAAsAAwAAAAMAAAAKAAwAAwAAAAMAAAAKAA0AAwAAAAMAAAAKAA4AAwAAAAMAAAAFAAMAAwAAAAMAAAAFAAIAAwAAAAMAAAAJAAkAAwAAAAMAAAA=")
 tile_set = SubResource("TileSet_fkgbs")
 script = ExtResource("2_0g2jr")
+_articlesContainer = NodePath("../Articles")
 
-[node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(2, 2)
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1610558112]
+zoom = Vector2(3, 3)

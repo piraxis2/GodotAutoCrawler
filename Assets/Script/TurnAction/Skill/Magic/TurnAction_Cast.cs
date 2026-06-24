@@ -20,7 +20,7 @@ public abstract partial class TurnAction_Cast : TurnActionBase
 
     private ActionState CastingPhase(double delta, ArticleBase owner)
     {
-        if (owner.AnimationPlayer.CurrentAnimation is "Cast" or "Casting")
+        if (owner.AnimationPlayer.CurrentAnimation == "Cast" || owner.AnimationPlayer.CurrentAnimation == "Casting")
         {
             if (owner.AnimationPlayer.CurrentAnimationPosition < owner.AnimationPlayer.CurrentAnimationLength)
             {
