@@ -1,7 +1,7 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-06-20
+updated: 2026-07-05
 ---
 
 # Open Tasks
@@ -18,6 +18,16 @@ updated: 2026-06-20
 
 ## Later
 
+- CB-001 프로덕션 전투 seed 생성/기록 정책: 현재 Step 2의 `_combatSeed=1` 기본값은 재현 테스트에 적합하지만,
+  실제 새 전투마다 seed를 생성하고 로그/리플레이 입력에 기록하는 경로는 Step 4 또는 Step 5에서 확정한다.
+
+- CB-001 2단계 — 전투 시뮬레이션/프레젠테이션 분리: 순수 `TurnResolver` + 이벤트 로그
+  (`Moved`/`Attacked`/`Damaged`/`Died`)로 판정을 확정하고 연출 계층은 이벤트 재생만 담당.
+  리플레이 포맷 `{시드, 초기 배치, 스탯}`, 헤드리스 빨리감기/결과 검증 가능.
+  선행 과제: `Damage.ApplyImmediately`의 `DamageFloater`/`Hit()` UI 직접 호출 제거(이벤트 발행 전환),
+  `TurnAction_ChainLightning`의 재생 중 판정(체인 타겟을 IgnitionPhase에서 선택) 패턴을 판정 시점
+  일괄 확정으로 변경. 엔진 버전 간 리플레이 호환이 필요해지면 `AStarGrid2D` 대신 자체 결정론
+  경로탐색 검토([[CB-001-Deterministic-Combat-Resolution]] Follow-ups).
 - DT-010 옵션 C: 에디터 debug Play preview에서 고정 example schema 대신 게임 schema 경로를 debug 설정으로
   주입하는 toggle. parse-safe하게 구현 가능(autoload는 `get_node_or_null` 런타임 lookup,
   [[ADR-012-Dialogue-Debug-Preview-Provider]] D1/D2). 현재는 game schema key가 preview에서
@@ -52,6 +62,13 @@ updated: 2026-06-20
 
 완료 작업의 상세 사실/판정은 Current-State와 각 Review가 보존한다. 여기는 최근 완료 포인터만 둔다.
 
+- **CB-001 Deterministic Combat Resolution 완료**(Step 0~5,
+  [[CB-001-Deterministic-Combat-Resolution-Review]] 판정: 완료): 전투를 "같은 시드 + 같은 초기 배치 →
+  같은 결과"의 결정론 시스템으로 전환(1단계, 현 구조 유지). 턴당 1회 지속 효과(프레임/배속 종속 버그
+  수정), `TurnHelper` 소유 시드 `CombatRng` + 금지 난수 API 정적 가드, ADR-017 정규 순서(타겟/체인/턴
+  순서/이동 동점자), 실제 `battle_field.tscn` 결정론 회귀(같은 시드 완전 일치·배속 불변·다른 시드
+  스모크) 고정. 결정 [[ADR-017-Deterministic-Combat-Resolution]], 사실 [[Turn-System]]/
+  [[Article-Status-System]]. 2단계(시뮬/프레젠테이션 분리)와 잔여 P3는 위 Later/Task Follow-ups 참고.
 - **BT-001 BehaviorTree Graph Editor and Debugger Step 4b 완료**(Step 4b, 판정: 완료):
   수신한 원격 payload 구조를 기반으로 동적으로 디버그 그래프를 구축하고, 노드 타입 색상 캐싱, 실시간 상태 하이라이트 전환, 잔상 차단을 위한 stale clear 및 unregister 시의 Stale 회색 잠금을 구현하였으며, 탭 라이프사이클 세션 제어 및 임시 선택 UI(TEMP)를 통해 F5 플레이 연동 스모크 테스트를 완수함. C# 헤드리스 단위 테스트(O~Q 케이스) 검증 완료.
   - 2026-06-20 P1 수정: `BehaviorTreeEditor.HandleDebugMessage`가 tick만 넘기던 배선을 고쳐

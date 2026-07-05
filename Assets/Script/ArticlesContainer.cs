@@ -16,8 +16,10 @@ public partial class ArticlesContainer : Node
 
     public override void _Ready()
     {
+        int spawnIndex = 0;
         foreach (ArticleBase article in GetChildren().SelectMany(child => child.GetChildren().OfType<ArticleBase>()))
         {
+            article.SpawnIndex = spawnIndex++;
             article.OnDead += deadArticle => { Articles[deadArticle.GetParent().Name].Remove(deadArticle); };
             Articles[article.GetParent().Name].Add(article);
         }

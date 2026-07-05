@@ -1,7 +1,7 @@
 ---
 type: index
 project: AutoCrawler
-updated: 2026-06-19
+updated: 2026-07-05
 ---
 
 # AutoCrawler LLM Wiki
@@ -53,6 +53,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[SG-002-SaveFlow-Facade-Metadata-Provider]]
 - [[SG-003-SaveSlot-UI-Host-Integration]]
 - [[BT-001-BehaviorTree-Graph-Editor-Debugger]]
+- [[CB-001-Deterministic-Combat-Resolution]]
 - [[DialogueTool-Step-1-to-8]]
 - [[DT-002-Portrait-Review]]
 - [[DT-004-Effect-Flow-Review]]
@@ -67,6 +68,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[SG-001-SaveGame-Core-Section-System-Review]]
 - [[SG-002-SaveFlow-Facade-Metadata-Provider-Review]]
 - [[SG-003-SaveSlot-UI-Host-Integration-Review]]
+- [[CB-001-Deterministic-Combat-Resolution-Review]]
 - [[ADR-001-Runtime-Snapshot]]
 - [[ADR-002-Editor-Adapter]]
 - [[ADR-003-DialogueManager-Autoload]]
@@ -83,6 +85,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[ADR-014-SaveFlow-Facade-And-Metadata-Provider]]
 - [[ADR-015-State-Read-Data-Node]]
 - [[ADR-016-BehaviorTree-Remote-Debug-Channel]]
+- [[ADR-017-Deterministic-Combat-Resolution]]
 
 ## 문서 역할
 

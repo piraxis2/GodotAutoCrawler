@@ -4,6 +4,7 @@ using System.Linq;
 using AutoCrawler.addons.behaviortree;
 using AutoCrawler.addons.behaviortree.node;
 using AutoCrawler.Assets.Script.Article;
+using AutoCrawler.Assets.Script.TurnAction.Skill;
 using AutoCrawler.Assets.Script.Util;
 using Godot;
 
@@ -51,12 +52,9 @@ public partial class BehaviorTree_Move : BehaviorTree_Action
         if (targetPointList.Count == 0) return null;
 
         _aStar2D.SetPointSolid(characterArticle.TilePosition, false);
-        var path = targetPointList
-            .Select(targetPoint => _aStar2D.GetIdPath(characterArticle.TilePosition, targetPoint, true))
-            .Where(candidatePath => candidatePath.Count >= 2)
-            .OrderBy(candidatePath => candidatePath.Count)
-            .ThenBy(candidatePath => (candidatePath[candidatePath.Count - 1] - characterArticle.TilePosition).LengthSquared())
-            .FirstOrDefault();
+        var path = SkillUtil.SelectCanonicalPath(
+            targetPointList.Select(targetPoint => _aStar2D.GetIdPath(characterArticle.TilePosition, targetPoint, true)),
+            characterArticle.TilePosition);
 
         if (path == null) return null;
 

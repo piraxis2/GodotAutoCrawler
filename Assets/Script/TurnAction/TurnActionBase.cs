@@ -27,9 +27,9 @@ public abstract partial class TurnActionBase : Resource
     // Action 범위
     protected abstract int Scale { get; }
     
-    // Action이 닿는 위치
-    private HashSet<Vector2I> _attackRangePositions;
-    public HashSet<Vector2I> AttackRangePositions => _attackRangePositions ??= SkillUtil.GetAttackRangePositions(Range);
+    // Action이 닿는 위치 (ADR-017 정규 순서로 정렬됨)
+    private IReadOnlyList<Vector2I> _attackRangePositions;
+    public IReadOnlyList<Vector2I> AttackRangePositions => _attackRangePositions ??= SkillUtil.GetAttackRangePositions(Range);
 
 
     protected virtual int MasterCost => 1;
@@ -55,8 +55,11 @@ public abstract partial class TurnActionBase : Resource
     {
         ArticleBase ownerArticle = (ArticleBase)((BehaviorTree_Action)owner).Tree.GetParent();
         List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + ownerArticle.TilePosition).ToList();
-        BattleFieldTileMapLayer tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap; 
-        ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?.FirstOrDefault(t => t is { IsAlive: true } && t.IsOpponent(ownerArticle));
+        BattleFieldTileMapLayer tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap;
+        ArticleBase target = tileMapLayer?.GetArticles(calculatedAttackRange)?
+            .Where(t => t is { IsAlive: true } && t.IsOpponent(ownerArticle))
+            .OrderByCanonical(t => t.TilePosition, ownerArticle.TilePosition)
+            .FirstOrDefault();
         if (target != null) ownerArticle.DecisionFlipH(target.TilePosition);
         return target;
     }

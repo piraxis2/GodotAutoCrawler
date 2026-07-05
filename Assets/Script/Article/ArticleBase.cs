@@ -10,6 +10,9 @@ public abstract partial class ArticleBase : Node2D
 {
     [Export] public ArticleStatus ArticleStatus = new();
 
+    // 씬 트리 순회 순서 기반 스폰 순번. ArticlesContainer가 등록 시 부여하며 턴 순서 동점자 키로 쓰인다(ADR-017).
+    public int SpawnIndex { get; set; }
+
     public bool IsAlive
     {
         get

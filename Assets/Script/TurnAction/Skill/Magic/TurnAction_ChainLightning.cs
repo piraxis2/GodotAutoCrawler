@@ -61,7 +61,11 @@ public partial class TurnAction_ChainLightning : TurnActionBase
         var potentialTargets = _tileMapLayer?.GetArticles(calculatedAttackRange)?
             .Where(t => t is { IsAlive: true } && t.TilePosition != tilePosition && t.IsOpponent(_owner));
         
-        return potentialTargets?.OrderBy(t => _hitTargets.Contains(t)).FirstOrDefault();
+        // 아직 맞지 않은 대상 우선, 그 안의 동점자는 ADR-017 정규 순서(거리 -> Y -> X)
+        return potentialTargets?
+            .OrderBy(t => _hitTargets.Contains(t))
+            .ThenByCanonical(t => t.TilePosition, tilePosition)
+            .FirstOrDefault();
     }
 
     private ActionState StartPhase(double delta, ArticleBase owner)

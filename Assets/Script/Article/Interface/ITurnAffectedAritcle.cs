@@ -1,4 +1,4 @@
-﻿using AutoCrawler.addons.behaviortree;
+using AutoCrawler.addons.behaviortree;
 using AutoCrawler.Assets.Script.TurnAction;
 
 namespace AutoCrawler.Assets.Script.Article.Interface;
@@ -6,8 +6,10 @@ namespace AutoCrawler.Assets.Script.Article.Interface;
 public interface ITurnAffectedArticle<T> where T : ArticleBase 
 {
     public int Priority { get; set; }
+    public int SpawnIndex { get; set; }
     public TurnActionBase CurrentTurnAction { get; set; }
     protected BehaviorTree BehaviorTree { get; }
+    public void ApplyTurnStartEffects();
     public BtStatus TurnPlay(double delta);
 
 

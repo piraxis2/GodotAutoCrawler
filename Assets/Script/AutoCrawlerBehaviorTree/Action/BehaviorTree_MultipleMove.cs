@@ -5,6 +5,7 @@ using AutoCrawler.addons.behaviortree;
 using AutoCrawler.addons.behaviortree.node;
 using AutoCrawler.Assets.Script.Article;
 using AutoCrawler.Assets.Script.Article.Status.Element;
+using AutoCrawler.Assets.Script.TurnAction.Skill;
 using AutoCrawler.Assets.Script.Util;
 using Godot;
 
@@ -47,12 +48,9 @@ public partial class BehaviorTree_MultipleMove : BehaviorTree_Action
         if (targetPointList.Count == 0) return null;
 
         _aStar2D.SetPointSolid(owner.TilePosition, false);
-        var path = targetPointList
-            .Select(targetPoint => _aStar2D.GetIdPath(owner.TilePosition, targetPoint, true))
-            .Where(candidatePath => candidatePath.Count >= 2)
-            .OrderBy(candidatePath => candidatePath.Count)
-            .ThenBy(candidatePath => (candidatePath[candidatePath.Count - 1] - owner.TilePosition).LengthSquared())
-            .FirstOrDefault();
+        var path = SkillUtil.SelectCanonicalPath(
+            targetPointList.Select(targetPoint => _aStar2D.GetIdPath(owner.TilePosition, targetPoint, true)),
+            owner.TilePosition);
         if (path == null) return null;
 
         owner.ArticleStatus.StatusElementsDictionary.TryGetValue(typeof(Mobility), out var mobility);

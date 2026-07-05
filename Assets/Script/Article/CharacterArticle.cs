@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoCrawler.addons.behaviortree;
 using AutoCrawler.Assets.Script.Article.Interface;
-using AutoCrawler.Assets.Script.Article.Status.Affect;
 using AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Action;
 using AutoCrawler.Assets.Script.TurnAction;
 using AutoCrawler.Assets.Script.TurnAction.Skill;
@@ -18,8 +17,8 @@ public partial class CharacterArticle : ArticleBase, ITurnAffectedArticle<Articl
     public BehaviorTree BehaviorTree => _behaviorTree ??= GetNode<BehaviorTree>("BehaviorTree");
     public int Priority { get; set; }
 
-    private HashSet<Vector2I> _attackRangePositions;
-    private HashSet<Vector2I> AttackRangePositions
+    private IReadOnlyList<Vector2I> _attackRangePositions;
+    private IReadOnlyList<Vector2I> AttackRangePositions
     {
         get
         {
@@ -35,13 +34,15 @@ public partial class CharacterArticle : ArticleBase, ITurnAffectedArticle<Articl
 
     public List<Vector2I> CalculatedAttackRange => AttackRangePositions.Select(p => p + TilePosition).ToList();
 
+    public void ApplyTurnStartEffects()
+    {
+        ArticleStatus.ApplyAffectingStatuses();
+    }
+
     public BtStatus TurnPlay(double delta)
     {
         if (BehaviorTree == null) throw new NullReferenceException("BehaviorTree is null");
         
-        // 턴마다 영향을 주는 상태를 적용
-        ArticleStatus.ApplyAffectingStatuses();
-
         if (CurrentTurnAction == null) return BehaviorTree.Behave(delta, this);
         
         // 현재 턴 액션이 null이 아닐 경우, 액션을 실행

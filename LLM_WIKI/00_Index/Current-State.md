@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-06-20
+updated: 2026-07-05
 ---
 
 # Current State
@@ -13,6 +13,26 @@ updated: 2026-06-20
 - 실제 전투 실험 중심 씬은 `Assets/Scenes/Map/battle_field.tscn`이다.
 - `main.tscn`은 UI와 윈도우 실험 성격이 강하다.
 
+
+## Combat
+
+- **CB-001 Deterministic Combat Resolution 완료**(Step 0~5,
+  [[CB-001-Deterministic-Combat-Resolution-Review]] 판정: 완료, 결정 [[ADR-017-Deterministic-Combat-Resolution]]):
+  전투가 {시드, 초기 배치} 입력만으로 재현된다(1단계, 현 구조 유지).
+  - 지속 효과는 `TurnHelper.AdvanceToNextTurn()` 직후 유닛 턴 시작 1회만 적용된다
+    (`ITurnAffectedArticle.ApplyTurnStartEffects()` hook). 프레임 수·배속 종속 버그 수정.
+  - `TurnHelper`가 seed 가능한 전투 전용 `CombatRng`를 소유하고 `PhysicalDamage` 크리티컬/데미지 롤이
+    이를 소비한다. 전투 코드의 `GD.Rand*`/`new Random(`/`Guid.NewGuid` 직접 사용은 정적 가드가 막는다.
+  - 전투 의사결정 동점자는 ADR-017 정규 순서(거리 → Y → X, 공용 구현 `SkillUtil`)로 고정:
+    `GetTarget`, `GetChainTarget`(미타격 우선 → 정규 순서), `BehaviorTree_Move`/`MultipleMove` 경로
+    선택(길이 → 거리² → Y → X). 턴 순서는 `Priority` → `SpawnIndex`(씬 트리 순회 순서) 안정 정렬.
+  - 결정론 회귀: 실제 `battle_field.tscn` 이벤트 로그(턴 순서/HP 변화/사망 순서/최종 HP·타일) 기준
+    같은 시드 완전 일치, 같은 시드 + 다른 배속(2 vs 6) 완전 일치, 다른 시드 상이(스모크).
+  - 검증 자산: `Assets/Script/Tests/cb001_step1~4` 4종 헤드리스 테스트, 전부 ALL PASS.
+  - 알려진 사실: 출하된 `battle_field.tscn`의 Opponent Puppet 4기는 BehaviorTree가 비어 있어 근접/단일
+    이동/`PhysicalDamage` 경로는 프로덕션 씬에서 미사용(Step 4 테스트가 프로그램적으로 구성해 커버).
+    프로덕션 시드는 아직 고정값 1(생성/기록 정책은 Follow-up). 2단계(시뮬/프레젠테이션 분리)는
+    [[Open-Tasks]] Later 참고.
 ## DialogueTool
 
 - Step 1~8 구현 및 리뷰가 완료됐다.

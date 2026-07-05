@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/Tests/Cb001Step1TurnEffectTest.cs" id="1_cb001"]
+
+[node name="Cb001Step1TurnEffectTest" type="Node"]
+script = ExtResource("1_cb001")

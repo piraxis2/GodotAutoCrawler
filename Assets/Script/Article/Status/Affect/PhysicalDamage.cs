@@ -1,4 +1,4 @@
-﻿using AutoCrawler.Assets.Script.Article.Status.Element;
+using AutoCrawler.Assets.Script.Article.Status.Element;
 using Godot;
 
 namespace AutoCrawler.Assets.Script.Article.Status.Affect;
@@ -20,7 +20,7 @@ public class PhysicalDamage : Damage
         _maxDamage = maxDamage;
         _strength = (giver.StatusElementsDictionary[typeof(Strength)] as Strength)?.Value ?? _strength;
         int luckValue = (giver.StatusElementsDictionary[typeof(Luck)] as Luck)?.Value ?? 0;
-        _isCritical = GD.RandRange(0, (double)100) < (double)luckValue / 10 + 5; 
+        _isCritical = GetCombatContext().CombatRandRange(0.0, 100.0) < (double)luckValue / 10 + 5;
     }
 
     protected override int CalculatedDamage(ArticleStatus recipient)
@@ -28,6 +28,13 @@ public class PhysicalDamage : Damage
         int defenseValue = (recipient.StatusElementsDictionary[typeof(Defense)] as Defense)?.Value ?? 0;
         int calculatedMinDamage = (_minDamage - defenseValue) / 2 + _strength + 25;
         int calculatedMaxDamage = (_maxDamage - defenseValue) / 2 + _strength + 25;
-        return GD.RandRange(calculatedMinDamage, calculatedMaxDamage); 
+        return GetCombatContext().CombatRandRange(calculatedMinDamage, calculatedMaxDamage);
+    }
+
+    private static TurnHelper GetCombatContext()
+    {
+        var turnHelper = BattleFieldScene.BattleField?.TurnHelper;
+        if (turnHelper != null) return turnHelper;
+        throw new System.InvalidOperationException("PhysicalDamage requires BattleFieldScene.BattleField.TurnHelper CombatRng.");
     }
 }
