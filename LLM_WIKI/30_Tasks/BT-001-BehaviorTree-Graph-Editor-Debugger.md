@@ -1,10 +1,10 @@
 ---
 id: BT-001
 type: task
-status: in-progress
+status: complete
 system: BehaviorTree
 created: 2026-06-19
-updated: 2026-06-20
+updated: 2026-07-05
 tags: [task, behavior-tree, editor, debugger]
 ---
 
@@ -401,6 +401,13 @@ Debug는 editor process와 play process가 분리되어 있으므로 remote chan
     수동 multi-tab 시각 확인은 불가했다. 색상/elapsed tick 변화와 natural death unregister stale도 육안 확인하지 못했고,
     자동 테스트(P/R/S/T)로 deterministic payload 경로를 보강했다.
 
+
+리뷰 및 P2 수정(2026-07-05):
+- 구현 리뷰에서 P0/P1은 없었고, `BehaviorTree_Node._elapsedTime`이 `long`이라 `0.016` 같은 fractional delta가 매 frame 0으로 잘리는 P2를 확인했다.
+- 수정: `_elapsedTime`과 `Util.BehaviorLog.Time`을 `double`로 변경하고, legacy `BehaviorTreeGraphView` debug tick 파싱도 `AsDouble()`로 맞췄다.
+- 회귀: `BehaviorTreeValidationTest` N 케이스에 실제 `Running` action을 `Behave(0.016)` 3회 실행해 `elapsed_time ~= 0.048` 누적을 단언하는 검사를 추가했다.
+- 재검증: `dotnet build AutoCrawler.sln -c Debug` PASS(경고/오류 0), `bt_validation_test.tscn` A~T ALL PASS. 기존 `SalvageChildren` owner warning 및 ObjectDB leak warning은 Step 5 이전부터 관찰된 테스트 환경 경고다.
+- 판정: [[BT-001-BehaviorTree-Graph-Editor-Debugger-Review]] 완료.
 ## Completion Criteria
 
 - 기존 Node tree 기반 BehaviorTree runtime이 유지된다.

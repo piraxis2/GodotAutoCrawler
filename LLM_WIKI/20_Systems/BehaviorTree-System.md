@@ -2,7 +2,7 @@
 type: system
 system: BehaviorTree
 status: active
-updated: 2026-06-20
+updated: 2026-07-05
 ---
 
 # BehaviorTree System
@@ -31,7 +31,7 @@ updated: 2026-06-20
 - **원격 디버그 채널**: `EngineDebugger` 양방향 IPC를 활용하며 `behavior_tree` 네임스페이스를 사용합니다.
 - **Discovery (Announce)**: `BehaviorTree` 인스턴스가 `_Ready()` 시 `behavior_tree:register`, `_ExitTree()` 시 `behavior_tree:unregister`를 전송합니다.
 - **Gating**: 에디터 측의 `start` 요청 전까지는 `DebugEnabled = false`로 유지되며, `BehaviorTree_Node.Behave()` 게이트에 의해 디버깅 연산 및 딕셔너리/상대 NodePath 문자열 할당이 완전히 단락(Zero allocation)됩니다.
-- **Structure & Tick**: `start` 수신 시 `behavior_tree:structure` 페이로드가 1회 전송되고, 매 physics tick마다 최적화된 `behavior_tree:tick` 틱 리포트가 전송됩니다.
+- **Structure & Tick**: `start` 수신 시 `behavior_tree:structure` 페이로드가 1회 전송되고, 매 physics tick마다 최적화된 `behavior_tree:tick` 틱 리포트가 전송됩니다. `elapsed_time`은 fractional frame delta 보존을 위해 `double`로 누적·전송됩니다.
 
 ## Remote Debug Window Routing (Step 4b P1 fix)
 

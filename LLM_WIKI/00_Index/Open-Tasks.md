@@ -8,12 +8,6 @@ updated: 2026-07-05
 
 ## Next
 
-- **BT-001 BehaviorTree Graph Editor and Debugger Step 5 구현 리뷰**:
-  전투 디버깅 통합 구현은 완료됐고 리뷰 대기다. 정식 BehaviorTree target selector, session 재수집,
-  runtime start/stop message 호환, 다중 tree_path 라우팅/탭 close stop 회귀 테스트(S/T), 실제
-  `battle_field.tscn` F5 smoke(register discovery → remote graph → stop stale)를 확인했다. 리뷰에서는
-  현재 smoke 한계(대표 씬 discovery 대상 1개, tick 색상/elapsed 및 natural death stale 육안 미확인)를 함께 판정한다.
-
 
 
 ## Later
@@ -60,6 +54,12 @@ updated: 2026-07-05
 
 ## Recently Completed
 
+- **BT-001 BehaviorTree Graph Editor and Debugger 완료**(Step 1~5, [[BT-001-BehaviorTree-Graph-Editor-Debugger-Review]] 판정: 완료):
+  Node tree source-of-truth 기반 GraphEdit viewer/authoring/Inspector 연동과 원격 디버그 채널을 완료했다.
+  Step 5에서 battle runtime register discovery, target selector, session 재수집, `tree_path`별 remote tab routing,
+  tab close stop 격리, stale 정지를 구현했다. 리뷰 P2로 발견된 `elapsed_time` fractional delta truncation은
+  `_elapsedTime`/`BehaviorLog.Time` double 전환 및 실제 `Running` action 0.016초 누적 회귀로 수정 완료.
+  검증: `dotnet build` 경고/오류 0, `bt_validation_test.tscn` A~T ALL PASS, `battle_field.tscn` F5 smoke.
 완료 작업의 상세 사실/판정은 Current-State와 각 Review가 보존한다. 여기는 최근 완료 포인터만 둔다.
 
 - **CB-001 Deterministic Combat Resolution 완료**(Step 0~5,

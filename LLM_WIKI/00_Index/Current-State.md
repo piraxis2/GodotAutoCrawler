@@ -564,7 +564,7 @@ updated: 2026-07-05
     `register`/`unregister`/`structure`/`tick` 4종을 모두 `DebuggerWindow.HandleDebugMessage(message, payload)`로
     위임한다. 원격 메시지 수신 시 창이 없으면 `EnsureDebuggerWindow()`로 자동 생성하고, 최초 `register`에서
     창을 표시한다. 회귀 테스트 R 케이스(editor -> window forwarding) 추가, A~R ALL PASS.
-- **BT-001 Step 5: Battle Debug Integration 구현 완료 — 리뷰 대기**
+- **BT-001 Step 5: Battle Debug Integration 완료(판정: 완료, [[BT-001-BehaviorTree-Graph-Editor-Debugger-Review]])**
   - `DebuggerWindow`의 TEMP discovery 패널을 정식 BehaviorTree target selector로 정리했다. 목록은
     `index. articleName — tree_path`로 표시해 같은 article 이름의 다중 인스턴스를 구분한다.
   - `BehaviorTreeEditor.StartDebugging/StopDebugging`은 송신 직전 `BtDebuggerPlugin.RegisterAvailableSessions()`로
@@ -573,10 +573,12 @@ updated: 2026-07-05
   - 원격 탭 close는 해당 `tree_path` 하나에만 stop을 보내며, stale title 중복 추가를 방지한다.
   - `DebuggerTree`는 로컬 에디터 scene Node 구조 보기 전용으로 유지하고, 원격 payload graph/status는
     `BehaviorTreeDebugGraphView`가 담당한다.
+  - 리뷰 P2 수정: `BehaviorTree_Node._elapsedTime`/`Util.BehaviorLog.Time`을 `double`로 바꿔 fractional delta가
+    0으로 잘리던 문제를 수정하고, 실제 `Running` action `Behave(0.016)` 3회 누적 회귀를 추가했다.
   - 검증: `dotnet build` 경고/오류 0, `bt_validation_test.tscn` A~T ALL PASS. 실제 `battle_field.tscn` F5 smoke에서
     register discovery, Start 후 remote graph 생성, Stop 후 `[STALE]` 정지를 확인했다. 현 battle smoke에서는
-    discovery 대상이 1개라 둘째 캐릭터 수동 Start/시각 multi-tab 확인은 불가했고, tick 색상/elapsed 변화 및 natural
-    death unregister stale는 자동 테스트(P/R/S/T)로 보강했다.
+    discovery 대상이 1개라 둘째 캐릭터 수동 Start/시각 multi-tab 확인은 불가했고, tick 색상 및 natural death
+    unregister stale는 자동 테스트(P/R/S/T)로 보강했다.
 
 ## Verification Baseline
 

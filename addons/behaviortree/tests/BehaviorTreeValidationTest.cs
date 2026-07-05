@@ -495,7 +495,26 @@ public partial class BehaviorTreeValidationTest : Node
         Check("N.Tick_Report_Status", report["status"].AsInt32() == (int)BtStatus.Success, true);
         Check("N.Tick_Report_Time", report["elapsed_time"].AsDouble() == 1.25, true);
 
+        // 3) 실제 Behave(delta) 경로에서 fractional delta가 잘리지 않고 누적되는지 검증
+        var runningTree = new BehaviorTree();
+        var runningAction = new TestRunningActionNode();
+        runningAction.Name = "RunningAction";
+        runningTree.AddChild(runningAction);
+        runningTree._Ready();
+        runningTree.DebugEnabled = true;
+
+        tickReportsField.SetValue(runningTree, new Godot.Collections.Array());
+        runningAction.Behave(0.016, null);
+        runningAction.Behave(0.016, null);
+        runningAction.Behave(0.016, null);
+
+        var runningReports = (Godot.Collections.Array)tickReportsField.GetValue(runningTree);
+        var lastReport = (Godot.Collections.Dictionary)runningReports[^1];
+        double accumulatedElapsed = lastReport["elapsed_time"].AsDouble();
+        Check("N.Tick_Report_Fractional_Delta_Accumulates", accumulatedElapsed > 0.047 && accumulatedElapsed < 0.049, true);
+
         testTree.QueueFree();
+        runningTree.QueueFree();
     }
 
     private void TestDebugGraphBuildFromStructure()
@@ -913,6 +932,14 @@ public partial class TestActionNode : BehaviorTree_Action
     protected override BtStatus PerformAction(double delta, Node owner)
     {
         return BtStatus.Success;
+    }
+}
+
+public partial class TestRunningActionNode : BehaviorTree_Action
+{
+    protected override BtStatus PerformAction(double delta, Node owner)
+    {
+        return BtStatus.Running;
     }
 }
 #endif

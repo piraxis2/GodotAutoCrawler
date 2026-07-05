@@ -10,7 +10,7 @@ namespace AutoCrawler.addons.behaviortree.node;
 public abstract partial class BehaviorTree_Node : Node
 {
     
-    private long _elapsedTime = 0;
+    private double _elapsedTime = 0.0;
     private BtStatus _status = BtStatus.Failure;
 
 
@@ -48,9 +48,9 @@ public abstract partial class BehaviorTree_Node : Node
         if (_status is BtStatus.Success or BtStatus.Failure)
         {
             OnInit(owner);
-            _elapsedTime = 0;
+            _elapsedTime = 0.0;
         }
-        _elapsedTime = (long)(_elapsedTime + delta);
+        _elapsedTime += delta;
         _status = OnBehave(delta, owner);
         
         if (Tree != null && Tree.DebugEnabled)

@@ -835,7 +835,7 @@ public partial class BehaviorTreeGraphView : MarginContainer
                 {
                     string nodePath = report.ContainsKey("node_path") ? report["node_path"].AsString() : "";
                     BtStatus status = report.ContainsKey("status") ? (BtStatus)report["status"].AsInt64() : BtStatus.Failure;
-                    long elapsedTime = report.ContainsKey("elapsed_time") ? report["elapsed_time"].AsInt64() : 0;
+                    double elapsedTime = report.ContainsKey("elapsed_time") ? report["elapsed_time"].AsDouble() : 0.0;
 
                     Node realNode = _tree.GetNodeOrNull(nodePath);
                     if (realNode != null)
@@ -902,7 +902,7 @@ public partial class BehaviorTreeGraphView : MarginContainer
         }
     }
 
-    private void HighlightGraphNode(GraphNode graphNode, BtStatus status, long elapsedTime)
+    private void HighlightGraphNode(GraphNode graphNode, BtStatus status, double elapsedTime)
     {
         switch (status)
         {
