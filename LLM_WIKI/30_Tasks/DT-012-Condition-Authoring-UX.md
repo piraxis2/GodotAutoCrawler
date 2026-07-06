@@ -201,7 +201,7 @@ Step 0 설계 리뷰(2026-06-16)에서 실제 코드 구조와 대조해 아래 
 - Step 0 승인.
 
 결과:
-- 구현 완료 — 리뷰 대기. provider-free helper `ConditionSummary`
+- 구현·리뷰 완료(판정: 완료). provider-free helper `ConditionSummary`
   (`addons/dialogtool/world_state/condition/condition_summary.gd`)를 추가했다.
   - public/static `ConditionSummary.summarize(condition_set, options := {}) -> Dictionary`,
     반환 `{ valid, summary, full_summary, tooltip, error_codes, errors }`.

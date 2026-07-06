@@ -298,7 +298,7 @@ func is_world_state_ready() -> bool
 
 선행 조건: Step 0 승인, D6 확정
 
-### Step 1 결과 — 구현 완료 (2026-06-12, 코드 리뷰 대기)
+### Step 1 결과 — 구현·리뷰 완료 (2026-06-12)
 
 **변경 파일**
 - `Assets/Script/gds/world_state/world_state_schema.tres` (신규): 확정 6-key bootstrap Schema.
@@ -366,7 +366,7 @@ func is_world_state_ready() -> bool
 
 선행 조건: Step 1 완료, D2/D3 확정
 
-### Step 2 결과 — 구현 완료 (2026-06-12, 코드 리뷰 대기)
+### Step 2 결과 — 구현·리뷰 완료 (2026-06-12)
 
 **변경 파일**
 - `project.godot`: `[autoload]`에 `WorldState="*res://Assets/Script/gds/world_state/world_state_store.tscn"` 추가.
@@ -451,7 +451,7 @@ func is_world_state_ready() -> bool
 
 선행 조건: Step 2 완료, D1/D3/D4 확정
 
-### Step 3 결과 — 구현 완료 (2026-06-12, 코드 리뷰 대기)
+### Step 3 결과 — 구현·리뷰 완료 (2026-06-12)
 
 **변경 파일**
 - `Assets/Script/gds/world_state/world_state_runtime.gd` (신규): coordinator. autoload `WorldStateRuntime`
@@ -537,7 +537,7 @@ func is_world_state_ready() -> bool
 
 선행 조건: Step 3 완료, D5 확정
 
-### Step 4 결과 — 구현 완료 (2026-06-12, 코드 리뷰 대기)
+### Step 4 결과 — 구현·리뷰 완료 (2026-06-12)
 
 **변경 파일**
 - `Assets/Script/gds/world_state/world_state_runtime.gd`: `restore_world_state(snapshot)` adapter 진입점 추가

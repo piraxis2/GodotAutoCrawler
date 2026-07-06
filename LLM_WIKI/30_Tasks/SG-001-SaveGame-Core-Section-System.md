@@ -464,7 +464,7 @@ DT-006 adapter 회귀 ALL PASS.
 
 #### Step 2 구현 결과 (2026-06-17)
 
-판정: 구현 완료 — 리뷰 대기.
+판정: 구현·리뷰 완료.
 
 변경 파일:
 - `addons/save_game/save_game_manager.gd`: 파일 slot store API 추가(`save_slot`/`load_slot`/`list_slots`/
@@ -620,7 +620,7 @@ DT-006 step3/step4 회귀 ALL PASS, `--import` 0 parse error, SCRIPT ERROR 0. �
 
 #### Step 4 구현 결과 (2026-06-17)
 
-판정: 구현 완료 — 리뷰 대기.
+판정: 구현·리뷰 완료.
 
 변경 파일:
 - `addons/save_game/save_game_manager.gd`: `_bak_path` 추가, `_atomic_write_json`에 백업 회전 추가,

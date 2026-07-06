@@ -280,7 +280,7 @@ func apply_batch(changes: Array[Dictionary]) -> Dictionary
 
 ## Implementation Log
 
-### Step 1: StateDefinition과 StateSchema — 구현 완료 (2026-06-12, 코드 리뷰 대기)
+### Step 1: StateDefinition과 StateSchema — 구현·리뷰 완료 (2026-06-12)
 
 설계 pseudocode는 `value_type: StateValueType` / `lifetime: StateLifetime`를 전역 타입처럼
 표기했지만 Godot 4에는 전역 enum이 없다. 따라서 두 enum을 `StateDefinition` 안의 named enum으로
@@ -359,7 +359,7 @@ func apply_batch(changes: Array[Dictionary]) -> Dictionary
   이번 Step 범위 밖(Step 2 이후).
 - 자기 승인하지 않는다.
 
-### Step 2: WorldStateStore Read/Write — 구현 완료 (2026-06-12, 코드 리뷰 대기)
+### Step 2: WorldStateStore Read/Write — 구현·리뷰 완료 (2026-06-12)
 
 **변경 파일**
 - `Assets/Script/gds/world_state/world_state_store.gd`: `class_name WorldStateStore extends Node`.
@@ -422,7 +422,7 @@ func apply_batch(changes: Array[Dictionary]) -> Dictionary
 - lifetime 구분과 snapshot은 Step 3, batch는 Step 4에서 다룬다.
 - 자기 승인하지 않는다.
 
-### Step 3: Lifetime과 Snapshot — 구현 완료 (2026-06-12, 코드 리뷰 대기)
+### Step 3: Lifetime과 Snapshot — 구현·리뷰 완료 (2026-06-12)
 
 **변경 파일**
 - `Assets/Script/gds/world_state/world_state_store.gd`: lifetime/snapshot API 추가.
@@ -538,7 +538,7 @@ func apply_batch(changes: Array[Dictionary]) -> Dictionary
 - atomic batch는 Step 4, Dialogue provider seam은 Step 5.
 - 자기 승인하지 않는다.
 
-### Step 4: Atomic Mutation Batch — 구현 완료 (2026-06-12, 코드 리뷰 대기)
+### Step 4: Atomic Mutation Batch — 구현·리뷰 완료 (2026-06-12)
 
 **변경 파일**
 - `Assets/Script/gds/world_state/world_state_store.gd`: `apply_batch(changes: Array[Dictionary]) -> Dictionary` 추가.
@@ -593,7 +593,7 @@ func apply_batch(changes: Array[Dictionary]) -> Dictionary
 - Dialogue provider seam은 Step 5.
 - 자기 승인하지 않는다.
 
-### Step 5: Dialogue Runtime Integration Seam — 구현 완료 (2026-06-12, 코드 리뷰 대기)
+### Step 5: Dialogue Runtime Integration Seam — 구현·리뷰 완료 (2026-06-12)
 
 **선행 상태 메모(실제 코드 기준):** Step 5 제품 코드와 테스트 스크립트는 이번 세션 시작 시점에 이미
 작업 트리에 존재했다(`dialogue_player.gd`/`dialogue_manager.gd`/`dialogue_ui.gd`는 git에 modified,

@@ -673,7 +673,7 @@ Brief, [[World-State-User-Guide]] §15에서 "State Condition 노드 없음" 표
 Step 0~5를 모두 구현·검증했다. State Condition Data 노드(`state_condition`)가 boolean Data로 Branch와
 조건부 Choice를 같은 `ConditionSet`/`ConditionEvaluator` 계약으로 제어하며, fail-closed(error-dominance
 포함)·visible→original port mapping·signal seam·저장/재로드/resize 보존이 헤드리스로 검증됐다. 각 Step
-리뷰 판정은 Step 1~4 **수정 후 완료**, Step 5는 완료 판정 리뷰 대기다. 상세는 [[DT-008-Choice-Integration-Review]].
+리뷰 판정은 Step 1~4 **수정 후 완료**, Step 5도 완료 판정이다. 상세는 [[DT-008-Choice-Integration-Review]].
 
 ## Design Risks
 

@@ -391,7 +391,7 @@ wrap report without hiding manager report
 
 ## Step 1 Implementation Result
 
-**Step 1 SaveFlow Core 구현 완료 — 리뷰 대기.**
+**Step 1 SaveFlow Core 구현·리뷰 완료(판정: 완료).**
 
 변경 파일:
 - `addons/save_game/save_flow.gd`(신규): `class_name SaveFlow extends Node`. manager를 소유하지 않고
@@ -449,7 +449,7 @@ Design Deviation: 없음. 정적 가드는 SG-001 가드 확장 대신 SG-002 �
 
 ## Step 2 Implementation Result
 
-**Step 2 WorldState Integration Usage Test 구현 완료 — 리뷰 대기. 제품 코드 변경 없음(통합 테스트만 추가).**
+**Step 2 WorldState Integration Usage Test 구현·리뷰 완료(판정: 완료, 제품 코드 변경 없음/통합 테스트만 추가).**
 
 변경 파일:
 - `addons/save_game_world_state/tests/sg002_step2_save_flow_world_state_test.gd`/`.tscn`(신규): A~D 통합

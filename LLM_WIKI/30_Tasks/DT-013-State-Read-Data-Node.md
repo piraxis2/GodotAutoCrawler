@@ -248,7 +248,7 @@ Suggested regression:
 
 ## Step 1 Implementation Result (2026-06-18)
 
-판정: 구현 완료 — 리뷰 대기. 제품 코드는 `DialoguePlayer`만 변경했고 editor/Definition/Adapter/Registry/
+판정: 구현·리뷰 완료. 제품 코드는 `DialoguePlayer`만 변경했고 editor/Definition/Adapter/Registry/
 `.tscn`/`.tres`는 건드리지 않았다(Step 2 범위 유지).
 
 변경 파일:
@@ -286,7 +286,7 @@ Suggested regression:
 
 ## Step 2 Implementation Result (2026-06-18)
 
-판정: 구현 완료 — 리뷰 대기. editor authoring 표면(Definition/GraphNode/Adapter/Registry + 저장 validation)만
+판정: 구현·리뷰 완료. editor authoring 표면(Definition/GraphNode/Adapter/Registry + 저장 validation)만
 추가했고 런타임(`DialoguePlayer`)은 Step 1에서 확정한 그대로 변경하지 않았다.
 
 변경/추가 파일:
@@ -344,7 +344,7 @@ Suggested regression:
 
 ## Step 3 Implementation Result (2026-06-18)
 
-판정: 구현 완료 — 리뷰 대기. **제품 코드 변경 없음**(통합 검증 단계). 런타임(Step 1)·에디터(Step 2)가 이미
+판정: 구현·리뷰 완료. **제품 코드 변경 없음**(통합 검증 단계). 런타임(Step 1)·에디터(Step 2)가 이미
 확정돼 있어, 실제 `DialogueManager → DialogueUI → DialoguePlayer` provider 주입 경로에서 state_read가 값
 supplier로 동작하는지 e2e로만 확인했다.
 

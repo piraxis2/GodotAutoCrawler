@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-07-05
+updated: 2026-07-06
 ---
 
 # Current State
@@ -221,7 +221,7 @@ updated: 2026-07-05
   `class_name` 하나(경로 독립)뿐, mutation/store/runtime은 provider 주입으로 decoupled. 결정: 후보 B
   (`addons/world_core/world_state/` 하위모듈), 런타임 autoload 3종은 호스트 수동 등록(순서 보장),
   addon은 example schema만 포함.
-- **DT-011 Step 1 구현 완료 — 리뷰 대기.** WorldState 폐쇄집합(state_definition/state_schema/store
+- **DT-011 Step 1 구현·리뷰 완료(판정: 완료).** WorldState 폐쇄집합(state_definition/state_schema/store
   (.gd/.tscn)/runtime/condition/* + WorldState·Condition tests)을 `git mv`로
   `Assets/Script/gds/world_state/` → `addons/world_core/world_state/`로 **이동**(복사·shim 없음,
   `.uid` 동반, 원본 디렉터리 제거 확인). path rewrite: `project.godot` autoload 2종, store.tscn/
@@ -232,13 +232,13 @@ updated: 2026-07-05
   `uid://urle8xa2dmc` 보존. headless `--import` 0 parse 에러 + class_name 중복 0, 회귀 20 scene
   (DT-005×6, DT-006×5, DT-007×5, DT-008 step1/3/5, DT-009 step4) ALL PASS. 제품 코드/테스트/리소스에
   stale path 0(`.godot`/`.idea` 캐시 제외).
-- **DT-011 Step 2 구현 완료 — 리뷰 대기.** dialogtool path 정규화. addon 테스트 `SCHEMA_PATH`는 Step 1에서
+- **DT-011 Step 2 구현·리뷰 완료(판정: 완료).** dialogtool path 정규화. addon 테스트 `SCHEMA_PATH`는 Step 1에서
   이미 정규화됐고, 고유 작업은 example ConditionSet 이동: `addons/dialogtool/Test/affinity_ge_10.tres`
   → `addons/world_core/dialogtool/examples/affinity_ge_10.tres`(`git mv`, uid `uid://bwsq70tpasvaw` 보존). 비게 된
   `Test/` 디렉터리 제거, 루트 샘플 `test.tres`의 ext_resource path 갱신. 파일 내부 condition ext_resource는
   Step 1에서 이미 새 경로. headless `--import` 0 parse 에러, DT-004/008/009 회귀 15 scene
   (DT-004 step1~4+pipeline, DT-008 step1~5+spike, DT-009 step2/3/3b/4) ALL PASS.
-- **DT-011 Step 3 구현 완료 — 리뷰 대기.** examples/migration/docs. (1) example schema 개명: `git mv`
+- **DT-011 Step 3 구현·리뷰 완료(판정: 완료).** examples/migration/docs. (1) example schema 개명: `git mv`
   `world_state/world_state_schema.tres` → `examples/world_state_schema_example.tres`(uid `uid://urle8xa2dmc`
   보존), store.tscn + 테스트 6개 `SCHEMA_PATH` 재작성. store.tscn이 example을 가리켜 out-of-box 부팅 유지,
   게임 schema는 호스트가 교체(ADR-011 D5). (2) sample dialogue: 루트 `test.tres` 채택 →
@@ -305,7 +305,7 @@ updated: 2026-07-05
   ADR-009와 동일하게 주입된 read provider만 소비하며, 실패는 구조화 report + Data error-dominance로
   fail-closed한다. 리뷰 후 `read_state` 호출 전 계약 검증, report sentinel(`TYPE_NIL/null`), `StateSchema.KEY_PATTERN`
   기반 key validation, 손상 key Variant fail-closed 테스트 조건을 설계에 반영했다.
-  **DT-013 Step 1(Runtime State Read Evaluator) 구현 완료 — 리뷰 대기.** `DialoguePlayer`만 변경
+  **DT-013 Step 1(Runtime State Read Evaluator) 구현·리뷰 완료(판정: 완료).** `DialoguePlayer`만 변경
   (editor/Definition/Adapter/Registry/`.tscn`/`.tres` 무변경, Step 2 범위 유지). `state_read_evaluated(read_node_id,
   consumer_node_id, report)` signal + `_eval_data`의 `state_read` 분기 + `_evaluate_state_read`/`_finish_state_read`
   helper 추가. read provider 계약은 주입된 `_read_state_provider`만 직접 소비하고(facade 재포장 없음),
@@ -321,7 +321,7 @@ updated: 2026-07-05
   (반환 Data value는 null). 검증: `dt013_step1_state_read_test`(A~N 14 시나리오) ALL PASS, SCRIPT ERROR 0,
   실제 `WorldStateStore` 5타입 success 포함. 회귀 dt008_step1/4/5·dt009_step2·dt010_step1 ALL PASS, `--import`
   0 parse error.
-  **DT-013 Step 2(Editor Authoring and Resource Round-Trip) 구현 완료 — 리뷰 대기.** editor authoring 표면만
+  **DT-013 Step 2(Editor Authoring and Resource Round-Trip) 구현·리뷰 완료(판정: 완료).** editor authoring 표면만
   추가(런타임 무변경). `WorldStateReadDef`(Data Definition, `key`/`value_type`, `get_runtime_params -> {key,
   value_type}`, provider-free `validate_structure` = value_type 허용 5타입 + key empty/`StateSchema.KEY_PATTERN`
   형식, `type_label`/`READ_VALUE_TYPES`), `WorldStateReadNode`(key LineEdit + type OptionButton + summary
@@ -335,7 +335,7 @@ updated: 2026-07-05
   params 보존, data output 1개 + data↔boolean + Branch 입력 연결, invalid key matrix(`quest`/`Quest.main`/
   `quest..main`/`1quest.main`/"")·value_type 차단, summary, `.tres` cache-ignore 왕복) ALL PASS, SCRIPT ERROR 0.
   회귀 dt013_step1·dt009_step3·dt008_step2/step5·dt012_step2 ALL PASS, `--import` 0 parse error.
-  **DT-013 Step 3(End-to-End Integration) 구현 완료 — 리뷰 대기. 제품 코드 변경 없음(통합 검증).** 실제
+  **DT-013 Step 3(End-to-End Integration) 구현·리뷰 완료(판정: 완료, 제품 코드 변경 없음).** 실제
   `DialogueManager → DialogueUI → DialoguePlayer` provider 주입 경로에서 state_read가 값 supplier로 동작함을
   e2e로 확인(`dt013_step3_e2e_test` A~G ALL PASS, SCRIPT ERROR 0): `State Read(INT)→Expression("x>5")→Branch`
   (7→TRUE/5→FALSE, consumer=expression), `State Read(BOOL)→Branch`(true/false), `State Read(BOOL)→Choice 항목
@@ -423,7 +423,7 @@ updated: 2026-07-05
   요구사항에 포함됐다.
   - **[DebuggerTree.cs](file:///f:/beestation/GodotAutoCrawler/addons/behaviortree/debugger/DebuggerTree.cs)**: 시나리오 D(노드 삭제/씬 교체) 중 발생하던 freed 인스턴스 접근 및 `Root == null` 크래시(NullReferenceException) 조치 완료.
   - **[BehaviorTreeValidationTest.cs](file:///f:/beestation/GodotAutoCrawler/addons/behaviortree/tests/BehaviorTreeValidationTest.cs)** / **[bt_validation_test.tscn](file:///f:/beestation/GodotAutoCrawler/addons/behaviortree/tests/bt_validation_test.tscn)**: C# 헤드리스 단위 테스트(6개 위반 사례 검증) 성공 확인.
-- **SG-002 Step 1(SaveFlow Core) 구현 완료 — 리뷰 대기.** `addons/world_core/save_game/save_flow.gd`
+- **SG-002 Step 1(SaveFlow Core) 구현·리뷰 완료(판정: 완료).** `addons/world_core/save_game/save_flow.gd`
   (`class_name SaveFlow extends Node`) 추가. manager를 소유하지 않고 호출마다 lazy resolve(주입 우선 →
   `manager_path` 기본 `/root/SaveGame`, 매번 `is_instance_valid`+`is SaveGameManager` 재확인, 미해석 시
   일반 report `manager_unavailable` / `list_slots()`만 단일 실패 entry `{ ok:false, slot_id:&"", error:&"manager_unavailable" }` /
@@ -440,7 +440,7 @@ updated: 2026-07-05
   SG-001 회귀(core/static_guard/slot_store/backup) ALL PASS. 코드 리뷰 [P2] 수정 완료: provider/gate setter·
   저장 변수·`_provider_usable`을 Variant 경계로 열고 검사 순서를 `null→non-Object→freed→method`로 재정렬해
   non-Object provider도 타입 오류 없이 unavailable로 fail-closed(D2/I2 회귀 추가).
-- **SG-002 Step 2(WorldState Integration Usage Test) 구현 완료 — 리뷰 대기. 제품 코드 변경 없음(통합 테스트만).**
+- **SG-002 Step 2(WorldState Integration Usage Test) 구현·리뷰 완료(판정: 완료, 제품 코드 변경 없음).**
   `addons/world_core/save_game_world_state/tests/sg002_step2_save_flow_world_state_test`(A~D): `SaveFlow`를
   `SaveGameManager + WorldStateSaveSection`에 주입해 (A) store/session ready 시 `save_manual` 성공 + `load_manual`
   SAVE snapshot 파일 왕복(타입 보존, SESSION default, metadata provider+caller override merge, manager report
@@ -463,7 +463,7 @@ updated: 2026-07-05
   flow 검증, Step 3 completion review로 분해됐다. 설계 수정으로 per-slot failure를 `corrupt` 전용이 아닌
   non-empty `slot_id`를 가진 raw error(`parse_error`/`corrupt` 등) 보존 entry로 확장했고, metadata fallback을
   Step 2 테스트 조건에 추가했다.
-- **SG-003 Step 1(Host Integration Guide) 구현 완료 — 리뷰 대기. 문서 전용(제품 코드 변경 없음).**
+- **SG-003 Step 1(Host Integration Guide) 구현·리뷰 완료(판정: 완료, 문서 전용/제품 코드 변경 없음).**
   [[SaveGame-User-Guide]] §12 "Host Save Slot UI Integration" 신규(slot list 분류, manual save/load/delete flow,
   metadata fallback, list/save/load/delete report consumption matrix, 검증 경계)와 `addons/world_core/save_game/README.md`
   host UI 통합 요약 추가. 실제 `SaveFlow`/`SaveGameManager` report shape와 대조해 작성: whole-list
@@ -471,7 +471,7 @@ updated: 2026-07-05
   fail-closed(미저장), load report 키가 실패 종류별로 다름(`recovered_from_backup`/`source`/`restore`/`slot_id`
   일부 누락 → `report.get` 소비), delete primary+`.bak` 동시 제거. `rg`로 핵심 용어 반영 확인,
   `git diff` 제품 코드 0. Godot headless는 문서 전용 Step이라 미실행. 다음은 Step 2 Reference Host Flow Test.
-- **SG-003 Step 2(Reference Host Flow Test) 구현·검증 완료 — 리뷰 대기. 제품 코드/helper 추가 없음(테스트 전용).**
+- **SG-003 Step 2(Reference Host Flow Test) 구현·검증·리뷰 완료(판정: 완료, 제품 코드/helper 추가 없음).**
   `addons/world_core/save_game/tests/sg003_step2_host_flow_test.gd`/`.tscn` 신규. 테스트 파일 내부 test-only
   `FakeSaveSlotHostController`(`extends RefCounted`, public API 아님)가 §12 host contract 상태 모델
   (`list_state`/`slot_cards`/`selected_slot_id`/`can_save_state`/`last_action`)을 흉내 내고, 실제

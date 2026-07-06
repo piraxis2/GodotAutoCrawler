@@ -191,7 +191,7 @@ condition/*  (condition_clause, state_condition, condition_group,
 
 선행 조건: Step 0 승인([[ADR-011-DialogueWorldState-Addon-Packaging]]).
 
-#### 구현 결과 (2026-06-16 — 리뷰 대기)
+#### 구현 결과 (2026-06-16 — 리뷰 완료)
 
 **이동(move-not-copy).** `git mv Assets/Script/gds/world_state addons/dialogtool/world_state`로
 폐쇄집합 전체를 한 번에 이동했다(복사·shim 없음, 원본 디렉터리 완전 제거 확인). `.gd`/`.gd.uid`/
@@ -257,7 +257,7 @@ matrix는 DT-011 Step 4 수용 기준에서 확인. (3) example/schema 분리·�
 
 선행 조건: Step 1 리뷰 완료
 
-#### 구현 결과 (2026-06-16 — 리뷰 대기)
+#### 구현 결과 (2026-06-16 — 리뷰 완료)
 
 **이미 Step 1에서 처리된 부분.** addon 테스트의 world_state path 문자열 정규화는 Step 1 path
 rewrite에서 함께 완료됐다(`RunTime/tests/dt008_step1/3/5`의 `SCHEMA_PATH` →
@@ -305,7 +305,7 @@ addons/dialogtool/Test/affinity_ge_10.tres
 
 선행 조건: Step 2 리뷰 완료
 
-#### 구현 결과 (2026-06-16 — 리뷰 대기)
+#### 구현 결과 (2026-06-16 — 리뷰 완료)
 
 **example schema 이동·개명(ADR-011 D5).** `git mv`로
 `world_state/world_state_schema.tres` → `examples/world_state_schema_example.tres`
@@ -362,7 +362,7 @@ historical record라 미수정(System 문서·Current-State는 갱신). (3) Fres
 
 선행 조건: Step 3 리뷰 완료
 
-#### 구현 결과 (2026-06-16 — 완료 판정 대기, 제품 코드 변경 없음)
+#### 구현 결과 (2026-06-16 — 완료 판정 완료, 제품 코드 변경 없음)
 
 **전체 회귀 matrix.** `--import` 0 parse/script error(class_name 중복 0), 전체 DT-004~009 테스트
 **32/32 scene ALL PASS**(dt004×5, dt005×6, dt006×5, dt007×4+spike, dt008×6, dt009×6). 제품 코드/

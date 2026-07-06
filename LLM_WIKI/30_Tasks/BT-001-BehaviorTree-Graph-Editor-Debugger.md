@@ -371,7 +371,7 @@ Debug는 editor process와 play process가 분리되어 있으므로 remote chan
 - 다중 캐릭터 탭 라우팅 수동/자동 검증.
 - 수동 editor debug 절차 문서화.
 
-구현 결과(2026-06-20, 리뷰 대기):
+구현 결과(2026-06-20, 리뷰 완료):
 - **Discovery UI 정식화**: `DebuggerWindow`의 TEMP naming을 제거하고 정식 target selection bar로 승격했다.
   라벨은 `BehaviorTree:`로 정리했고, 버튼은 `Start`/`Stop`으로 단순화했다. 목록 항목은
   `index. articleName — tree_path` 형태로 표시해 같은 article 이름의 다중 인스턴스를 구분한다.
