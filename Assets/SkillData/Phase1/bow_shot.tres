@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="SkillDefinition" format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_oj5q3"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/DamageBlock.cs" id="2_odvn7"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="3_21uli"]
+
+[sub_resource type="Resource" id="Resource_o3lyo"]
+script = ExtResource("2_odvn7")
+MaxDamage = 18
+HitChance = 90
+
+[resource]
+script = ExtResource("3_21uli")
+Id = &"bow_shot"
+DisplayName = "사격"
+Range = 5
+Effects = Array[ExtResource("1_oj5q3")]([SubResource("Resource_o3lyo")])

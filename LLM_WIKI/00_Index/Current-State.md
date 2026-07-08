@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-07-06
+updated: 2026-07-07
 ---
 
 # Current State
@@ -33,6 +33,43 @@ updated: 2026-07-06
     이동/`PhysicalDamage` 경로는 프로덕션 씬에서 미사용(Step 4 테스트가 프로그램적으로 구성해 커버).
     프로덕션 시드는 아직 고정값 1(생성/기록 정책은 Follow-up). 2단계(시뮬/프레젠테이션 분리)는
     [[Open-Tasks]] Later 참고.
+- **SK-001 Data-Driven Skill System Step 0 설계 리뷰 완료**([[SK-001-Data-Driven-Skill-System-Review]], 판정: Approved after design fixes).
+  데이터 기반 스킬 방향(`SkillDefinition`/`SkillState`/`EffectBlock`/`TurnAction_Skill`), combo 보류,
+  `Assets/Script/SkillSystem` 신규 위치, 기존 BT/TurnAction 경로 유지가 승인됐다. Step 1 구현 전 보완으로
+  `TurnActionBase.Action()` non-virtual + private `_usedCost`, `BehaviorTree_TurnAction`의 Running Resource 보관,
+  `CharacterArticle.CurrentTurnAction` 재개 계약을 깨지 않는 작은 compatibility seam을 Step 1 범위에 포함하기로 했다.
+  다음 단계는 Skeleton + DamageBlock + Slash Data 구현이며, 기존 Attack 대비 phase 지점/RNG 소비/크리티컬/HP
+  baseline과 SkillState isolation을 검증한다.
+- **SK-001 Step 1 구현 완료, 코드 리뷰 완료**([[SK-001-Data-Driven-Skill-System]], [[SK-001-Data-Driven-Skill-System-Review]] 판정: Approved, minor fixes applied).
+  `Assets/Script/SkillSystem`에 `SkillDefinition`/`SkillState`/`SkillContext`/`EffectBlock`/`DamageBlock`/`TurnAction_Skill`
+  v0를 추가하고, `Assets/SkillData/slash.tres`로 `베기`(range 1, physical 10~20)를 데이터화했다.
+  `TurnActionBase`는 `Init`/`Finish`/`Action` virtual seam을 제공하고, `CharacterArticle.CurrentTurnActionState`(`ITurnActionState`)가
+  `TurnAction_Skill`의 유닛별 `SkillState`를 보관한다. 기존 legacy 3종 TurnAction은 유지된다. 검증:
+  `dotnet build` 경고/오류 0, `sk001_step1_skill_system_test` ALL PASS, CB-001 Step 1~4 ALL PASS, `--import` exit 0.
+  리뷰 후 `ITurnActionState` marker, 미지원 target side/selector fail-closed, magical legacy parity 주석을 반영했다. Godot 종료 시 ObjectDB/resource 시 누락 ERROR 로그는 남아 있다.
+- **SK-001 Step 2 구현·코드 리뷰 완료**([[SK-001-Data-Driven-Skill-System]], [[SK-001-Data-Driven-Skill-System-Review]] 판정: 수정 후 완료).
+  `SkillTargetSelector` 확장(`LowestHp`, `HighestHp`, `Self`) 및 `TargetSide` 필터링을 도입했다. `SkillDefinition`에 `WindupCost`를 추가하고 `TurnAction_Skill`에 `CastingPhase` 삽입을 통한 영창 시스템을 구축했다.
+  영창 중 BT 평가는 `CharacterArticle.TurnPlay`를 통해 자연스럽게 스킵되며, 영창 상태는 `ITurnActionState.IsCasting`/`CharacterArticle.IsCasting`으로 SkillSystem 구체 타입 의존 없이 외부에서 구독할 수 있다.
+  리뷰 중 P2 2건(LowestHp/HighestHp 동점 처리를 유클리드 거리→ADR-017 정규 순서(`ThenByCanonical`)로 교체, `IsCasting` 인터페이스 노출)·P3 1건(`SkillTargetSelector.Self` 미처리→시전자 확정)을 수정·재검증했다.
+  레거시 `TurnAction_MagicBolt`와의 baseline 교차 검증과 유클리드/Manhattan 동점 구분 fixture(`A.TieCanonical`)를 포함한 헤드리스 테스트가 ALL PASS(`sk001_step1`·CB-001 Step 1~4 회귀 포함).
+- **SK-001 Step 3 구현·코드 리뷰 완료**([[SK-001-Data-Driven-Skill-System]], [[SK-001-Data-Driven-Skill-System-Review]] 판정: 완료).
+  `Mana : StatusElement`와 `SkillDefinition.ManaCost` 지불 게이트를 도입했다. 마나 부족 시 상태 변경 없이 `ActionState.Failure`(신규)를 내고, `BehaviorTree_TurnAction`/`CharacterArticle.TurnPlay`가 `BtStatus.Failure`로 매핑해 `BehaviorTree_Selector`가 다음 행으로 fallback한다. `ManaCost == 0`(slash/magicbolt)은 게이트 없음.
+  `DamageBlock.HitChance`를 추가했다. `HitChance < 100`일 때만 `SkillContext.CombatRandRange`(단일 CombatRng)로 명중 판정하며 순서는 `명중 -> 크리티컬 -> 피해`, `HitChance == 100`은 hit roll 생략으로 기존 baseline RNG 스트림 보존. 명중 실패/성공 모두 `SkillState.Reports`(report sink)에 기록. 피해 금액+UI는 여전히 legacy `Damage`(migration 경계 `DamageBlock.ApplyDamage`에 문서화).
+  `sk001_step3_mana_hit_test`(20 assertions) 및 `sk001_step1`/`sk001_step2`/CB-001 Step 1~4 회귀 전부 ALL PASS. Mana의 production scene 배선과 무대상 fail-closed는 후속.
+- **SK-001 Step 4a 구현·코드 리뷰 완료**([[SK-001-Data-Driven-Skill-System]], [[SK-001-Data-Driven-Skill-System-Review]] 판정: 완료). 사용자 승인으로 Step 4를 4a(이번)/4b(KnockbackBlock)로 분할.
+  제어/버프 상태를 유닛별 `StatusController`(턴 카운터)로 도입(`StunTurns`/`BindTurns`·`BoundThisTurn`/`DamageDealtMultiplier`/`DamageTakenMultiplier`). 기존 `StatusAffect`(1턴 제어 apply/expire 붕괴) 대신 사용. `StunBlock`/`BindBlock`/`SelfBuffBlock`/`ManaDrainBlock` 4종 EffectBlock 추가.
+  Stun=`TurnPlay` 시작 소비→즉시 스킵+영창 취소(무환불), Bind=`OnTurnStart` 틱→이동 노드(`BehaviorTree_Move`/`MultipleMove`) 차단, SelfBuff=주는 피해 배율, ManaDrain=마나 흡수. 피해 배율 hook은 `ArticleBase` virtual(기본 1.0, 롤 이후 곱셈→RNG 무이동)을 `CharacterArticle`이 `StatusController`로 오버라이드.
+  `sk001_step4_status_control_test`(41 assertions, 컨트롤러 순수+통합 6종) 및 `sk001_step1~3`/CB-001 Step 1~4 회귀 전부 ALL PASS. 외부 리뷰 후 minor fix 2건 반영: `turns<=0` 버프 영구화 방지(early-return), 스턴 취소 테스트의 "Cast" 애니메이션 ERROR 제거.
+- **SK-001 Step 4b(KnockbackBlock) 구현·코드 리뷰 완료**([[SK-001-Data-Driven-Skill-System]], [[SK-001-Data-Driven-Skill-System-Review]] 판정: 완료). Step 4(4a+4b) 전체 완료.
+  `KnockbackBlock`: 대상을 시전자 반대 4방향(더 큰 축, 동률 X)으로 최대 `Distance`칸 밀되 맵 경계(`GetUsedRect().HasPoint`)·점유 칸(`GetArticle`)에서 중단. 최종 위치를 `TilePosition`으로 1회 설정 → `OnMove` → tilemap `_placedArticles` → (다음)`UpdateAStar` 갱신(별도 점유 테이블 없이 기존 파이프라인 재사용).
+  `sk001_step4b_knockback_test`(17 assertions: 기본 넉백+OnMove+AStar/점유, 맵 경계 중단, 점유 충돌, 방향 카디널) 및 `sk001_step1~4`/CB-001 회귀 전부 ALL PASS. 외부 리뷰 후 테스트 격리를 맵 안 유효 칸(`ParkUnusedOpponents`)으로 바꿔 UpdateAStar out-of-bounds ERROR 제거.
+- **SK-001 Step 5(ChainBlock 이관) 구현·코드 리뷰 완료**([[SK-001-Data-Driven-Skill-System]], [[SK-001-Data-Driven-Skill-System-Review]] 판정: 완료).
+  `ChainBlock`: `TurnAction_ChainLightning`의 연쇄 대상 선택/피해를 데이터 블록으로 이관. 첫 대상=`ConfirmedTargets[0]`(=legacy `GetTarget`), 홉마다 `미타격 우선 -> ADR-017 정규 순서`(legacy `GetChainTarget` 동일 코드). 고정 `MagicalDamage`(RNG 미소비)를 DamageBlock처럼 단일 phase에 적용(legacy 다중 프레임 FX phase는 권위 상태 무변경이라 결과 동일).
+  `sk001_step5_chain_test`: legacy ChainLightning과 ChainBlock의 대상별 HP가 완전 일치(opp1~3 각 32 피해, opp4 무피해), 미타격 우선 검증. `sk001_step1~4b`/CB-001 회귀 전부 ALL PASS. `TurnAction_ChainLightning`은 TempArticle3/PrincessKnight BT 배선이 남아 삭제 안 함(Step 6). 다음은 Step 6 Phase1 12종 `.tres`.
+- **SK-001 Step 6(Phase1 데이터 팩) 구현·코드 리뷰 완료 → SK-001 전체 완료**([[SK-001-Data-Driven-Skill-System]], [[SK-001-Data-Driven-Skill-System-Review]] 판정: 완료).
+  `Assets/SkillData/Phase1/`에 12종 `.tres`(검/격투/활/지팡이 × 3) 입력. 블록 확장 2건: `StunBlock.Chance`(강타 20%·소닉블로 35%, <100일 때만 CombatRng 1회), `SelfBuffBlock.Kind`(금강체 받는피해 0.5). 기본값 무효과라 Step 4a 회귀 유지.
+  `sk001_step6_data_pack_test`: 12종 로드/검증 + 직렬화 round-trip(스크래치) + 기본기(베기)/강기(강타+넉백)/제어(금강체 Taken 0.5·속박 Bind3)/흡수(마나 흡수 ±16) 실행 + StunBlock Chance 0/100 결정론 + 연쇄 뇌격 3체. `sk001_step1~5`/CB-001 Step 1~4 회귀 전부 ALL PASS.
+  근사/후속: 조준 사격 크리 보너스·연쇄 뇌격 per-hit 명중·마나 흡수 정확한 50%는 damage-result API 등 후속. 기존 3종 하드코딩 TurnAction 대체는 가능하나 BT 재배선/삭제는 별도 cleanup(밸런스 스왑·CB-001 회귀 재검증 필요).
 ## DialogueTool
 
 - Step 1~8 구현 및 리뷰가 완료됐다.

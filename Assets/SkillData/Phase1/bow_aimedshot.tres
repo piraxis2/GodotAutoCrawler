@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SkillDefinition" format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_e0bmx"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/DamageBlock.cs" id="2_1ya6k"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="3_6q6l1"]
+
+[sub_resource type="Resource" id="Resource_gvelh"]
+script = ExtResource("2_1ya6k")
+MinDamage = 25
+MaxDamage = 40
+
+[resource]
+script = ExtResource("3_6q6l1")
+Id = &"bow_aimedshot"
+DisplayName = "조준 사격"
+Range = 5
+WindupCost = 1
+ManaCost = 15
+Effects = Array[ExtResource("1_e0bmx")]([SubResource("Resource_gvelh")])

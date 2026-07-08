@@ -24,9 +24,13 @@ public abstract class Damage : StatusAffect, IAffectedImmediately
         { DamageNegate.Resisted, "Resist" }
     };
     
+    // 피해를 준 유닛. 주는 피해 배율(giver 측) hook에 쓰인다.
+    protected ArticleStatus Giver;
+
     public static T CreateDamage<T>(ArticleStatus giver, int minDamage, int maxDamage) where T : Damage, new()
     {
         var damage = new T();
+        damage.Giver = giver;
         damage.Init(giver, minDamage, maxDamage);
         return damage;
     }
@@ -60,8 +64,11 @@ public abstract class Damage : StatusAffect, IAffectedImmediately
         }
         
         recipient.Owner.Hit();
-        
-        int damage = CalculatedDamage(recipient) * (IsCritical ? 2 : 1);
+
+        // 배율 hook: 주는 유닛(DamageDealt)과 받는 유닛(DamageTaken) 배율을 롤 이후에 곱한다(RNG 스트림 무이동).
+        // 상태가 없으면 둘 다 1.0이라 기존 피해 baseline이 그대로 유지된다.
+        float multiplier = (Giver?.Owner?.DamageDealtMultiplier ?? 1f) * recipient.Owner.DamageTakenMultiplier;
+        int damage = (int)(CalculatedDamage(recipient) * (IsCritical ? 2 : 1) * multiplier);
         damageFloater.Call("damage_display", damage, recipient.Owner.GlobalPosition, IsCritical);
         health.CurrentHealth -= damage;
     }

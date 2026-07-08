@@ -87,7 +87,10 @@ public partial class BehaviorTree_Move : BehaviorTree_Action
             return BtStatus.Running;
         }
 
-        var tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap 
+        // Bind: 이번 턴 이동이 묶였으면 이동 없이 턴을 넘긴다(공격 등 다음 행은 계속 진행).
+        if (article is CharacterArticle { StatusController.BoundThisTurn: true }) return ActionExecuted();
+
+        var tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap
                            ?? throw new NullReferenceException("TileMapLayer is null");
 
         _targetPosition ??= FindTarget(article, tileMapLayer);

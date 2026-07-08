@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="SkillDefinition" format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_bj8nl"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/DamageBlock.cs" id="2_7tuyi"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/KnockbackBlock.cs" id="3_5uog2"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/StunBlock.cs" id="4_be0f7"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="5_0ygyq"]
+
+[sub_resource type="Resource" id="Resource_cpars"]
+script = ExtResource("2_7tuyi")
+MinDamage = 15
+MaxDamage = 25
+HitChance = 90
+
+[sub_resource type="Resource" id="Resource_vbhuj"]
+script = ExtResource("3_5uog2")
+
+[sub_resource type="Resource" id="Resource_cc86w"]
+script = ExtResource("4_be0f7")
+Chance = 20
+
+[resource]
+script = ExtResource("5_0ygyq")
+Id = &"sword_smash"
+DisplayName = "강타"
+ManaCost = 15
+Effects = Array[ExtResource("1_bj8nl")]([SubResource("Resource_cpars"), SubResource("Resource_vbhuj"), SubResource("Resource_cc86w")])

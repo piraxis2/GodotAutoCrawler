@@ -14,7 +14,9 @@ public enum ActionState
 {
     Executed,
     Running,
-    End
+    End,
+    // 지불/검증 실패로 행동을 시작하지 못함. BT는 Selector 다음 행으로 넘어간다(상태 변경 없음).
+    Failure
 }
 
 [GlobalClass, Tool]
@@ -38,13 +40,13 @@ public abstract partial class TurnActionBase : Resource
 
     protected int Cost => MasterCost - _usedCost;
 
-    public void Init(Node owner)
+    public virtual void Init(Node owner)
     {
         _usedCost = 0;
         ActionQueue.Clear();
         OnInit(owner);
     }
-    public void Finish(Node owner)
+    public virtual void Finish(Node owner)
     {
         _usedCost = 0;
         ActionQueue.Clear();
@@ -69,7 +71,7 @@ public abstract partial class TurnActionBase : Resource
     
     protected virtual void OnUsedCostChanged(int oldCost, int newCost){}
 
-    public ActionState Action(double delta, ArticleBase owner)
+    public virtual ActionState Action(double delta, ArticleBase owner)
     {
         if (Cost <= 0) return ActionState.End;
 

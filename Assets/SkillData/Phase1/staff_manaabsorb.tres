@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="SkillDefinition" format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_3r3cc"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/DamageBlock.cs" id="2_572s1"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/ManaDrainBlock.cs" id="3_p85wt"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="4_qcndm"]
+
+[sub_resource type="Resource" id="Resource_tgoxr"]
+script = ExtResource("2_572s1")
+MinDamage = 8
+MaxDamage = 15
+DamageType = 1
+HitChance = 90
+
+[sub_resource type="Resource" id="Resource_nbusb"]
+script = ExtResource("3_p85wt")
+Amount = 16
+
+[resource]
+script = ExtResource("4_qcndm")
+Id = &"staff_manaabsorb"
+DisplayName = "마나 흡수"
+Range = 3
+AnimationName = ""
+Effects = Array[ExtResource("1_3r3cc")]([SubResource("Resource_tgoxr"), SubResource("Resource_nbusb")])

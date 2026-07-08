@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SkillDefinition" format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_exp3s"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/DamageBlock.cs" id="2_4hp73"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="3_p0ma5"]
+
+[sub_resource type="Resource" id="Resource_jq7eh"]
+script = ExtResource("2_4hp73")
+MinDamage = 18
+MaxDamage = 28
+HitChance = 90
+
+[resource]
+script = ExtResource("3_p0ma5")
+Id = &"fist_straight"
+DisplayName = "스트레이트"
+ManaCost = 10
+Effects = Array[ExtResource("1_exp3s")]([SubResource("Resource_jq7eh")])

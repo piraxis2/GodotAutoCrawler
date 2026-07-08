@@ -13,6 +13,11 @@ public abstract partial class ArticleBase : Node2D
     // 씬 트리 순회 순서 기반 스폰 순번. ArticlesContainer가 등록 시 부여하며 턴 순서 동점자 키로 쓰인다(ADR-017).
     public int SpawnIndex { get; set; }
 
+    // 피해 배율 hook. 기본 1.0이라 상태가 없으면 기존 피해 baseline을 보존한다.
+    // 주는 피해(giver 측)와 받는 피해(recipient 측) 배율을 각각 CharacterArticle이 StatusController로 오버라이드한다.
+    public virtual float DamageDealtMultiplier => 1f;
+    public virtual float DamageTakenMultiplier => 1f;
+
     public bool IsAlive
     {
         get

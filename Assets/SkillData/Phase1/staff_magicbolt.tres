@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="SkillDefinition" format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_is3ig"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/DamageBlock.cs" id="2_lh4rt"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="3_mxwbv"]
+
+[sub_resource type="Resource" id="Resource_xn5ox"]
+script = ExtResource("2_lh4rt")
+MinDamage = 15
+MaxDamage = 15
+DamageType = 1
+HitChance = 95
+
+[resource]
+script = ExtResource("3_mxwbv")
+Id = &"staff_magicbolt"
+DisplayName = "마탄"
+Range = 3
+ManaCost = 5
+AnimationName = ""
+Effects = Array[ExtResource("1_is3ig")]([SubResource("Resource_xn5ox")])

@@ -1,14 +1,19 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-07-05
+updated: 2026-07-07
 ---
 
 # Open Tasks
 
 ## Next
 
-
+- **SK-001 Data-Driven Skill System — 전체 완료(Step 0~6)**. 후속 cleanup/기능 Task 후보:
+  - 기존 3종 하드코딩 TurnAction(`Attack`→TempArticle2, `ChainLightning`→PrincessKnight/TempArticle3) BT 재배선을 데이터 스킬(`sword_slash`/`staff_chainlightning` 등)로 하고 스크립트 삭제. 밸런스 스왑(명중 95%·마나)·CB-001 결정론 회귀 재검증 필요.
+  - `Mana`의 production character scene(PrincessKnight/Puppet 등) 배선.
+  - `DamageBlock.ApplyDamage`의 legacy Damage/UI 결합 제거(headless 피해 result API) — 마나 흡수 정확한 50%·조준 사격 크리 보너스도 이때.
+  - 무대상 fail-closed/마나 환불 정책 확정.
+  - 마법 대미지 min 반영 시 마탄/연쇄 뇌격 위력 범위 부여(07 수치표 F-4).
 
 ## Later
 

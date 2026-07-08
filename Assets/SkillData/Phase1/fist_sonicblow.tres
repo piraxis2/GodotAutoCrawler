@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillDefinition" format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_5rg1c"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/DamageBlock.cs" id="2_nkbjf"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/StunBlock.cs" id="3_l18h2"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="4_37jde"]
+
+[sub_resource type="Resource" id="Resource_dy3gr"]
+script = ExtResource("2_nkbjf")
+MinDamage = 30
+MaxDamage = 45
+HitChance = 85
+
+[sub_resource type="Resource" id="Resource_odhlh"]
+script = ExtResource("3_l18h2")
+Chance = 35
+
+[resource]
+script = ExtResource("4_37jde")
+Id = &"fist_sonicblow"
+DisplayName = "소닉 블로"
+WindupCost = 1
+ManaCost = 20
+Effects = Array[ExtResource("1_5rg1c")]([SubResource("Resource_dy3gr"), SubResource("Resource_odhlh")])

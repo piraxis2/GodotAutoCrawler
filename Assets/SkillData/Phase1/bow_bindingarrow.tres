@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillDefinition" format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_a0k6x"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/DamageBlock.cs" id="2_jgq58"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/BindBlock.cs" id="3_7wgms"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="4_mk8p6"]
+
+[sub_resource type="Resource" id="Resource_npige"]
+script = ExtResource("2_jgq58")
+MinDamage = 5
+MaxDamage = 10
+HitChance = 85
+
+[sub_resource type="Resource" id="Resource_2od0f"]
+script = ExtResource("3_7wgms")
+Turns = 3
+
+[resource]
+script = ExtResource("4_mk8p6")
+Id = &"bow_bindingarrow"
+DisplayName = "속박 화살"
+Range = 5
+ManaCost = 20
+Effects = Array[ExtResource("1_a0k6x")]([SubResource("Resource_npige"), SubResource("Resource_2od0f")])

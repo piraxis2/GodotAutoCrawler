@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SkillDefinition" format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_vcodb"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/DamageBlock.cs" id="2_x3opj"]
+[ext_resource type="Script" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="3_4yk6t"]
+
+[sub_resource type="Resource" id="Resource_raduv"]
+script = ExtResource("2_x3opj")
+MaxDamage = 16
+
+[resource]
+script = ExtResource("3_4yk6t")
+Id = &"fist_jab"
+DisplayName = "잽"
+Effects = Array[ExtResource("1_vcodb")]([SubResource("Resource_raduv")])

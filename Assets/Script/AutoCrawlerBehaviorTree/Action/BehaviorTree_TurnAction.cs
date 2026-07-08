@@ -21,6 +21,8 @@ public partial class BehaviorTree_TurnAction : BehaviorTree_Action
             
             TurnAction.Init(this);
             ActionState actionStatus = TurnAction.Action(delta, article as ArticleBase);
+            // 지불/검증 실패는 CurrentTurnAction을 세우지 않고 Selector 다음 행으로 넘긴다.
+            if (actionStatus == ActionState.Failure) return BtStatus.Failure;
             if (actionStatus is ActionState.Executed or ActionState.Running)
             {
                 article.CurrentTurnAction?.Finish(this);

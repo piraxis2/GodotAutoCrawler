@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/Tests/Sk001Step4StatusControlTest.cs" id="1_sk004"]
+
+[node name="Sk001Step4StatusControlTest" type="Node"]
+script = ExtResource("1_sk004")
