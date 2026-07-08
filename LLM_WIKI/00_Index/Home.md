@@ -1,7 +1,7 @@
 ---
 type: index
 project: AutoCrawler
-updated: 2026-07-08
+updated: 2026-07-09
 ---
 
 # AutoCrawler LLM Wiki
@@ -30,6 +30,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[BehaviorTree-System]]
 - [[Article-Status-System]]
 - [[Skill-System]]
+- [[Workspace-Window-System]]
 
 ## 작업과 결정
 
@@ -59,6 +60,8 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[SK-001-Data-Driven-Skill-System-Review]]
 - [[ST-001-Natural-Regen-Stats-Review]]
 - [[ST-001-Natural-Regen-Stats]]
+- [[WS-001-Native-Window-Workspace-Shell]]
+- [[WS-001-Native-Window-Workspace-Shell-Review]]
 - [[DialogueTool-Step-1-to-8]]
 - [[DT-002-Portrait-Review]]
 - [[DT-004-Effect-Flow-Review]]
@@ -106,3 +109,4 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 | `50_Reviews` | 리뷰 결과와 완료 판정 |
 | `90_Templates` | Agent가 복제해 쓰는 문서 템플릿 |
 | `Archive` | 더 이상 현재 사실이 아닌 기록 |
+

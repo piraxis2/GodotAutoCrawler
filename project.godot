@@ -42,9 +42,6 @@ settings/gdscript/always_track_local_variables=true
 
 window/size/viewport_width=1440
 window/size/viewport_height=960
-window/size/resizable=false
-window/size/minimize_disabled=true
-window/size/maximize_disabled=true
 window/subwindows/embed_subwindows=false
 
 [dotnet]

@@ -1,10 +1,16 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-07-08
+updated: 2026-07-09
 ---
 
 # Current State
+
+> **Known Regressions (2026-07-09 기준, 정정 대기).** 아래 본문의 일부 "ALL PASS" 서술은 지금은 사실이 아니다.
+> `cb001_step4_determinism_test`(`D.deaths_recorded`)와 `sk001_step6_data_pack_test`(`D.ChainHitsThree`)는
+> 현재 `dev`에서 **실패**한다. WS-001 변경과 무관하며(`project.godot` 되돌린 baseline에서도 재현), 각각 별도
+> Task로 분리돼 있다([[Open-Tasks]]). 그 Task에서 원인 정정 후 본문 서술(64·81·98·101·104행 근처)을 갱신한다.
+> CB-001 step1~3, SK-001 step1~5는 통과한다.
 
 ## Project
 
@@ -12,6 +18,39 @@ updated: 2026-07-08
 - 전투 핵심은 Article, Status, BehaviorTree, TurnAction, TurnHelper로 구성된다.
 - 실제 전투 실험 중심 씬은 `Assets/Scenes/Map/battle_field.tscn`이다.
 - `main.tscn`은 UI와 윈도우 실험 성격이 강하다.
+- 아웃게임 UI 기반은 독립 Window 작업대 `Assets/Scenes/workspace.tscn`이다(WS-001, 아래 Workspace 절).
+
+
+## Workspace
+
+- **WS-001 Native Window Workspace Shell W0(Step 0~3) 완료**([[WS-001-Native-Window-Workspace-Shell]],
+  [[WS-001-Native-Window-Workspace-Shell-Review]] 판정 완료). 사실은 [[Workspace-Window-System]]이 보존한다.
+  아웃게임 UI를 독립 Godot `Window`들의 작업대로 세웠다. W0는 각 창의 실제 콘텐츠가 아니라 창 lifecycle·preset·
+  persistence **계약**을 세우고, 창 내용은 placeholder다.
+- 셸 entry scene은 `Assets/Scenes/workspace.tscn`이며 직접 실행으로 검증한다. `run/main_scene`은 여전히
+  `battle_field.tscn`이다(CB-001 결정론 경로 무영향). Step 1에서 `project.godot` display 설정
+  `resizable`/`minimize_disabled`/`maximize_disabled`를 해제했다.
+- managed window 5종(`World`/`Situation`/`WeeklyAction`/`Calendar`/`Log`)은 `WorkspaceWindow`(`Godot.Window`
+  직접 상속)다. Root/Main(`WorkspaceShell`)은 managed set에 없다. `World`만 `content_mode`
+  (`hub`/`battle`/`replay`, `Window.ModeEnum`과 별개)를 가진다.
+- `WorkspaceWindowManager`가 registry(자동 등록·중복/빈 id·freed fail-closed)·show/hide/toggle(닫기=hide,
+  duplicate open 시 좌표 보존)·최소화 동기화(보이던 창만 기억·복원, `sub_windows` 그룹 미사용)·preset apply·
+  gather·persistence를 오케스트레이션한다.
+- preset 3종(`outgame`/`battle`/`analysis`)은 창별 `{visible, offset, size, content_mode}`를 적용한다.
+  offset은 대상 screen work area 원점 기준이다(절대 좌표 아님). `World`는 재생성 없이 같은 인스턴스의
+  content_mode/position/size만 바꾼다.
+- geometry/preset resolve/저장 로직은 Window를 모르는 순수 코드(`WorkspaceGeometry`, `WorkspaceLayoutStore`)로
+  분리했다(D7). **모든 gather 판정·clamp는 decoration 포함 rect 기준**이다 — Godot은 화면 안 clamp에서 client
+  rect만 보고 타이틀바를 무시하기 때문이다(Step 1 실측 버그). screen 원점은 `(0,0)`이 아니다(`screen[0]
+  pos=(0,542)`).
+- 배치 저장은 `user://workspace_layout.cfg`(전역 `settings.ini`와 분리, `[meta] version` 키). 파일 없음/파싱
+  실패/미지 version/개별 창 타입 오류는 모두 기본 preset fallback이며 파일을 파괴하지 않는다. `LoadLayout`은
+  복원 후 항상 gather를 돌려 화면 밖 좌표를 회수한다. 자동 복원/저장은 entry scene에서만 켠다
+  (`WorkspaceShell._restoreLayoutOnReady`).
+- 검증: `dotnet build` 경고/오류 0, `--import` exit 0, 헤드리스 `ws001_step1`(62)·`ws001_step2`(66)·
+  `ws001_step3`(40) ALL PASS, 실제 GUI probe로 멀티모니터 preset/gather/save-load round-trip 확인.
+- 후속(W0 범위 밖): 각 창 실제 콘텐츠(DemoState/BattleSession/TacticBoard/Report) 장착, custom preset
+  override 저장, 창 스냅 UX, `battle_field.tscn` stretch 정책, `run/main_scene` 전환. [[Open-Tasks]] 참고.
 
 
 ## Combat
@@ -634,5 +673,6 @@ updated: 2026-07-08
 - [[Open-Tasks]]
 - [[DialogueTool-Architecture]]
 - [[DialogueTool-Step-1-to-8]]
+
 
 

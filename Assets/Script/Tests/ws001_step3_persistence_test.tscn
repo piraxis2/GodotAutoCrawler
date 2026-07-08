@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/Tests/Ws001Step3PersistenceTest.cs" id="1_ws003"]
+
+[node name="Ws001Step3PersistenceTest" type="Node"]
+script = ExtResource("1_ws003")

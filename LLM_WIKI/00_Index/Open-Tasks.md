@@ -1,12 +1,30 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-07-08
+updated: 2026-07-09
 ---
 
 # Open Tasks
 
 ## Next
+
+- **WS-001 Native Window Workspace Shell — W0(Step 1~3) 완료**([[WS-001-Native-Window-Workspace-Shell]],
+  [[Workspace-Window-System]]): 아웃게임 UI를 독립 Godot `Window`들의 작업대로 세웠다. managed Window 5종의
+  lifecycle(닫기=hide, duplicate open, freed/stale 방어, 최소화 동기화), preset 3종(outgame/battle/analysis)
+  apply + `gather_windows`(decoration 포함 rect 기준 회수), `user://workspace_layout.cfg` 저장/복원
+  (version·타입 fallback)이 완료됐다. 헤드리스 3종 168 assertions ALL PASS. 후속 창 장착(DemoState/
+  BattleSession/TacticBoard/Report)은 아래 별도 항목.
+
+- **WS-001 후속 — managed window에 실제 콘텐츠 장착**([[Workspace-Window-System]]): W0는 placeholder만 둔다.
+  각 창(World hub/battle/replay, Situation 위험 게이지, WeeklyAction 6계열, Calendar 48주, Log 아카이브)에
+  실제 상태/UI를 장착하는 작업이 남아 있다. DemoState/BattleSession/TacticBoard/Report/UnitDetail/Save·Load
+  창은 각자 자기 Window에 확장된다. custom preset override 저장(OD7)과 창 스냅 UX도 W0 범위 밖 후속이다.
+
+- **display 설정 변경 후속 결정 — root window stretch mode**(WS-001 OD6에서 파생):
+  Step 1에서 `resizable`/`minimize_disabled`/`maximize_disabled`를 해제했다. 프로젝트에 `display/window/stretch/*`
+  설정이 없어, `battle_field.tscn`에서 창을 키우거나 최대화하면 전투 화면이 따라 커지지 않고 빈 공간만 생긴다
+  (수동 확인, 크래시/스크립트 에러 없음). `stretch/mode = canvas_items` 도입 여부와 그 경우의 aspect 정책을
+  결정해야 한다. 결정론(CB-001)에는 영향 없다.
 
 - **SK-001 Data-Driven Skill System — 전체 완료(Step 0~6)**. 후속 cleanup/기능 Task 후보:
   - 기존 3종 하드코딩 TurnAction(`Attack`→TempArticle2, `ChainLightning`→PrincessKnight/TempArticle3) BT 재배선을 데이터 스킬(`sword_slash`/`staff_chainlightning` 등)로 하고 스크립트 삭제. 밸런스 스왑(명중 95%·마나)·CB-001 결정론 회귀 재검증 필요.
@@ -15,6 +33,9 @@ updated: 2026-07-08
   - 마법 대미지 min 반영 시 마탄/연쇄 뇌격 위력 범위 부여(07 수치표 F-4).
 
 ## Later
+
+- Workspace UI cleanup 후속:
+  - `Assets/UI/Window/field_window.tscn`은 `Window` 루트가 아닌 `Node` 루트이고 자기 자신을 `ext_resource`로 재귀 인스턴스한다. WS-001에서는 재사용하지 않지만, 혼동 방지를 위해 별도 cleanup에서 삭제/수정 여부를 결정한다.
 
 - ST-001 잔여 P3:
   - `battle_field.tscn`의 per-instance `ArticleStatus` override 제거. 순수 중복은 아니고 인카운터 튜닝이다
@@ -145,6 +166,11 @@ updated: 2026-07-08
 - 시스템 문서는 코드 변경 후 현재 사실만 남도록 갱신한다.
 - 완료 작업은 Task 문서에 검증 결과를 남기고 이 목록에서 제거한다.
 - 새로운 중요한 설계 선택은 ADR을 먼저 작성한다.
+
+
+
+
+
 
 
 
