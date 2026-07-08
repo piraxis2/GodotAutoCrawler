@@ -11,7 +11,7 @@ updated: 2026-07-08
 
 - 주요 위치: `Assets/Script/SkillSystem`, `Assets/SkillData/slash.tres`
 - 책임: 스킬 정의(`SkillDefinition`)를 데이터 Resource로 두고, 실행 중 상태를 유닛별 `SkillState`로 분리해 기존 BT/TurnAction 경로에서 실행한다.
-- 현재 상태: **SK-001 Step 0~6 전체 완료**. 데이터 기반 스킬 골격 + 블록 카탈로그 + Phase1 12종 데이터. 후속(별도 Task): 기존 3종 TurnAction BT 재배선/삭제, 무대상/환불 정책, Mana production 배선, damage-result API.
+- 현재 상태: **SK-001 Step 0~6 전체 완료**. 데이터 기반 스킬 골격 + 블록 카탈로그 + Phase1 12종 데이터. 후속(별도 Task): 기존 3종 TurnAction BT 재배선/삭제, 무대상/환불 정책, damage-result API. `Mana` production 배선은 ST-001 Step 2에서 완료.
 
 ## Model
 
@@ -39,7 +39,7 @@ updated: 2026-07-08
 
 ## Payment Gate and Hit Chance (Step 3)
 
-- `Mana : StatusElement`: `CurrentMana`/`MaxMana`, `CanAfford`, `TrySpend`(부족 시 소모 없이 false). production character scene 배선은 후속(소비 스킬이 없어 미배선).
+- `Mana : StatusElement`: `CurrentMana`/`MaxMana`, `CanAfford`, `TrySpend`(부족 시 소모 없이 false). production character scene과 `battle_field.tscn` override 모두 배선 완료(ST-001 Step 2). 전투 시작 시 `CurrentMana == MaxMana`이고, 턴 시작마다 `ManaRegen`만큼 회복된다([[Article-Status-System]]).
 - `SkillDefinition.ManaCost`: `TurnAction_Skill.Init`이 `ManaCost > 0`일 때만 `Mana.TrySpend`로 지불. 부족하면 상태 변경 없이 `SkillState.Failed`를 세우고, `Action`이 `ActionState.Failure`로 반환한다. `ManaCost == 0`(slash/magicbolt)은 게이트 없음 → 기존 baseline 보존.
 - `ActionState.Failure`: 지불/검증 실패 신호. `BehaviorTree_TurnAction.PerformAction`과 `CharacterArticle.TurnPlay`가 `BtStatus.Failure`로 매핑하고 CurrentTurnAction을 세우지 않아 `BehaviorTree_Selector`가 다음 행으로 fallback한다. legacy 3종은 `Failure`를 반환하지 않아 additive.
 - `DamageBlock.HitChance`(0~100): `HitChance < 100`일 때만 `SkillContext.CombatRandRange(0,100) >= HitChance`로 명중 판정(단일 CombatRng 1회). RNG 순서 `명중 -> 크리티컬 -> 피해`, 같은 seed 재현. `HitChance == 100`은 hit roll 생략(baseline RNG 스트림 보존). 명중 실패/성공 모두 `SkillState.Reports`에 `miss:`/`damage:` 기록.

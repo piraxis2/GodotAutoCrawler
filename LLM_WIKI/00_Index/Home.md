@@ -1,7 +1,7 @@
 ---
 type: index
 project: AutoCrawler
-updated: 2026-07-07
+updated: 2026-07-08
 ---
 
 # AutoCrawler LLM Wiki
@@ -57,6 +57,8 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[CB-001-Deterministic-Combat-Resolution]]
 - [[SK-001-Data-Driven-Skill-System]]
 - [[SK-001-Data-Driven-Skill-System-Review]]
+- [[ST-001-Natural-Regen-Stats-Review]]
+- [[ST-001-Natural-Regen-Stats]]
 - [[DialogueTool-Step-1-to-8]]
 - [[DT-002-Portrait-Review]]
 - [[DT-004-Effect-Flow-Review]]
@@ -90,6 +92,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[ADR-016-BehaviorTree-Remote-Debug-Channel]]
 - [[ADR-017-Deterministic-Combat-Resolution]]
 - [[ADR-018-Data-Driven-Skill-System]]
+- [[ADR-019-Natural-Regen-Stats]]
 
 ## 문서 역할
 

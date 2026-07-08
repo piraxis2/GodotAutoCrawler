@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="SkillDefinition" format=3]
+[gd_resource type="Resource" script_class="SkillDefinition" format=3 uid="uid://ca0v0203xughw"]
 
-[ext_resource type="Script" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_sblbw"]
-[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/SelfBuffBlock.cs" id="2_pqgsr"]
-[ext_resource type="Script" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="3_a52ol"]
+[ext_resource type="Script" uid="uid://d2saisc5058wn" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_sblbw"]
+[ext_resource type="Script" uid="uid://cotfdlqh6two0" path="res://Assets/Script/SkillSystem/Blocks/SelfBuffBlock.cs" id="2_pqgsr"]
+[ext_resource type="Script" uid="uid://dmvgexs35oc4j" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="3_a52ol"]
 
 [sub_resource type="Resource" id="Resource_iyacv"]
 script = ExtResource("2_pqgsr")

@@ -53,7 +53,8 @@ public partial class CharacterArticle : ArticleBase, ITurnAffectedArticle<Articl
     public void ApplyTurnStartEffects()
     {
         StatusController.OnTurnStart();
-        ArticleStatus.ApplyAffectingStatuses();
+        ArticleStatus.ApplyTurnStartStatusElements();
+        if (ArticleStatus.HasLivingHealth()) ArticleStatus.ApplyAffectingStatuses();
     }
 
     public BtStatus TurnPlay(double delta)

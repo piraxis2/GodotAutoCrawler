@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/Tests/St001Step1NaturalRegenTest.cs" id="1_st001"]
+
+[node name="St001Step1NaturalRegenTest" type="Node"]
+script = ExtResource("1_st001")

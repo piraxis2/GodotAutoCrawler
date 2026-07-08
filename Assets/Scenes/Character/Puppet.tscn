@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://bvf5eww4h7tp2"]
+[gd_scene format=3 uid="uid://bvf5eww4h7tp2"]
 
 [ext_resource type="Script" uid="uid://dfo7fcc4ivngo" path="res://Assets/Script/Article/CharacterArticle.cs" id="1_p356t"]
 [ext_resource type="Script" uid="uid://dt641onuentr8" path="res://Assets/Script/Article/Status/Element/StatusElement.cs" id="2_p6hmd"]
@@ -12,7 +12,10 @@
 [ext_resource type="Material" uid="uid://dd7qbgt5p6813" path="res://Assets/Material/hitMaterial.tres" id="9_o0q3f"]
 [ext_resource type="Script" uid="uid://cwlvijl5y02o1" path="res://addons/behaviortree/BehaviorTree.cs" id="10_8140d"]
 [ext_resource type="Script" uid="uid://bi51owx2orvu5" path="res://Assets/Script/gds/fx/article_sprite_hit.gd" id="10_eqfli"]
-[ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/health_bar.tscn" id="16_5f4bl"]
+[ext_resource type="PackedScene" uid="uid://c5n18dhovqwe4" path="res://Assets/UI/CharacterInfoUI/overhead_ui.tscn" id="16_5f4bl"]
+[ext_resource type="Script" uid="uid://cuyrbo1ncio8f" path="res://Assets/Script/Article/Status/Element/Mana.cs" id="80_st001mn"]
+[ext_resource type="Script" uid="uid://l2ewt4v12ari" path="res://Assets/Script/Article/Status/Element/ManaRegen.cs" id="81_st001mr"]
+[ext_resource type="Script" uid="uid://ck1ka4y1d0c1h" path="res://Assets/Script/Article/Status/Element/HealthRegen.cs" id="82_st001hr"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
 resource_local_to_scene = true
@@ -36,10 +39,24 @@ resource_local_to_scene = true
 script = ExtResource("7_evawd")
 Value = 2
 
+[sub_resource type="Resource" id="Resource_st001_mana"]
+resource_local_to_scene = true
+script = ExtResource("80_st001mn")
+MaxMana = 30
+
+[sub_resource type="Resource" id="Resource_st001_manaregen"]
+resource_local_to_scene = true
+script = ExtResource("81_st001mr")
+Value = 3
+
+[sub_resource type="Resource" id="Resource_st001_healthregen"]
+resource_local_to_scene = true
+script = ExtResource("82_st001hr")
+
 [sub_resource type="Resource" id="Resource_7e21v"]
 resource_local_to_scene = true
 script = ExtResource("8_mv88v")
-StatusElements = Array[ExtResource("2_p6hmd")]([SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5"), SubResource("Resource_7tk6w")])
+StatusElements = Array[ExtResource("2_p6hmd")]([SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5"), SubResource("Resource_7tk6w"), SubResource("Resource_st001_mana"), SubResource("Resource_st001_manaregen"), SubResource("Resource_st001_healthregen")])
 
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_fwt52"]
 
@@ -412,15 +429,15 @@ _data = {
 &"Walk": SubResource("Animation_0audv")
 }
 
-[node name="Character" type="Node2D"]
+[node name="Character" type="Node2D" unique_id=153946385]
 script = ExtResource("1_p356t")
 ArticleStatus = SubResource("Resource_7e21v")
 
-[node name="AnimationTree" type="AnimationTree" parent="."]
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=715923056]
 tree_root = SubResource("AnimationNodeBlendSpace2D_fwt52")
 parameters/blend_position = Vector2(-0.00198412, 0.0163934)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=748171429]
 texture_filter = 1
 material = ExtResource("9_o0q3f")
 sprite_frames = SubResource("SpriteFrames_ovkpk")
@@ -429,14 +446,14 @@ speed_scale = 2.0
 offset = Vector2(0, -6)
 script = ExtResource("10_eqfli")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="AnimatedSprite2D"]
-libraries = {
-&"": SubResource("AnimationLibrary_hfvbi")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="AnimatedSprite2D" unique_id=434664922]
+libraries/ = SubResource("AnimationLibrary_hfvbi")
 
-[node name="BehaviorTree" type="Node" parent="."]
+[node name="BehaviorTree" type="Node" parent="." unique_id=1764740872]
 script = ExtResource("10_8140d")
 
-[node name="HealthBar" parent="." instance=ExtResource("16_5f4bl")]
+[node name="OverheadUi" parent="." unique_id=1476416213 instance=ExtResource("16_5f4bl")]
+offset_left = -6.0
 offset_top = -20.0
-offset_bottom = -18.0
+offset_right = 6.0
+offset_bottom = -14.0

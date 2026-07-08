@@ -2,7 +2,7 @@
 type: system
 system: Turn
 status: active
-updated: 2026-07-05
+updated: 2026-07-08
 ---
 
 # Turn System
@@ -21,11 +21,15 @@ updated: 2026-07-05
 
 턴이 시작되면 `TurnHelper.AdvanceToNextTurn()`이 현재 유닛을 선택하고, game over가 아니면
 `ITurnAffectedArticle.ApplyTurnStartEffects()`를 정확히 1회 호출한다. `CharacterArticle`은 이 hook에서
-`ArticleStatus.ApplyAffectingStatuses()`를 실행한다.
+순서만 오케스트레이션한다.
+
+1. `StatusController.OnTurnStart()` — 제어/버프 카운터 틱
+2. `ArticleStatus.ApplyTurnStartStatusElements()` — `HealthRegen`/`ManaRegen` 등 자연 회복(ADR-019)
+3. 살아 있으면 `ArticleStatus.ApplyAffectingStatuses()` — 지속 효과
 
 `TurnHelper._PhysicsProcess()`는 현재 유닛의 `TurnPlay(delta * Speed)`를 호출한다. 결과가 Success 또는
 Failure이면 다음 유닛으로 넘어가며, 새 유닛의 턴 시작 효과가 1회 적용된다. Running frame 반복 중에는
-지속 효과를 다시 적용하지 않는다.
+지속 효과나 자연 회복을 다시 적용하지 않는다. 자연 회복은 RNG를 소비하지 않아 결정론 시퀀스를 바꾸지 않는다.
 
 ## Combat RNG
 
@@ -65,6 +69,8 @@ Failure이면 다음 유닛으로 넘어가며, 새 유닛의 턴 시작 효과�
   금지 난수 API 정적 가드를 검증한다.
 - `Assets/Script/Tests/cb001_step3_canonical_order_test.tscn`: 사거리 오프셋 정규 순서, 타겟/체인 동점자
   규칙, 턴 순서 Priority → SpawnIndex 안정 정렬, 경로 후보 동점자 규칙을 검증한다.
+- `Assets/Script/Tests/st001_step1_natural_regen_test.tscn`: 턴 시작 자연 회복 1회 적용, Running frame 반복과
+  `Speed` 변화 불변, 사망 유닛의 이후 turn-start 스탯/지속 효과 스킵.
 - `Assets/Script/Tests/cb001_step4_determinism_test.tscn`: 실제 `battle_field.tscn` 결정론 회귀 —
   같은 시드 2회 이벤트 로그 완전 일치, 다른 시드 상이(스모크), 같은 시드 + 다른 배속 완전 일치,
   근접/체인/이동 배선의 씬 레벨 소비 보증.

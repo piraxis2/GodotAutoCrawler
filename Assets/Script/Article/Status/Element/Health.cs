@@ -22,13 +22,13 @@ public partial class Health : StatusElement
             if (value <= 0) Owner.Dead();
             _currentHealth = Math.Clamp(value, 0, MaxHealth);
             EmitSignal("OnHealthChanged", oldHealth, _currentHealth);
-            Owner.HealthBar?.Call("_set_health", _currentHealth);
+            Owner.OverheadUi?.Call("set_health", _currentHealth);
         }
     }
 
     protected override void OnInit(ArticleBase owner)
     {
         _currentHealth = MaxHealth;
-        Owner.HealthBar?.Call("init_health", MaxHealth);
+        Owner.OverheadUi?.Call("init_health", MaxHealth);
     }
 }

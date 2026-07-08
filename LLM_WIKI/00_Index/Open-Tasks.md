@@ -1,7 +1,7 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-07-07
+updated: 2026-07-08
 ---
 
 # Open Tasks
@@ -10,12 +10,19 @@ updated: 2026-07-07
 
 - **SK-001 Data-Driven Skill System — 전체 완료(Step 0~6)**. 후속 cleanup/기능 Task 후보:
   - 기존 3종 하드코딩 TurnAction(`Attack`→TempArticle2, `ChainLightning`→PrincessKnight/TempArticle3) BT 재배선을 데이터 스킬(`sword_slash`/`staff_chainlightning` 등)로 하고 스크립트 삭제. 밸런스 스왑(명중 95%·마나)·CB-001 결정론 회귀 재검증 필요.
-  - `Mana`의 production character scene(PrincessKnight/Puppet 등) 배선.
   - `DamageBlock.ApplyDamage`의 legacy Damage/UI 결합 제거(headless 피해 result API) — 마나 흡수 정확한 50%·조준 사격 크리 보너스도 이때.
   - 무대상 fail-closed/마나 환불 정책 확정.
   - 마법 대미지 min 반영 시 마탄/연쇄 뇌격 위력 범위 부여(07 수치표 F-4).
 
 ## Later
+
+- ST-001 잔여 P3:
+  - `battle_field.tscn`의 per-instance `ArticleStatus` override 제거. 순수 중복은 아니고 인카운터 튜닝이다
+    (Opponent = Puppet인데 `MaxHealth`만 1000 → 200). Ally override는 원본과 동일해 삭제 가능하고,
+    Opponent 4개는 `Puppet.tscn`의 `MaxHealth`를 200으로 내리면 삭제 가능하다(Puppet은 battle_field에서만 사용).
+    단, 나머지 필드 대조 + `.tscn` 재직렬화 위험 + CB-001 결정론 회귀 재검증이 필요해 별도 Task가 맞다.
+  - `TurnStartOrder` 상수 집중화. 스탯이 2개뿐이라 실익이 작다. 세 번째 turn-start 스탯 추가 시 함께 한다.
+  - 전투 UI 마나 바/회복량 표시 미구현.
 
 - CB-001 프로덕션 전투 seed 생성/기록 정책: 현재 Step 2의 `_combatSeed=1` 기본값은 재현 테스트에 적합하지만,
   실제 새 전투마다 seed를 생성하고 로그/리플레이 입력에 기록하는 경로는 Step 4 또는 Step 5에서 확정한다.
@@ -58,6 +65,23 @@ updated: 2026-07-07
   schema/section version migration registry, Dialogue SaveEffect(저장 트리거는 game/event layer 우선).
 
 ## Recently Completed
+
+- **`ArticleStatus.ApplyAffectingStatuses()` 열거 중 리스트 수정 결함 수정**(ST-001 후속, 단독 수정):
+  만료(`Cost == 0`)된 `StatusAffect`가 `OnAffectedEnd` → `RemoveAffectStatus()`로 순회 중인 리스트를 수정해
+  첫 `IAffectedOnlyMyTurn`/`IAffectedUntilTheEnd` production 구현에서 `InvalidOperationException`이 날 수 있었다.
+  `AffectingStatusesList.ToArray()` snapshot 순회로 수정. 회귀 테스트 `st001_step1_natural_regen_test` `[H]` headless PASS(2026-07-08).
+
+- **`ArticleBase.IsAlive` indexer 예외 / `HasLivingHealth()` 개념 중복 수정**(ST-001 P3, 단독 수정):
+  `IsAlive`가 `StatusElementsDictionary[typeof(Health)]` 인덱서를 써서 `Health` 없는 Article에서 `KeyNotFoundException`을 던졌다.
+  `ArticleStatus.HasLivingHealth()`에 위임하도록 바꿔 생존 판정 진실을 한 곳으로 모았다. 호출부 17곳 무변경.
+  회귀 테스트 `st001_step1_natural_regen_test` `[I]` headless PASS(2026-07-08).
+
+- **ST-001 Natural Regen Stats 완료**(Step 0~3, [[ST-001-Natural-Regen-Stats-Review]] 판정: 완료):
+  체력/마나 자연 회복을 `HealthRegen`/`ManaRegen : StatusElement`로 표현하고, `ITurnStartStatusElement`
+  (`TurnStartOrder`/`ApplyTurnStart`) 계약 기반 dispatch로 유닛 턴 시작 1회에 적용한다. `ArticleStatus`는
+  보관/조회/생존 guard/dispatch만 담당한다. production 캐릭터 씬 4종과 `battle_field.tscn` override 5개에
+  `Mana`/`ManaRegen`/`HealthRegen` 배선 완료. 결정 [[ADR-019-Natural-Regen-Stats]], 사실
+  [[Article-Status-System]]/[[Turn-System]]. 잔여 P3와 `ApplyAffectingStatuses()` 결함은 위 항목 참고.
 
 - **BT-001 BehaviorTree Graph Editor and Debugger 완료**(Step 1~5, [[BT-001-BehaviorTree-Graph-Editor-Debugger-Review]] 판정: 완료):
   Node tree source-of-truth 기반 GraphEdit viewer/authoring/Inspector 연동과 원격 디버그 채널을 완료했다.
@@ -121,3 +145,9 @@ updated: 2026-07-07
 - 시스템 문서는 코드 변경 후 현재 사실만 남도록 갱신한다.
 - 완료 작업은 Task 문서에 검증 결과를 남기고 이 목록에서 제거한다.
 - 새로운 중요한 설계 선택은 ADR을 먼저 작성한다.
+
+
+
+
+
+

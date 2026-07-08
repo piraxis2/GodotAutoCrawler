@@ -13,13 +13,16 @@
 [ext_resource type="Script" uid="uid://jhjvup735lqt" path="res://Assets/Script/Article/Status/Element/Luck.cs" id="7_56f8w"]
 [ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_jm7tw"]
 [ext_resource type="Script" uid="uid://527wle2alee2" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="8_ry6v4"]
-[ext_resource type="PackedScene" uid="uid://bvf5eww4h7tp2" path="res://Assets/Scenes/Character/Puppet.tscn" id="11_hv0hd"]
+[ext_resource type="PackedScene" uid="uid://kpkog4h221oy" path="res://Assets/Scenes/Character/Temp/TempArticle2.tscn" id="14_7o1qe"]
 [ext_resource type="Script" uid="uid://kxwtxub32atc" path="res://Assets/Script/FxPlayer.cs" id="16_3bkig"]
 [ext_resource type="PackedScene" uid="uid://5jaympibmkwm" path="res://Assets/FxScene/IceBolt.tscn" id="17_4m0c6"]
 [ext_resource type="PackedScene" uid="uid://dgjogfc7xujst" path="res://Assets/FxScene/Lightning.tscn" id="18_enjqk"]
 [ext_resource type="Script" uid="uid://b55u2i73bs0x5" path="res://Assets/Script/gds/damage_floater.gd" id="18_f5ues"]
 [ext_resource type="PackedScene" uid="uid://csamidlr34g7s" path="res://Assets/FxScene/SoundFx/sound_fx_scene.tscn" id="18_fajhp"]
 [ext_resource type="Script" uid="uid://b5oowkl1j6sbv" path="res://Assets/Script/InputHelper.cs" id="19_fajhp"]
+[ext_resource type="Script" uid="uid://cuyrbo1ncio8f" path="res://Assets/Script/Article/Status/Element/Mana.cs" id="80_st001mn"]
+[ext_resource type="Script" uid="uid://l2ewt4v12ari" path="res://Assets/Script/Article/Status/Element/ManaRegen.cs" id="81_st001mr"]
+[ext_resource type="Script" uid="uid://ck1ka4y1d0c1h" path="res://Assets/Script/Article/Status/Element/HealthRegen.cs" id="82_st001hr"]
 
 [sub_resource type="Resource" id="Resource_dewjv"]
 resource_local_to_scene = true
@@ -43,118 +46,65 @@ resource_local_to_scene = true
 script = ExtResource("8_ry6v4")
 Value = 2
 
-[sub_resource type="Resource" id="Resource_f5ues"]
+[sub_resource type="Resource" id="Resource_st001_ally_mana"]
 resource_local_to_scene = true
-script = ExtResource("8_jm7tw")
-StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_dewjv"), SubResource("Resource_dxsyy"), SubResource("Resource_icvma"), SubResource("Resource_lo22a"), SubResource("Resource_uddro")])
+script = ExtResource("80_st001mn")
+MaxMana = 60
 
-[sub_resource type="Resource" id="Resource_26pw6"]
+[sub_resource type="Resource" id="Resource_st001_ally_manaregen"]
 resource_local_to_scene = true
-script = ExtResource("4_72njd")
-MaxHealth = 200
+script = ExtResource("81_st001mr")
+Value = 8
 
-[sub_resource type="Resource" id="Resource_vdgyl"]
+[sub_resource type="Resource" id="Resource_st001_ally_healthregen"]
 resource_local_to_scene = true
-script = ExtResource("5_rst3o")
-
-[sub_resource type="Resource" id="Resource_kmlyk"]
-resource_local_to_scene = true
-script = ExtResource("6_ep4vv")
-
-[sub_resource type="Resource" id="Resource_7lwu5"]
-resource_local_to_scene = true
-script = ExtResource("7_56f8w")
-
-[sub_resource type="Resource" id="Resource_qnp2s"]
-resource_local_to_scene = true
-script = ExtResource("8_ry6v4")
-Value = 2
-
-[sub_resource type="Resource" id="Resource_v4f5j"]
-resource_local_to_scene = true
-script = ExtResource("8_jm7tw")
-StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_26pw6"), SubResource("Resource_vdgyl"), SubResource("Resource_kmlyk"), SubResource("Resource_7lwu5"), SubResource("Resource_qnp2s")])
-
-[sub_resource type="Resource" id="Resource_fajhp"]
-resource_local_to_scene = true
-script = ExtResource("4_72njd")
-MaxHealth = 200
-
-[sub_resource type="Resource" id="Resource_0ovk8"]
-resource_local_to_scene = true
-script = ExtResource("5_rst3o")
-
-[sub_resource type="Resource" id="Resource_4kslh"]
-resource_local_to_scene = true
-script = ExtResource("6_ep4vv")
-
-[sub_resource type="Resource" id="Resource_b4tol"]
-resource_local_to_scene = true
-script = ExtResource("7_56f8w")
-
-[sub_resource type="Resource" id="Resource_rpkph"]
-resource_local_to_scene = true
-script = ExtResource("8_ry6v4")
-Value = 2
-
-[sub_resource type="Resource" id="Resource_fv452"]
-resource_local_to_scene = true
-script = ExtResource("8_jm7tw")
-StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_fajhp"), SubResource("Resource_0ovk8"), SubResource("Resource_4kslh"), SubResource("Resource_b4tol"), SubResource("Resource_rpkph")])
-
-[sub_resource type="Resource" id="Resource_81x2m"]
-resource_local_to_scene = true
-script = ExtResource("4_72njd")
-MaxHealth = 200
-
-[sub_resource type="Resource" id="Resource_38hap"]
-resource_local_to_scene = true
-script = ExtResource("5_rst3o")
-
-[sub_resource type="Resource" id="Resource_wcjbh"]
-resource_local_to_scene = true
-script = ExtResource("6_ep4vv")
-
-[sub_resource type="Resource" id="Resource_1g6wm"]
-resource_local_to_scene = true
-script = ExtResource("7_56f8w")
-
-[sub_resource type="Resource" id="Resource_ak8v2"]
-resource_local_to_scene = true
-script = ExtResource("8_ry6v4")
-Value = 2
-
-[sub_resource type="Resource" id="Resource_7o1qe"]
-resource_local_to_scene = true
-script = ExtResource("8_jm7tw")
-StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_81x2m"), SubResource("Resource_38hap"), SubResource("Resource_wcjbh"), SubResource("Resource_1g6wm"), SubResource("Resource_ak8v2")])
-
-[sub_resource type="Resource" id="Resource_cshov"]
-resource_local_to_scene = true
-script = ExtResource("4_72njd")
-MaxHealth = 200
-
-[sub_resource type="Resource" id="Resource_1okoo"]
-resource_local_to_scene = true
-script = ExtResource("5_rst3o")
-
-[sub_resource type="Resource" id="Resource_rujwq"]
-resource_local_to_scene = true
-script = ExtResource("6_ep4vv")
-
-[sub_resource type="Resource" id="Resource_u7i10"]
-resource_local_to_scene = true
-script = ExtResource("7_56f8w")
-
-[sub_resource type="Resource" id="Resource_mjwh7"]
-resource_local_to_scene = true
-script = ExtResource("8_ry6v4")
-Value = 2
+script = ExtResource("82_st001hr")
 
 [sub_resource type="Resource" id="Resource_8ious"]
 resource_local_to_scene = true
 script = ExtResource("8_jm7tw")
-StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_cshov"), SubResource("Resource_1okoo"), SubResource("Resource_rujwq"), SubResource("Resource_u7i10"), SubResource("Resource_mjwh7")])
+StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_dewjv"), SubResource("Resource_dxsyy"), SubResource("Resource_icvma"), SubResource("Resource_lo22a"), SubResource("Resource_uddro"), SubResource("Resource_st001_ally_mana"), SubResource("Resource_st001_ally_manaregen"), SubResource("Resource_st001_ally_healthregen")])
+
+[sub_resource type="Resource" id="Resource_r1x3m"]
+resource_local_to_scene = true
+script = ExtResource("4_72njd")
+MaxHealth = 1000
+
+[sub_resource type="Resource" id="Resource_5hay4"]
+resource_local_to_scene = true
+script = ExtResource("5_rst3o")
+
+[sub_resource type="Resource" id="Resource_d6aib"]
+resource_local_to_scene = true
+script = ExtResource("6_ep4vv")
+
+[sub_resource type="Resource" id="Resource_5xbx8"]
+resource_local_to_scene = true
+script = ExtResource("7_56f8w")
+
+[sub_resource type="Resource" id="Resource_sjfbh"]
+resource_local_to_scene = true
+script = ExtResource("8_ry6v4")
+Value = 2
+
+[sub_resource type="Resource" id="Resource_d7wu3"]
+resource_local_to_scene = true
+script = ExtResource("80_st001mn")
+MaxMana = 40
+
+[sub_resource type="Resource" id="Resource_bfbve"]
+resource_local_to_scene = true
+script = ExtResource("81_st001mr")
+Value = 5
+
+[sub_resource type="Resource" id="Resource_w3e6b"]
+resource_local_to_scene = true
+script = ExtResource("82_st001hr")
+
+[sub_resource type="Resource" id="Resource_al7lm"]
+resource_local_to_scene = true
+script = ExtResource("8_jm7tw")
+StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_r1x3m"), SubResource("Resource_5hay4"), SubResource("Resource_d6aib"), SubResource("Resource_5xbx8"), SubResource("Resource_sjfbh"), SubResource("Resource_d7wu3"), SubResource("Resource_bfbve"), SubResource("Resource_w3e6b")])
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fla71"]
 texture = ExtResource("1_xbpsd")
@@ -283,24 +233,12 @@ script = ExtResource("2_q3ikk")
 
 [node name="Character" parent="Articles/Ally" unique_id=1386758331 instance=ExtResource("3_fajhp")]
 position = Vector2(-80, 40)
-ArticleStatus = SubResource("Resource_f5ues")
+ArticleStatus = SubResource("Resource_8ious")
 
 [node name="Opponent" type="Node2D" parent="Articles" unique_id=1272859551]
 
-[node name="Character" parent="Articles/Opponent" unique_id=650052817 instance=ExtResource("11_hv0hd")]
-position = Vector2(48, -24)
-ArticleStatus = SubResource("Resource_v4f5j")
-
-[node name="Character2" parent="Articles/Opponent" unique_id=558788869 instance=ExtResource("11_hv0hd")]
-ArticleStatus = SubResource("Resource_fv452")
-
-[node name="Character3" parent="Articles/Opponent" unique_id=616552741 instance=ExtResource("11_hv0hd")]
-position = Vector2(48, -56)
-ArticleStatus = SubResource("Resource_7o1qe")
-
-[node name="Character4" parent="Articles/Opponent" unique_id=642260940 instance=ExtResource("11_hv0hd")]
-position = Vector2(16, -22)
-ArticleStatus = SubResource("Resource_8ious")
+[node name="Character" parent="Articles/Opponent" unique_id=2007721688 instance=ExtResource("14_7o1qe")]
+ArticleStatus = SubResource("Resource_al7lm")
 
 [node name="TurnHelper" type="Node" parent="." unique_id=1463199549 node_paths=PackedStringArray("_articlesContainer")]
 script = ExtResource("1_25g81")

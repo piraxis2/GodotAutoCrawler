@@ -17,8 +17,11 @@
 [ext_resource type="Script" uid="uid://cm4wshnybyy74" path="res://Assets/Script/AutoCrawlerBehaviorTree/Decorator/BehaviorTree_FindOpponent.cs" id="12_v8t08"]
 [ext_resource type="Script" uid="uid://c7js0inhhipcp" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_MultipleMove.cs" id="13_ad5g1"]
 [ext_resource type="Script" uid="uid://bwx0oup5d1dc" path="res://Assets/Script/AutoCrawlerBehaviorTree/Action/BehaviorTree_TurnAction.cs" id="14_45j83"]
-[ext_resource type="PackedScene" uid="uid://b26gm5gig300j" path="res://Assets/UI/health_bar.tscn" id="16_2sfhm"]
+[ext_resource type="PackedScene" uid="uid://c5n18dhovqwe4" path="res://Assets/UI/CharacterInfoUI/overhead_ui.tscn" id="16_2sfhm"]
 [ext_resource type="Script" uid="uid://x5t3hrh74wu7" path="res://Assets/Script/TurnAction/Skill/Magic/TurnAction_ChainLightning.cs" id="16_y7hsj"]
+[ext_resource type="Script" uid="uid://cuyrbo1ncio8f" path="res://Assets/Script/Article/Status/Element/Mana.cs" id="80_st001mn"]
+[ext_resource type="Script" uid="uid://l2ewt4v12ari" path="res://Assets/Script/Article/Status/Element/ManaRegen.cs" id="81_st001mr"]
+[ext_resource type="Script" uid="uid://ck1ka4y1d0c1h" path="res://Assets/Script/Article/Status/Element/HealthRegen.cs" id="82_st001hr"]
 
 [sub_resource type="Resource" id="Resource_hwnjf"]
 resource_local_to_scene = true
@@ -42,10 +45,24 @@ resource_local_to_scene = true
 script = ExtResource("7_36ego")
 Value = 2
 
+[sub_resource type="Resource" id="Resource_st001_mana"]
+resource_local_to_scene = true
+script = ExtResource("80_st001mn")
+MaxMana = 60
+
+[sub_resource type="Resource" id="Resource_st001_manaregen"]
+resource_local_to_scene = true
+script = ExtResource("81_st001mr")
+Value = 8
+
+[sub_resource type="Resource" id="Resource_st001_healthregen"]
+resource_local_to_scene = true
+script = ExtResource("82_st001hr")
+
 [sub_resource type="Resource" id="Resource_7e21v"]
 resource_local_to_scene = true
 script = ExtResource("8_vwhsm")
-StatusElements = Array[ExtResource("2_y7hsj")]([SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5"), SubResource("Resource_7tk6w")])
+StatusElements = Array[ExtResource("2_y7hsj")]([SubResource("Resource_hwnjf"), SubResource("Resource_f6flg"), SubResource("Resource_pne82"), SubResource("Resource_2fwi5"), SubResource("Resource_7tk6w"), SubResource("Resource_st001_mana"), SubResource("Resource_st001_manaregen"), SubResource("Resource_st001_healthregen")])
 
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_fwt52"]
 
@@ -745,9 +762,11 @@ script = ExtResource("14_45j83")
 TurnAction = SubResource("Resource_7jual")
 metadata/bt_graph_position = Vector2(530, 230)
 
-[node name="HealthBar" parent="." unique_id=1738088231 instance=ExtResource("16_2sfhm")]
+[node name="OverheadUi" parent="." unique_id=1738088231 instance=ExtResource("16_2sfhm")]
+offset_left = -6.0
 offset_top = -22.0
-offset_bottom = -20.0
+offset_right = 6.0
+offset_bottom = -16.0
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=2034223006]
 pitch_scale = 0.95

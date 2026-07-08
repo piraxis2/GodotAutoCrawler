@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using AutoCrawler.Assets.Script.Article.Interface;
 using AutoCrawler.Assets.Script.Article.Status;
-using AutoCrawler.Assets.Script.Article.Status.Element;
 using Godot;
 
 namespace AutoCrawler.Assets.Script.Article;
@@ -18,23 +17,16 @@ public abstract partial class ArticleBase : Node2D
     public virtual float DamageDealtMultiplier => 1f;
     public virtual float DamageTakenMultiplier => 1f;
 
-    public bool IsAlive
-    {
-        get
-        {
-            if (ArticleStatus.StatusElementsDictionary[typeof(Health)] is Health health)
-            {
-                return health.CurrentHealth > 0;
-            }
-
-            return true;
-        }
-    }
+    // 생존 판정의 진실은 ArticleStatus가 소유한다. Health가 없는 Article은 살아 있는 것으로 본다.
+    public bool IsAlive => ArticleStatus.HasLivingHealth();
 
     private AnimationPlayer _animationPlayer;
     private AnimatedSprite2D _animatedSprite2D;
     public AnimationPlayer AnimationPlayer => _animationPlayer;
-    public ProgressBar HealthBar;
+
+    // 머리 위 HP/MP 바 묶음(overhead_ui.gd). StatusElement가 init_health/set_health,
+    // init_mana/set_mana를 Call로 밀어 넣는다.
+    public Control OverheadUi;
 
     [Signal]
     public delegate void OnMoveEventHandler(Vector2I from, Vector2I to, ArticleBase article);
@@ -64,7 +56,7 @@ public abstract partial class ArticleBase : Node2D
     {
         _animatedSprite2D = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
         _animationPlayer = GetNode<AnimationPlayer>("AnimatedSprite2D/AnimationPlayer");
-        HealthBar = GetNode<ProgressBar>("HealthBar");
+        OverheadUi = GetNode<Control>("OverheadUi");
         ArticleStatus.InitStatus(this);
         AnimationPlayer.Connect("animation_finished", new Callable(this, nameof(OnAnimationFinished)));
         AnimationPlayer.Play("Idle");

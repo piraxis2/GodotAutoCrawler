@@ -21,6 +21,7 @@ public partial class Mana : StatusElement
             int oldMana = _currentMana;
             _currentMana = clamped;
             EmitSignal("OnManaChanged", oldMana, _currentMana);
+            Owner.OverheadUi?.Call("set_mana", _currentMana);
         }
     }
 
@@ -37,5 +38,6 @@ public partial class Mana : StatusElement
     protected override void OnInit(ArticleBase owner)
     {
         _currentMana = MaxMana;
+        Owner.OverheadUi?.Call("init_mana", MaxMana, _currentMana);
     }
 }

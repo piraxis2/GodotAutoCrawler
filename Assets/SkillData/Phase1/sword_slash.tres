@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="SkillDefinition" format=3]
+[gd_resource type="Resource" script_class="SkillDefinition" format=3 uid="uid://d44yfgvay6bg"]
 
-[ext_resource type="Script" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_vn12q"]
-[ext_resource type="Script" path="res://Assets/Script/SkillSystem/Blocks/DamageBlock.cs" id="2_yi7h6"]
-[ext_resource type="Script" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="3_ulpv3"]
+[ext_resource type="Script" uid="uid://d2saisc5058wn" path="res://Assets/Script/SkillSystem/EffectBlock.cs" id="1_vn12q"]
+[ext_resource type="Script" uid="uid://eofip0t31b2v" path="res://Assets/Script/SkillSystem/Blocks/DamageBlock.cs" id="2_yi7h6"]
+[ext_resource type="Script" uid="uid://dmvgexs35oc4j" path="res://Assets/Script/SkillSystem/SkillDefinition.cs" id="3_ulpv3"]
 
 [sub_resource type="Resource" id="Resource_it5gb"]
 script = ExtResource("2_yi7h6")

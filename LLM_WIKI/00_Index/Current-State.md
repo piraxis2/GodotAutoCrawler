@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-07-07
+updated: 2026-07-08
 ---
 
 # Current State
@@ -55,7 +55,7 @@ updated: 2026-07-07
 - **SK-001 Step 3 구현·코드 리뷰 완료**([[SK-001-Data-Driven-Skill-System]], [[SK-001-Data-Driven-Skill-System-Review]] 판정: 완료).
   `Mana : StatusElement`와 `SkillDefinition.ManaCost` 지불 게이트를 도입했다. 마나 부족 시 상태 변경 없이 `ActionState.Failure`(신규)를 내고, `BehaviorTree_TurnAction`/`CharacterArticle.TurnPlay`가 `BtStatus.Failure`로 매핑해 `BehaviorTree_Selector`가 다음 행으로 fallback한다. `ManaCost == 0`(slash/magicbolt)은 게이트 없음.
   `DamageBlock.HitChance`를 추가했다. `HitChance < 100`일 때만 `SkillContext.CombatRandRange`(단일 CombatRng)로 명중 판정하며 순서는 `명중 -> 크리티컬 -> 피해`, `HitChance == 100`은 hit roll 생략으로 기존 baseline RNG 스트림 보존. 명중 실패/성공 모두 `SkillState.Reports`(report sink)에 기록. 피해 금액+UI는 여전히 legacy `Damage`(migration 경계 `DamageBlock.ApplyDamage`에 문서화).
-  `sk001_step3_mana_hit_test`(20 assertions) 및 `sk001_step1`/`sk001_step2`/CB-001 Step 1~4 회귀 전부 ALL PASS. Mana의 production scene 배선과 무대상 fail-closed는 후속.
+  `sk001_step3_mana_hit_test`(20 assertions) 및 `sk001_step1`/`sk001_step2`/CB-001 Step 1~4 회귀 전부 ALL PASS. 당시 `Mana`의 production scene 배선은 후속이었고, 현재는 ST-001 Step 2에서 완료됐다([[ST-001-Natural-Regen-Stats]]). 무대상 fail-closed는 여전히 후속.
 - **SK-001 Step 4a 구현·코드 리뷰 완료**([[SK-001-Data-Driven-Skill-System]], [[SK-001-Data-Driven-Skill-System-Review]] 판정: 완료). 사용자 승인으로 Step 4를 4a(이번)/4b(KnockbackBlock)로 분할.
   제어/버프 상태를 유닛별 `StatusController`(턴 카운터)로 도입(`StunTurns`/`BindTurns`·`BoundThisTurn`/`DamageDealtMultiplier`/`DamageTakenMultiplier`). 기존 `StatusAffect`(1턴 제어 apply/expire 붕괴) 대신 사용. `StunBlock`/`BindBlock`/`SelfBuffBlock`/`ManaDrainBlock` 4종 EffectBlock 추가.
   Stun=`TurnPlay` 시작 소비→즉시 스킵+영창 취소(무환불), Bind=`OnTurnStart` 틱→이동 노드(`BehaviorTree_Move`/`MultipleMove`) 차단, SelfBuff=주는 피해 배율, ManaDrain=마나 흡수. 피해 배율 hook은 `ArticleBase` virtual(기본 1.0, 롤 이후 곱셈→RNG 무이동)을 `CharacterArticle`이 `StatusController`로 오버라이드.
@@ -70,6 +70,12 @@ updated: 2026-07-07
   `Assets/SkillData/Phase1/`에 12종 `.tres`(검/격투/활/지팡이 × 3) 입력. 블록 확장 2건: `StunBlock.Chance`(강타 20%·소닉블로 35%, <100일 때만 CombatRng 1회), `SelfBuffBlock.Kind`(금강체 받는피해 0.5). 기본값 무효과라 Step 4a 회귀 유지.
   `sk001_step6_data_pack_test`: 12종 로드/검증 + 직렬화 round-trip(스크래치) + 기본기(베기)/강기(강타+넉백)/제어(금강체 Taken 0.5·속박 Bind3)/흡수(마나 흡수 ±16) 실행 + StunBlock Chance 0/100 결정론 + 연쇄 뇌격 3체. `sk001_step1~5`/CB-001 Step 1~4 회귀 전부 ALL PASS.
   근사/후속: 조준 사격 크리 보너스·연쇄 뇌격 per-hit 명중·마나 흡수 정확한 50%는 damage-result API 등 후속. 기존 3종 하드코딩 TurnAction 대체는 가능하나 BT 재배선/삭제는 별도 cleanup(밸런스 스왑·CB-001 회귀 재검증 필요).
+- **ST-001 Natural Regen Stats 전체 완료(Step 0~3)**([[ST-001-Natural-Regen-Stats]], [[ST-001-Natural-Regen-Stats-Review]] 판정: 완료, 결정 [[ADR-019-Natural-Regen-Stats]] accepted). 사실은 [[Article-Status-System]]/[[Turn-System]]이 보존한다.
+  `HealthRegen`/`ManaRegen`(`[GlobalClass, Tool]`, 정수 `Value`, 기본 0)은 `StatusElement`이자 `ITurnStartStatusElement`(`TurnStartOrder` 100/110, `ApplyTurnStart(ArticleStatus)`)다. 각자 `ArticleStatus.TryGetStatusElement<T>()`로 `Health`/`Mana`를 찾아 setter를 통해 회복을 적용한다(clamp·signal·HealthBar·사망 처리 재사용).
+  `ArticleStatus.ApplyTurnStartStatusElements()`는 `TurnStartOrder` 오름차순(동점자는 타입 `FullName` ordinal)으로 실행하고 각 실행 전 `HasLivingHealth()`로 사망 유닛을 차단한다. 구체 regen 타입 지식이 없어 새 turn-start 스탯은 인터페이스 구현만으로 추가된다.
+  `CharacterArticle.ApplyTurnStartEffects()` = `StatusController.OnTurnStart()` → turn-start 스탯 dispatch → 살아 있으면 `ApplyAffectingStatuses()`. 누락 스탯과 `Value == 0`은 no-op, 음수는 감소, 사망을 같은 hook 안에서 되돌리지 않는다. RNG 미소비.
+  production 배선: `PrincessKnight` 60/8/0, `Puppet` 30/3/0, `TempArticle2` 40/5/0, `TempArticle3` 60/8/0(MaxMana/ManaRegen/HealthRegen). `battle_field.tscn`은 인스턴스별 `ArticleStatus`를 로컬 override하므로 그 5개(Ally=TempArticle3 값, Opponent 4명=Puppet 값)도 함께 배선했다. `HealthRegen = 0`이라 CB-001 결정론 회귀는 유지된다. 전투 UI 마나 바는 없다.
+  검증: `dotnet build`, `--import`, `st001_step1_natural_regen_test`, `st001_step2_production_wiring_test`, CB-001 Step 1~4, SK-001 Step 3/6 ALL PASS.
 ## DialogueTool
 
 - Step 1~8 구현 및 리뷰가 완료됐다.
@@ -628,3 +634,5 @@ updated: 2026-07-07
 - [[Open-Tasks]]
 - [[DialogueTool-Architecture]]
 - [[DialogueTool-Step-1-to-8]]
+
+
