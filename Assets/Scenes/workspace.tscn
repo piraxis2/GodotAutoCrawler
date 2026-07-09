@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cxnnwnc5nalhc" path="res://Assets/Script/UI/Window/WorkspaceShell.cs" id="1_shell"]
 [ext_resource type="Script" uid="uid://cce250gbc3ie6" path="res://Assets/Script/UI/Window/WorkspaceWindowManager.cs" id="2_manager"]
 [ext_resource type="Script" uid="uid://0hrn1u60ckof" path="res://Assets/Script/UI/Window/WorkspaceWindow.cs" id="3_window"]
+[ext_resource type="Script" path="res://Assets/Script/UI/Window/LogWindowController.cs" id="4_logctrl"]
 
 [node name="Workspace" type="Node" unique_id=1673475761 node_paths=PackedStringArray("_manager", "_windowMenu", "_presetMenu")]
 script = ExtResource("1_shell")
@@ -126,9 +127,10 @@ min_size = Vector2i(240, 200)
 script = ExtResource("3_window")
 WindowId = "log"
 
-[node name="Placeholder" type="Label" parent="Windows/LogWindow" unique_id=665064068]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 340.0
-offset_bottom = 100.0
-text = "append-only log dummy"
+[node name="LogView" type="Control" parent="Windows/LogWindow" unique_id=665064068]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_logctrl")

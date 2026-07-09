@@ -44,6 +44,9 @@ updated: 2026-07-09
     단, 나머지 필드 대조 + `.tscn` 재직렬화 위험 + CB-001 결정론 회귀 재검증이 필요해 별도 Task가 맞다.
   - `TurnStartOrder` 상수 집중화. 스탯이 2개뿐이라 실익이 작다. 세 번째 turn-start 스탯 추가 시 함께 한다.
   - 전투 UI 마나 바/회복량 표시 미구현.
+  - ManaRegen production 수치 기획-코드 충돌 확인: 기획서 07/F-1, B-5 §5는 전투 중 플레이어 마나 자연 회복 없음이 전제인데,
+    ST-001 완료 상태는 production 캐릭터 씬 4종에 `ManaRegen` 배선을 포함한다. 권장 결정은 시스템은 적/특성용 부품으로 보존하고,
+    플레이어 production 수치는 0으로 두는 것. 별도 Task에서 기획/수치/씬 배선을 함께 정리한다.
 
 - CB-001 프로덕션 전투 seed 생성/기록 정책: 현재 Step 2의 `_combatSeed=1` 기본값은 재현 테스트에 적합하지만,
   실제 새 전투마다 seed를 생성하고 로그/리플레이 입력에 기록하는 경로는 Step 4 또는 Step 5에서 확정한다.
@@ -86,6 +89,14 @@ updated: 2026-07-09
   schema/section version migration registry, Dialogue SaveEffect(저장 트리거는 game/event layer 우선).
 
 ## Recently Completed
+
+- **GL-001 GameLog Foundation 전체 완료(Step 0~4)**([[GL-001-GameLog-Foundation-Completion-Review]] 판정: 완료).
+  전역 로그 기반: `Assets/Script/GameLog` 순수 C# 도메인(`GameLogEntry`/enum/`GameLogModel` append·200 trim·필터),
+  `LogWindowController`가 `workspace.tscn` Log 창 placeholder를 읽기 전용 UI로 교체(탭·Detail/importance 시각 구분·
+  대화 아카이브 접힘·200 trim 반영), `GameLogService` autoload([[ADR-020-GameLog-Service-Lifetime]])가 모델 소유,
+  `SkillReportToGameLogAdapter`가 raw report 9종을 entry로 변환(cast_cancel 진영 분기·`TitleKey`/`Args`/fallback·
+  fail-closed). 사실은 [[GameLog-System]]. 후속: **adapter live 전투 배선 + kill/death 발행**, SaveSection 저장,
+  interaction handler 실제 연결, 던전 크롤식 집계, 구조화 `SkillReport` 마이그레이션, 현지화 renderer, 아웃게임 이벤트 자동 생성.
 
 - **`ArticleStatus.ApplyAffectingStatuses()` 열거 중 리스트 수정 결함 수정**(ST-001 후속, 단독 수정):
   만료(`Cost == 0`)된 `StatusAffect`가 `OnAffectedEnd` → `RemoveAffectStatus()`로 순회 중인 리스트를 수정해
@@ -166,14 +177,3 @@ updated: 2026-07-09
 - 시스템 문서는 코드 변경 후 현재 사실만 남도록 갱신한다.
 - 완료 작업은 Task 문서에 검증 결과를 남기고 이 목록에서 제거한다.
 - 새로운 중요한 설계 선택은 ADR을 먼저 작성한다.
-
-
-
-
-
-
-
-
-
-
-

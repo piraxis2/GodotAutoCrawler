@@ -21,6 +21,20 @@ updated: 2026-07-09
 - 아웃게임 UI 기반은 독립 Window 작업대 `Assets/Scenes/workspace.tscn`이다(WS-001, 아래 Workspace 절).
 
 
+
+## GameLog
+
+- **GL-001 GameLog Foundation Step 1 완료·코드 리뷰 완료**([[GL-001-GameLog-Foundation]], [[GL-001-GameLog-Foundation-Step1-Review]] 판정: 완료).
+  `Assets/Script/GameLog`에 Godot UI 미의존 순수 C# 도메인을 신설했다. `GameLogChannel`은 `Combat`/`Story`/`Reward`/`System`만 두고 `All`은 nullable channel 필터로 표현한다.
+  `GameLogSeverity`는 `Event`/`Detail`/`Trace`, `GameLogImportance`는 `Normal`/`Warning`/`Critical`로 분리한다.
+- `GameLogModel`은 `IGameLogSink.Append`에서 `long` Id를 부여하고 최근 200개만 유지한다. `GetEntries(GameLogChannel? channel, bool includeDetail, bool includeTrace)`로 기본 전체 탭(Event-only), 채널 탭(Event+Detail), debug Trace를 구분한다. `GameLogEntry`는 표시/저장/link 데이터만 담고 interaction handler를 호출하지 않는다.
+- 검증: `dotnet build AutoCrawler.sln -c Debug` 경고/오류 0, Godot `--headless --path . --import` exit 0, `gl001_step1_game_log_model_test.tscn` 48/48 assertions ALL PASS.
+- **GL-001 GameLog Foundation Step 2 완료·코드 리뷰 완료**([[GL-001-GameLog-Foundation-Step2-Review]] 판정: 완료). `workspace.tscn`의 `Windows/LogWindow` placeholder를 `LogWindowController` 기반 read-only UI로 교체했다. 탭은 전체/전투/이야기/획득·시스템이며, 전체는 Event-only, 채널 탭은 Event+Detail, Trace는 v0에서 미노출이다. 대화 archive 접힘/펼침, Detail 감광, Importance 색 강조, 200 trim UI 반영을 구현했다.
+- 검증: `gl001_step2_log_window_test.tscn` 51/51 assertions ALL PASS, WS-001 step1/step3 회귀 PASS. Step 2 P3(`ToggleExpand` public API no-op 계약)는 후속 수정·재검증 완료.
+- **GL-001 GameLog Foundation Step 3 완료·코드 리뷰 완료**([[GL-001-GameLog-Foundation-Step3-Review]] 판정: 완료). 선행 결정 3건을 구현했다: `GameLogService` autoload가 `GameLogModel`을 소유하고 `IGameLogSink`를 제공한다([[ADR-020-GameLog-Service-Lifetime]]). `LogWindowController`는 주입 모델 우선, 없으면 service 모델 구독, 없으면 로컬 fallback으로 동작한다. `SkillReportToGameLogAdapter`는 현재 SkillSystem raw report 9종(`damage`/`miss`/`stun`/`stun_miss`/`bind`/`cast_cancel`/`chain`/`knockback`/`manadrain`/`selfbuff`)을 `GameLogEntry`로 변환하고 `TitleKey`/`Args`/fallback title을 보존한다. `cast_cancel`은 `SceneTreeFactionResolver`로 대상 path를 resolve해 enemy target=`Event/Normal`, ally target=`Event/Warning`, unresolved/unknown/malformed는 fail-closed한다.
+- 검증: `dotnet build` 경고/오류 0, Godot `--import` exit 0, `gl001_step3_adapter_test.tscn` ALL PASS, GL-001 step1/step2·`sk001_step3_mana_hit_test`·`ws001_step3_persistence_test` 회귀 PASS. adapter live 전투 배선과 kill/death 전투 이벤트 발행은 후속이다.
+- **GL-001 Step 4(문서/완료 리뷰) 완료 → GL-001 전체 완료(Step 0~4)**([[GL-001-GameLog-Foundation-Completion-Review]] 판정: 완료). 현재 사실은 [[GameLog-System]]이 보존한다(`20_Systems/GameLog-System.md` 신규). 후속: adapter live 전투 배선 + kill/death 발행, SaveSection 저장(최근 200개), interaction handler 실제 연결, 던전 크롤식 집계, 구조화 `SkillReport` 마이그레이션, 현지화 renderer, 아웃게임 이벤트 자동 생성.
+
 ## Workspace
 
 - **WS-001 Native Window Workspace Shell W0(Step 0~3) 완료**([[WS-001-Native-Window-Workspace-Shell]],
@@ -673,6 +687,3 @@ updated: 2026-07-09
 - [[Open-Tasks]]
 - [[DialogueTool-Architecture]]
 - [[DialogueTool-Step-1-to-8]]
-
-
-

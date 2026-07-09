@@ -31,6 +31,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[Article-Status-System]]
 - [[Skill-System]]
 - [[Workspace-Window-System]]
+- [[GameLog-System]]
 
 ## 작업과 결정
 
@@ -61,6 +62,12 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[ST-001-Natural-Regen-Stats-Review]]
 - [[ST-001-Natural-Regen-Stats]]
 - [[WS-001-Native-Window-Workspace-Shell]]
+- [[GL-001-GameLog-Foundation]]
+- [[GL-001-GameLog-Foundation-Review]]
+- [[GL-001-GameLog-Foundation-Step1-Review]]
+- [[GL-001-GameLog-Foundation-Step2-Review]]
+- [[GL-001-GameLog-Foundation-Step3-Review]]
+- [[GL-001-GameLog-Foundation-Completion-Review]]
 - [[WS-001-Native-Window-Workspace-Shell-Review]]
 - [[DialogueTool-Step-1-to-8]]
 - [[DT-002-Portrait-Review]]
@@ -96,6 +103,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[ADR-017-Deterministic-Combat-Resolution]]
 - [[ADR-018-Data-Driven-Skill-System]]
 - [[ADR-019-Natural-Regen-Stats]]
+- [[ADR-020-GameLog-Service-Lifetime]]
 
 ## 문서 역할
 
@@ -109,4 +117,3 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 | `50_Reviews` | 리뷰 결과와 완료 판정 |
 | `90_Templates` | Agent가 복제해 쓰는 문서 템플릿 |
 | `Archive` | 더 이상 현재 사실이 아닌 기록 |
-
