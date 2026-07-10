@@ -16,4 +16,6 @@ DisplayName = "조준 사격"
 Range = 5
 WindupCost = 1
 ManaCost = 15
+AmmoResetScope = 1
+Ammo = 2
 Effects = Array[ExtResource("1_e0bmx")]([SubResource("Resource_gvelh")])

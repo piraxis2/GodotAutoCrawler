@@ -22,4 +22,6 @@ Id = &"staff_manaabsorb"
 DisplayName = "마나 흡수"
 Range = 3
 AnimationName = ""
+AmmoResetScope = 1
+Ammo = 2
 Effects = Array[ExtResource("1_3r3cc")]([SubResource("Resource_tgoxr"), SubResource("Resource_nbusb")])

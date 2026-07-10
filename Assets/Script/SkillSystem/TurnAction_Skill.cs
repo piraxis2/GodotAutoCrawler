@@ -17,29 +17,69 @@ public partial class TurnAction_Skill : TurnActionBase
     protected override int Range => Definition?.Range ?? 0;
     protected override int Scale => 1;
 
+    public override bool CanStart(CharacterArticle caster)
+    {
+        if (caster == null || Definition == null || !Definition.IsValidV0()) return false;
+        if (Definition.AmmoResetScope != SkillAmmoResetScope.Unlimited && !caster.SkillAmmoState.HasAmmo(Definition.Id)) return false;
+        if (Definition.ManaCost > 0 && !CanAffordMana(caster, Definition.ManaCost)) return false;
+        return true;
+    }
+
     public override void Init(Node owner)
     {
+        // 유효성은 런타임 Failure 게이트가 아니라 진입 전제조건이다(ADR-021 §3). caster 조회 실패/null/invalid
+        // definition은 저작·구조 오류이므로 상태 없이 반환 → Action이 End를 낸다(SK-001 계약). caster 조회가
+        // 실패하면 Failed state를 붙일 caster 자체가 없어 상태 기반 Failure도 불가능하다. ammo/마나/무대상만 Failure.
         if (!TryGetCaster(owner, out var caster) || Definition == null || !Definition.IsValidV0())
         {
             return;
         }
 
         var state = new SkillState(this, Definition);
+        bool ammoLimited = Definition.AmmoResetScope != SkillAmmoResetScope.Unlimited;
 
-        // 지불 게이트: 마나가 부족하면 상태 변경 없이 fail-closed. Action이 ActionState.Failure로 되돌린다.
-        if (Definition.ManaCost > 0 && !TrySpendMana(caster, Definition.ManaCost))
+        // 게이트 순서(ADR-021 §3): ammo -> 마나 지불 가능성 -> 대상 락온. 셋 중 하나라도 막히면 상태 변경/소모
+        // 없이 fail-closed하고 Action이 ActionState.Failure로 되돌려 BT Selector 다음 행으로 넘긴다.
+
+        // (1) ammo 게이트: 제한 스킬이 remaining 0이면 무소모 Failure.
+        if (ammoLimited && !caster.SkillAmmoState.HasAmmo(Definition.Id))
+        {
+            state.Failed = true;
+            state.Reports.Add($"ammo:{Definition.Id}:empty");
+            caster.CurrentTurnActionState = state;
+            return;
+        }
+
+        // (2) 마나 지불 가능성만 확인한다. 실제 소모는 대상 락온 뒤 커밋에서 한다.
+        if (Definition.ManaCost > 0 && !CanAffordMana(caster, Definition.ManaCost))
         {
             state.Failed = true;
             caster.CurrentTurnActionState = state;
             return;
         }
 
+        // (3) 대상 락온: 시전 시작 시점에 사거리 내 유효 대상이 하나도 없으면 무소모 Failure.
+        //     (락온 이후 여러 턴 windup 중 대상이 이동/사망해 빗나가는 것은 의도된 전황이며 환불하지 않는다.)
         var context = SkillContext.FromBattleField(caster);
         ArticleBase target = SelectTarget(caster, context);
-        if (target != null)
+        if (target == null)
         {
-            state.ConfirmedTargets.Add(target);
-            caster.DecisionFlipH(target.TilePosition);
+            state.Failed = true;
+            caster.CurrentTurnActionState = state;
+            return;
+        }
+        state.ConfirmedTargets.Add(target);
+        caster.DecisionFlipH(target.TilePosition);
+
+        // (4) 커밋(시전 시작 = 대상 락온): ammo 1 + 마나를 함께 소모한다. 이후 빗나감/스턴 취소는 환불 없음.
+        if (ammoLimited && caster.SkillAmmoState.Consume(Definition.Id))
+        {
+            caster.SkillAmmoState.TryGetAmmo(Definition.Id, out int remaining, out _);
+            state.Reports.Add($"ammo:{Definition.Id}:consumed:{remaining}");
+        }
+        if (Definition.ManaCost > 0)
+        {
+            TrySpendMana(caster, Definition.ManaCost);
         }
 
         if (Definition.WindupCost > 0)
@@ -81,28 +121,29 @@ public partial class TurnAction_Skill : TurnActionBase
             || state.Definition != Definition
             || state.Completed)
         {
+            if (owner is CharacterArticle { CurrentTurnAction: var current } staleCharacter && current == this)
+            {
+                staleCharacter.CurrentTurnAction = null;
+            }
             return ActionState.End;
         }
 
         // 지불/검증 실패 상태는 실행 없이 Failure로 닫고 Selector 다음 행으로 넘긴다.
         if (state.Failed)
         {
-            character.CurrentTurnActionState = null;
-            return ActionState.Failure;
+            return ClearCurrentAction(character, ActionState.Failure);
         }
 
         if (state.RemainingCost <= 0)
         {
-            character.CurrentTurnActionState = null;
-            return ActionState.End;
+            return ClearCurrentAction(character, ActionState.End);
         }
 
         if (state.PhaseQueue.Count == 0)
         {
             owner.AnimationPlayer.Play("Idle");
             state.MarkCostUsed();
-            character.CurrentTurnActionState = null;
-            return ActionState.End;
+            return ClearCurrentAction(character, ActionState.End);
         }
 
         ActionState status = state.PhaseQueue.Peek()(delta, owner);
@@ -111,17 +152,25 @@ public partial class TurnAction_Skill : TurnActionBase
         {
             owner.AnimationPlayer.Play("Idle");
             state.MarkCostUsed();
-            character.CurrentTurnActionState = null;
-            return ActionState.End;
+            return ClearCurrentAction(character, ActionState.End);
         }
 
         if (state.Completed)
         {
-            character.CurrentTurnActionState = null;
-            return ActionState.End;
+            return ClearCurrentAction(character, ActionState.End);
         }
 
         return status;
+    }
+
+    private ActionState ClearCurrentAction(CharacterArticle character, ActionState result)
+    {
+        character.CurrentTurnActionState = null;
+        if (character.CurrentTurnAction == this)
+        {
+            character.CurrentTurnAction = null;
+        }
+        return result;
     }
 
     private ActionState CastingPhase(double delta, ArticleBase owner)
@@ -233,6 +282,17 @@ public partial class TurnAction_Skill : TurnActionBase
     private static int? CurrentHealthOf(ArticleBase article)
     {
         return (article.ArticleStatus.StatusElementsDictionary.GetValueOrDefault(typeof(Health)) as Health)?.CurrentHealth;
+    }
+
+    // 지불 가능성만 확인한다(소모 안 함). 마나 원소가 없는 유닛은 지불 불가로 fail-closed(ADR-018 follow-up 유지).
+    private static bool CanAffordMana(ArticleBase caster, int cost)
+    {
+        if (caster.ArticleStatus.StatusElementsDictionary.GetValueOrDefault(typeof(Mana)) is not Mana mana)
+        {
+            return false;
+        }
+
+        return mana.CanAfford(cost);
     }
 
     private static bool TrySpendMana(ArticleBase caster, int cost)

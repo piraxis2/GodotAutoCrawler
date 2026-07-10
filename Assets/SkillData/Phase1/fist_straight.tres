@@ -15,4 +15,6 @@ script = ExtResource("3_p0ma5")
 Id = &"fist_straight"
 DisplayName = "스트레이트"
 ManaCost = 10
+AmmoResetScope = 1
+Ammo = 3
 Effects = Array[ExtResource("1_exp3s")]([SubResource("Resource_jq7eh")])

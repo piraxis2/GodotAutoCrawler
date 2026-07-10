@@ -21,4 +21,6 @@ Id = &"bow_bindingarrow"
 DisplayName = "속박 화살"
 Range = 5
 ManaCost = 20
+AmmoResetScope = 1
+Ammo = 2
 Effects = Array[ExtResource("1_a0k6x")]([SubResource("Resource_npige"), SubResource("Resource_2od0f")])

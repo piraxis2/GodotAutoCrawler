@@ -21,4 +21,6 @@ Id = &"fist_sonicblow"
 DisplayName = "소닉 블로"
 WindupCost = 1
 ManaCost = 20
+AmmoResetScope = 1
+Ammo = 1
 Effects = Array[ExtResource("1_5rg1c")]([SubResource("Resource_dy3gr"), SubResource("Resource_odhlh")])

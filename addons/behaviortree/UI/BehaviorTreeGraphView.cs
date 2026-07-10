@@ -39,6 +39,7 @@ public partial class BehaviorTreeGraphView : MarginContainer
         _contextMenu.AddItem("Add FindOpponent (Decorator)", 3);
         _contextMenu.AddItem("Add MultipleMove (Action)", 4);
         _contextMenu.AddItem("Add TurnAction (Action)", 5);
+        _contextMenu.AddItem("Add HasUsableAttack (Decorator)", 6);
         _contextMenu.IdPressed += OnContextMenuIdPressed;
         AddChild(_contextMenu);
 

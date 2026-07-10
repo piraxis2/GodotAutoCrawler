@@ -1,13 +1,15 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-07-09
+updated: 2026-07-10
 ---
 
 # Open Tasks
 
 ## Next
 
+- **SK-002 후속 — ammo UI/영속/loadout 실효화**([[SK-002-Skill-Ammo-System]], [[Skill-System]]): SK-002 본체는 완료됐다. 후속은 ammo HUD 표시(`SkillAmmoState.TryGetAmmo` 소비), save/load 영속, Expedition 실이월(등반 lifecycle 도입 시), 플레이어 loadout/장착 UI다. `SkillCaster.tscn` 샘플은 `TurnAction_Skill`과 Phase1 지팡이 스킬을 배선했지만, production `battle_field.tscn` 로스터에는 아직 배치하지 않았다. ammo HUD/저장/loadout 및 기존 3종 하드코딩 TurnAction의 데이터 스킬 재배선(아래 SK-001 후속)은 여전히 후속이다.
+- **회귀 rebaseline — SK-001/CB-001 다중 상대 테스트**(SK-002와 무관, 스킬 개편 워크스트림 소관): 커밋 `e5d339b "스킬 개편 2"`가 `battle_field.tscn` 상대를 4명(구 타입 `11_hv0hd`) → 1명(신 타입 `14_7o1qe`)으로 의도적 교체 → `sk001_step2/4/4b/5`, `sk001_step6 D.ChainHitsThree`, `cb001_step4 D.deaths_recorded`가 실패한다. 1명 로스터는 의도된 상태(오너 확정)이므로 씬을 되돌리지 말고, 테스트를 상대 로스터에 비의존하도록 self-sufficient로 고친다(각 테스트가 필요한 상대를 스폰/복제). CB-001 D는 신 상대가 1v1에서 죽는지(HP/위치/턴 예산)도 함께 점검.
 - **WS-001 Native Window Workspace Shell — W0(Step 1~3) 완료**([[WS-001-Native-Window-Workspace-Shell]],
   [[Workspace-Window-System]]): 아웃게임 UI를 독립 Godot `Window`들의 작업대로 세웠다. managed Window 5종의
   lifecycle(닫기=hide, duplicate open, freed/stale 방어, 최소화 동기화), preset 3종(outgame/battle/analysis)
@@ -29,7 +31,7 @@ updated: 2026-07-09
 - **SK-001 Data-Driven Skill System — 전체 완료(Step 0~6)**. 후속 cleanup/기능 Task 후보:
   - 기존 3종 하드코딩 TurnAction(`Attack`→TempArticle2, `ChainLightning`→PrincessKnight/TempArticle3) BT 재배선을 데이터 스킬(`sword_slash`/`staff_chainlightning` 등)로 하고 스크립트 삭제. 밸런스 스왑(명중 95%·마나)·CB-001 결정론 회귀 재검증 필요.
   - `DamageBlock.ApplyDamage`의 legacy Damage/UI 결합 제거(headless 피해 result API) — 마나 흡수 정확한 50%·조준 사격 크리 보너스도 이때.
-  - 무대상 fail-closed/마나 환불 정책 확정.
+  - ~~무대상 fail-closed/마나 환불 정책 확정~~ → **SK-002/[[ADR-021-Skill-Ammo-System]] §3에서 확정**: 무대상은 커밋 이전 무소모 `Failure`, 마나는 대상 락온 후 커밋 소모, 커밋 후 무환불.
   - 마법 대미지 min 반영 시 마탄/연쇄 뇌격 위력 범위 부여(07 수치표 F-4).
 
 ## Later
@@ -89,6 +91,10 @@ updated: 2026-07-09
   schema/section version migration registry, Dialogue SaveEffect(저장 트리거는 game/event layer 우선).
 
 ## Recently Completed
+
+- **SK-003 Skill-Based Character Scene 완료**([[SK-003-Skill-Based-Character-Scene]]): `Assets/Scenes/Character/SkillCaster.tscn` 신규. `TurnAction_Skill`로 `staff_chainlightning`(Battle ammo 1)과 `staff_magicbolt`(Unlimited fallback)를 BT에 배선했다. production 전투 배치는 별도 밸런스/결정론 재검증 범위로 남김.
+
+- **SK-002 Skill Ammo System 전체 완료(Step 0~4)**([[SK-002-Skill-Ammo-System]], [[SK-002-Skill-Ammo-System-Review]] 판정: 완료, [[ADR-021-Skill-Ammo-System]] accepted). 스킬별 고정 보장 사용 횟수 ammo를 `SkillDefinition.AmmoResetScope`/`Ammo` + `CharacterArticle.SkillAmmoState`(순수 C#, Resource 미저장)로 구현하고, `TurnHelper._Ready` battle-start charge에 배선했다. 사실은 [[Skill-System]] "Ammo" 절이 보존한다. 후속은 위 Next의 SK-002 후속 항목으로 분리했다.
 
 - **GL-001 GameLog Foundation 전체 완료(Step 0~4)**([[GL-001-GameLog-Foundation-Completion-Review]] 판정: 완료).
   전역 로그 기반: `Assets/Script/GameLog` 순수 C# 도메인(`GameLogEntry`/enum/`GameLogModel` append·200 trim·필터),

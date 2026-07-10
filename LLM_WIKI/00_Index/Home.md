@@ -1,7 +1,7 @@
 ---
 type: index
 project: AutoCrawler
-updated: 2026-07-09
+updated: 2026-07-10
 ---
 
 # AutoCrawler LLM Wiki
@@ -58,6 +58,8 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[BT-001-BehaviorTree-Graph-Editor-Debugger]]
 - [[CB-001-Deterministic-Combat-Resolution]]
 - [[SK-001-Data-Driven-Skill-System]]
+- [[SK-002-Skill-Ammo-System]]
+- [[SK-003-Skill-Based-Character-Scene]]
 - [[SK-001-Data-Driven-Skill-System-Review]]
 - [[ST-001-Natural-Regen-Stats-Review]]
 - [[ST-001-Natural-Regen-Stats]]
@@ -104,6 +106,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[ADR-018-Data-Driven-Skill-System]]
 - [[ADR-019-Natural-Regen-Stats]]
 - [[ADR-020-GameLog-Service-Lifetime]]
+- [[ADR-021-Skill-Ammo-System]]
 
 ## 문서 역할
 

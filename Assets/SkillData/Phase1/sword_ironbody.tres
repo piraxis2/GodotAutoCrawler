@@ -18,4 +18,6 @@ Range = 0
 ManaCost = 25
 AnimationName = ""
 TargetSide = 2
+AmmoResetScope = 1
+Ammo = 1
 Effects = Array[ExtResource("1_sblbw")]([SubResource("Resource_iyacv")])

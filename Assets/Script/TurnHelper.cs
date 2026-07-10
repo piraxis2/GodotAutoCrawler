@@ -45,6 +45,9 @@ public partial class TurnHelper : Node
                     {
                         _turnAffectedArticleList.Remove(turnAffectedArticle);
                     };
+
+                    // 전투 시작 reset(SK-002 Step 3, ADR-021 §4): 제한 스킬 ammo를 전투마다 full charge.
+                    if (articleBase is CharacterArticle character) character.ChargeBattleAmmo();
                 }
             }
         }

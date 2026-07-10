@@ -238,6 +238,10 @@ public partial class Sk001Step6DataPackTest : Node
     private void RunSkill(string id, CharacterArticle caster, BehaviorTree_TurnAction ownerNode)
     {
         var def = ResourceLoader.Load<SkillDefinition>($"{DataDir}/{id}.tres", "", ResourceLoader.CacheMode.Ignore);
+        // SK-002: 제한 스킬은 ammo가 충전돼 있어야 실행된다. 이 테스트는 RunSkill이 TurnHelper battle-start reset
+        // 경로 밖에서 TurnAction을 직접 실행하므로 여기서 대역 충전한다(Unlimited는 no-op). 없으면 Init이 ammo
+        // fail-closed로 스킬을 실행하지 않는다.
+        caster.SkillAmmoState.Charge(def.Id, def.Ammo, def.AmmoResetScope);
         RunTurnAction(new TurnAction_Skill { Definition = def }, caster, ownerNode);
     }
 

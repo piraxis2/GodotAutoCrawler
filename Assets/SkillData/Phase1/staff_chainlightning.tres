@@ -15,4 +15,6 @@ Range = 3
 WindupCost = 1
 ManaCost = 30
 AnimationName = ""
+AmmoResetScope = 1
+Ammo = 1
 Effects = Array[ExtResource("1_rglrm")]([SubResource("Resource_do6v2")])

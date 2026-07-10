@@ -1,16 +1,18 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-07-09
+updated: 2026-07-10
 ---
 
 # Current State
 
-> **Known Regressions (2026-07-09 기준, 정정 대기).** 아래 본문의 일부 "ALL PASS" 서술은 지금은 사실이 아니다.
-> `cb001_step4_determinism_test`(`D.deaths_recorded`)와 `sk001_step6_data_pack_test`(`D.ChainHitsThree`)는
-> 현재 `dev`에서 **실패**한다. WS-001 변경과 무관하며(`project.godot` 되돌린 baseline에서도 재현), 각각 별도
-> Task로 분리돼 있다([[Open-Tasks]]). 그 Task에서 원인 정정 후 본문 서술(64·81·98·101·104행 근처)을 갱신한다.
-> CB-001 step1~3, SK-001 step1~5는 통과한다.
+> **Known Regressions (2026-07-10 갱신, 근본 원인 확정).** 아래 본문의 일부 "ALL PASS" 서술은 지금은 사실이 아니다.
+> `cb001_step4_determinism_test`(`D.deaths_recorded`)와 `sk001_step6_data_pack_test`(`D.ChainHitsThree`),
+> 그리고 `sk001_step2/4/4b/5`의 다중 상대 의존 단언은 현재 `dev`에서 **실패**한다. **근본 원인:** 커밋
+> `e5d339b "스킬 개편 2"`가 `battle_field.tscn`의 상대를 4명(구 타입 `11_hv0hd`) → 1명(신 타입 `14_7o1qe`)으로
+> **의도적으로 교체**했다(드리프트 아님). 1명 로스터는 의도된 상태이며(오너 확정), 회귀 테스트를 상대 로스터에
+> 비의존하도록 self-sufficient로 rebaseline하는 별도 Task로 처리한다([[Open-Tasks]]). SK-002/WS-001 등과 무관.
+> CB-001 step1~3, SK-001 step1(및 Step3·SK-002 전 스텝)은 통과한다.
 
 ## Project
 
@@ -108,7 +110,7 @@ updated: 2026-07-09
 - **SK-001 Step 3 구현·코드 리뷰 완료**([[SK-001-Data-Driven-Skill-System]], [[SK-001-Data-Driven-Skill-System-Review]] 판정: 완료).
   `Mana : StatusElement`와 `SkillDefinition.ManaCost` 지불 게이트를 도입했다. 마나 부족 시 상태 변경 없이 `ActionState.Failure`(신규)를 내고, `BehaviorTree_TurnAction`/`CharacterArticle.TurnPlay`가 `BtStatus.Failure`로 매핑해 `BehaviorTree_Selector`가 다음 행으로 fallback한다. `ManaCost == 0`(slash/magicbolt)은 게이트 없음.
   `DamageBlock.HitChance`를 추가했다. `HitChance < 100`일 때만 `SkillContext.CombatRandRange`(단일 CombatRng)로 명중 판정하며 순서는 `명중 -> 크리티컬 -> 피해`, `HitChance == 100`은 hit roll 생략으로 기존 baseline RNG 스트림 보존. 명중 실패/성공 모두 `SkillState.Reports`(report sink)에 기록. 피해 금액+UI는 여전히 legacy `Damage`(migration 경계 `DamageBlock.ApplyDamage`에 문서화).
-  `sk001_step3_mana_hit_test`(20 assertions) 및 `sk001_step1`/`sk001_step2`/CB-001 Step 1~4 회귀 전부 ALL PASS. 당시 `Mana`의 production scene 배선은 후속이었고, 현재는 ST-001 Step 2에서 완료됐다([[ST-001-Natural-Regen-Stats]]). 무대상 fail-closed는 여전히 후속.
+  `sk001_step3_mana_hit_test`(20 assertions) 및 `sk001_step1`/`sk001_step2`/CB-001 Step 1~4 회귀 전부 ALL PASS. 당시 `Mana`의 production scene 배선은 후속이었고, 현재는 ST-001 Step 2에서 완료됐다([[ST-001-Natural-Regen-Stats]]). 무대상 fail-closed와 마나 환불 정책은 이후 SK-002/[[ADR-021-Skill-Ammo-System]]에서 target-first 무소모 Failure/커밋 후 무환불로 확정됐다.
 - **SK-001 Step 4a 구현·코드 리뷰 완료**([[SK-001-Data-Driven-Skill-System]], [[SK-001-Data-Driven-Skill-System-Review]] 판정: 완료). 사용자 승인으로 Step 4를 4a(이번)/4b(KnockbackBlock)로 분할.
   제어/버프 상태를 유닛별 `StatusController`(턴 카운터)로 도입(`StunTurns`/`BindTurns`·`BoundThisTurn`/`DamageDealtMultiplier`/`DamageTakenMultiplier`). 기존 `StatusAffect`(1턴 제어 apply/expire 붕괴) 대신 사용. `StunBlock`/`BindBlock`/`SelfBuffBlock`/`ManaDrainBlock` 4종 EffectBlock 추가.
   Stun=`TurnPlay` 시작 소비→즉시 스킵+영창 취소(무환불), Bind=`OnTurnStart` 틱→이동 노드(`BehaviorTree_Move`/`MultipleMove`) 차단, SelfBuff=주는 피해 배율, ManaDrain=마나 흡수. 피해 배율 hook은 `ArticleBase` virtual(기본 1.0, 롤 이후 곱셈→RNG 무이동)을 `CharacterArticle`이 `StatusController`로 오버라이드.
@@ -123,6 +125,12 @@ updated: 2026-07-09
   `Assets/SkillData/Phase1/`에 12종 `.tres`(검/격투/활/지팡이 × 3) 입력. 블록 확장 2건: `StunBlock.Chance`(강타 20%·소닉블로 35%, <100일 때만 CombatRng 1회), `SelfBuffBlock.Kind`(금강체 받는피해 0.5). 기본값 무효과라 Step 4a 회귀 유지.
   `sk001_step6_data_pack_test`: 12종 로드/검증 + 직렬화 round-trip(스크래치) + 기본기(베기)/강기(강타+넉백)/제어(금강체 Taken 0.5·속박 Bind3)/흡수(마나 흡수 ±16) 실행 + StunBlock Chance 0/100 결정론 + 연쇄 뇌격 3체. `sk001_step1~5`/CB-001 Step 1~4 회귀 전부 ALL PASS.
   근사/후속: 조준 사격 크리 보너스·연쇄 뇌격 per-hit 명중·마나 흡수 정확한 50%는 damage-result API 등 후속. 기존 3종 하드코딩 TurnAction 대체는 가능하나 BT 재배선/삭제는 별도 cleanup(밸런스 스왑·CB-001 회귀 재검증 필요).
+- **SK-003 Skill-Based Character Scene 완료**([[SK-003-Skill-Based-Character-Scene]]). `Assets/Scenes/Character/SkillCaster.tscn`을 추가해 Phase1 지팡이 데이터 스킬을 실제 BT에 배선했다. 제한 스킬 `staff_chainlightning`(Battle ammo 1)을 먼저 시도하고, ammo/마나/무대상 Failure 시 무제한 `staff_magicbolt`로 fallback한다. 후속 수정으로 `TurnAction_Skill` 종료/Failure 시 stale `CurrentTurnAction`도 함께 정리한다(`D.current_action_cleared`). `battle_field.tscn`에는 아직 배치하지 않아 기존 전투 baseline은 의도적으로 건드리지 않았다. 검증: `dotnet build` 0경고/0오류, Godot `--headless --path . --import` exit 0(기존 종료 시 resource-in-use 로그 유지).
+- **SK-002 Skill Ammo System 전체 완료(Step 0~4)**([[SK-002-Skill-Ammo-System]], [[SK-002-Skill-Ammo-System-Review]] 판정: 완료, 결정 [[ADR-021-Skill-Ammo-System]] accepted). 사실은 [[Skill-System]] "Ammo" 절이 보존한다.
+  스킬별 **고정 보장 사용 횟수** ammo 도입. `SkillDefinition.AmmoResetScope`(`Unlimited`/`Battle`/`Expedition` 예약)+`Ammo`(기본 `Unlimited`/0 → 기존 `.tres` 무제한 로드, backward-compatible). remaining은 `CharacterArticle.SkillAmmoState`(순수 C#, `StatusController` 동형, `.tres` 미직렬화)가 소유 — Resource 미저장, per-unit 격리.
+  소모 정책(ADR-021 §3): 유효성은 진입 전제조건(실패=상태 없이 `End`), 런타임 게이트(ammo/마나 `CanAfford`/무대상)만 무소모 `Failure`. 대상 락온(=커밋)에서 ammo 1+마나 동시 소모, 커밋 후 빗나감·스턴 취소는 무환불(의도된 전황, 오너 확정).
+  battle-start 배선: `TurnHelper._Ready()`가 유닛마다 `ChargeBattleAmmo()`(BT raw 워크로 `TurnAction_Skill.Definition` 순회 → `Charge`). `Battle`=매 전투 full charge(이월 없음), `Expedition`=이월 없는 battle 처리. `SkillCaster.tscn` 샘플은 `TurnAction_Skill`을 배선했지만, production `battle_field.tscn` 로스터에는 아직 배치하지 않아 production 전투에서는 no-op.
+  Phase1 12종 `.tres`에 ammo 입력(기본기 무제한, 제한 8종 Battle+수치표). 검증: `sk002_step1_ammo_test`(40)·`sk002_step3_reset_test`(14) ALL PASS, `sk001_step1/3`·`cb001_step1`·`sk001_step6` A/B/C 회귀 유지, 빌드/`--import` clean. 후속: ammo HUD·save 영속·Expedition 실이월·loadout UI·`TurnAction_Skill` 실 BT 배선.
 - **ST-001 Natural Regen Stats 전체 완료(Step 0~3)**([[ST-001-Natural-Regen-Stats]], [[ST-001-Natural-Regen-Stats-Review]] 판정: 완료, 결정 [[ADR-019-Natural-Regen-Stats]] accepted). 사실은 [[Article-Status-System]]/[[Turn-System]]이 보존한다.
   `HealthRegen`/`ManaRegen`(`[GlobalClass, Tool]`, 정수 `Value`, 기본 0)은 `StatusElement`이자 `ITurnStartStatusElement`(`TurnStartOrder` 100/110, `ApplyTurnStart(ArticleStatus)`)다. 각자 `ArticleStatus.TryGetStatusElement<T>()`로 `Health`/`Mana`를 찾아 setter를 통해 회복을 적용한다(clamp·signal·HealthBar·사망 처리 재사용).
   `ArticleStatus.ApplyTurnStartStatusElements()`는 `TurnStartOrder` 오름차순(동점자는 타입 `FullName` ordinal)으로 실행하고 각 실행 전 `HasLivingHealth()`로 사망 유닛을 차단한다. 구체 regen 타입 지식이 없어 새 turn-start 스탯은 인터페이스 구현만으로 추가된다.

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "STEP_REVIEW_WORKFLOW.md",
+                "file": "30_Tasks/SK-003-Skill-Based-Character-Scene.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "STEP_REVIEW_WORKFLOW"
+              "title": "SK-003-Skill-Based-Character-Scene"
             }
           }
         ]
@@ -185,6 +185,12 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
+    "00_Index/Current-State.md",
+    "30_Tasks/SK-003-Skill-Based-Character-Scene.md",
+    "20_Systems/Workspace-Window-System.md",
+    "20_Systems/World-State-System.md",
+    "30_Tasks/BT-001-BehaviorTree-Graph-Editor-Debugger.md",
+    "STEP_REVIEW_WORKFLOW.md",
     "Related Document.md",
     "90_Templates/Task.md",
     "90_Templates/Review.md",
@@ -192,10 +198,8 @@
     "90_Templates/Design-Review-Prompt.md",
     "90_Templates/ADR.md",
     "40_Decisions/ADR-001-Runtime-Snapshot.md",
-    "30_Tasks/BT-001-BehaviorTree-Graph-Editor-Debugger.md",
     "00_Index/Open-Tasks.md",
     "40_Decisions/ADR-016-BehaviorTree-Remote-Debug-Channel.md.tmp.35700.e25adce8b474",
-    "STEP_REVIEW_WORKFLOW.md",
     "30_Tasks/DT-014-Say-Line-Paging-UI-Regression.md.tmp.19276.deadea5a09f9",
     "50_Reviews/DT-014-Say-Line-Paging-UI-Regression-Review.md.tmp.19276.e7f9e5b8ab61",
     "50_Reviews/DT-014-Say-Line-Paging-UI-Regression-Review.md",
@@ -216,10 +220,6 @@
     "50_Reviews/DT-002-Portrait-Review.md",
     "50_Reviews/DialogueTool-Step-1-to-8.md",
     "50_Reviews/DT-011-DialogueWorldState-Addon-Packaging-Review.md",
-    "50_Reviews/DT-012-Condition-Authoring-UX-Review.md",
-    "50_Reviews/SG-001-SaveGame-Core-Section-System-Review.md",
-    "50_Reviews/SG-002-SaveFlow-Facade-Metadata-Provider-Review.md",
-    "30_Tasks/SG-002-SaveFlow-Facade-Metadata-Provider.md",
-    "20_Systems/World-State-User-Guide.md"
+    "50_Reviews/DT-012-Condition-Authoring-UX-Review.md"
   ]
 }

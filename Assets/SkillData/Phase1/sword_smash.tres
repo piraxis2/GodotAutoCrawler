@@ -24,4 +24,6 @@ script = ExtResource("5_0ygyq")
 Id = &"sword_smash"
 DisplayName = "강타"
 ManaCost = 15
+AmmoResetScope = 1
+Ammo = 2
 Effects = Array[ExtResource("1_bj8nl")]([SubResource("Resource_cpars"), SubResource("Resource_vbhuj"), SubResource("Resource_cc86w")])

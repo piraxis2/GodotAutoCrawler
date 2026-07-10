@@ -41,3 +41,6 @@ Thumbs.db
 Assets/Textures/
 Assets/Audio/
 addons/godot-vim/
+
+# Local-only
+GameDesign/

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AutoCrawler.addons.behaviortree;
@@ -39,6 +39,11 @@ public abstract partial class TurnActionBase : Resource
     private int _usedCost = 0;
 
     protected int Cost => MasterCost - _usedCost;
+
+    public virtual bool CanStart(CharacterArticle caster)
+    {
+        return caster != null;
+    }
 
     public virtual void Init(Node owner)
     {
