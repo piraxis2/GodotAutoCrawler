@@ -11,7 +11,7 @@ updated: 2026-07-10
 
 - 주요 위치: `Assets/Script/SkillSystem`, `Assets/SkillData/slash.tres`
 - 책임: 스킬 정의(`SkillDefinition`)를 데이터 Resource로 두고, 실행 중 상태를 유닛별 `SkillState`로 분리해 기존 BT/TurnAction 경로에서 실행한다.
-- 현재 상태: **SK-001 Step 0~6 + SK-002 Step 0~4(ammo) 전체 완료 + SK-003 샘플 캐릭터 씬 완료**. 데이터 기반 스킬 골격 + 블록 카탈로그 + Phase1 12종 데이터 + 스킬별 고정 보장 사용 횟수(ammo). `Assets/Scenes/Character/SkillCaster.tscn`은 `TurnAction_Skill`로 Phase1 지팡이 스킬 2종을 실제 BT에 배선한 샘플 씬이다. 후속(별도 Task): 기존 3종 TurnAction BT 재배선/삭제, damage-result API, ammo HUD/save 통합, Expedition 실이월. `Mana` production 배선은 ST-001 Step 2에서 완료.
+- 현재 상태: **SK-001 Step 0~6 + SK-002 Step 0~4(ammo) 전체 완료 + SK-003 샘플 캐릭터 씬 완료 + SK-004 usable attack gate 완료**. 데이터 기반 스킬 골격 + 블록 카탈로그 + Phase1 12종 데이터 + 스킬별 고정 보장 사용 횟수(ammo). `Assets/Scenes/Character/SkillCaster.tscn`은 `TurnAction_Skill`로 Phase1 지팡이 스킬 2종을 실제 BT에 배선한 샘플 씬이다. 후속(별도 Task): 기존 3종 TurnAction BT 재배선/삭제, damage-result API, ammo HUD/save 통합, Expedition 실이월, 공격 불가 시 도망/대기 BT 분기. `Mana` production 배선은 ST-001 Step 2에서 완료.
 
 ## Model
 
@@ -63,7 +63,7 @@ updated: 2026-07-10
 - **runtime owner:** `CharacterArticle.SkillAmmoState`(순수 C#, `StatusController`와 동형, `.tres` 미직렬화). `skill_id -> remaining/max/scope`. `Unlimited`은 등록하지 않고(무제한), 미등록 제한 스킬은 fail-closed(0발). API: `Charge`/`HasAmmo`/`Consume`/`TryGetAmmo`(읽기 전용, 후속 HUD/report 소비). 같은 Definition을 여러 유닛이 공유해도 remaining 격리.
 - **소모/환불 정책(`TurnAction_Skill.Init`, ADR-021 §3):** 유효성(definition/caster)은 게이트가 아닌 진입 전제조건 → 실패 시 상태 없이 `End`(SK-001 계약). 런타임 게이트 3종만 무소모 `Failure`: ① ammo 제한 스킬 `remaining==0`, ② 마나 `CanAfford` 실패, ③ 시전 시작 시점 사거리 내 유효 대상 0(무대상). 대상 락온(=커밋) 시 ammo 1 + 마나 동시 소모. 커밋 이후 빗나감(락온 대상이 windup 중 이동/사망)·스턴 취소는 **환불하지 않는다**(의도된 전황).
 - **reset scope:** `Battle`은 전투 시작마다 full charge(이월 없음). `Expedition`은 예약값으로 현재 이월 없는 `Battle`처럼 처리한다(등반 lifecycle 도입 시 실이월). `Unlimited`은 counter 없음.
-- **battle-start 배선:** `TurnHelper._Ready()`가 turn-affected 유닛마다 `CharacterArticle.ChargeBattleAmmo()`를 호출. 이 메서드는 BT를 raw 재귀 노드 워크로 순회해 `BehaviorTree_TurnAction.TurnAction`이 `TurnAction_Skill`인 노드의 `Definition`을 찾아 `SkillAmmoState.Charge(id, ammo, scope)` 한다(`FindNodeByType`는 `Root`(GetChild(0)) 하위·deferred `TreeChildren`만 봐 battle-start 미갱신에 취약하므로 raw 워크 채택). `SkillCaster.tscn` 샘플은 `TurnAction_Skill`을 배선해 제한 스킬 charge 경로를 가진다. production `battle_field.tscn` 로스터에는 아직 배치하지 않아 production 전투에서는 no-op이다.
+- **battle-start 배선:** `TurnHelper._Ready()`가 turn-affected 유닛마다 `CharacterArticle.ChargeBattleAmmo()`를 호출. 이 메서드는 BT를 raw 재귀 노드 워크로 순회해 `BehaviorTree_TurnAction.TurnAction`이 `TurnAction_Skill`인 노드의 `Definition`을 찾아 `SkillAmmoState.Charge(id, ammo, scope)` 한다(`FindNodeByType`는 `Root`(GetChild(0)) 하위·deferred `TreeChildren`만 봐 battle-start 미갱신에 취약하므로 raw 워크 채택). `SkillCaster.tscn` 샘플은 `TurnAction_Skill`을 배선해 제한 스킬 charge 경로를 가진다. `TurnAction_Skill`을 배선한 유닛은 battle-start에서 제한 스킬이 full charge된다.
 - **Phase1 수치:** 기본기(`sword_slash`/`fist_jab`/`bow_shot`/`staff_magicbolt`) `Unlimited`. 제한(전부 Battle): `sword_smash` 2, `sword_ironbody` 1, `fist_straight` 3, `fist_sonicblow` 1, `bow_aimedshot` 2, `bow_bindingarrow` 2, `staff_chainlightning` 1, `staff_manaabsorb` 2. `.tres`엔 제한 스킬만 `AmmoResetScope`/`Ammo` 2줄 추가(Unlimited은 기본값 생략).
 - **report:** ammo 소모 시 `ammo:{id}:consumed:{remaining}`, 부족 실패 시 `ammo:{id}:empty`를 `SkillState.Reports`에 append(raw string, GL-001 어휘 정리는 후속).
 - **후속:** ammo HUD 표시, save/load 영속, Expedition 실이월, 플레이어 loadout/장착 UI, `TurnAction_Skill` 실제 BT 배선.
@@ -87,8 +87,10 @@ updated: 2026-07-10
 ## Compatibility Seam
 
 `TurnActionBase.Init`/`Finish`/`Action`은 virtual로 열렸다. 기존 구현은 그대로 base 동작을 사용한다.
+`TurnActionBase.CanStart(CharacterArticle)`는 현재 턴에 시작 가능한 공격인지 묻는 공통 계약이다. 기본 구현은 caster null만 막고, `TurnAction_Skill.CanStart`는 `SkillDefinition` 유효성, ammo remaining, mana affordability를 확인한다. 무대상 여부는 위치 의존 런타임 판단이므로 기존 `Init` 커밋 게이트가 처리한다.
 `TurnAction_Skill.Action()`은 Failure/End/Completed로 닫힐 때 `CurrentTurnActionState`와 stale `CharacterArticle.CurrentTurnAction`을 함께 정리한다. ammo 부족 등 Failure 후 BT selector/fallback 또는 다음 턴이 이전 스킬에 붙잡히지 않게 하는 계약이다(`Sk002Step1AmmoTest` `D.current_action_cleared`).
 `CharacterArticle.CurrentTurnActionState`는 `ITurnActionState` 타입의 단일 런타임 슬롯이며 `TurnAction_Skill`의 `SkillState`를 저장한다. 기존 `CurrentTurnAction` 재개 경로는 유지된다.
+`CharacterArticle.HasUsableAttack`과 `CalculatedAttackRange`는 BT의 `BehaviorTree_TurnAction` 중 `TurnAction.CanStart(this)`가 true인 후보만 본다. 즉 ammo/mana가 소진된 긴 사거리 주력기는 이동 사거리 계산에서 빠지고, 무제한 기본기 같은 fallback 사거리로 접근 판단이 내려간다([[SK-004-Usable-Attack-Gate]]).
 영창 상태는 `ITurnActionState.IsCasting` getter와 `CharacterArticle.IsCasting` 창구로 SkillSystem 구체 타입 의존 없이 외부(HUD/조건 어휘/영창 취소)에서 소비 가능하다. 실제 소비처는 Step 4.
 
 ## Verification
@@ -100,8 +102,9 @@ updated: 2026-07-10
 - `Sk001Step4bKnockbackTest`: 넉백 이동/맵 경계/점유 충돌/방향(카디널) + `OnMove` 발행 + tilemap/AStar 점유 갱신.
 - `Sk001Step5ChainTest`: legacy ChainLightning vs ChainBlock 대상별 HP baseline 일치 + 체인 선택 미타격 우선.
 - `Sk001Step6DataPackTest`: 커밋 12종 읽기 전용 로드 + 정본(`Phase1SkillSpec`)과 전체 필드·이펙트 파라미터 서명 비교(누락/드리프트 검출, ammo/scope 포함) + 직렬화 round-trip + 기본기·강기·제어·흡수 실행 + StunBlock Chance 0/100 결정론. `RunSkill`이 `TurnHelper` battle-start reset 경로 밖에서 직접 `TurnAction`을 실행하므로 실행 전 `SkillAmmoState.Charge`로 대역 충전한다. `.tres` 생성은 별도 부트스트랩 `Sk001Phase1DataGenerator`(회귀 비포함, 수동).
-- `Sk002Step1AmmoTest`(SK-002 Step 1): ammo 직렬화 round-trip, Unlimited baseline 보존, 제한 스킬 차감→소진 Failure(HP/RNG/마나 불변), 마나 부족·무대상 무차감, windup 스턴 취소 무환불, shared Definition per-unit 격리(40 assertions).
+- `Sk002Step1AmmoTest`(SK-002 Step 1): ammo 직렬화 round-trip, Unlimited baseline 보존, 제한 스킬 차감→소진 Failure(HP/RNG/마나 불변), 마나 부족·무대상 무차감, windup 스턴 취소 무환불, shared Definition per-unit 격리, stale current action 정리. 현재 씬 상대 노드명에 의존하지 않도록 첫 살아있는 상대를 fixture로 선택한다.
 - `Sk002Step3ResetTest`(SK-002 Step 3): `ChargeBattleAmmo` 제한 충전·Unlimited 미등록, `TurnHelper._Ready` battle-start 충전, Battle 이월 없음(재충전=full), Resource `Ammo` 불변, Expedition=battle charge(14 assertions, self-sufficient: Ally BT에만 주입해 상대 로스터 비의존).
+- `Sk004Step1UsableAttackTest`(SK-004 Step 1): spent ammo/mana-blocked 긴 사거리 스킬이 `CalculatedAttackRange`에서 제외되고, 무제한 기본기 사거리로 fallback되는지 검증.
 - CB-001 Step 1~4 회귀 유지. **알려진 선행 실패(SK-002와 무관):** `sk001_step6` `D.ChainHitsThree`, `cb001_step4` `D.deaths_recorded`는 커밋 `e5d339b`가 `battle_field.tscn` 상대를 4→1(신 타입)으로 개편해 발생. 별도 rebaseline Task로 분리.
 
 ## Related

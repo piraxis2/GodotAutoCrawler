@@ -110,7 +110,7 @@ public partial class Sk002Step1AmmoTest : Node
         try
         {
             var caster = battle.GetNode<CharacterArticle>("Articles/Ally/Character");
-            var target = battle.GetNode<CharacterArticle>("Articles/Opponent/Character");
+            var target = GetFirstOpponent(battle);
             SetAdjacent(battle, caster, target);
 
             var definition = MakeDamageSkill("unlimited_skill", SkillAmmoResetScope.Unlimited, 0);
@@ -142,7 +142,7 @@ public partial class Sk002Step1AmmoTest : Node
         try
         {
             var caster = battle.GetNode<CharacterArticle>("Articles/Ally/Character");
-            var target = battle.GetNode<CharacterArticle>("Articles/Opponent/Character");
+            var target = GetFirstOpponent(battle);
             SetAdjacent(battle, caster, target);
             var helper = battle.GetNode<TurnHelper>("TurnHelper");
 
@@ -203,7 +203,7 @@ public partial class Sk002Step1AmmoTest : Node
         try
         {
             var caster = battle.GetNode<CharacterArticle>("Articles/Ally/Character");
-            var target = battle.GetNode<CharacterArticle>("Articles/Opponent/Character");
+            var target = GetFirstOpponent(battle);
             SetAdjacent(battle, caster, target);
 
             var definition = MakeDamageSkill("limited_mana", SkillAmmoResetScope.Battle, 1);
@@ -276,7 +276,7 @@ public partial class Sk002Step1AmmoTest : Node
         try
         {
             var caster = battle.GetNode<CharacterArticle>("Articles/Ally/Character");
-            var target = battle.GetNode<CharacterArticle>("Articles/Opponent/Character");
+            var target = GetFirstOpponent(battle);
             SetAdjacent(battle, caster, target);
 
             var definition = MakeDamageSkill("limited_windup", SkillAmmoResetScope.Battle, 1);
@@ -318,7 +318,7 @@ public partial class Sk002Step1AmmoTest : Node
         try
         {
             var ally = battle.GetNode<CharacterArticle>("Articles/Ally/Character");
-            var opponent = battle.GetNode<CharacterArticle>("Articles/Opponent/Character");
+            var opponent = GetFirstOpponent(battle);
             SetAdjacent(battle, ally, opponent);
 
             var shared = MakeDamageSkill("shared_limited", SkillAmmoResetScope.Battle, 1);
@@ -361,6 +361,14 @@ public partial class Sk002Step1AmmoTest : Node
         };
     }
 
+    private static CharacterArticle GetFirstOpponent(BattleFieldScene battle)
+    {
+        return battle.GetNode("Articles/Opponent")
+            .GetChildren()
+            .OfType<CharacterArticle>()
+            .First(article => article.IsAlive);
+    }
+
     // 대상만 인접시키고 나머지 상대는 사거리 밖으로 밀며, 대상 방어력/체력을 피해 확정용으로 세팅한다.
     private void SetAdjacent(BattleFieldScene battle, CharacterArticle caster, CharacterArticle target)
     {
@@ -370,7 +378,7 @@ public partial class Sk002Step1AmmoTest : Node
         target.TilePosition = targetPosition;
         target.GlobalPosition = tileMap.ToGlobal(tileMap.MapToLocal(targetPosition));
 
-        foreach (var opp in battle.GetNode("Articles/Opponent").GetChildren().Cast<CharacterArticle>())
+        foreach (var opp in battle.GetNode("Articles/Opponent").GetChildren().OfType<CharacterArticle>())
         {
             if (opp != target) { opp.TilePosition = new Vector2I(900, 900); }
         }
@@ -384,7 +392,7 @@ public partial class Sk002Step1AmmoTest : Node
     private static void PushAllOpponentsFar(BattleFieldScene battle)
     {
         int far = 900;
-        foreach (var opp in battle.GetNode("Articles/Opponent").GetChildren().Cast<CharacterArticle>())
+        foreach (var opp in battle.GetNode("Articles/Opponent").GetChildren().OfType<CharacterArticle>())
         {
             opp.TilePosition = new Vector2I(far, far);
             far++;

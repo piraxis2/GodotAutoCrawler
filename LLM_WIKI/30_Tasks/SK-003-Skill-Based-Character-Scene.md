@@ -28,7 +28,7 @@ tags: [task, combat, skill-system, scene]
   - `StaffChainLightning`: `Assets/SkillData/Phase1/staff_chainlightning.tres`, Battle ammo 1, windup 1, mana 30.
   - `StaffMagicBolt`: `Assets/SkillData/Phase1/staff_magicbolt.tres`, Unlimited fallback, mana 5.
 - SK-002의 battle-start `ChargeBattleAmmo()`가 이 씬의 제한 스킬을 충전할 수 있다.
-- 기존 production `battle_field.tscn` 로스터에는 아직 배치하지 않았다. 전투 밸런스/결정론 baseline 변경은 별도 cleanup 범위다.
+- 이 Task의 산출물은 `SkillCaster.tscn` 샘플 배선이다. 실제 encounter 배치와 밸런스/결정론 baseline 재검증은 씬 변경 범위에서 별도로 판단한다.
 
 ## 2026-07-10 follow-up fix
 
@@ -54,7 +54,7 @@ tags: [task, combat, skill-system, scene]
 
 ## Follow-ups
 
-- `battle_field.tscn` 또는 별도 encounter에 실제 배치할 경우 CB-001 결정론 baseline을 함께 재검증한다.
+- ammo/mana 소진 후 이동 사거리 스턱은 [[SK-004-Usable-Attack-Gate]]에서 해결했다.
 - ammo HUD/save/load/loadout UI는 SK-002 후속 범위다.
 
 ## Related

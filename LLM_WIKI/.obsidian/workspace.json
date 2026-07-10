@@ -185,6 +185,7 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
+    "30_Tasks/SK-004-Usable-Attack-Gate.md",
     "00_Index/Current-State.md",
     "30_Tasks/SK-003-Skill-Based-Character-Scene.md",
     "20_Systems/Workspace-Window-System.md",
@@ -219,7 +220,6 @@
     "30_Tasks/SG-003-SaveSlot-UI-Host-Integration.md",
     "50_Reviews/DT-002-Portrait-Review.md",
     "50_Reviews/DialogueTool-Step-1-to-8.md",
-    "50_Reviews/DT-011-DialogueWorldState-Addon-Packaging-Review.md",
-    "50_Reviews/DT-012-Condition-Authoring-UX-Review.md"
+    "50_Reviews/DT-011-DialogueWorldState-Addon-Packaging-Review.md"
   ]
 }

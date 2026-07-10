@@ -2,7 +2,7 @@
 type: system
 system: BehaviorTree
 status: active
-updated: 2026-07-05
+updated: 2026-07-10
 ---
 
 # BehaviorTree System
@@ -21,10 +21,13 @@ updated: 2026-07-05
 - RatingSelector: RatingDecorator 점수가 가장 높은 후보 실행
 - Action: 이동 또는 TurnAction 선택
 - Decorator: 상대 탐색, 복수 상대 조건 등
+- HasUsableAttack decorator: owner가 `CharacterArticle`이고 현재 시작 가능한 공격(`CharacterArticle.HasUsableAttack`)이 있으면 통과한다. `Invert`로 공격 불가 분기를 만들 수 있다([[SK-004-Usable-Attack-Gate]]).
 
 ## Integration
 
-`CharacterArticle`이 자신의 `BehaviorTree`를 실행한다. 행동 노드는 `BattleFieldScene`과 `BattleFieldTileMapLayer`를 통해 대상과 이동 경로를 찾는다.
+`CharacterArticle`이 자신의 `BehaviorTree`를 실행한다. 행동 노드는 `BattleFieldScene`과 `BattleFieldTileMapLayer`를 통해 대상과 이동 경로를 찾는다. SK-004 이후 이동 사거리 계산은 `TurnAction.CanStart(owner)`가 true인 행동만 사용하므로, ammo/mana가 소진된 스킬은 접근 판단에서 제외된다.
+
+Graph editor context menu는 `BehaviorTree_HasUsableAttack` 추가 항목을 제공한다.
 
 ## Debugging & Gating (Step 4a)
 
