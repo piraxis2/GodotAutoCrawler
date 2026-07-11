@@ -8,7 +8,7 @@ namespace AutoCrawler.Assets.Script.Tests;
 /// <summary>
 /// WS-002 Step 2. 마스터 윈도우 승격 + 하단 로그 도크 + content area clamp를 headless로 검증한다.
 ///
-/// - content rect = 마스터 − 좌측 메뉴바 − 하단 로그 도크 − 상단 inset (순수 geometry).
+/// - content rect = 마스터 − 상단 메뉴바/타이틀 여백 − 하단 로그 도크 (순수 geometry).
 /// - 로그 도크 rect = 하단 전폭, content와 겹치지 않음.
 /// - `log` floating window 제거(registry 4종), 로그는 `CanvasLayer/LogDock/LogView`(LogWindowController).
 /// - content 밖으로 민 창을 GatherIntoContentArea가 메뉴/도크 비침범 위치로 회수(멱등).
@@ -39,7 +39,7 @@ public partial class Ws002Step2MasterDockTest : Node
         GetTree().Quit(_fail == 0 ? 0 : 1);
     }
 
-    // content rect는 좌측 메뉴바 폭, 하단 도크 높이, 상단 inset을 제외한다.
+    // content rect는 상단 메뉴바/타이틀 여백과 하단 도크 높이를 제외한다.
     private void TestContentRectExcludesMenuAndDock()
     {
         GD.Print("[A] Content rect excludes menu, dock, top inset");
@@ -48,12 +48,12 @@ public partial class Ws002Step2MasterDockTest : Node
         Rect2I content = WorkspaceGeometry.ComputeContentRect(
             master, WorkspaceWindowManager.MenuBarWidth, dock, WorkspaceWindowManager.ContentTopInset);
 
-        CheckEqual("A.ContentRect", content, new Rect2I(200, 32, 1240, 736));
+        CheckEqual("A.ContentRect", content, new Rect2I(0, 64, 1440, 704));
 
-        // 마스터가 메뉴/도크보다 작아도(메뉴 200 > 마스터 100) content rect는 마스터 경계 안에서
+        // 마스터가 메뉴/도크보다 작아도 content rect는 마스터 경계 안에서
         // 시작하고 끝나야 한다. 크기 ≥ 1, position ≥ 0, 오른쪽/아래 끝이 마스터를 넘지 않는다.
         var tinyMaster = new Vector2I(100, 100);
-        Rect2I tiny = WorkspaceGeometry.ComputeContentRect(tinyMaster, 200, 20, 32);
+        Rect2I tiny = WorkspaceGeometry.ComputeContentRect(tinyMaster, WorkspaceWindowManager.MenuBarWidth, 20, WorkspaceWindowManager.ContentTopInset);
         CheckTrue("A.TinyWidthClamped", tiny.Size.X >= 1);
         CheckTrue("A.TinyHeightClamped", tiny.Size.Y >= 1);
         CheckTrue("A.TinyPositionNonNegative", tiny.Position.X >= 0 && tiny.Position.Y >= 0);
@@ -84,7 +84,7 @@ public partial class Ws002Step2MasterDockTest : Node
     private void TestGatherIntoContentPure()
     {
         GD.Print("[C] GatherIntoContent pure containment");
-        var content = new Rect2I(200, 32, 1240, 736);
+        var content = new Rect2I(0, 64, 1440, 704);
 
         var inside = new Rect2I(300, 100, 400, 300);
         CheckEqual("C.InsideUnchanged", WorkspaceGeometry.GatherIntoContent(inside, content), inside);
@@ -271,3 +271,4 @@ public partial class Ws002Step2MasterDockTest : Node
     }
 }
 #endif
+

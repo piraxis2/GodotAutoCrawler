@@ -16,17 +16,20 @@ public partial class WorkspaceWindowManager : Node
     public const string DefaultPresetId = WorkspaceLayoutPreset.Outgame;
 
     // --- WS-002 마스터 레이아웃 상수 (D6) ---
-    // content area = 마스터 rect − 좌측 메뉴바(폭) − 하단 로그 도크(높이 비율) − 상단 타이틀바 inset.
-    // .tscn의 MenuPanel/LogDock anchor가 이 상수와 일치해야 시각 배치와 clamp 판정이 어긋나지 않는다.
+    // content area = 마스터 rect - 상단 메뉴바/타이틀 여백 - 하단 로그 도크(높이 비율).
+    // .tscn의 TopMenuBar/LogDock anchor가 이 상수와 일치해야 시각 배치와 clamp 판정이 어긋나지 않는다.
 
-    /// <summary>좌측 메뉴바 폭(px). workspace.tscn MenuPanel offset_right와 일치시킨다.</summary>
-    public const int MenuBarWidth = 200;
+    /// <summary>상단 드롭다운 메뉴바 높이(px). workspace.tscn TopMenuBar offset_bottom과 일치시킨다.</summary>
+    public const int TopMenuBarHeight = 32;
+
+    /// <summary>좌측 메뉴바는 상단 드롭다운으로 이동했으므로 content 좌측 여백은 없다.</summary>
+    public const int MenuBarWidth = 0;
 
     /// <summary>하단 로그 도크 높이 비율. workspace.tscn LogDock anchor_top(=1-ratio)와 일치시킨다.</summary>
     public const float LogDockHeightRatio = 0.2f;
 
-    /// <summary>임베디드 창 타이틀바가 마스터 상단 밖으로 잘리지 않게 남기는 content 상단 여백.</summary>
-    public static readonly int ContentTopInset = WorkspaceGeometry.TitleBarHeight;
+    /// <summary>상단 메뉴바와 창 타이틀바가 겹치지 않게 남기는 content 상단 여백.</summary>
+    public static readonly int ContentTopInset = TopMenuBarHeight + WorkspaceGeometry.TitleBarHeight;
 
     /// <summary>슬롯 자석 거리 = content area 짧은 변의 이 비율(Step 0 리뷰 Finding 3 기본 계약).</summary>
     public const float SlotSnapRatio = 0.06f;
@@ -733,6 +736,8 @@ public partial class WorkspaceWindowManager : Node
         return GodotObject.IsInstanceValid(window) && !window.IsQueuedForDeletion();
     }
 }
+
+
 
 
 

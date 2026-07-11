@@ -266,7 +266,8 @@ public partial class Ws001Step1RegistryTest : Node
         AddChild(workspace);
 
         var manager = workspace.GetNode<WorkspaceWindowManager>("WorkspaceWindowManager");
-        var menu = workspace.GetNode<BoxContainer>("CanvasLayer/MenuPanel/VBoxContainer/WindowMenu");
+        var menu = workspace.GetNode<MenuButton>("CanvasLayer/TopMenuBar/HBox/WindowMenu");
+        PopupMenu popup = menu.GetPopup();
 
         // WS-002 창 다이어트: floating managed 창은 World/TacticBoard/Report 3종. Log는 하단 도크,
         // Situation/WeeklyAction/Calendar는 World 내부 패널로 이관돼 registry에 없다.
@@ -281,22 +282,24 @@ public partial class Ws001Step1RegistryTest : Node
             CheckEqual($"K.StartsHidden_{id}", manager.IsWindowVisible(id), false);
         }
 
-        CheckEqual("K.MenuButtonCount", menu.GetChildCount(), 3);
-        var worldButton = menu.GetNode<CheckButton>("Toggle_world");
+        CheckEqual("K.MenuButtonCount", popup.GetItemCount(), 3);
+        int worldItemId = 1;
+        int worldIndex = popup.GetItemIndex(worldItemId);
+        CheckEqual("K.WorldMenuItemExists", worldIndex >= 0, true);
 
         // 메뉴 버튼으로 연다.
-        worldButton.ButtonPressed = true;
+        popup.EmitSignal(PopupMenu.SignalName.IdPressed, worldItemId);
         CheckEqual("K.WorldVisibleAfterMenuToggle", manager.IsWindowVisible("world"), true);
 
         // OS close = hide. 버튼도 함께 풀려야 한 번 눌러 다시 열 수 있다.
         manager.TryGetWindow("world", out WorkspaceWindow world);
         world.EmitSignal(Godot.Window.SignalName.CloseRequested);
         CheckEqual("K.WorldHiddenAfterClose", manager.IsWindowVisible("world"), false);
-        CheckEqual("K.ButtonUnpressedAfterClose", worldButton.ButtonPressed, false);
+        CheckEqual("K.MenuUncheckedAfterClose", popup.IsItemChecked(worldIndex), false);
         CheckEqual("K.WindowNotFreed", GodotObject.IsInstanceValid(world), true);
 
         // 메뉴에서 다시 표시된다.
-        worldButton.ButtonPressed = true;
+        popup.EmitSignal(PopupMenu.SignalName.IdPressed, worldItemId);
         CheckEqual("K.WorldVisibleAgain", manager.IsWindowVisible("world"), true);
         CheckEqual("K.RegistryStillThree", manager.Registry.Count, 3);
 
@@ -350,6 +353,8 @@ public partial class Ws001Step1RegistryTest : Node
     }
 }
 #endif
+
+
 
 
 

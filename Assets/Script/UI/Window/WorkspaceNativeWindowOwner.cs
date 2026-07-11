@@ -24,9 +24,12 @@ internal static class WorkspaceNativeWindowOwner
         int masterId = master.GetWindowId();
         if (childId == masterId || childId < 0 || masterId < 0) return false;
 
-        // Godot의 공식 transient parent를 먼저 명시한다. Inspector의 flag 조합보다 부모가 분명하다.
-        DisplayServer.WindowSetTransient(childId, masterId);
-        DisplayServer.WindowSetExclusive(childId, false);
+        // Godot 쪽 플래그는 모달 입력 잠금을 만들지 않는 값만 보장한다.
+        // WindowSetTransient(child, parent)는 같은 parent에 반복 호출하면 Godot Windows backend가 에러 로그를 찍으므로
+        // native owner 관계는 아래 Win32 HWND owner 보강에 맡긴다.
+        if (!child.Transient) child.Transient = true;
+        if (child.TransientToFocused) child.TransientToFocused = false;
+        if (child.Exclusive) child.Exclusive = false;
 
         if (OS.GetName() != "Windows") return true;
 
@@ -68,5 +71,6 @@ internal static class WorkspaceNativeWindowOwner
         int cy,
         uint flags);
 }
+
 
 

@@ -4,12 +4,15 @@
 [ext_resource type="Script" uid="uid://cce250gbc3ie6" path="res://Assets/Script/UI/Window/WorkspaceWindowManager.cs" id="2_manager"]
 [ext_resource type="Script" uid="uid://0hrn1u60ckof" path="res://Assets/Script/UI/Window/WorkspaceWindow.cs" id="3_window"]
 [ext_resource type="Script" uid="uid://d2u2xd3cdmnni" path="res://Assets/Script/UI/Window/LogWindowController.cs" id="4_logctrl"]
+[ext_resource type="Script" uid="uid://vmmko1nbbhea" path="res://Assets/Script/UI/Retro/RetroPanelContainer.cs" id="5_retro_panel"]
+[ext_resource type="Script" uid="uid://c7k32gghg8st3" path="res://Assets/Script/UI/Retro/RetroVBoxPanel.cs" id="6_retro_vbox"]
+[ext_resource type="Theme" uid="uid://5mgwh6s56p47" path="res://Assets/UI/Theme/RetroWin98Theme.tres" id="7_retro_theme"]
 
 [node name="Workspace" type="Node" unique_id=1673475761 node_paths=PackedStringArray("_manager", "_windowMenu", "_presetMenu")]
 script = ExtResource("1_shell")
 _manager = NodePath("WorkspaceWindowManager")
-_windowMenu = NodePath("CanvasLayer/MenuPanel/VBoxContainer/WindowMenu")
-_presetMenu = NodePath("CanvasLayer/MenuPanel/VBoxContainer/PresetMenu")
+_windowMenu = NodePath("CanvasLayer/TopMenuBar/HBox/WindowMenu")
+_presetMenu = NodePath("CanvasLayer/TopMenuBar/HBox/PresetMenu")
 _restoreLayoutOnReady = true
 
 [node name="WorkspaceWindowManager" type="Node" parent="." unique_id=663205783 node_paths=PackedStringArray("_windowRoot", "_slotHighlight")]
@@ -19,28 +22,37 @@ _slotHighlight = NodePath("../CanvasLayer/SlotHighlight")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=423228919]
 
-[node name="MenuPanel" type="PanelContainer" parent="CanvasLayer" unique_id=1942023001]
-anchors_preset = -1
-anchor_bottom = 0.8
-offset_right = 200.0
+[node name="DesktopBackground" type="ColorRect" parent="CanvasLayer" unique_id=278754014]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+color = Color(0.29803923, 0.29803923, 0.29803923, 1)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MenuPanel" unique_id=2016243190]
+[node name="TopMenuBar" type="PanelContainer" parent="CanvasLayer" unique_id=1881281095]
+anchors_preset = -1
+anchor_right = 1.0
+offset_bottom = 32.0
+grow_horizontal = 2
+theme = ExtResource("7_retro_theme")
+script = ExtResource("5_retro_panel")
+
+[node name="HBox" type="HBoxContainer" parent="CanvasLayer/TopMenuBar" unique_id=1548553258]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="CanvasLayer/MenuPanel/VBoxContainer" unique_id=313448847]
+[node name="WindowMenu" type="MenuButton" parent="CanvasLayer/TopMenuBar/HBox" unique_id=673925506]
 layout_mode = 2
-text = "Workspace Shell (W0)"
+text = "Windows"
 
-[node name="WindowMenu" type="VBoxContainer" parent="CanvasLayer/MenuPanel/VBoxContainer" unique_id=1543682015]
-layout_mode = 2
-
-[node name="PresetLabel" type="Label" parent="CanvasLayer/MenuPanel/VBoxContainer" unique_id=1682107642]
+[node name="PresetMenu" type="MenuButton" parent="CanvasLayer/TopMenuBar/HBox" unique_id=2010843540]
 layout_mode = 2
 text = "Presets"
 
-[node name="PresetMenu" type="VBoxContainer" parent="CanvasLayer/MenuPanel/VBoxContainer" unique_id=83574882]
+[node name="Spacer" type="Control" parent="CanvasLayer/TopMenuBar/HBox" unique_id=1991628598]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="LogDock" type="PanelContainer" parent="CanvasLayer" unique_id=310002001]
 anchors_preset = -1
@@ -49,6 +61,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("7_retro_theme")
+script = ExtResource("5_retro_panel")
 
 [node name="LogView" type="Control" parent="CanvasLayer/LogDock" unique_id=665064068]
 layout_mode = 2
@@ -57,7 +71,7 @@ script = ExtResource("4_logctrl")
 [node name="SlotHighlight" type="ColorRect" parent="CanvasLayer" unique_id=310003001]
 visible = false
 mouse_filter = 2
-color = Color(0.3, 0.6, 1, 0.25)
+color = Color(1, 1, 0, 0.28)
 
 [node name="Windows" type="Node" parent="." unique_id=189585255]
 
@@ -81,6 +95,8 @@ offset_left = 16.0
 offset_top = 12.0
 offset_right = -16.0
 offset_bottom = -12.0
+theme = ExtResource("7_retro_theme")
+script = ExtResource("6_retro_vbox")
 
 [node name="ContentMode" type="Label" parent="Windows/WorldWindow/Panels" unique_id=457209667]
 layout_mode = 2
@@ -88,6 +104,8 @@ text = "content_mode: hub"
 
 [node name="HubPanels" type="VBoxContainer" parent="Windows/WorldWindow/Panels" unique_id=457209671]
 layout_mode = 2
+theme = ExtResource("7_retro_theme")
+script = ExtResource("6_retro_vbox")
 
 [node name="CalendarStrip" type="Label" parent="Windows/WorldWindow/Panels/HubPanels" unique_id=457209668]
 layout_mode = 2
@@ -112,20 +130,26 @@ transient = true
 min_size = Vector2i(240, 240)
 script = ExtResource("3_window")
 WindowId = "tacticboard"
-_contentModeLabel = NodePath("ContentMode")
+_contentModeLabel = NodePath("Panels/ContentMode")
 
-[node name="ContentMode" type="Label" parent="Windows/TacticBoardWindow" unique_id=217325025]
+[node name="Panels" type="VBoxContainer" parent="Windows/TacticBoardWindow" unique_id=1340049831]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = 16.0
-offset_top = 40.0
-offset_right = 340.0
-offset_bottom = 64.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = -12.0
+theme = ExtResource("7_retro_theme")
+script = ExtResource("6_retro_vbox")
+
+[node name="ContentMode" type="Label" parent="Windows/TacticBoardWindow/Panels" unique_id=217325025]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0.5, 1)
 text = "content_mode: read"
 
-[node name="Placeholder" type="Label" parent="Windows/TacticBoardWindow" unique_id=217325026]
-offset_left = 16.0
-offset_top = 72.0
-offset_right = 340.0
-offset_bottom = 200.0
+[node name="Placeholder" type="Label" parent="Windows/TacticBoardWindow/Panels" unique_id=217325026]
+layout_mode = 2
 text = "Tactic board placeholder
 (battle=read / analysis=edit)"
 
@@ -139,9 +163,17 @@ min_size = Vector2i(240, 240)
 script = ExtResource("3_window")
 WindowId = "report"
 
-[node name="Placeholder" type="Label" parent="Windows/ReportWindow" unique_id=455374870]
+[node name="Panels" type="VBoxContainer" parent="Windows/ReportWindow" unique_id=721984529]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = 16.0
-offset_top = 40.0
-offset_right = 340.0
-offset_bottom = 200.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = -12.0
+theme = ExtResource("7_retro_theme")
+script = ExtResource("6_retro_vbox")
+
+[node name="Placeholder" type="Label" parent="Windows/ReportWindow/Panels" unique_id=455374870]
+layout_mode = 2
 text = "Report placeholder (analysis)"

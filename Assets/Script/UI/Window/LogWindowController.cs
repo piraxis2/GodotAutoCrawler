@@ -269,9 +269,9 @@ public partial class LogWindowController : Control
     {
         Color color = entry.Importance switch
         {
-            GameLogImportance.Warning => new Color(1f, 0.82f, 0.35f),
-            GameLogImportance.Critical => new Color(1f, 0.45f, 0.45f),
-            _ => new Color(0.9f, 0.9f, 0.9f),
+            GameLogImportance.Warning => new Color(0.55f, 0.32f, 0.0f),
+            GameLogImportance.Critical => new Color(0.62f, 0.0f, 0.0f),
+            _ => new Color(0.22f, 0.22f, 0.22f),
         };
 
         if (entry.Severity == GameLogSeverity.Detail) color = color.Darkened(0.45f);
@@ -317,3 +317,5 @@ public partial class LogWindowController : Control
         public Label Body;
     }
 }
+
+
