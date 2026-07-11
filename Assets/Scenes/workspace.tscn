@@ -12,17 +12,17 @@ _windowMenu = NodePath("CanvasLayer/MenuPanel/VBoxContainer/WindowMenu")
 _presetMenu = NodePath("CanvasLayer/MenuPanel/VBoxContainer/PresetMenu")
 _restoreLayoutOnReady = true
 
-[node name="WorkspaceWindowManager" type="Node" parent="." unique_id=663205783 node_paths=PackedStringArray("_windowRoot")]
+[node name="WorkspaceWindowManager" type="Node" parent="." unique_id=663205783 node_paths=PackedStringArray("_windowRoot", "_slotHighlight")]
 script = ExtResource("2_manager")
 _windowRoot = NodePath("../Windows")
+_slotHighlight = NodePath("../CanvasLayer/SlotHighlight")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=423228919]
 
 [node name="MenuPanel" type="PanelContainer" parent="CanvasLayer" unique_id=1942023001]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
+anchors_preset = -1
+anchor_bottom = 0.8
+offset_right = 200.0
 grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MenuPanel" unique_id=2016243190]
@@ -42,96 +42,106 @@ text = "Presets"
 [node name="PresetMenu" type="VBoxContainer" parent="CanvasLayer/MenuPanel/VBoxContainer" unique_id=83574882]
 layout_mode = 2
 
-[node name="Windows" type="Node" parent="." unique_id=189585255]
-
-[node name="WorldWindow" type="Window" parent="Windows" unique_id=998665394 node_paths=PackedStringArray("_contentModeLabel")]
-title = "World"
-initial_position = 2
-size = Vector2i(640, 480)
-visible = false
-min_size = Vector2i(320, 240)
-script = ExtResource("3_window")
-WindowId = "world"
-_contentModeLabel = NodePath("Placeholder")
-
-[node name="Placeholder" type="Label" parent="Windows/WorldWindow" unique_id=457209666]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 400.0
-offset_bottom = 60.0
-text = "World placeholder"
-
-[node name="SituationWindow" type="Window" parent="Windows" unique_id=59535069]
-title = "Situation"
-initial_position = 2
-size = Vector2i(360, 240)
-visible = false
-min_size = Vector2i(240, 160)
-script = ExtResource("3_window")
-WindowId = "situation"
-
-[node name="Placeholder" type="Label" parent="Windows/SituationWindow" unique_id=217325025]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 340.0
-offset_bottom = 100.0
-text = "Danger gauge dummy
-- Region A
-- Region B
-- Region C"
-
-[node name="WeeklyActionWindow" type="Window" parent="Windows" unique_id=708131514]
-title = "WeeklyAction"
-initial_position = 2
-size = Vector2i(360, 280)
-visible = false
-min_size = Vector2i(240, 200)
-script = ExtResource("3_window")
-WindowId = "weekly_action"
-
-[node name="Placeholder" type="Label" parent="Windows/WeeklyActionWindow" unique_id=455374870]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 340.0
-offset_bottom = 200.0
-text = "Weekly action dummy
-1. Train
-2. Rest
-3. Scout
-4. Craft
-5. Talk
-6. Expedition"
-
-[node name="CalendarWindow" type="Window" parent="Windows" unique_id=639088158]
-title = "Calendar"
-initial_position = 2
-size = Vector2i(640, 160)
-visible = false
-min_size = Vector2i(320, 120)
-script = ExtResource("3_window")
-WindowId = "calendar"
-
-[node name="Placeholder" type="Label" parent="Windows/CalendarWindow" unique_id=954068149]
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 600.0
-offset_bottom = 60.0
-text = "48-week strip dummy (current: W1)"
-
-[node name="LogWindow" type="Window" parent="Windows" unique_id=1112509733]
-title = "Log"
-initial_position = 2
-size = Vector2i(360, 560)
-visible = false
-min_size = Vector2i(240, 200)
-script = ExtResource("3_window")
-WindowId = "log"
-
-[node name="LogView" type="Control" parent="Windows/LogWindow" unique_id=665064068]
-layout_mode = 3
-anchors_preset = 15
+[node name="LogDock" type="PanelContainer" parent="CanvasLayer" unique_id=310002001]
+anchors_preset = -1
+anchor_top = 0.8
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="LogView" type="Control" parent="CanvasLayer/LogDock" unique_id=665064068]
+layout_mode = 2
 script = ExtResource("4_logctrl")
+
+[node name="SlotHighlight" type="ColorRect" parent="CanvasLayer" unique_id=310003001]
+visible = false
+mouse_filter = 2
+color = Color(0.3, 0.6, 1, 0.25)
+
+[node name="Windows" type="Node" parent="." unique_id=189585255]
+
+[node name="WorldWindow" type="Window" parent="Windows" unique_id=998665394 node_paths=PackedStringArray("_contentModeLabel", "_modeGatedPanels")]
+title = "World"
+initial_position = 2
+size = Vector2i(640, 480)
+visible = false
+transient = true
+min_size = Vector2i(320, 240)
+script = ExtResource("3_window")
+WindowId = "world"
+_contentModeLabel = NodePath("Panels/ContentMode")
+_modeGatedPanels = NodePath("Panels/HubPanels")
+
+[node name="Panels" type="VBoxContainer" parent="Windows/WorldWindow" unique_id=457209666]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = -16.0
+offset_bottom = -12.0
+
+[node name="ContentMode" type="Label" parent="Windows/WorldWindow/Panels" unique_id=457209667]
+layout_mode = 2
+text = "content_mode: hub"
+
+[node name="HubPanels" type="VBoxContainer" parent="Windows/WorldWindow/Panels" unique_id=457209671]
+layout_mode = 2
+
+[node name="CalendarStrip" type="Label" parent="Windows/WorldWindow/Panels/HubPanels" unique_id=457209668]
+layout_mode = 2
+text = "[거점 패널] 48주 캘린더 스트립 (현재: W1)"
+
+[node name="DangerGauge" type="Label" parent="Windows/WorldWindow/Panels/HubPanels" unique_id=457209669]
+layout_mode = 2
+text = "[거점 패널] 위험 게이지 / 가호 / D-day
+- Region A / Region B / Region C"
+
+[node name="ActionCards" type="Label" parent="Windows/WorldWindow/Panels/HubPanels" unique_id=457209670]
+layout_mode = 2
+text = "[거점 패널] 행동 카드 6계열
+1. Train  2. Rest  3. Scout  4. Craft  5. Talk  6. Expedition"
+
+[node name="TacticBoardWindow" type="Window" parent="Windows" unique_id=59535069 node_paths=PackedStringArray("_contentModeLabel")]
+title = "TacticBoard"
+initial_position = 2
+size = Vector2i(360, 480)
+visible = false
+transient = true
+min_size = Vector2i(240, 240)
+script = ExtResource("3_window")
+WindowId = "tacticboard"
+_contentModeLabel = NodePath("ContentMode")
+
+[node name="ContentMode" type="Label" parent="Windows/TacticBoardWindow" unique_id=217325025]
+offset_left = 16.0
+offset_top = 40.0
+offset_right = 340.0
+offset_bottom = 64.0
+text = "content_mode: read"
+
+[node name="Placeholder" type="Label" parent="Windows/TacticBoardWindow" unique_id=217325026]
+offset_left = 16.0
+offset_top = 72.0
+offset_right = 340.0
+offset_bottom = 200.0
+text = "Tactic board placeholder
+(battle=read / analysis=edit)"
+
+[node name="ReportWindow" type="Window" parent="Windows" unique_id=708131514]
+title = "Report"
+initial_position = 2
+size = Vector2i(360, 480)
+visible = false
+transient = true
+min_size = Vector2i(240, 240)
+script = ExtResource("3_window")
+WindowId = "report"
+
+[node name="Placeholder" type="Label" parent="Windows/ReportWindow" unique_id=455374870]
+offset_left = 16.0
+offset_top = 40.0
+offset_right = 340.0
+offset_bottom = 200.0
+text = "Report placeholder (analysis)"

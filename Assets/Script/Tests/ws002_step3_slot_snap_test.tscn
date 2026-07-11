@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/Tests/Ws002Step3SlotSnapTest.cs" id="1_test"]
+
+[node name="Ws002Step3SlotSnapTest" type="Node"]
+script = ExtResource("1_test")

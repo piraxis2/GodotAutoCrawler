@@ -77,7 +77,7 @@ public partial class WorkspaceShell : Node
     private Button MakeGatherButton()
     {
         var button = new Button { Name = "GatherWindows", Text = "창 모아오기" };
-        button.Pressed += () => _manager.GatherWindows();
+        button.Pressed += () => _manager.GatherIntoContentArea();
         return button;
     }
 

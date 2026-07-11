@@ -268,14 +268,20 @@ public partial class Ws001Step1RegistryTest : Node
         var manager = workspace.GetNode<WorkspaceWindowManager>("WorkspaceWindowManager");
         var menu = workspace.GetNode<BoxContainer>("CanvasLayer/MenuPanel/VBoxContainer/WindowMenu");
 
-        CheckEqual("K.ManagedWindowCount", manager.Registry.Count, 5);
-        foreach (string id in new[] { "world", "situation", "weekly_action", "calendar", "log" })
+        // WS-002 창 다이어트: floating managed 창은 World/TacticBoard/Report 3종. Log는 하단 도크,
+        // Situation/WeeklyAction/Calendar는 World 내부 패널로 이관돼 registry에 없다.
+        CheckEqual("K.ManagedWindowCount", manager.Registry.Count, 3);
+        foreach (string gone in new[] { "log", "situation", "weekly_action", "calendar" })
+            CheckEqual($"K.NotInRegistry_{gone}", manager.TryGetWindow(gone, out _), false);
+        foreach (string id in new[] { "world", "tacticboard", "report" })
         {
             CheckEqual($"K.Registered_{id}", manager.TryGetWindow(id, out _), true);
+            manager.TryGetWindow(id, out WorkspaceWindow window);
+            CheckEqual($"K.NonExclusive_{id}", window.Exclusive, false);
             CheckEqual($"K.StartsHidden_{id}", manager.IsWindowVisible(id), false);
         }
 
-        CheckEqual("K.MenuButtonCount", menu.GetChildCount(), 5);
+        CheckEqual("K.MenuButtonCount", menu.GetChildCount(), 3);
         var worldButton = menu.GetNode<CheckButton>("Toggle_world");
 
         // 메뉴 버튼으로 연다.
@@ -292,7 +298,7 @@ public partial class Ws001Step1RegistryTest : Node
         // 메뉴에서 다시 표시된다.
         worldButton.ButtonPressed = true;
         CheckEqual("K.WorldVisibleAgain", manager.IsWindowVisible("world"), true);
-        CheckEqual("K.RegistryStillFive", manager.Registry.Count, 5);
+        CheckEqual("K.RegistryStillThree", manager.Registry.Count, 3);
 
         RemoveChild(workspace);
         workspace.QueueFree();
@@ -344,3 +350,7 @@ public partial class Ws001Step1RegistryTest : Node
     }
 }
 #endif
+
+
+
+

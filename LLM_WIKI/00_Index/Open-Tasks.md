@@ -10,24 +10,22 @@ updated: 2026-07-10
 
 - **SK-002 후속 — ammo UI/영속/loadout 실효화**([[SK-002-Skill-Ammo-System]], [[Skill-System]]): SK-002 본체는 완료됐다. 후속은 ammo HUD 표시(`SkillAmmoState.TryGetAmmo` 소비), save/load 영속, Expedition 실이월(등반 lifecycle 도입 시), 플레이어 loadout/장착 UI다. `TurnAction_Skill` 배선 자체는 SK-003/SK-004에서 검증됐다. ammo HUD/저장/loadout 및 기존 3종 하드코딩 TurnAction의 데이터 스킬 재배선(아래 SK-001 후속)은 여전히 후속이다.
 - **회귀 rebaseline — SK-001/CB-001 다중 상대 테스트**(SK-002와 무관, 스킬 개편 워크스트림 소관): 커밋 `e5d339b "스킬 개편 2"`가 `battle_field.tscn` 상대를 4명(구 타입 `11_hv0hd`) → 1명(신 타입 `14_7o1qe`)으로 의도적 교체 → `sk001_step2/4/4b/5`, `sk001_step6 D.ChainHitsThree`, `cb001_step4 D.deaths_recorded`가 실패한다. 1명 로스터는 의도된 상태(오너 확정)이므로 씬을 되돌리지 말고, 테스트를 상대 로스터에 비의존하도록 self-sufficient로 고친다(각 테스트가 필요한 상대를 스폰/복제). CB-001 D는 신 상대가 1v1에서 죽는지(HP/위치/턴 예산)도 함께 점검.
-- **WS-001 Native Window Workspace Shell — W0(Step 1~3) 완료**([[WS-001-Native-Window-Workspace-Shell]],
-  [[Workspace-Window-System]]): 아웃게임 UI를 독립 Godot `Window`들의 작업대로 세웠다. managed Window 5종의
-  lifecycle(닫기=hide, duplicate open, freed/stale 방어, 최소화 동기화), preset 3종(outgame/battle/analysis)
-  apply + `gather_windows`(decoration 포함 rect 기준 회수), `user://workspace_layout.cfg` 저장/복원
-  (version·타입 fallback)이 완료됐다. 헤드리스 3종 168 assertions ALL PASS. 후속 창 장착(DemoState/
-  BattleSession/TacticBoard/Report)은 아래 별도 항목.
+- **WS-002 후속 — workspace 실제 콘텐츠 장착**([[WS-002-Embedded-MDI-Master-Window]],
+  [[Workspace-Window-System]]): WS-002 본체는 완료됐고, W0는 placeholder 구조만 둔다. 후속은 World hub 실물화
+  (거점 씬 PC 1인, 48주/위험/행동 카드 실제 상태), World battle/replay 장착, BattleSession/전장 scene 연결,
+  TacticBoard 실제 보드/읽기·편집 모드, Report 분석 콘텐츠, DemoState/자동 국면 전환, UnitDetail/Save·Load UI다.
+  하단 로그 도크는 GL-001 controller가 이식됐지만 live 전투/아웃게임 이벤트 발행은 GameLog 후속과 연결한다.
 
-- **WS-001 후속 — managed window에 실제 콘텐츠 장착**([[Workspace-Window-System]]): W0는 placeholder만 둔다.
-  각 창(World hub/battle/replay, Situation 위험 게이지, WeeklyAction 6계열, Calendar 48주, Log 아카이브)에
-  실제 상태/UI를 장착하는 작업이 남아 있다. DemoState/BattleSession/TacticBoard/Report/UnitDetail/Save·Load
-  창은 각자 자기 Window에 확장된다. custom preset override 저장(OD7)과 창 스냅 UX도 W0 범위 밖 후속이다.
+- **Workspace 후속 — layout/legacy cleanup**([[Workspace-Window-System]]): custom preset override 저장, slot snap UX 고도화
+  (창 가장자리/마스터 가장자리 스냅, modifier UX), 레거시 `Assets/Script/WindowManager.cs`/`Assets/Script/UI/Window/GameWindow.cs`
+  정리 여부, `Assets/UI/Window/field_window.tscn` 삭제/수정 여부, `run/main_scene` 전환은 WS-002 범위 밖 후속이다.
 
-- **display 설정 변경 후속 결정 — root window stretch mode**(WS-001 OD6에서 파생):
-  Step 1에서 `resizable`/`minimize_disabled`/`maximize_disabled`를 해제했다. 프로젝트에 `display/window/stretch/*`
+- **display 설정 변경 후속 결정 — root window stretch mode**(WS-001 OD6/WS-002 OD5에서 파생):
+  `resizable`/`minimize_disabled`/`maximize_disabled`를 해제했고, WS-002는 workspace 내부 content/log dock rect를
+  stretch와 무관하게 처리했다. 프로젝트에 `display/window/stretch/*`
   설정이 없어, `battle_field.tscn`에서 창을 키우거나 최대화하면 전투 화면이 따라 커지지 않고 빈 공간만 생긴다
   (수동 확인, 크래시/스크립트 에러 없음). `stretch/mode = canvas_items` 도입 여부와 그 경우의 aspect 정책을
   결정해야 한다. 결정론(CB-001)에는 영향 없다.
-
 - **SK-001 Data-Driven Skill System — 전체 완료(Step 0~6)**. 후속 cleanup/기능 Task 후보:
   - 기존 3종 하드코딩 TurnAction(`Attack`→TempArticle2, `ChainLightning`→PrincessKnight/TempArticle3) BT 재배선을 데이터 스킬(`sword_slash`/`staff_chainlightning` 등)로 하고 스크립트 삭제. 밸런스 스왑(명중 95%·마나)·CB-001 결정론 회귀 재검증 필요.
   - `DamageBlock.ApplyDamage`의 legacy Damage/UI 결합 제거(headless 피해 result API) — 마나 흡수 정확한 50%·조준 사격 크리 보너스도 이때.
@@ -185,3 +183,4 @@ updated: 2026-07-10
 - 시스템 문서는 코드 변경 후 현재 사실만 남도록 갱신한다.
 - 완료 작업은 Task 문서에 검증 결과를 남기고 이 목록에서 제거한다.
 - 새로운 중요한 설계 선택은 ADR을 먼저 작성한다.
+

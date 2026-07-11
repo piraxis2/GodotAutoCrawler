@@ -222,7 +222,6 @@ public partial class Ws001Step3PersistenceTest : Node
         first.Manager.TryGetWindow("world", out WorkspaceWindow world);
         world.Position = new Vector2I(222, 333);
         world.Size = new Vector2I(500, 400);
-        first.Manager.HideWindow("log");
         Vector2I savedWorldPos = world.Position;
         Vector2I savedWorldSize = world.Size;
         CheckEqual("F.SaveOk", first.Manager.SaveLayout(), Error.Ok);
@@ -235,7 +234,7 @@ public partial class Ws001Step3PersistenceTest : Node
         second.Manager.TryGetWindow("world", out WorkspaceWindow restoredWorld);
         CheckEqual("F.WorldPositionRestored", restoredWorld.Position, savedWorldPos);
         CheckEqual("F.WorldSizeRestored", restoredWorld.Size, savedWorldSize);
-        CheckFalse("F.LogStaysHidden", second.Manager.IsWindowVisible("log"));
+        CheckFalse("F.LogNotInRegistry", second.Manager.TryGetWindow("log", out _));
         CheckTrue("F.WorldVisible", second.Manager.IsWindowVisible("world"));
         second.Dispose();
 
@@ -252,20 +251,19 @@ public partial class Ws001Step3PersistenceTest : Node
         Fixture fixture = MakeFixture(path);
         LayoutLoadStatus status = fixture.Manager.LoadLayout();
         CheckEqual("G.FirstRunStatus", status, LayoutLoadStatus.FirstRun);
-        // 기본 preset(outgame)은 5창을 모두 보인다.
-        foreach (string id in AllIds)
-        {
-            CheckTrue($"G.{id}_visible", fixture.Manager.IsWindowVisible(id));
-        }
+        // 기본 preset(outgame)은 World(hub)만 보인다. TacticBoard/Report 숨김, Log는 상시 도크.
+        CheckTrue("G.world_visible", fixture.Manager.IsWindowVisible("world"));
+        CheckFalse("G.tacticboard_hidden", fixture.Manager.IsWindowVisible("tacticboard"));
+        CheckFalse("G.report_hidden", fixture.Manager.IsWindowVisible("report"));
 
         fixture.Dispose();
         DeleteIfExists(path);
     }
 
-    // [H] 저장된 좌표가 현재 화면 밖이면 load 후 gather로 회수된다.
+    // [H] WS-002: 저장된 좌표가 현재 마스터 content 밖이면 load 후 content gather로 회수된다.
     private void TestStaleCoordinatesAreGatheredOnLoad()
     {
-        GD.Print("[H] Stale off-screen coordinates are gathered on load");
+        GD.Print("[H] Stale out-of-content coordinates are gathered on load");
         string path = NextTmpPath();
         var config = new ConfigFile();
         config.SetValue("meta", "version", WorkspaceLayoutStore.CurrentVersion);
@@ -281,9 +279,9 @@ public partial class Ws001Step3PersistenceTest : Node
         CheckEqual("H.LoadedStatus", status, LayoutLoadStatus.Loaded);
 
         fixture.Manager.TryGetWindow("world", out WorkspaceWindow world);
-        Rect2I workArea = fixture.Manager.GetWorkArea();
+        Rect2I content = fixture.Manager.GetContentRect();
         Rect2I decoRect = WorkspaceWindowManager.GetDecorationRect(world);
-        CheckTrue("H.ReachableAfterLoad", WorkspaceGeometry.IsReachable(decoRect, workArea));
+        CheckTrue("H.InsideContentAfterLoad", WorkspaceGeometry.IsInside(decoRect, content));
         CheckTrue("H.PulledBackFromNegative", world.Position.X > -9000);
 
         fixture.Dispose();
@@ -310,8 +308,6 @@ public partial class Ws001Step3PersistenceTest : Node
 
         DeleteIfExists(path);
     }
-
-    private static readonly string[] AllIds = { "world", "situation", "weekly_action", "calendar", "log" };
 
     private Fixture MakeFixture(string storePath)
     {

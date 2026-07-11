@@ -37,7 +37,7 @@ public partial class Ws001Step2GeometryTest : Node
             TestApplyPresetShowsAndHides();
             TestApplyPresetDoesNotRecreateWorldWindow();
             TestApplyUnknownPresetFailsClosed();
-            TestPresetOffsetsAreRelativeToWorkArea();
+            TestPresetOffsetsAreRelativeToContentArea();
             TestGatherRecoversForcedOffScreenWindow();
         }
         catch (Exception ex)
@@ -186,22 +186,21 @@ public partial class Ws001Step2GeometryTest : Node
         GD.Print("[H] Preset shows required windows and hides the rest");
         Fixture fixture = MakeFixture();
 
+        // WS-002 창 다이어트: outgame=World만, battle=World+TacticBoard, analysis=Report+TacticBoard+World.
         CheckTrue("H.OutgameApplied", fixture.Manager.ApplyPreset(WorkspaceLayoutPreset.Outgame));
-        foreach (string id in AllIds)
-        {
-            CheckTrue($"H.Outgame_{id}_visible", fixture.Manager.IsWindowVisible(id));
-        }
+        CheckTrue("H.Outgame_world_visible", fixture.Manager.IsWindowVisible("world"));
+        CheckFalse("H.Outgame_tacticboard_hidden", fixture.Manager.IsWindowVisible("tacticboard"));
+        CheckFalse("H.Outgame_report_hidden", fixture.Manager.IsWindowVisible("report"));
 
         CheckTrue("H.BattleApplied", fixture.Manager.ApplyPreset(WorkspaceLayoutPreset.Battle));
         CheckTrue("H.Battle_world_visible", fixture.Manager.IsWindowVisible("world"));
-        CheckTrue("H.Battle_log_visible", fixture.Manager.IsWindowVisible("log"));
-        CheckFalse("H.Battle_situation_hidden", fixture.Manager.IsWindowVisible("situation"));
-        CheckFalse("H.Battle_weekly_hidden", fixture.Manager.IsWindowVisible("weekly_action"));
-        CheckFalse("H.Battle_calendar_hidden", fixture.Manager.IsWindowVisible("calendar"));
+        CheckTrue("H.Battle_tacticboard_visible", fixture.Manager.IsWindowVisible("tacticboard"));
+        CheckFalse("H.Battle_report_hidden", fixture.Manager.IsWindowVisible("report"));
 
         CheckTrue("H.AnalysisApplied", fixture.Manager.ApplyPreset(WorkspaceLayoutPreset.Analysis));
-        CheckTrue("H.Analysis_calendar_visible", fixture.Manager.IsWindowVisible("calendar"));
-        CheckFalse("H.Analysis_weekly_hidden", fixture.Manager.IsWindowVisible("weekly_action"));
+        CheckTrue("H.Analysis_report_visible", fixture.Manager.IsWindowVisible("report"));
+        CheckTrue("H.Analysis_tacticboard_visible", fixture.Manager.IsWindowVisible("tacticboard"));
+        CheckTrue("H.Analysis_world_visible", fixture.Manager.IsWindowVisible("world"));
 
         fixture.Dispose();
     }
@@ -227,7 +226,7 @@ public partial class Ws001Step2GeometryTest : Node
         fixture.Manager.TryGetWindow("world", out WorkspaceWindow worldAfterAnalysis);
         CheckEqual("I.SameInstanceAfterAnalysis", worldAfterAnalysis.GetInstanceId(), instanceId);
         CheckEqual("I.ReplayContentMode", worldAfterAnalysis.ContentMode, WorldContentMode.Replay);
-        CheckEqual("I.RegistryStillFive", fixture.Manager.Registry.Count, 5);
+        CheckEqual("I.RegistryStillThree", fixture.Manager.Registry.Count, 3);
 
         fixture.Dispose();
     }
@@ -238,7 +237,7 @@ public partial class Ws001Step2GeometryTest : Node
         GD.Print("[J] Unknown preset fails closed");
         Fixture fixture = MakeFixture();
         fixture.Manager.ApplyPreset(WorkspaceLayoutPreset.Battle);
-        bool situationVisibleBefore = fixture.Manager.IsWindowVisible("situation");
+        bool reportVisibleBefore = fixture.Manager.IsWindowVisible("report"); // battle에서 hidden
         fixture.Manager.TryGetWindow("world", out WorkspaceWindow world);
         Vector2I positionBefore = world.Position;
         string contentModeBefore = world.ContentMode;
@@ -249,12 +248,13 @@ public partial class Ws001Step2GeometryTest : Node
             CheckFalse("J.NullPresetReturnsFalse", fixture.Manager.ApplyPreset(null));
         });
 
-        CheckEqual("J.VisibilityUnchanged", fixture.Manager.IsWindowVisible("situation"), situationVisibleBefore);
+        CheckEqual("J.VisibilityUnchanged", fixture.Manager.IsWindowVisible("report"), reportVisibleBefore);
         CheckEqual("J.PositionUnchanged", world.Position, positionBefore);
         CheckEqual("J.ContentModeUnchanged", world.ContentMode, contentModeBefore);
 
         // preset이 registry에 없는 창을 참조해도 나머지 적용을 막지 않는다.
-        fixture.Manager.UnregisterWindow("log");
+        // (preset에 있는 `tacticboard`를 등록 해제해 missing-window 경로를 검증한다.)
+        fixture.Manager.UnregisterWindow("tacticboard");
         ExpectDiagnosticLog("unknown window in preset push_warning",
             () => CheckTrue("J.AppliesDespiteMissingWindow", fixture.Manager.ApplyPreset(WorkspaceLayoutPreset.Outgame)));
         CheckTrue("J.SurvivingWindowApplied", fixture.Manager.IsWindowVisible("world"));
@@ -262,25 +262,24 @@ public partial class Ws001Step2GeometryTest : Node
         fixture.Dispose();
     }
 
-    // [K] preset 좌표는 절대값이 아니라 work area 원점 기준 오프셋이다.
-    private void TestPresetOffsetsAreRelativeToWorkArea()
+    // [K] WS-002: preset 좌표는 screen work area가 아니라 마스터 content area 원점 기준 client 오프셋이다.
+    private void TestPresetOffsetsAreRelativeToContentArea()
     {
-        GD.Print("[K] Preset offsets are relative to the work area origin");
+        GD.Print("[K] Preset offsets are relative to the master content area origin");
         Fixture fixture = MakeFixture();
-        Rect2I workArea = fixture.Manager.GetWorkArea();
+        Rect2I content = fixture.Manager.GetContentRect();
 
         fixture.Manager.ApplyPreset(WorkspaceLayoutPreset.Outgame);
         fixture.Manager.TryGetWindow("world", out WorkspaceWindow world);
 
         WorkspaceLayoutPreset.TryGetPreset(WorkspaceLayoutPreset.Outgame,
             out IReadOnlyDictionary<string, WindowLayout> layouts);
-        Vector2I worldOffset = layouts["world"].Offset;
+        Rect2I expected = WorkspaceLayoutPreset.ResolveRect(layouts["world"].NormalizedRect, content);
 
-        // decoration 포함 좌표 = work area 원점 + preset 오프셋. 절대좌표가 아니다.
+        // 보이는 영역(타이틀바 포함 decoration rect) = 정규화 비율(E-7)을 content 기준으로 resolve한 rect.
         Rect2I decoRect = WorkspaceWindowManager.GetDecorationRect(world);
-        CheckEqual("K.DecoPositionIsWorkAreaRelative", decoRect.Position, workArea.Position + worldOffset);
-        CheckTrue("K.DecoTopInside", decoRect.Position.Y >= workArea.Position.Y);
-        CheckTrue("K.ReachableAfterPreset", WorkspaceGeometry.IsReachable(decoRect, workArea));
+        CheckEqual("K.DecoRectIsContentResolved", decoRect, expected);
+        CheckTrue("K.InsideContentArea", WorkspaceGeometry.IsInside(decoRect, content));
 
         fixture.Dispose();
     }
@@ -306,8 +305,6 @@ public partial class Ws001Step2GeometryTest : Node
 
         fixture.Dispose();
     }
-
-    private static readonly string[] AllIds = { "world", "situation", "weekly_action", "calendar", "log" };
 
     private Fixture MakeFixture()
     {

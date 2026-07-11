@@ -39,36 +39,29 @@ updated: 2026-07-10
 
 ## Workspace
 
-- **WS-001 Native Window Workspace Shell W0(Step 0~3) 완료**([[WS-001-Native-Window-Workspace-Shell]],
-  [[WS-001-Native-Window-Workspace-Shell-Review]] 판정 완료). 사실은 [[Workspace-Window-System]]이 보존한다.
-  아웃게임 UI를 독립 Godot `Window`들의 작업대로 세웠다. W0는 각 창의 실제 콘텐츠가 아니라 창 lifecycle·preset·
-  persistence **계약**을 세우고, 창 내용은 placeholder다.
-- 셸 entry scene은 `Assets/Scenes/workspace.tscn`이며 직접 실행으로 검증한다. `run/main_scene`은 여전히
-  `battle_field.tscn`이다(CB-001 결정론 경로 무영향). Step 1에서 `project.godot` display 설정
-  `resizable`/`minimize_disabled`/`maximize_disabled`를 해제했다.
-- managed window 5종(`World`/`Situation`/`WeeklyAction`/`Calendar`/`Log`)은 `WorkspaceWindow`(`Godot.Window`
-  직접 상속)다. Root/Main(`WorkspaceShell`)은 managed set에 없다. `World`만 `content_mode`
-  (`hub`/`battle`/`replay`, `Window.ModeEnum`과 별개)를 가진다.
-- `WorkspaceWindowManager`가 registry(자동 등록·중복/빈 id·freed fail-closed)·show/hide/toggle(닫기=hide,
-  duplicate open 시 좌표 보존)·최소화 동기화(보이던 창만 기억·복원, `sub_windows` 그룹 미사용)·preset apply·
-  gather·persistence를 오케스트레이션한다.
-- preset 3종(`outgame`/`battle`/`analysis`)은 창별 `{visible, offset, size, content_mode}`를 적용한다.
-  offset은 대상 screen work area 원점 기준이다(절대 좌표 아님). `World`는 재생성 없이 같은 인스턴스의
-  content_mode/position/size만 바꾼다.
-- geometry/preset resolve/저장 로직은 Window를 모르는 순수 코드(`WorkspaceGeometry`, `WorkspaceLayoutStore`)로
-  분리했다(D7). **모든 gather 판정·clamp는 decoration 포함 rect 기준**이다 — Godot은 화면 안 clamp에서 client
-  rect만 보고 타이틀바를 무시하기 때문이다(Step 1 실측 버그). screen 원점은 `(0,0)`이 아니다(`screen[0]
-  pos=(0,542)`).
-- 배치 저장은 `user://workspace_layout.cfg`(전역 `settings.ini`와 분리, `[meta] version` 키). 파일 없음/파싱
-  실패/미지 version/개별 창 타입 오류는 모두 기본 preset fallback이며 파일을 파괴하지 않는다. `LoadLayout`은
-  복원 후 항상 gather를 돌려 화면 밖 좌표를 회수한다. 자동 복원/저장은 entry scene에서만 켠다
-  (`WorkspaceShell._restoreLayoutOnReady`).
-- 검증: `dotnet build` 경고/오류 0, `--import` exit 0, 헤드리스 `ws001_step1`(62)·`ws001_step2`(66)·
-  `ws001_step3`(40) ALL PASS, 실제 GUI probe로 멀티모니터 preset/gather/save-load round-trip 확인.
-- 후속(W0 범위 밖): 각 창 실제 콘텐츠(DemoState/BattleSession/TacticBoard/Report) 장착, custom preset
-  override 저장, 창 스냅 UX, `battle_field.tscn` stretch 정책, `run/main_scene` 전환. [[Open-Tasks]] 참고.
-
-
+- **WS-002 Embedded MDI Master Window 전체 완료(Step 0~5)**([[WS-002-Embedded-MDI-Master-Window]],
+  [[WS-002-Embedded-MDI-Master-Window-Completion-Review]] 판정: 완료). 현재 사실은 [[Workspace-Window-System]]이 보존한다.
+- workspace는 native OS window skeleton에서 **native transient child-window 마스터 작업대**로 전환됐다. `workspace.tscn`은 좌측 메뉴,
+  content area, 하단 로그 도크를 가진 마스터이고, managed `Window`들은 root viewport에 임베드된다.
+  `run/main_scene`은 여전히 `battle_field.tscn`이다.
+- floating managed window는 3종(`world`/`tacticboard`/`report`)이다. `log`는 하단 `LogDock/LogView`
+  (`LogWindowController`)로 이동했고, `situation`/`weekly_action`/`calendar`는 독립 창에서 제거되어 World `hub`
+  내부 placeholder 패널로 이관됐다. hub 패널은 `battle`/`replay` 모드에서 숨긴다.
+- preset 3종은 E-7 정규화 비율을 content area 기준 px로 resolve한다: `outgame` = World(hub) 전면,
+  `battle` = World(battle) 64% + TacticBoard(read) 33%, `analysis` = Report 34% + TacticBoard(edit) 36% +
+  World(replay) 26%. 로그는 도크가 별도 소유한다.
+- `WorkspaceWindowManager`는 content rect(메뉴 200px, 로그 도크 높이 20%, 상단 inset 32px 제외) 기준으로
+  gather/preset/slot snap을 처리한다. root resize 시 content gather가 재실행된다. 슬롯 스냅은 content 짧은 변 6%
+  거리, Y→X→id tie-break, hidden slot 제외, Alt disable 계약이다.
+- persistence는 `user://workspace_layout.cfg` version 2다. floating 3창의 position/size/visible/content_mode만 저장하고,
+  WS-001 v1 config는 `UnsupportedVersion` fallback으로 기본 preset을 적용하며 파일은 파괴하지 않는다.
+- 검증: `dotnet build` 경고/오류 0, `--import` exit 0, `ws001_step1/2/3`, `ws002_embedded_tween_probe`,
+  `ws002_step2_master_dock_test`, `ws002_step3_slot_snap_test`, `ws002_step4_window_diet_test`, GL-001 step1/2/3,
+  `cb001_step1_turn_effect_test`, `battle_field` 부팅 회귀 PASS. Known Regressions의 `cb001_step4`/`sk001_step6` 등은
+  WS-002 범위 밖 기존 항목이다.
+- 후속(W0 범위 밖): World hub 실물화, BattleSession/전장 scene 장착, TacticBoard/Report 실제 콘텐츠,
+  DemoState/자동 국면 전환, custom preset override 저장, 레거시 `WindowManager.cs`/`GameWindow.cs` cleanup,
+  `battle_field.tscn` stretch 정책, `run/main_scene` 전환. [[Open-Tasks]] 참고.
 ## Combat
 
 - **CB-001 Deterministic Combat Resolution 완료**(Step 0~5,
@@ -696,3 +689,6 @@ updated: 2026-07-10
 - [[Open-Tasks]]
 - [[DialogueTool-Architecture]]
 - [[DialogueTool-Step-1-to-8]]
+
+
+

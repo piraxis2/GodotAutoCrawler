@@ -59,7 +59,9 @@ public readonly struct LayoutLoadResult
 /// </summary>
 public class WorkspaceLayoutStore
 {
-    public const int CurrentVersion = 1;
+    // WS-002 Step 4에서 1→2로 bump. WS-001 native 좌표/구 창 세트로 저장된 v1 파일은 UnsupportedVersion으로
+    // fallback한다(파일 파괴 없음). 마스터 내부 좌표와 새 창 세트를 v1 좌표로 오해하면 안 된다(OD6 후보 A).
+    public const int CurrentVersion = 2;
     public const string DefaultPath = "user://workspace_layout.cfg";
 
     private const string MetaSection = "meta";

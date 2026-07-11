@@ -185,6 +185,15 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
+    "50_Reviews/WS-002-Embedded-MDI-Master-Window-Completion-Review.md",
+    "30_Tasks/WS-002-Embedded-MDI-Master-Window.md.tmp.46416.7895471d70bc",
+    "30_Tasks/WS-002-Embedded-MDI-Master-Window.md.tmp.46416.40f0011e88d6",
+    "30_Tasks/WS-002-Embedded-MDI-Master-Window.md.tmp.34820.334141dc3593",
+    "30_Tasks/WS-002-Embedded-MDI-Master-Window.md.tmp.34820.5dd3288903ba",
+    "30_Tasks/WS-002-Embedded-MDI-Master-Window.md.tmp.34820.8b01ef63458e",
+    "50_Reviews/WS-002-Embedded-MDI-Master-Window-Review.md",
+    "50_Reviews/WS-002-Embedded-MDI-Master-Window-Review.md.tmp.34820.5965b69f8cce",
+    "30_Tasks/WS-002-Embedded-MDI-Master-Window.md",
     "30_Tasks/SK-004-Usable-Attack-Gate.md",
     "00_Index/Current-State.md",
     "30_Tasks/SK-003-Skill-Based-Character-Scene.md",
@@ -206,20 +215,11 @@
     "50_Reviews/DT-014-Say-Line-Paging-UI-Regression-Review.md",
     "00_Index/Current-State.md.tmp.19276.baa98fd03f8a",
     "30_Tasks/DT-014-Say-Line-Paging-UI-Regression.md",
-    "30_Tasks/DT-014-Say-Line-Paging-UI-Regression.md.tmp.19276.b4d55d5f8717",
-    "50_Reviews/DT-013-State-Read-Data-Node-Review.md.tmp.40468.c613b17952d7",
-    "00_Index/Open-Tasks.md.tmp.40468.f091d91966a8",
-    "20_Systems/World-State-System.md.tmp.40468.ed0cf343699b",
-    "20_Systems/DialogueTool.md.tmp.40468.8ba0549b11d1",
-    "00_Index/Current-State.md.tmp.40468.8ab240ff5a04",
     "50_Reviews/DT-013-State-Read-Data-Node-Review.md",
     "40_Decisions/ADR-015-State-Read-Data-Node.md",
     "30_Tasks/DT-013-State-Read-Data-Node.md",
     "40_Decisions/ADR-014-SaveFlow-Facade-And-Metadata-Provider.md",
     "40_Decisions/ADR-002-Editor-Adapter.md",
-    "30_Tasks/SG-003-SaveSlot-UI-Host-Integration.md",
-    "50_Reviews/DT-002-Portrait-Review.md",
-    "50_Reviews/DialogueTool-Step-1-to-8.md",
-    "50_Reviews/DT-011-DialogueWorldState-Addon-Packaging-Review.md"
+    "30_Tasks/SG-003-SaveSlot-UI-Host-Integration.md"
   ]
 }

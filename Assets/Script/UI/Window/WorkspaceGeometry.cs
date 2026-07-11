@@ -85,6 +85,133 @@ public static class WorkspaceGeometry
         return IsReachable(decoRect, workArea) ? decoRect : ClampIntoWorkArea(decoRect, workArea);
     }
 
+    // --- WS-002 마스터 내부(embedded) 좌표계 ---
+    // 임베디드 subwindow는 OS decoration/screen이 없다. 창은 마스터의 content area(메뉴바·로그 도크를 제외한
+    // rect) 안에서만 움직인다. 판정·clamp는 screen work area가 아니라 이 content rect 기준의 client rect다.
+
+    /// <summary>
+    /// 마스터 크기에서 content area rect를 계산한다. 메뉴바(좌측 <paramref name="menuWidth"/>)와
+    /// 하단 로그 도크(<paramref name="dockHeight"/>)를 제외하고, 상단에 임베디드 타이틀바용
+    /// <paramref name="topInset"/>를 남긴다.
+    ///
+    /// 마스터가 메뉴/도크보다 작아도 반환 rect는 항상 마스터 경계 안에 있고 크기 ≥ 1이다(fail-safe):
+    /// position은 [0, master-1]로 clamp하고, 크기는 남은 공간(master - position)을 넘지 않는다.
+    /// </summary>
+    public static Rect2I ComputeContentRect(Vector2I masterSize, int menuWidth, int dockHeight, int topInset)
+    {
+        int masterW = Mathf.Max(1, masterSize.X);
+        int masterH = Mathf.Max(1, masterSize.Y);
+
+        int x = Mathf.Clamp(menuWidth, 0, masterW - 1);
+        int y = Mathf.Clamp(topInset, 0, masterH - 1);
+
+        // 남은 공간을 넘지 않게 크기를 clamp한다. x + w <= masterW, y + h <= masterH 보장(마스터 밖 시작 방지).
+        int w = masterW - x;                                  // x <= masterW-1 이므로 항상 >= 1
+        int h = Mathf.Clamp(masterH - dockHeight - y, 1, masterH - y);
+        return new Rect2I(x, y, w, h);
+    }
+
+    /// <summary><paramref name="inner"/>가 <paramref name="outer"/> 안에 완전히 들어가는가.</summary>
+    public static bool IsInside(Rect2I inner, Rect2I outer)
+    {
+        return inner.Position.X >= outer.Position.X
+            && inner.Position.Y >= outer.Position.Y
+            && inner.Position.X + inner.Size.X <= outer.Position.X + outer.Size.X
+            && inner.Position.Y + inner.Size.Y <= outer.Position.Y + outer.Size.Y;
+    }
+
+    /// <summary>
+    /// 창 client rect를 content area 안으로 회수한다. content보다 큰 창은 먼저 축소한 뒤 clamp한다.
+    /// 이미 content 안에 있으면 원본을 그대로 돌려준다(gather 멱등). 반환 rect는 항상
+    /// <see cref="IsInside"/>(content)를 만족한다 — 즉 메뉴바/로그 도크를 침범하지 않는다.
+    /// </summary>
+    public static Rect2I GatherIntoContent(Rect2I windowRect, Rect2I contentRect)
+    {
+        return IsInside(windowRect, contentRect) ? windowRect : ClampIntoWorkArea(windowRect, contentRect);
+    }
+
+    // --- WS-002 Step 3: 레이아웃 슬롯 스냅 (D5) ---
+
+    /// <summary>슬롯 스냅 판정 결과. 후보 없음이면 <see cref="HasCandidate"/>가 false다.</summary>
+    public readonly struct SlotSnapResult
+    {
+        public SlotSnapResult(bool hasCandidate, string slotId, Rect2I highlightRect, Rect2I appliedRect)
+        {
+            HasCandidate = hasCandidate;
+            SlotId = slotId;
+            HighlightRect = highlightRect;
+            AppliedRect = appliedRect;
+        }
+
+        public bool HasCandidate { get; }
+
+        /// <summary>후보 슬롯 id(=창 id). 후보 없음이면 null.</summary>
+        public string SlotId { get; }
+
+        /// <summary>드래그 중 표시할 하이라이트 rect(슬롯 rect).</summary>
+        public Rect2I HighlightRect { get; }
+
+        /// <summary>drop 시 창에 적용할 rect. content area를 벗어나지 않고 로그 도크와 겹치지 않는다.</summary>
+        public Rect2I AppliedRect { get; }
+
+        public static SlotSnapResult None => new(false, null, default, default);
+    }
+
+    /// <summary>
+    /// D5. 드래그 중인 창 rect의 중심이 현재 국면 슬롯 중심에서 <paramref name="snapDistance"/> 안이면
+    /// 가장 가까운 슬롯을 후보로 반환한다. 거리 밖·<paramref name="snapDisabled"/>·빈 슬롯이면 후보 없음이다.
+    ///
+    /// 같은 거리 tie-break는 슬롯 중심의 정규 순서(Y → X → slot id ordinal)로 stable하다.
+    /// applied rect는 슬롯 rect를 content area 안으로 clamp한 값이다.
+    /// </summary>
+    public static SlotSnapResult FindSlotSnap(
+        Rect2I draggedRect,
+        IReadOnlyDictionary<string, Rect2I> slots,
+        int snapDistance,
+        Rect2I contentRect,
+        bool snapDisabled)
+    {
+        if (snapDisabled || slots == null || slots.Count == 0) return SlotSnapResult.None;
+
+        Vector2I draggedCenter = draggedRect.Position + draggedRect.Size / 2;
+        long maxDistSq = (long)snapDistance * snapDistance;
+
+        string bestId = null;
+        Rect2I bestSlot = default;
+        Vector2I bestCenter = default;
+        long bestDistSq = long.MaxValue;
+
+        foreach (KeyValuePair<string, Rect2I> entry in slots)
+        {
+            Rect2I slot = entry.Value;
+            Vector2I slotCenter = slot.Position + slot.Size / 2;
+            Vector2I d = slotCenter - draggedCenter;
+            long distSq = (long)d.X * d.X + (long)d.Y * d.Y;
+            if (distSq > maxDistSq) continue; // 거리 밖
+
+            bool better = bestId == null
+                || distSq < bestDistSq
+                || (distSq == bestDistSq && IsCanonicallyBefore(slotCenter, entry.Key, bestCenter, bestId));
+            if (!better) continue;
+
+            bestId = entry.Key;
+            bestSlot = slot;
+            bestCenter = slotCenter;
+            bestDistSq = distSq;
+        }
+
+        if (bestId == null) return SlotSnapResult.None;
+        return new SlotSnapResult(true, bestId, bestSlot, GatherIntoContent(bestSlot, contentRect));
+    }
+
+    /// <summary>같은 거리에서 A가 B보다 앞서는가. 정규 순서: 중심 Y → 중심 X → slot id ordinal.</summary>
+    private static bool IsCanonicallyBefore(Vector2I aCenter, string aId, Vector2I bCenter, string bId)
+    {
+        if (aCenter.Y != bCenter.Y) return aCenter.Y < bCenter.Y;
+        if (aCenter.X != bCenter.X) return aCenter.X < bCenter.X;
+        return string.CompareOrdinal(aId, bId) < 0;
+    }
+
     private static Rect2I TitleStrip(Rect2I decoRect)
     {
         int height = Mathf.Min(TitleBarHeight, decoRect.Size.Y);

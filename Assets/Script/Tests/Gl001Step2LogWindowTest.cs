@@ -301,7 +301,8 @@ public partial class Gl001Step2LogWindowTest : Node
         workspace.Set("_restoreLayoutOnReady", false); // 배치 저장/복원 side effect 차단(WS 테스트와 동일).
         AddChild(workspace);
 
-        var logView = workspace.GetNodeOrNull<LogWindowController>("Windows/LogWindow/LogView");
+        // WS-002: Log는 floating window에서 마스터 하단 도크로 이관됐다.
+        var logView = workspace.GetNodeOrNull<LogWindowController>("CanvasLayer/LogDock/LogView");
         CheckTrue("I.LogViewIsController", logView != null);
         if (logView != null)
         {
