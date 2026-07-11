@@ -516,6 +516,15 @@ Current-State, Open-Tasks를 WS-002 현재 사실과 후속 기준으로 갱신�
 - 문서 링크/상태 정적 검토.
 - 최종 리뷰 판정: 완료 / 수정 후 완료 / 미완료.
 
+
+## Post-Completion Adjustments
+
+2026-07-11 GUI 검증과 후속 UX 조정으로 다음 현재 사실이 추가됐다. 완료 리뷰의 Step 0~5 판정은 유지하되, 시스템 문서의 현재 사실은 [[Workspace-Window-System]]을 기준으로 한다.
+
+- **native owned child-window 확정**: 임베디드 MDI 전제는 GUI 요구(하위 창이 마스터 밖으로 나갈 수 있음, 마스터 위 z-order 유지, 작업표시줄 1개 유지, 마스터 입력 차단 없음, 마스터 최소화 시 동기화)에 맞지 않았다. 현재는 `gui_embed_subwindows=false`, managed 창은 OS native `Window`로 뜨되 `Transient=true`, `Exclusive=false`, `TransientToFocused=false`로 설정한다. Windows에서는 `WorkspaceNativeWindowOwner`가 Win32 `GWLP_HWNDPARENT` owner 관계를 보강한다. 반복 `DisplayServer.WindowSetTransient(child, parent)` 호출은 Godot Windows backend가 중복 parent 에러 로그를 내므로 제거했다.
+- **좌측 메뉴 → 상단 dropdown**: 좌측 `MenuPanel`은 제거됐고 `TopMenuBar` 아래 `WindowMenu`/`PresetMenu` `MenuButton`으로 이동했다. content rect는 좌측 200px 여백을 더 이상 제외하지 않고, 상단 메뉴바 32px + 창 타이틀 inset 32px + 하단 로그 도크 20%를 제외한다.
+- **레트로 UI Theme 리소스화**: 빠른 실험용 C# Theme 생성은 `Assets/UI/Theme/RetroWin98Theme.tres`로 이동했다. `RetroPanelContainer`는 Theme fallback load만 수행하고, `RetroVBoxPanel`은 Theme 색상을 읽어 bevel draw만 담당한다. 색/여백/버튼/PopupMenu/PanelContainer 값은 `.tres`에서 수정한다.
+- **최근 검증**: `dotnet build` 경고/오류 0, `ws001_step1_registry_test` ALL PASS, `ws002_step2_master_dock_test` 41 passed, `ws002_step4_window_diet_test` 40 passed, `gl001_step2_log_window_test` ALL PASS.
 ## Verification Matrix
 
 | 영역 | 정상 | 실패/경계 |
@@ -539,4 +548,5 @@ Current-State, Open-Tasks를 WS-002 현재 사실과 후속 기준으로 갱신�
 - [[STEP_REVIEW_WORKFLOW]]
 - `GameDesign/기획서/06_UXUI.md`
 - `GameDesign/기획서/08_데모_스코프.md`
+
 

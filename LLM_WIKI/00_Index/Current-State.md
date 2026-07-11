@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-07-10
+updated: 2026-07-11
 ---
 
 # Current State
@@ -41,27 +41,30 @@ updated: 2026-07-10
 
 - **WS-002 Embedded MDI Master Window 전체 완료(Step 0~5)**([[WS-002-Embedded-MDI-Master-Window]],
   [[WS-002-Embedded-MDI-Master-Window-Completion-Review]] 판정: 완료). 현재 사실은 [[Workspace-Window-System]]이 보존한다.
-- workspace는 native OS window skeleton에서 **native transient child-window 마스터 작업대**로 전환됐다. `workspace.tscn`은 좌측 메뉴,
-  content area, 하단 로그 도크를 가진 마스터이고, managed `Window`들은 root viewport에 임베드된다.
+- workspace는 WS-002 완료 후 GUI 검증을 거쳐 **native owned child-window 마스터 작업대**로 조정됐다. `workspace.tscn`은 상단 드롭다운 메뉴바,
+  content area, 하단 로그 도크를 가진 마스터이고, managed `Window`들은 OS 창으로 떠서 마스터 밖 이동이 가능하다.
+  Windows에서는 `WorkspaceNativeWindowOwner`가 Win32 owner 관계를 보강해 하위 창이 마스터 위에 유지되고, 작업표시줄 스택은 마스터 1개에 가깝게 유지된다. `exclusive` modal 입력 잠금은 쓰지 않는다.
   `run/main_scene`은 여전히 `battle_field.tscn`이다.
+- 마스터 메뉴는 좌측 패널이 아니라 상단 `MenuButton` 드롭다운이다. `Windows` 메뉴는 `world`/`tacticboard`/`report` toggle check item을 제공하고,
+  `Presets` 메뉴는 `outgame`/`battle`/`analysis`, `창 모아오기`, `배치 저장`, `배치 복원`을 제공한다.
 - floating managed window는 3종(`world`/`tacticboard`/`report`)이다. `log`는 하단 `LogDock/LogView`
   (`LogWindowController`)로 이동했고, `situation`/`weekly_action`/`calendar`는 독립 창에서 제거되어 World `hub`
   내부 placeholder 패널로 이관됐다. hub 패널은 `battle`/`replay` 모드에서 숨긴다.
 - preset 3종은 E-7 정규화 비율을 content area 기준 px로 resolve한다: `outgame` = World(hub) 전면,
   `battle` = World(battle) 64% + TacticBoard(read) 33%, `analysis` = Report 34% + TacticBoard(edit) 36% +
   World(replay) 26%. 로그는 도크가 별도 소유한다.
-- `WorkspaceWindowManager`는 content rect(메뉴 200px, 로그 도크 높이 20%, 상단 inset 32px 제외) 기준으로
-  gather/preset/slot snap을 처리한다. root resize 시 content gather가 재실행된다. 슬롯 스냅은 content 짧은 변 6%
-  거리, Y→X→id tie-break, hidden slot 제외, Alt disable 계약이다.
+- `WorkspaceWindowManager`는 content rect(상단 메뉴바 32px + 창 타이틀 inset 32px, 로그 도크 높이 20%, 좌측 메뉴 0px 제외) 기준으로
+  gather/preset/slot snap을 처리한다. 슬롯 스냅은 content 짧은 변 6% 거리, Y→X→id tie-break, hidden slot 제외, Alt disable 계약이다.
 - persistence는 `user://workspace_layout.cfg` version 2다. floating 3창의 position/size/visible/content_mode만 저장하고,
   WS-001 v1 config는 `UnsupportedVersion` fallback으로 기본 preset을 적용하며 파일은 파괴하지 않는다.
-- 검증: `dotnet build` 경고/오류 0, `--import` exit 0, `ws001_step1/2/3`, `ws002_embedded_tween_probe`,
-  `ws002_step2_master_dock_test`, `ws002_step3_slot_snap_test`, `ws002_step4_window_diet_test`, GL-001 step1/2/3,
-  `cb001_step1_turn_effect_test`, `battle_field` 부팅 회귀 PASS. Known Regressions의 `cb001_step4`/`sk001_step6` 등은
-  WS-002 범위 밖 기존 항목이다.
+- Workspace 레트로/Win98 계열 스타일은 `Assets/UI/Theme/RetroWin98Theme.tres`가 소유한다. `RetroPanelContainer`는 Theme fallback load만 수행하고,
+  `RetroVBoxPanel`은 Theme 색상을 읽어 2px bevel만 custom draw한다. 색/여백/버튼/popup/panel 값은 `.tres`에서 수정한다.
+- 최근 검증(2026-07-11): `dotnet build` 경고/오류 0, `ws001_step1_registry_test` ALL PASS,
+  `ws002_step2_master_dock_test` 41 passed, `ws002_step4_window_diet_test` 40 passed, `gl001_step2_log_window_test` ALL PASS.
+  Known Regressions의 `cb001_step4`/`sk001_step6` 등은 WS-002 범위 밖 기존 항목이다.
 - 후속(W0 범위 밖): World hub 실물화, BattleSession/전장 scene 장착, TacticBoard/Report 실제 콘텐츠,
-  DemoState/자동 국면 전환, custom preset override 저장, 레거시 `WindowManager.cs`/`GameWindow.cs` cleanup,
-  `battle_field.tscn` stretch 정책, `run/main_scene` 전환. [[Open-Tasks]] 참고.
+  DemoState/자동 국면 전환, custom preset override 저장, 자체 슬롯 스냅 UX 고도화, 레거시 `WindowManager.cs`/`GameWindow.cs` cleanup,
+  레트로 Theme 폰트/아이콘/컴포넌트 세트 정리, `battle_field.tscn` stretch 정책, `run/main_scene` 전환. [[Open-Tasks]] 참고.
 ## Combat
 
 - **CB-001 Deterministic Combat Resolution 완료**(Step 0~5,
@@ -689,6 +692,7 @@ updated: 2026-07-10
 - [[Open-Tasks]]
 - [[DialogueTool-Architecture]]
 - [[DialogueTool-Step-1-to-8]]
+
 
 
 

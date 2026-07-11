@@ -1,7 +1,7 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-07-10
+updated: 2026-07-11
 ---
 
 # Open Tasks
@@ -16,9 +16,11 @@ updated: 2026-07-10
   TacticBoard 실제 보드/읽기·편집 모드, Report 분석 콘텐츠, DemoState/자동 국면 전환, UnitDetail/Save·Load UI다.
   하단 로그 도크는 GL-001 controller가 이식됐지만 live 전투/아웃게임 이벤트 발행은 GameLog 후속과 연결한다.
 
-- **Workspace 후속 — layout/legacy cleanup**([[Workspace-Window-System]]): custom preset override 저장, slot snap UX 고도화
-  (창 가장자리/마스터 가장자리 스냅, modifier UX), 레거시 `Assets/Script/WindowManager.cs`/`Assets/Script/UI/Window/GameWindow.cs`
-  정리 여부, `Assets/UI/Window/field_window.tscn` 삭제/수정 여부, `run/main_scene` 전환은 WS-002 범위 밖 후속이다.
+- **Workspace 후속 — layout/theme/legacy cleanup**([[Workspace-Window-System]]): custom preset override 저장, 자체 slot snap UX 고도화
+  (창 가장자리/마스터 가장자리 스냅, Windows Snap Assist trade-off 보완, modifier UX), 레트로 Theme 후속 정리
+  (`RetroWin98Theme.tres` 폰트/아이콘/컴포넌트 세트, PopupMenu 밀도, 조조전풍 실제 asset), 레거시
+  `Assets/Script/WindowManager.cs`/`Assets/Script/UI/Window/GameWindow.cs` 정리 여부,
+  `Assets/UI/Window/field_window.tscn` 삭제/수정 여부, `run/main_scene` 전환은 WS-002 범위 밖 후속이다.
 
 - **display 설정 변경 후속 결정 — root window stretch mode**(WS-001 OD6/WS-002 OD5에서 파생):
   `resizable`/`minimize_disabled`/`maximize_disabled`를 해제했고, WS-002는 workspace 내부 content/log dock rect를
@@ -183,4 +185,5 @@ updated: 2026-07-10
 - 시스템 문서는 코드 변경 후 현재 사실만 남도록 갱신한다.
 - 완료 작업은 Task 문서에 검증 결과를 남기고 이 목록에서 제거한다.
 - 새로운 중요한 설계 선택은 ADR을 먼저 작성한다.
+
 
