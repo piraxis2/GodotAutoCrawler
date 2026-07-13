@@ -123,12 +123,20 @@ reflection 없이 주입한다.
 - `EncounterDefinition`/`EncounterModifier`/`PartySnapshot`으로 request 확장, `PlayerPath`→안정 `unit_id`.
 - 명시적 Faction 타입/`BattleRoster`, `CombatContext`/`CombatRng` 이동, `BattleRecorder` 추출.
 - RNG/FX tick은 U1 동안 `TurnHelper`에 남아 완전한 시뮬/프레젠테이션 분리는 아니다.
-- U3 workspace World 창 임베드 통합 시 정적 `BattleFieldScene.BattleField` 소유권 정합 필요.
+
+## Consumers
+
+- 첫 production 소비자는 workspace 로비 진입 controller `LobbyBattleEntry`(BS-002)다. World 창의 `SubViewport`
+  아래에 세션을 장착해 로비 버튼→고정 `BattleRequest`→`Running`을 연결하고, Completed에서 session Node cleanup만
+  한다. 사실은 [[Workspace-Window-System]] "Lobby Battle Entry"가 보존한다. `BattleResult` 정산·로비 복귀·U3 등반
+  루프는 후속이다.
 
 ## Related
 
 - [[Turn-System]]
 - [[Article-Status-System]]
+- [[Workspace-Window-System]]
 - [[ADR-022-Battle-Session-Lifecycle]]
 - [[ADR-017-Deterministic-Combat-Resolution]]
 - [[BS-001-Battle-Session]]
+- [[BS-002-Lobby-to-Battle-Entry-Integration]]

@@ -7,6 +7,8 @@
 [ext_resource type="Script" uid="uid://vmmko1nbbhea" path="res://Assets/Script/UI/Retro/RetroPanelContainer.cs" id="5_retro_panel"]
 [ext_resource type="Script" uid="uid://c7k32gghg8st3" path="res://Assets/Script/UI/Retro/RetroVBoxPanel.cs" id="6_retro_vbox"]
 [ext_resource type="Theme" uid="uid://5mgwh6s56p47" path="res://Assets/UI/Theme/RetroWin98Theme.tres" id="7_retro_theme"]
+[ext_resource type="Script" uid="uid://b6vembiuptaeo" path="res://Assets/Script/UI/Window/LobbyBattleEntry.cs" id="8_lobbyentry"]
+[ext_resource type="PackedScene" uid="uid://dv7r53qteumxi" path="res://Assets/Scenes/Map/battle_field.tscn" id="9_battlefield"]
 
 [node name="Workspace" type="Node" unique_id=1673475761 node_paths=PackedStringArray("_manager", "_windowMenu", "_presetMenu")]
 script = ExtResource("1_shell")
@@ -121,6 +123,22 @@ layout_mode = 2
 text = "[거점 패널] 행동 카드 6계열
 1. Train  2. Rest  3. Scout  4. Craft  5. Talk  6. Expedition"
 
+[node name="EnterBattleButton" type="Button" parent="Windows/WorldWindow/Panels/HubPanels" unique_id=457209680]
+layout_mode = 2
+text = "전투 시작"
+
+[node name="BattleMount" type="SubViewportContainer" parent="Windows/WorldWindow" unique_id=457209690]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="BattleViewport" type="SubViewport" parent="Windows/WorldWindow/BattleMount" unique_id=457209691]
+handle_input_locally = false
+
 [node name="TacticBoardWindow" type="Window" parent="Windows" unique_id=59535069 node_paths=PackedStringArray("_contentModeLabel")]
 title = "TacticBoard"
 initial_position = 2
@@ -177,3 +195,13 @@ script = ExtResource("6_retro_vbox")
 [node name="Placeholder" type="Label" parent="Windows/ReportWindow/Panels" unique_id=455374870]
 layout_mode = 2
 text = "Report placeholder (analysis)"
+
+[node name="LobbyBattleEntry" type="Node" parent="." unique_id=457209700 node_paths=PackedStringArray("_enterBattleButton", "_battleMount", "_battleMountVisibility", "_windowManager")]
+script = ExtResource("8_lobbyentry")
+_enterBattleButton = NodePath("../Windows/WorldWindow/Panels/HubPanels/EnterBattleButton")
+_battleMount = NodePath("../Windows/WorldWindow/BattleMount/BattleViewport")
+_battleMountVisibility = NodePath("../Windows/WorldWindow/BattleMount")
+_windowManager = NodePath("../WorkspaceWindowManager")
+_battleScene = ExtResource("9_battlefield")
+_playerPath = "Articles/Ally/Character"
+_seed = 20260713

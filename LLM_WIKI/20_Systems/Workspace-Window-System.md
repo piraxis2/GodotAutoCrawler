@@ -2,7 +2,7 @@
 type: system
 project: AutoCrawler
 system: Workspace
-updated: 2026-07-11
+updated: 2026-07-13
 tags: [system, workspace, ui, window, mdi, outgame]
 ---
 
@@ -14,7 +14,7 @@ tags: [system, workspace, ui, window, mdi, outgame]
 
 ## 위치
 
-- `Assets/Scenes/workspace.tscn` — workspace entry scene. `godot --path . res://Assets/Scenes/workspace.tscn`으로 직접 실행한다. `run/main_scene`은 여전히 `battle_field.tscn`이다.
+- `Assets/Scenes/workspace.tscn` — workspace entry scene. `godot --path . res://Assets/Scenes/workspace.tscn`으로 직접 실행한다. `run/main_scene`도 `workspace.tscn`(`uid://caplqnfi4j3ys`)이다.
 - `Assets/Script/UI/Window/WorkspaceShell.cs` — 상단 `MenuButton` 드롭다운을 구성한다. `Windows` 메뉴는 managed 창 toggle, `Presets` 메뉴는 preset/`창 모아오기`/`배치 저장`/`배치 복원`을 제공한다.
 - `Assets/Script/UI/Window/WorkspaceWindowManager.cs` — managed window registry, 마스터 content rect, preset apply, gather, 슬롯 스냅, persistence 오케스트레이션.
 - `Assets/Script/UI/Window/WorkspaceWindow.cs` — managed window 공통 기반(`Godot.Window` 직접 상속). content mode 라벨과 hub 전용 패널 gating을 처리한다.
@@ -67,6 +67,23 @@ Floating managed window는 3종이다.
 
 slot snap은 현재 preset의 visible slot을 후보로 쓴다. 자석 거리는 content area 짧은 변의 6%다. tie-break는 슬롯 중심 Y -> X -> id ordinal 순서이고, hidden slot은 후보에서 제외된다. Alt 입력은 스냅 disable flag다. 드래그 중 `SlotHighlight`가 후보 slot을 표시하고, drop 시 창의 보이는 영역이 slot rect에 맞춰진다.
 
+## Lobby Battle Entry (BS-002)
+
+World hub를 게임 로비로 보고, 로비의 `전투 시작` 버튼에서 기존 `BattleSession`으로 전투를 시작하는 단방향 진입을
+연결했다([[BS-002-Lobby-to-Battle-Entry-Integration]], [[Battle-Session-System]]).
+
+- `Assets/Script/UI/Window/LobbyBattleEntry.cs`(root `LobbyBattleEntry` 노드): 고정 v0 `BattleRequest`
+  (export `PackedScene`/`PlayerPath`/`seed`)로 활성 `BattleSession` 하나를 생성·장착·시작한다. `TryEnterBattle`은
+  active 중복·null request·mount 미배선·preset 실패를 fail-closed(false)하고, 완료(Victory/Defeat/Aborted)는
+  구독 해제 → active 해제 → session `QueueFree`만 한다(결과 표시/로비 복귀 없음, ADR-022).
+- World 창의 전투 표시 영역은 `Windows/WorldWindow/BattleMount`(`SubViewportContainer`, stretch, 기본 `visible=false`)
+  + `BattleViewport`(`SubViewport`)다. 세션은 이 SubViewport 아래에 장착돼 UI 좌표계와 격리된 채 렌더된다. mount
+  가시성은 entry controller가 소유한다(`TryEnterBattle`에서 표시).
+- `전투 시작` 버튼은 `WorldWindow/Panels/HubPanels/EnterBattleButton`이다. hub content mode에서만 보이며, 진입 시
+  entry가 `ApplyPreset("battle")`(World `battle` 64% + TacticBoard `read` 33%, HubPanels 숨김)를 적용한다.
+- 검증: `bs002_step1_entry_test`(seam), `bs002_step2_workspace_test`(버튼→preset→session Running + mount 배선 +
+  중복 차단). 실제 전투가 World client에 픽셀로 표시되고 자동 턴이 진행되는지는 GUI 수동 smoke 사인오프다.
+
 ## Theme
 
 Workspace의 레트로/Win98 계열 스타일은 코드 생성 Theme가 아니라 `Assets/UI/Theme/RetroWin98Theme.tres` 리소스가 소유한다.
@@ -108,15 +125,19 @@ GUI 사인오프 항목은 화면 관찰이 필요하다: 창이 OS 창으로 �
 
 ## 설계 경계
 
-- World hub 실물화, BattleSession/전장 scene 장착, TacticBoard/Report 실제 콘텐츠, DemoState와 자동 국면 전환은 후속이다.
+- BattleSession/전장 scene의 로비→전투 단방향 진입은 BS-002가 연결했다(위 Lobby Battle Entry). 결과 표시·정산·로비
+  복귀·재전투·전투 창 resize/aspect/input 고도화, World hub 실물화, TacticBoard/Report 실제 콘텐츠, DemoState/자동
+  국면 전환은 후속이다.
 - 레트로 Theme는 W0 첫 패스다. 실제 조조전풍 컴포넌트 세트, 폰트, 아이콘, 상세 여백/밀도 조정은 후속이다.
 - Windows Snap Assist와 native owned child-window 요구는 trade-off가 있다. OS Snap이 필요해지면 자체 슬롯 스냅 강화 또는 owner 관계 정책 재검토가 필요하다.
-- `battle_field.tscn` stretch 정책과 `run/main_scene` 전환은 별도 결정이다([[Open-Tasks]]).
+- `battle_field.tscn` stretch/aspect 정책은 별도 결정이다. `run/main_scene`은 이미 `workspace.tscn`으로 전환됐다([[Open-Tasks]]).
 
 ## Related
 
 - [[WS-002-Embedded-MDI-Master-Window]]
 - [[WS-002-Embedded-MDI-Master-Window-Completion-Review]]
 - [[WS-001-Native-Window-Workspace-Shell]]
+- [[BS-002-Lobby-to-Battle-Entry-Integration]]
+- [[Battle-Session-System]]
 - [[Current-State]]
 - [[Open-Tasks]]

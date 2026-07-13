@@ -72,6 +72,16 @@ updated: 2026-07-13
   `workspace.tscn`으로 전환됨.) [[Open-Tasks]] 참고.
 ## Combat
 
+- **BS-002 Lobby-to-Battle Entry — Step 0~3 완료(코드/문서), GUI smoke 사인오프 대기**([[BS-002-Lobby-to-Battle-Entry-Integration]],
+  [[BS-002-Lobby-to-Battle-Entry-Integration-Completion-Review]] 판정: 코드/headless 완료 + GUI 표시 smoke 대기). workspace 로비(World hub)
+  `전투 시작` 버튼에서 고정 `BattleRequest`로 `BattleSession`을 시작해 World 창 `SubViewport`에 전투를 장착하는
+  단방향 진입을 연결했다. `Assets/Script/UI/Window/LobbyBattleEntry.cs`(root 노드)가 `TryEnterBattle`
+  (active latch·null/mount/preset fail-closed) + 완료 시 session Node cleanup만 소유하고, `workspace.tscn`에 버튼/
+  `BattleMount`(SubViewportContainer)/`BattleViewport`/entry export를 배선했다. 사실은
+  [[Workspace-Window-System]] "Lobby Battle Entry". 검증: `bs002_step1_entry_test`(29)/`bs002_step2_workspace_test`
+  (14) ALL PASS, ws001/ws002·bs001 회귀 유지, `dotnet build` 0/0. Step 3 문서/완료 리뷰 완료. **유일한 남은 것:
+  main scene GUI 수동 smoke**(실제 전투가 World client에 픽셀로 표시·자동 턴 진행 — SubViewport 렌더, headless 불가). 결과 표시·
+  정산·로비 복귀·재전투는 후속.
 - **BS-001 BattleSession Runtime Boundary 전체 완료(Step 0~4)**([[BS-001-Battle-Session]],
   [[BS-001-Battle-Session-Completion-Review]] 판정: 완료, 결정 [[ADR-022-Battle-Session-Lifecycle]] accepted).
   사실은 [[Battle-Session-System]]이 보존한다.

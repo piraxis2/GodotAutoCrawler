@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/Tests/Bs002Step2WorkspaceTest.cs" id="1_bs002s2"]
+
+[node name="Bs002Step2WorkspaceTest" type="Node"]
+script = ExtResource("1_bs002s2")
