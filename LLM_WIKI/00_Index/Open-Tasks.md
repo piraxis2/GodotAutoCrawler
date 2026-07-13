@@ -1,15 +1,17 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Open Tasks
 
 ## Next
 
+- **BS-001 후속 — U3 등반 루프 연결 + request/roster 확장**([[BS-001-Battle-Session]], [[Battle-Session-System]]): BS-001 본체는 완료됐다. 후속은 `EncounterDefinition`/`EncounterModifier`/`PartySnapshot`으로 `BattleRequest` 확장(`PlayerPath`→안정 `unit_id`), 명시적 Faction/`BattleRoster`, `CombatContext`/`CombatRng` 이동 + `BattleRecorder` 추출, U3 DungeonRun이 `BattleResult`를 소비해 층 순회·HP/마나/ammo 이월·보상/XP/주차 정산, workspace World 창에 전장 scene 장착(정적 `BattleFieldScene.BattleField` 소유권 정합), 한계 턴/수동 후퇴(`Retreat`/`RoundLimit` 실효화), 모든 직접 실행 소비자 전환 뒤 `TurnHelper.AutoStart` legacy seam 삭제, 전투 이벤트 스트림 GameLog kill/death live 배선.
+
 - **SK-002 후속 — ammo UI/영속/loadout 실효화**([[SK-002-Skill-Ammo-System]], [[Skill-System]]): SK-002 본체는 완료됐다. 후속은 ammo HUD 표시(`SkillAmmoState.TryGetAmmo` 소비), save/load 영속, Expedition 실이월(등반 lifecycle 도입 시), 플레이어 loadout/장착 UI다. `TurnAction_Skill` 배선 자체는 SK-003/SK-004에서 검증됐다. ammo HUD/저장/loadout 및 기존 3종 하드코딩 TurnAction의 데이터 스킬 재배선(아래 SK-001 후속)은 여전히 후속이다.
-- **회귀 rebaseline — SK-001/CB-001 다중 상대 테스트**(SK-002와 무관, 스킬 개편 워크스트림 소관): 커밋 `e5d339b "스킬 개편 2"`가 `battle_field.tscn` 상대를 4명(구 타입 `11_hv0hd`) → 1명(신 타입 `14_7o1qe`)으로 의도적 교체 → `sk001_step2/4/4b/5`, `sk001_step6 D.ChainHitsThree`, `cb001_step4 D.deaths_recorded`가 실패한다. 1명 로스터는 의도된 상태(오너 확정)이므로 씬을 되돌리지 말고, 테스트를 상대 로스터에 비의존하도록 self-sufficient로 고친다(각 테스트가 필요한 상대를 스폰/복제). CB-001 D는 신 상대가 1v1에서 죽는지(HP/위치/턴 예산)도 함께 점검.
+- **회귀 rebaseline — SK-001/CB-001 다중 상대 테스트**(SK-002와 무관, 스킬 개편 워크스트림 소관): 커밋 `e5d339b "스킬 개편 2"`가 `battle_field.tscn` 상대를 4명(구 타입 `11_hv0hd`) → 1명(신 타입 `14_7o1qe`, 노드명 `Character2`)으로 의도적 교체 → 두 갈래로 실패한다. (a) **셋업 NPE**: `sk001_step1_skill_system_test`(`PrepareAdjacentTarget:275`), `sk001_step3_mana_hit_test`(`TestManaGate:78~80`), `cb001_step4_determinism_test`(`BuildMeleeBehaviorTree:96~97`)가 `Articles/Opponent/Character`(현 `Character2`)를 GetNode해 null→NPE. (b) **다중 상대 단언**: `sk001_step2/4/4b/5`, `sk001_step6 D.ChainHitsThree`, `cb001_step4 D.deaths_recorded`. (2026-07-13 BS-001에서 clean-baseline 동일 재현, 제품 회귀 아님.) 1명 로스터는 의도된 상태(오너 확정)이므로 씬을 되돌리지 말고, (a)는 고정 경로를 현재 `Character2`로 바꾸거나 테스트 자체 fixture로 전환하고, (b)는 각 테스트가 필요한 상대를 스폰/복제하는 self-sufficient로 고친다. CB-001 D는 신 상대가 1v1에서 죽는지(HP/위치/턴 예산)도 함께 점검.
 - **WS-002 후속 — workspace 실제 콘텐츠 장착**([[WS-002-Embedded-MDI-Master-Window]],
   [[Workspace-Window-System]]): WS-002 본체는 완료됐고, W0는 placeholder 구조만 둔다. 후속은 World hub 실물화
   (거점 씬 PC 1인, 48주/위험/행동 카드 실제 상태), World battle/replay 장착, BattleSession/전장 scene 연결,
@@ -91,6 +93,8 @@ updated: 2026-07-11
   schema/section version migration registry, Dialogue SaveEffect(저장 트리거는 game/event layer 우선).
 
 ## Recently Completed
+
+- **BS-001 BattleSession Runtime Boundary 전체 완료(Step 0~4)**([[BS-001-Battle-Session]], [[BS-001-Battle-Session-Completion-Review]] 판정: 완료, [[ADR-022-Battle-Session-Lifecycle]] accepted). `Assets/Script/Battle/`의 `BattleSession`이 `BattleRequest`로 전투 씬을 생성·소유·시작하고 승패를 판정해 scene-free `BattleResult`를 1회 반환한 뒤 정리·재실행한다(Victory/OpponentsEliminated, Defeat/PlayerDefeated, mutual kill=Defeat, Aborted/InvalidSetup). 완료는 event-identity + deferred teardown + `_ExitTree` 정적 정리 + 2회 연속 실행 격리. `TurnHelper`는 명시적 lifecycle seam으로 축소 + 현재 유닛 사망 커서 결함 수정. 사실은 [[Battle-Session-System]]. 후속은 위 Next의 BS-001 후속 항목으로 분리했다.
 
 - **SK-004 Usable Attack Gate 완료**([[SK-004-Usable-Attack-Gate]]): spent ammo/mana-blocked 주력기가 이동 사거리 계산에 남아 기본기 접근을 막던 문제를 수정했다. `TurnActionBase.CanStart`, `CharacterArticle.HasUsableAttack`, `BehaviorTree_HasUsableAttack`을 추가하고 SK-002/SK-004 회귀를 통과시켰다. 후속은 공격 불가 시 도망/대기 BT 분기.
 

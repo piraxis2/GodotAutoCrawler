@@ -2,7 +2,7 @@
 type: system
 system: Turn
 status: active
-updated: 2026-07-08
+updated: 2026-07-13
 ---
 
 # Turn System
@@ -10,14 +10,32 @@ updated: 2026-07-08
 ## Agent Brief
 
 - 주요 파일: `Assets/Script/TurnHelper.cs`, `Assets/Script/Article/CharacterArticle.cs`
-- 책임: 턴 대상 등록, 순서 결정, 전투 RNG 소유, 턴 시작 효과 적용, 현재 유닛 실행, 다음 턴 전환
-- 주의: 사망 중 리스트 변경, 게임오버 조건, Speed 0 일시정지
+- 책임: 턴 순서 결정/정렬, 현재 유닛 실행, 다음 행동자 전환, 턴 시작 효과 호출, 전투 RNG·FX tick(U1 임시)
+- 소유하지 않음(BS-001 이후 신규 세션 경로): 승패/게임오버 의미 판정, 결과 생성, 참가자 발견, ammo reset —
+  `BattleSession`이 소유한다([[Battle-Session-System]], [[ADR-022-Battle-Session-Lifecycle]])
+- 주의: Speed 0 일시정지, `AutoStart` 직접 실행 seam vs 명시 `Configure/StartBattle` 경로 구분
+
+## Lifecycle Seam (BS-001)
+
+`TurnHelper`는 명시적 수명 주기 상태(`Idle → Configured → Running → Stopped`)를 가진다.
+
+- `[Export] AutoStart`(기본 true): 직접 씬 실행(`battle_field.tscn`) 호환 seam. `_Ready()`가 컨테이너에서
+  참가자를 수집·ammo 충전한 뒤 `Configure`+`StartBattle`을 자동 수행한다. 모든 직접 실행 소비자 전환 뒤 삭제
+  후보다.
+- 신규 세션 경로: `AutoStart=false`로 두고 `BattleSession`이 `Configure(participants, seed)` +
+  `StartBattle()`을 명시 호출한다. `StopBattle()`은 외부(세션) 요청으로 턴 진행을 멈춘다. start/stop은 멱등,
+  configure 전 start는 fail-closed.
+- `_PhysicsProcess()`는 `Running`에서만 턴을 진행한다. 진영 공백 기반 종료 감지는 legacy `AutoStart` 경로에서만
+  유지하고, 명시 경로는 참가자 링 진행 가능 여부만 본다(승패는 `BattleSession` 소유).
+- `Configure`는 사망 시 턴 순서에서 유닛을 제거하는 `OnDead` 구독을 보관했다가 재구성/`StopBattle` 시 해제한다
+  (구독 누적 방지).
 
 ## Flow
 
-`TurnHelper._Ready()`가 전투 RNG를 `_combatSeed`로 초기화하고, 턴 대상 목록을 구성한 뒤
-`Priority` 오름차순 → 스폰 순번(`SpawnIndex`) 오름차순으로 정렬하고 첫 턴을 시작한다. 스폰 순번은
-`ArticlesContainer._Ready()`가 씬 트리 순회 순서로 article을 등록하며 부여한다(ADR-017 턴 순서 동점자 키).
+직접 실행(`AutoStart=true`)에서 `TurnHelper._Ready()`가, 신규 세션에서 `TurnHelper.Configure`가 전투 RNG를
+seed로 초기화하고 턴 대상 목록을 `Priority` 오름차순 → 스폰 순번(`SpawnIndex`) 오름차순으로 정렬한 뒤 `StartBattle`
+이 첫 턴을 시작한다. 스폰 순번은 `ArticlesContainer._Ready()`가 씬 트리 순회 순서로 article을 등록하며 부여한다
+(ADR-017 턴 순서 동점자 키).
 
 턴이 시작되면 `TurnHelper.AdvanceToNextTurn()`이 현재 유닛을 선택하고, game over가 아니면
 `ITurnAffectedArticle.ApplyTurnStartEffects()`를 정확히 1회 호출한다. `CharacterArticle`은 이 hook에서
@@ -51,9 +69,18 @@ Failure이면 다음 유닛으로 넘어가며, 새 유닛의 턴 시작 효과�
 - `SkillUtil.SelectCanonicalPath`: 경로 길이 → 목적지 거리 제곱 → 목적지 Y → 목적지 X.
   `BehaviorTree_Move.FindTarget`과 `BehaviorTree_MultipleMove.FindPath`가 사용한다.
 
+## Cursor (현재 유닛 사망 시)
+
+턴 순서 링은 정수 커서(`_turnCursor`)를 진실로 삼는다. 현재 턴 유닛이 사망으로 리스트에서 제거되면 후임이 커서
+슬롯으로 당겨지므로 커서를 +1 하지 않고 리스트 길이로 wrap만 한다. 제거 위치가 커서보다 앞이면 커서를 당긴다.
+과거 `IndexOf(current) == -1` 뒤 `(index+1) % count == 0`으로 순번이 목록 처음으로 부당 리셋되던 결함은
+BS-001 Step 1에서 제거됐다.
+
 ## Known Gaps
 
-- 게임오버 후속 처리가 TODO 상태다.
+- 승패/게임오버 의미는 신규 세션 경로에서 `BattleSession`이 소유한다. legacy `AutoStart` 경로의 진영 공백 종료는
+  여전히 TODO에서 조용히 멈춘다(직접 실행 호환용).
+- RNG와 FX tick은 U1 동안 `TurnHelper`에 남는다(순수 시뮬/프레젠테이션 분리는 후속).
 - Priority 정렬은 낮은 값이 먼저 실행되는 현재 구현을 기준으로 한다.
 - `SpawnIndex`는 `ArticlesContainer._Ready()`가 `TurnHelper._Ready()`보다 먼저 실행되는 현재 씬 트리
   순서에 의존한다. `TurnHelper`가 `Articles` 딕셔너리에 의존하던 기존 불변식과 같은 조건이지만, 씬 트리
@@ -74,9 +101,13 @@ Failure이면 다음 유닛으로 넘어가며, 새 유닛의 턴 시작 효과�
 - `Assets/Script/Tests/cb001_step4_determinism_test.tscn`: 실제 `battle_field.tscn` 결정론 회귀 —
   같은 시드 2회 이벤트 로그 완전 일치, 다른 시드 상이(스모크), 같은 시드 + 다른 배속 완전 일치,
   근접/체인/이동 배선의 씬 레벨 소비 보증.
+- `Assets/Script/Tests/bs001_step1_lifecycle_test.tscn`: `AutoStart` on/off, `Configure/StartBattle/StopBattle`
+  멱등·정지, 현재 유닛 사망 시 커서 후임/wrap/선행 제거 보정, 재구성 구독 무누적을 검증한다.
 
 ## Related
 
+- [[Battle-Session-System]]
 - [[BehaviorTree-System]]
 - [[Article-Status-System]]
 - [[CB-001-Deterministic-Combat-Resolution]]
+- [[ADR-022-Battle-Session-Lifecycle]]

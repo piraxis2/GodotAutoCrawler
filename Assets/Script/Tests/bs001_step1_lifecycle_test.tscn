@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://n6q5rmoc8fpf"]
+
+[ext_resource type="Script" uid="uid://dony1h2mhryx2" path="res://Assets/Script/Tests/Bs001Step1LifecycleTest.cs" id="1_bs001s1"]
+
+[node name="Bs001Step1LifecycleTest" type="Node" unique_id=142546604]
+script = ExtResource("1_bs001s1")

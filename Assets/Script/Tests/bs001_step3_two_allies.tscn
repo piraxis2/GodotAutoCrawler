@@ -1,0 +1,275 @@
+[gd_scene format=4]
+
+[ext_resource type="Script" uid="uid://doh5xcdvrrn7g" path="res://Assets/Script/BattleFieldScene.cs" id="1_8td0i"]
+[ext_resource type="Script" uid="uid://bofxi10iwp1bf" path="res://Assets/Script/TurnHelper.cs" id="1_25g81"]
+[ext_resource type="Texture2D" uid="uid://bk0bo4lm7w2ck" path="res://Assets/Textures/isometric-sandbox-sheet.png" id="1_xbpsd"]
+[ext_resource type="Script" uid="uid://dr75a3n4tydq3" path="res://Assets/Script/BattleFieldTileMapLayer.cs" id="2_0g2jr"]
+[ext_resource type="Script" uid="uid://cdvlslcfcln4t" path="res://Assets/Script/ArticlesContainer.cs" id="2_q3ikk"]
+[ext_resource type="PackedScene" uid="uid://cbtoxh6imusjm" path="res://Assets/Scenes/Character/Temp/TempArticle3.tscn" id="3_fajhp"]
+[ext_resource type="Script" uid="uid://nhx4lou1hoy4" path="res://Assets/Script/Article/Status/Element/Health.cs" id="4_72njd"]
+[ext_resource type="Script" uid="uid://dt641onuentr8" path="res://Assets/Script/Article/Status/Element/StatusElement.cs" id="4_xn4rr"]
+[ext_resource type="Script" uid="uid://bmr3t8odnuo7b" path="res://Assets/Script/Article/Status/Element/Strength.cs" id="5_rst3o"]
+[ext_resource type="Script" uid="uid://do5ouq5ee4i4c" path="res://Assets/Script/Article/Status/Element/Defense.cs" id="6_ep4vv"]
+[ext_resource type="Script" uid="uid://jhjvup735lqt" path="res://Assets/Script/Article/Status/Element/Luck.cs" id="7_56f8w"]
+[ext_resource type="Script" uid="uid://bouh0lyi2habb" path="res://Assets/Script/Article/Status/ArticleStatus.cs" id="8_jm7tw"]
+[ext_resource type="Script" uid="uid://527wle2alee2" path="res://Assets/Script/Article/Status/Element/Mobility.cs" id="8_ry6v4"]
+[ext_resource type="PackedScene" uid="uid://cp5fi4bq4v6ls" path="res://Assets/Scenes/Character/SkillCaster.tscn" id="15_8ious"]
+[ext_resource type="Script" uid="uid://kxwtxub32atc" path="res://Assets/Script/FxPlayer.cs" id="16_3bkig"]
+[ext_resource type="PackedScene" uid="uid://5jaympibmkwm" path="res://Assets/FxScene/IceBolt.tscn" id="17_4m0c6"]
+[ext_resource type="PackedScene" uid="uid://dgjogfc7xujst" path="res://Assets/FxScene/Lightning.tscn" id="18_enjqk"]
+[ext_resource type="Script" uid="uid://b55u2i73bs0x5" path="res://Assets/Script/gds/damage_floater.gd" id="18_f5ues"]
+[ext_resource type="PackedScene" uid="uid://csamidlr34g7s" path="res://Assets/FxScene/SoundFx/sound_fx_scene.tscn" id="18_fajhp"]
+[ext_resource type="Script" uid="uid://b5oowkl1j6sbv" path="res://Assets/Script/InputHelper.cs" id="19_fajhp"]
+[ext_resource type="Script" uid="uid://cuyrbo1ncio8f" path="res://Assets/Script/Article/Status/Element/Mana.cs" id="80_st001mn"]
+[ext_resource type="Script" uid="uid://l2ewt4v12ari" path="res://Assets/Script/Article/Status/Element/ManaRegen.cs" id="81_st001mr"]
+[ext_resource type="Script" uid="uid://ck1ka4y1d0c1h" path="res://Assets/Script/Article/Status/Element/HealthRegen.cs" id="82_st001hr"]
+
+[sub_resource type="Resource" id="Resource_dewjv"]
+resource_local_to_scene = true
+script = ExtResource("4_72njd")
+MaxHealth = 1000
+
+[sub_resource type="Resource" id="Resource_dxsyy"]
+resource_local_to_scene = true
+script = ExtResource("5_rst3o")
+
+[sub_resource type="Resource" id="Resource_icvma"]
+resource_local_to_scene = true
+script = ExtResource("6_ep4vv")
+
+[sub_resource type="Resource" id="Resource_lo22a"]
+resource_local_to_scene = true
+script = ExtResource("7_56f8w")
+
+[sub_resource type="Resource" id="Resource_uddro"]
+resource_local_to_scene = true
+script = ExtResource("8_ry6v4")
+Value = 2
+
+[sub_resource type="Resource" id="Resource_st001_ally_mana"]
+resource_local_to_scene = true
+script = ExtResource("80_st001mn")
+MaxMana = 60
+
+[sub_resource type="Resource" id="Resource_st001_ally_manaregen"]
+resource_local_to_scene = true
+script = ExtResource("81_st001mr")
+Value = 8
+
+[sub_resource type="Resource" id="Resource_st001_ally_healthregen"]
+resource_local_to_scene = true
+script = ExtResource("82_st001hr")
+
+[sub_resource type="Resource" id="Resource_7o1qe"]
+resource_local_to_scene = true
+script = ExtResource("8_jm7tw")
+StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_dewjv"), SubResource("Resource_dxsyy"), SubResource("Resource_icvma"), SubResource("Resource_lo22a"), SubResource("Resource_uddro"), SubResource("Resource_st001_ally_mana"), SubResource("Resource_st001_ally_manaregen"), SubResource("Resource_st001_ally_healthregen")])
+
+[sub_resource type="Resource" id="Resource_8ious"]
+resource_local_to_scene = true
+script = ExtResource("4_72njd")
+MaxHealth = 1000
+
+[sub_resource type="Resource" id="Resource_lxfvc"]
+resource_local_to_scene = true
+script = ExtResource("5_rst3o")
+
+[sub_resource type="Resource" id="Resource_p6fns"]
+resource_local_to_scene = true
+script = ExtResource("6_ep4vv")
+
+[sub_resource type="Resource" id="Resource_ites3"]
+resource_local_to_scene = true
+script = ExtResource("7_56f8w")
+
+[sub_resource type="Resource" id="Resource_p11tj"]
+resource_local_to_scene = true
+script = ExtResource("8_ry6v4")
+Value = 2
+
+[sub_resource type="Resource" id="Resource_rn7ag"]
+resource_local_to_scene = true
+script = ExtResource("80_st001mn")
+MaxMana = 60
+
+[sub_resource type="Resource" id="Resource_i88lg"]
+resource_local_to_scene = true
+script = ExtResource("81_st001mr")
+Value = 8
+
+[sub_resource type="Resource" id="Resource_c3f71"]
+resource_local_to_scene = true
+script = ExtResource("82_st001hr")
+
+[sub_resource type="Resource" id="Resource_r1x3m"]
+resource_local_to_scene = true
+script = ExtResource("8_jm7tw")
+StatusElements = Array[ExtResource("4_xn4rr")]([SubResource("Resource_8ious"), SubResource("Resource_lxfvc"), SubResource("Resource_p6fns"), SubResource("Resource_ites3"), SubResource("Resource_p11tj"), SubResource("Resource_rn7ag"), SubResource("Resource_i88lg"), SubResource("Resource_c3f71")])
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fla71"]
+texture = ExtResource("1_xbpsd")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(0, -8)
+1:0/0 = 0
+1:0/0/texture_origin = Vector2i(0, -8)
+2:0/0 = 0
+2:0/0/texture_origin = Vector2i(0, -8)
+3:0/0 = 0
+3:0/0/texture_origin = Vector2i(0, -8)
+4:0/0 = 0
+4:0/0/texture_origin = Vector2i(0, -8)
+5:0/0 = 0
+5:0/0/texture_origin = Vector2i(0, -8)
+0:1/0 = 0
+0:1/0/texture_origin = Vector2i(0, -8)
+1:1/0 = 0
+1:1/0/texture_origin = Vector2i(0, -8)
+2:1/0 = 0
+2:1/0/texture_origin = Vector2i(0, -8)
+3:1/0 = 0
+3:1/0/texture_origin = Vector2i(0, -8)
+4:1/0 = 0
+4:1/0/texture_origin = Vector2i(0, -8)
+5:1/0 = 0
+5:1/0/texture_origin = Vector2i(0, -8)
+0:2/0 = 0
+0:2/0/texture_origin = Vector2i(0, -8)
+1:2/0 = 0
+1:2/0/texture_origin = Vector2i(0, -8)
+2:2/0 = 0
+2:2/0/texture_origin = Vector2i(0, -8)
+3:2/0 = 0
+3:2/0/texture_origin = Vector2i(0, -8)
+4:2/0 = 0
+4:2/0/texture_origin = Vector2i(0, -8)
+5:2/0 = 0
+5:2/0/texture_origin = Vector2i(0, -8)
+0:3/0 = 0
+0:3/0/texture_origin = Vector2i(0, -8)
+1:3/0 = 0
+1:3/0/texture_origin = Vector2i(0, -8)
+2:3/0 = 0
+2:3/0/texture_origin = Vector2i(0, -8)
+3:3/0 = 0
+3:3/0/texture_origin = Vector2i(0, -8)
+4:3/0 = 0
+4:3/0/texture_origin = Vector2i(0, -8)
+5:3/0 = 0
+5:3/0/texture_origin = Vector2i(0, -8)
+0:4/0 = 0
+0:4/0/texture_origin = Vector2i(0, -8)
+1:4/0 = 0
+1:4/0/texture_origin = Vector2i(0, -8)
+2:4/0 = 0
+2:4/0/texture_origin = Vector2i(0, -8)
+3:4/0 = 0
+3:4/0/texture_origin = Vector2i(0, -8)
+4:4/0 = 0
+4:4/0/texture_origin = Vector2i(0, -8)
+5:4/0 = 0
+5:4/0/texture_origin = Vector2i(0, -8)
+4:5/0 = 0
+4:5/0/texture_origin = Vector2i(0, -8)
+5:5/0 = 0
+5:5/0/texture_origin = Vector2i(0, -8)
+0:6/0 = 0
+0:6/0/texture_origin = Vector2i(0, -8)
+1:6/0 = 0
+1:6/0/texture_origin = Vector2i(0, -8)
+2:6/0 = 0
+2:6/0/texture_origin = Vector2i(0, -8)
+3:6/0 = 0
+3:6/0/texture_origin = Vector2i(0, -8)
+4:6/0 = 0
+4:6/0/texture_origin = Vector2i(0, -8)
+5:6/0 = 0
+5:6/0/texture_origin = Vector2i(0, -8)
+0:7/0 = 0
+0:7/0/texture_origin = Vector2i(0, -8)
+1:7/0 = 0
+1:7/0/texture_origin = Vector2i(0, -8)
+2:7/0 = 0
+2:7/0/texture_origin = Vector2i(0, -8)
+3:7/0 = 0
+3:7/0/texture_origin = Vector2i(0, -8)
+4:7/0 = 0
+4:7/0/texture_origin = Vector2i(0, -8)
+5:7/0 = 0
+5:7/0/texture_origin = Vector2i(0, -8)
+0:8/0 = 0
+0:8/0/texture_origin = Vector2i(0, -8)
+1:8/0 = 0
+1:8/0/texture_origin = Vector2i(0, -8)
+4:8/0 = 0
+4:8/0/texture_origin = Vector2i(0, -8)
+5:8/0 = 0
+5:8/0/texture_origin = Vector2i(0, -8)
+
+[sub_resource type="TileSet" id="TileSet_fkgbs"]
+tile_shape = 1
+tile_layout = 5
+tile_offset_axis = 1
+tile_size = Vector2i(32, 16)
+custom_data_layer_0/name = "FixedArticle"
+custom_data_layer_0/type = 24
+sources/3 = SubResource("TileSetAtlasSource_fla71")
+
+[node name="BattleField" type="Node2D" unique_id=1554462748 node_paths=PackedStringArray("_battleFieldTileMap", "_turnHelper", "_articles", "_fxPlayer", "_damageFloater")]
+y_sort_enabled = true
+script = ExtResource("1_8td0i")
+_battleFieldTileMap = NodePath("TileMapLayer")
+_turnHelper = NodePath("TurnHelper")
+_articles = NodePath("Articles")
+_fxPlayer = NodePath("FxPlayer")
+_damageFloater = NodePath("DamageFloater")
+
+[node name="Articles" type="Node2D" parent="." unique_id=393788407]
+script = ExtResource("2_q3ikk")
+
+[node name="Neutral" type="Node2D" parent="Articles" unique_id=1456247373]
+
+[node name="Ally" type="Node2D" parent="Articles" unique_id=1509658396]
+
+[node name="Character" parent="Articles/Ally" unique_id=1386758331 instance=ExtResource("3_fajhp")]
+position = Vector2(-80, 40)
+ArticleStatus = SubResource("Resource_7o1qe")
+
+[node name="Opponent" type="Node2D" parent="Articles" unique_id=1272859551]
+
+[node name="Character2" parent="Articles/Opponent" unique_id=244761795 instance=ExtResource("15_8ious")]
+position = Vector2(63, -33)
+ArticleStatus = SubResource("Resource_r1x3m")
+
+[node name="TurnHelper" type="Node" parent="." unique_id=1463199549 node_paths=PackedStringArray("_articlesContainer")]
+script = ExtResource("1_25g81")
+_articlesContainer = NodePath("../Articles")
+
+[node name="InputHelper" type="Node" parent="." unique_id=83738491]
+script = ExtResource("19_fajhp")
+
+[node name="FxPlayer" type="Node" parent="." unique_id=393605340]
+script = ExtResource("16_3bkig")
+_spriteFxScenes = Dictionary[StringName, PackedScene]({
+&"IceBolt": ExtResource("17_4m0c6")
+})
+_lineFxScenes = Dictionary[StringName, PackedScene]({
+&"Lightning": ExtResource("18_enjqk")
+})
+_soundFxScene = ExtResource("18_fajhp")
+
+[node name="DamageFloater" type="Node" parent="." unique_id=552329607]
+script = ExtResource("18_f5ues")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1855249842 node_paths=PackedStringArray("_articlesContainer")]
+position = Vector2(16, -104)
+tile_map_data = PackedByteArray("AAAAAAAAAwAAAAMAAAABAAAAAwAAAAMAAAABAAEAAwAAAAMAAAAAAAEAAwAAAAMAAAAAAAIAAwAAAAMAAAAAAAMAAwAAAAMAAAAAAAQAAwAAAAMAAAAAAAUAAwAAAAMAAAAAAAYAAwAAAAMAAAAAAAcAAwAAAAMAAAAAAAgAAwAAAAMAAAAAAAkAAwAAAAMAAAAAAAoAAwAAAAMAAAAAAAsAAwAAAAMAAAAAAAwAAwAAAAMAAAAAAA0AAwAAAAMAAAAAAA4AAwAAAAMAAAABAAIAAwAAAAMAAAABAAMAAwAAAAMAAAABAAQAAwAAAAMAAAABAAUAAwAAAAMAAAABAAYAAwAAAAMAAAABAAcAAwAAAAMAAAABAAgAAwAAAAMAAAABAAkAAwAAAAMAAAABAAoAAwAAAAMAAAABAAsAAwAAAAMAAAABAAwAAwAAAAMAAAABAA0AAwAAAAMAAAABAA4AAwAAAAMAAAACAAAAAwAAAAMAAAACAAEAAwAAAAMAAAACAAIAAwAAAAMAAAACAAMAAwAAAAMAAAACAAQAAwAAAAMAAAACAAUAAwAAAAMAAAACAAYAAwAAAAMAAAACAAcAAwAAAAMAAAACAAgAAwAAAAMAAAACAAkAAwAAAAMAAAACAAoAAwAAAAMAAAACAAsAAwAAAAMAAAACAAwAAwAAAAMAAAACAA0AAwAAAAMAAAACAA4AAwAAAAMAAAADAAAAAwAAAAMAAAADAAEAAwAAAAMAAAADAAIAAwAAAAMAAAADAAMAAwAAAAMAAAADAAQAAwAAAAMAAAADAAUAAwAAAAMAAAADAAYAAwAAAAMAAAADAAcAAwAAAAMAAAADAAgAAwAAAAMAAAADAAkAAwAAAAMAAAADAAoAAwAAAAMAAAADAAsAAwAAAAMAAAADAAwAAwAAAAMAAAADAA0AAwAAAAMAAAADAA4AAwAAAAMAAAAEAAAAAwAAAAMAAAAEAAEAAwAAAAMAAAAEAAIAAwAAAAMAAAAEAAMAAwAAAAMAAAAEAAQAAwAAAAMAAAAEAAUAAwAAAAMAAAAEAAYAAwAAAAMAAAAEAAcAAwAAAAMAAAAEAAgAAwAAAAMAAAAEAAkAAwAAAAMAAAAEAAoAAwAAAAMAAAAEAAsAAwAAAAMAAAAEAAwAAwAAAAMAAAAEAA0AAwAAAAMAAAAEAA4AAwAAAAMAAAAFAAAAAwAAAAMAAAAFAAEAAwAAAAMAAAAFAAQAAwAAAAMAAAAFAAUAAwAAAAMAAAAFAAYAAwAAAAMAAAAFAAcAAwAAAAMAAAAFAAgAAwAAAAMAAAAFAAkAAwAAAAMAAAAFAAoAAwAAAAMAAAAFAAsAAwAAAAMAAAAFAAwAAwAAAAMAAAAFAA0AAwAAAAMAAAAFAA4AAwAAAAMAAAAGAAAAAwAAAAMAAAAGAAEAAwAAAAMAAAAGAAIAAwAAAAMAAAAGAAMAAwAAAAMAAAAGAAQAAwAAAAMAAAAGAAUAAwAAAAMAAAAGAAYAAwAAAAMAAAAGAAcAAwAAAAMAAAAGAAgAAwAAAAMAAAAGAAkAAwAAAAMAAAAGAAoAAwAAAAMAAAAGAAsAAwAAAAMAAAAGAAwAAwAAAAMAAAAGAA0AAwAAAAMAAAAGAA4AAwAAAAMAAAAHAAAAAwAAAAMAAAAHAAEAAwAAAAMAAAAHAAIAAwAAAAMAAAAHAAMAAwAAAAMAAAAHAAQAAwAAAAMAAAAHAAUAAwAAAAMAAAAHAAYAAwAAAAMAAAAHAAcAAwAAAAMAAAAHAAgAAwAAAAMAAAAHAAkAAwAAAAMAAAAHAAoAAwAAAAMAAAAHAAsAAwAAAAMAAAAHAAwAAwAAAAMAAAAHAA0AAwAAAAMAAAAHAA4AAwAAAAMAAAAIAAAAAwAAAAMAAAAIAAEAAwAAAAMAAAAIAAIAAwAAAAMAAAAIAAMAAwAAAAMAAAAIAAQAAwAAAAMAAAAIAAUAAwAAAAMAAAAIAAYAAwAAAAMAAAAIAAcAAwAAAAMAAAAIAAgAAwAAAAMAAAAIAAkAAwAAAAMAAAAIAAoAAwAAAAMAAAAIAAsAAwAAAAMAAAAIAAwAAwAAAAMAAAAIAA0AAwAAAAMAAAAIAA4AAwAAAAMAAAAJAAAAAwAAAAMAAAAJAAEAAwAAAAMAAAAJAAIAAwAAAAMAAAAJAAMAAwAAAAMAAAAJAAQAAwAAAAMAAAAJAAUAAwAAAAMAAAAJAAYAAwAAAAMAAAAJAAcAAwAAAAMAAAAJAAgAAwAAAAMAAAAJAAoAAwAAAAMAAAAJAAsAAwAAAAMAAAAJAAwAAwAAAAMAAAAJAA0AAwAAAAMAAAAJAA4AAwAAAAMAAAAKAAAAAwAAAAMAAAAKAAEAAwAAAAMAAAAKAAIAAwAAAAMAAAAKAAMAAwAAAAMAAAAKAAQAAwAAAAMAAAAKAAUAAwAAAAMAAAAKAAYAAwAAAAMAAAAKAAcAAwAAAAMAAAAKAAgAAwAAAAMAAAAKAAkAAwAAAAMAAAAKAAoAAwAAAAMAAAAKAAsAAwAAAAMAAAAKAAwAAwAAAAMAAAAKAA0AAwAAAAMAAAAKAA4AAwAAAAMAAAAFAAMAAwAAAAMAAAAFAAIAAwAAAAMAAAAJAAkAAwAAAAMAAAA=")
+tile_set = SubResource("TileSet_fkgbs")
+script = ExtResource("2_0g2jr")
+_articlesContainer = NodePath("../Articles")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1610558112]
+zoom = Vector2(3, 3)
+
+[node name="Character3" parent="Articles/Ally" instance=ExtResource("3_fajhp")]
+position = Vector2(-48, 40)

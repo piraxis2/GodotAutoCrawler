@@ -1,18 +1,21 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-07-11
+updated: 2026-07-13
 ---
 
 # Current State
 
 > **Known Regressions (2026-07-10 갱신, 근본 원인 확정).** 아래 본문의 일부 "ALL PASS" 서술은 지금은 사실이 아니다.
-> `cb001_step4_determinism_test`(`D.deaths_recorded`)와 `sk001_step6_data_pack_test`(`D.ChainHitsThree`),
-> 그리고 `sk001_step2/4/4b/5`의 다중 상대 의존 단언은 현재 `dev`에서 **실패**한다. **근본 원인:** 커밋
-> `e5d339b "스킬 개편 2"`가 `battle_field.tscn`의 상대를 4명(구 타입 `11_hv0hd`) → 1명(신 타입 `14_7o1qe`)으로
-> **의도적으로 교체**했다(드리프트 아님). 1명 로스터는 의도된 상태이며(오너 확정), 회귀 테스트를 상대 로스터에
-> 비의존하도록 self-sufficient로 rebaseline하는 별도 Task로 처리한다([[Open-Tasks]]). SK-002/WS-001 등과 무관.
-> CB-001 step1~3, SK-001 step1(및 Step3·SK-002 전 스텝)은 통과한다.
+> `cb001_step4_determinism_test`, `sk001_step1_skill_system_test`, `sk001_step3_mana_hit_test`은
+> `Articles/Opponent/Character`(현 노드명 `Character2`)를 GetNode하는 **셋업 단계에서 NPE**로 실패하고,
+> `sk001_step2/4/4b/5`, `sk001_step6_data_pack_test`(`D.ChainHitsThree`)은 다중 상대 의존 단언이 **실패**한다
+> (2026-07-13 BS-001 작업에서 clean-baseline 동일 재현 확인 — 제품 회귀 아님). **근본 원인:** 커밋
+> `e5d339b "스킬 개편 2"`가 `battle_field.tscn`의 상대를 4명(구 타입 `11_hv0hd`) → 1명(신 타입 `14_7o1qe`,
+> 노드명 `Character2`)으로 **의도적으로 교체**했다(드리프트 아님). 1명 로스터는 의도된 상태이며(오너 확정),
+> 회귀 테스트를 상대 로스터에 비의존하도록 self-sufficient로 rebaseline하는 별도 Task로 처리한다([[Open-Tasks]]).
+> SK-002/WS-001 등과 무관.
+> CB-001 step1~3, SK-002 전 스텝, ST-001 step1, BS-001 step1~3은 통과한다.
 
 ## Project
 
@@ -44,7 +47,8 @@ updated: 2026-07-11
 - workspace는 WS-002 완료 후 GUI 검증을 거쳐 **native owned child-window 마스터 작업대**로 조정됐다. `workspace.tscn`은 상단 드롭다운 메뉴바,
   content area, 하단 로그 도크를 가진 마스터이고, managed `Window`들은 OS 창으로 떠서 마스터 밖 이동이 가능하다.
   Windows에서는 `WorkspaceNativeWindowOwner`가 Win32 owner 관계를 보강해 하위 창이 마스터 위에 유지되고, 작업표시줄 스택은 마스터 1개에 가깝게 유지된다. `exclusive` modal 입력 잠금은 쓰지 않는다.
-  `run/main_scene`은 여전히 `battle_field.tscn`이다.
+  `run/main_scene`은 `workspace.tscn`(`uid://caplqnfi4j3ys`)이다(2026-07-13 확인). 부팅 시 정적
+  `BattleFieldScene.BattleField`는 비어 있어 BS-001 세션 가드가 깨끗하게 시작한다([[Battle-Session-System]]).
 - 마스터 메뉴는 좌측 패널이 아니라 상단 `MenuButton` 드롭다운이다. `Windows` 메뉴는 `world`/`tacticboard`/`report` toggle check item을 제공하고,
   `Presets` 메뉴는 `outgame`/`battle`/`analysis`, `창 모아오기`, `배치 저장`, `배치 복원`을 제공한다.
 - floating managed window는 3종(`world`/`tacticboard`/`report`)이다. `log`는 하단 `LogDock/LogView`
@@ -64,9 +68,28 @@ updated: 2026-07-11
   Known Regressions의 `cb001_step4`/`sk001_step6` 등은 WS-002 범위 밖 기존 항목이다.
 - 후속(W0 범위 밖): World hub 실물화, BattleSession/전장 scene 장착, TacticBoard/Report 실제 콘텐츠,
   DemoState/자동 국면 전환, custom preset override 저장, 자체 슬롯 스냅 UX 고도화, 레거시 `WindowManager.cs`/`GameWindow.cs` cleanup,
-  레트로 Theme 폰트/아이콘/컴포넌트 세트 정리, `battle_field.tscn` stretch 정책, `run/main_scene` 전환. [[Open-Tasks]] 참고.
+  레트로 Theme 폰트/아이콘/컴포넌트 세트 정리, `battle_field.tscn` stretch 정책. (`run/main_scene`은 이미
+  `workspace.tscn`으로 전환됨.) [[Open-Tasks]] 참고.
 ## Combat
 
+- **BS-001 BattleSession Runtime Boundary 전체 완료(Step 0~4)**([[BS-001-Battle-Session]],
+  [[BS-001-Battle-Session-Completion-Review]] 판정: 완료, 결정 [[ADR-022-Battle-Session-Lifecycle]] accepted).
+  사실은 [[Battle-Session-System]]이 보존한다.
+  - `Assets/Script/Battle/`: `BattleSession : Node`가 `BattleRequest`(PackedScene+seed+PlayerPath)로 전투 씬을
+    생성·소유하고 명시적 `Start`로 시작해 승패를 판정, scene-free 값 `BattleResult`를 C# event로 정확히 1회
+    반환한 뒤 씬·정적 context를 정리한다. 상대 전멸=`Victory/OpponentsEliminated`, 지정 PC 사망(다른 Ally 무관)=
+    `Defeat/PlayerDefeated`, mutual kill=Defeat 우선(OD5), 잘못된 구성=`Aborted/InvalidSetup`(deferred 1회).
+  - 완료 판정은 event-identity(사망 유닛 `Survived=false`/`FinalHealth=0`, `Health` setter가 clamp 전 `Dead()`
+    emit) + 세션 자체 상대 bookkeeping이며, teardown+event는 사망/물리 콜스택 밖 deferred다(재진입/tree 수정
+    방지). `BattleFieldScene._ExitTree()`가 `==this`일 때만 정적 context를 null → 완료 handler의 즉시 다음 세션
+    재진입이 stale singleton 없이 성립(2회 연속 실행 격리 검증).
+  - `TurnHelper`는 명시적 lifecycle seam(`AutoStart`/`Configure`/`StartBattle`/`StopBattle`)으로 축소되고 현재
+    유닛 사망 시 커서가 목록 처음으로 리셋되던 결함을 수정했다([[Turn-System]]). 신규 세션 경로의 참가자 준비·
+    ammo 충전·승패는 `TurnHelper` 밖(세션)이 소유한다. RNG/FX tick은 U1 임시로 `TurnHelper`에 남는다.
+  - 검증: `dotnet build` 경고/오류 0, `--import` exit 0, `bs001_step1`(27)/`bs001_step2`(79)/`bs001_step3`(45)
+    ALL PASS, 회귀 cb001_step1~3·sk002_step1/3·st001_step1 ALL PASS. Known Regressions(cb001_step4/sk001)은
+    로스터 rebaseline 소관으로 무관. 후속: encounter/party snapshot 확장, Faction/BattleRoster, CombatContext/
+    RNG 이동, U3 등반 루프 정산·workspace 전장 scene 장착.
 - **CB-001 Deterministic Combat Resolution 완료**(Step 0~5,
   [[CB-001-Deterministic-Combat-Resolution-Review]] 판정: 완료, 결정 [[ADR-017-Deterministic-Combat-Resolution]]):
   전투가 {시드, 초기 배치} 입력만으로 재현된다(1단계, 현 구조 유지).

@@ -1,7 +1,7 @@
 ---
 type: index
 project: AutoCrawler
-updated: 2026-07-10
+updated: 2026-07-13
 ---
 
 # AutoCrawler LLM Wiki
@@ -27,6 +27,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[SaveGame-System]]
 - [[SaveGame-User-Guide]]
 - [[Turn-System]]
+- [[Battle-Session-System]]
 - [[BehaviorTree-System]]
 - [[Article-Status-System]]
 - [[Skill-System]]
@@ -65,6 +66,9 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[ST-001-Natural-Regen-Stats]]
 - [[WS-001-Native-Window-Workspace-Shell]]
 - [[GL-001-GameLog-Foundation]]
+- [[BS-001-Battle-Session]]
+- [[BS-001-Battle-Session-Review]]
+- [[BS-001-Battle-Session-Completion-Review]]
 - [[GL-001-GameLog-Foundation-Review]]
 - [[GL-001-GameLog-Foundation-Step1-Review]]
 - [[GL-001-GameLog-Foundation-Step2-Review]]
@@ -107,6 +111,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[ADR-019-Natural-Regen-Stats]]
 - [[ADR-020-GameLog-Service-Lifetime]]
 - [[ADR-021-Skill-Ammo-System]]
+- [[ADR-022-Battle-Session-Lifecycle]]
 
 ## 문서 역할
 

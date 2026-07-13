@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/BattleFieldScene.cs" id="1_bfs"]
+[ext_resource type="Script" path="res://Assets/Script/ArticlesContainer.cs" id="2_ac"]
+[ext_resource type="Script" path="res://Assets/Script/TurnHelper.cs" id="3_th"]
+
+[node name="BattleField" type="Node2D" node_paths=PackedStringArray("_turnHelper", "_articles")]
+script = ExtResource("1_bfs")
+_turnHelper = NodePath("TurnHelper")
+_articles = NodePath("Articles")
+
+[node name="Articles" type="Node2D" parent="."]
+script = ExtResource("2_ac")
+
+[node name="Neutral" type="Node2D" parent="Articles"]
+
+[node name="Ally" type="Node2D" parent="Articles"]
+
+[node name="Opponent" type="Node2D" parent="Articles"]
+
+[node name="TurnHelper" type="Node" parent="." node_paths=PackedStringArray("_articlesContainer")]
+script = ExtResource("3_th")
+_articlesContainer = NodePath("../Articles")

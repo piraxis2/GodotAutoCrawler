@@ -156,6 +156,9 @@ public partial class Cb001Step1TurnEffectTest : Node
         SetPrivateField(helper, "_articlesContainer", articlesContainer);
         SetPrivateField(helper, "_fxPlayer", fxPlayer);
         SetPrivateField(helper, "_currentTurnArticle", null);
+        // BS-001 Step 1: _PhysicsProcess는 이제 Running 상태에서만 턴을 진행한다. 이 화이트박스 테스트는
+        // StartBattle을 거치지 않고 내부 상태를 직접 조립하므로, 실제 전투 진행 상태를 reflection으로 세팅한다.
+        SetRunStateRunning(helper);
 
         var list = (List<ITurnAffectedArticle<ArticleBase>>)GetPrivateField(helper, "_turnAffectedArticleList");
         list.Clear();
@@ -195,6 +198,12 @@ public partial class Cb001Step1TurnEffectTest : Node
         target.GetType()
             .GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance)
             ?.SetValue(target, value);
+    }
+
+    private static void SetRunStateRunning(TurnHelper helper)
+    {
+        var field = typeof(TurnHelper).GetField("_runState", BindingFlags.NonPublic | BindingFlags.Instance);
+        field?.SetValue(helper, Enum.Parse(field.FieldType, "Running"));
     }
 
     private sealed class FakeTurnArticle : ITurnAffectedArticle<ArticleBase>

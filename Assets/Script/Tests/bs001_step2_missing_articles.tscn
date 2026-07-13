@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/BattleFieldScene.cs" id="1_bfs"]
+[ext_resource type="Script" path="res://Assets/Script/TurnHelper.cs" id="3_th"]
+
+[node name="BattleField" type="Node2D" node_paths=PackedStringArray("_turnHelper")]
+script = ExtResource("1_bfs")
+_turnHelper = NodePath("TurnHelper")
+
+[node name="TurnHelper" type="Node" parent="."]
+script = ExtResource("3_th")
