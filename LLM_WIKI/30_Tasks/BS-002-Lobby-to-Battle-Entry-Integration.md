@@ -1,12 +1,12 @@
 ---
 id: BS-002
 type: task
-status: in-progress
+status: complete
 system: Combat, Workspace
 created: 2026-07-13
 updated: 2026-07-13
 step0: Approved after design fixes ([[BS-002-Lobby-to-Battle-Entry-Integration-Review]])
-completion: 코드/headless 완료, GUI 표시 smoke 사인오프 대기 ([[BS-002-Lobby-to-Battle-Entry-Integration-Completion-Review]])
+completion: 완료, 오너 GUI 표시 smoke 사인오프 ([[BS-002-Lobby-to-Battle-Entry-Integration-Completion-Review]])
 depends_on: [BS-001, WS-002]
 tags: [task, combat, battle-session, workspace, lobby, entry]
 ---
@@ -258,8 +258,8 @@ Verification:
   context가 그 세션 전투 씬 + 중복 클릭 미복제.
 - 검증: `dotnet build` 경고/오류 0, `--import` parse/script 에러 0, 회귀 `ws001_step1/2`·`ws002_step2`(41)/
   `step4`(40)·`bs001_step1~3`·`bs002_step1` ALL PASS.
-- **남은 GUI 수동 smoke(Finding 2, headless 불가)**: main scene에서 실제 `battle_field.tscn`이 World client에
-  보이고 자동 턴이 진행되는지 — SubViewport 렌더/카메라/stretch는 화면 관찰 사인오프 필요.
+- **GUI 수동 smoke 사인오프 완료(오너 확인)**: main scene에서 실제 `battle_field.tscn`이 World client에 보이고
+  자동 턴이 진행됨을 확인했다.
 
 ## Step 3: Docs and Completion Review
 
@@ -284,9 +284,8 @@ Done condition:
   [[Battle-Session-System]] "Consumers" 절 신규(첫 소비자 = LobbyBattleEntry). [[Current-State]] Combat에 BS-002
   추가, [[Open-Tasks]] 상태 갱신.
 - 완료 리뷰 [[BS-002-Lobby-to-Battle-Entry-Integration-Completion-Review]](Step 0~3 대조, Verification Matrix,
-  판정: 코드/headless 완료 + GUI 표시 smoke 대기).
-- 판정: **코드·headless 계약 충족, P0/P1 없음.** Done condition #1의 "전투 표시"(픽셀 렌더)만 GUI 수동 smoke가
-  남았고 이는 headless 한계다(WS-002 GUI 사인오프와 동형). 오너가 main scene에서 표시를 확인하면 최종 완료.
+  판정: 완료 — 코드/headless + 오너 GUI smoke 사인오프).
+- 판정: **완료, P0/P1 없음.** 코드·headless 계약과 오너 GUI 수동 smoke(픽셀 렌더/자동 턴 진행)가 모두 충족됐다.
 
 ## Verification Matrix
 

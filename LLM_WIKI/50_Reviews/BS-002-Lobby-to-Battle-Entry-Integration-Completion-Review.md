@@ -20,7 +20,7 @@ Step 0 설계 리뷰는 [[BS-002-Lobby-to-Battle-Entry-Integration-Review]], Ste
 | 0 Design Review | OD1~4 확정, mount/cleanup/GUI 경계 확정 | [[BS-002-Lobby-to-Battle-Entry-Integration-Review]] | Approved after design fixes |
 | 1 Entry Controller | valid Running / duplicate 거부 / invalid·Aborted cleanup / 자연 완료 cleanup | `bs002_step1_entry_test`(29) | 수정 후 완료(P2×1, P3×1) |
 | 2 Button + Presentation | 버튼→battle preset→session Running + mount 배선 + 중복 차단 | `bs002_step2_workspace_test`(14) | 수정 후 완료(문서 P3×1) |
-| 3 Docs + Completion Review | 시스템 문서·인덱스·Task 갱신, 완료 대조 | 이 문서 + Workspace/Battle-Session 시스템 갱신 | 완료(코드/headless), **GUI smoke 대기** |
+| 3 Docs + Completion Review | 시스템 문서·인덱스·Task 갱신, 완료 대조 | 이 문서 + Workspace/Battle-Session 시스템 갱신 + 오너 GUI smoke | 완료 |
 
 ## Verification Matrix 대조 (Task)
 
@@ -31,7 +31,7 @@ Step 0 설계 리뷰는 [[BS-002-Lobby-to-Battle-Entry-Integration-Review]], Ste
 | active 중 duplicate start 차단 | ✅ `bs002_step1` [C], `bs002_step2` [B] |
 | 자연 완료 시 구독/active/session Node cleanup | ✅ `bs002_step1` [D] Victory, [G] 첫 턴 lethal 즉시 완료 |
 | lobby button → battle preset/mode | ✅ `bs002_step2` — 버튼 Pressed → World `ContentMode=="battle"` + HubPanels 숨김 + mount 표시 |
-| World client 영역의 실제 battle scene 표시와 자동 턴 진행 | ⏳ **GUI 수동 smoke 대기**(headless 렌더 검증 불가, Finding 2) — headless는 session mounted+Running+정적 context=세션 전투 씬까지 확인 |
+| World client 영역의 실제 battle scene 표시와 자동 턴 진행 | ✅ 오너 GUI 수동 smoke 사인오프 — headless의 session mounted+Running 계약과 실제 픽셀 표시/자동 턴 진행 모두 확인 |
 
 ## 검증 재확인 (2026-07-13)
 
@@ -49,25 +49,22 @@ Step 0 설계 리뷰는 [[BS-002-Lobby-to-Battle-Entry-Integration-Review]], Ste
   lethal 즉시 완료 cleanup 회귀 추가(테스트 `G`).
 - Step 2 [P3] Open-Tasks 상태 문구 stale → 갱신.
 
-## 남은 사인오프 / 후속
+## GUI 사인오프 / 후속
 
-- **미완(오너 수동 확인 필요)**: main scene `workspace.tscn` 실행 → `전투 시작` 클릭 시 실제 `battle_field.tscn`이
-  World client(`BattleMount/BattleViewport`)에 픽셀로 보이고 자동 턴이 진행되는지 GUI smoke. SubViewport 렌더/
-  카메라(zoom 3)/stretch는 headless로 검증 불가라 이 Agent 세션에서 사인오프할 수 없다. 안 보이면 OD1 대안
-  (WorldWindow viewport 직접 장착)이 fallback이다.
+- **완료(오너 확인)**: main scene `workspace.tscn`의 `전투 시작` 클릭 후 실제 `battle_field.tscn`이 World client
+  (`BattleMount/BattleViewport`)에 픽셀로 보이고 자동 턴이 진행됨을 수동 확인했다.
 - **후속(범위 밖)**: `BattleResult` 결과 창/토스트, 전투 종료 후 lobby preset 복귀, 재전투, 보상/XP/주차/
   WorldState 정산, DemoState/행동, U3 Dungeon/Party/Encounter 조립, 전투 창 resize/aspect/input 고도화, GameLog
   kill/death live.
 
 ## Verdict
 
-**완료(코드·headless 계약 기준), 단 GUI 표시 smoke 1건은 오너 수동 사인오프 대기.**
+**완료.**
 
 P0/P1 없음. Step 0~2의 리뷰 P2/P3는 수정·재검증 완료. headless로 확인 가능한 모든 Done 조건(로비 버튼 → battle
 preset → mount 아래 `BattleSession.Running`, 중복 차단, invalid·자연 완료 cleanup, 정적 context=세션 전투 씬)이
-통과하고 코드와 문서가 일치한다. Task Done condition #1의 **"전투 표시"(픽셀 렌더)** 부분만 GUI 수동 smoke가
-남았고, 이는 headless 환경의 한계이지 설계·코드 결함이 아니다(WS-002 GUI 사인오프와 동형). 오너가 main scene에서
-표시를 확인하면 BS-002는 최종 완료다.
+통과하고 코드와 문서가 일치한다. Task Done condition #1의 **"전투 표시"(픽셀 렌더)**와 자동 턴 진행도 오너 GUI
+수동 smoke로 사인오프되어 BS-002의 단방향 로비→전투 범위가 최종 완료됐다.
 
 ## Related
 

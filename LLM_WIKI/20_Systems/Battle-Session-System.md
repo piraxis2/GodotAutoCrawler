@@ -126,10 +126,12 @@ reflection 없이 주입한다.
 
 ## Consumers
 
-- 첫 production 소비자는 workspace 로비 진입 controller `LobbyBattleEntry`(BS-002)다. World 창의 `SubViewport`
-  아래에 세션을 장착해 로비 버튼→고정 `BattleRequest`→`Running`을 연결하고, Completed에서 session Node cleanup만
-  한다. 사실은 [[Workspace-Window-System]] "Lobby Battle Entry"가 보존한다. `BattleResult` 정산·로비 복귀·U3 등반
-  루프는 후속이다.
+- 첫 production 소비자는 workspace 로비 진입 controller `LobbyBattleEntry`(BS-002/BS-003)다. World 창의
+  `SubViewport` 아래에 세션을 장착해 로비 버튼→고정 `BattleRequest`→`Running`을 연결하고(BS-002), `Completed`의
+  `BattleResult`를 소비해 결과를 최소 표시 + outgame/hub 복귀 + session cleanup을 하고 같은 버튼으로 재전투할 수
+  있게 한다(BS-003). 완료 handler는 cleanup을 preset/presentation보다 먼저 수행하고(누수 방지), `LastResult`는
+  scene-free 마지막 완료 결과만 보존한다. 사실은 [[Workspace-Window-System]] "Lobby Battle Entry"가 보존한다.
+  보상·XP·주차·WorldState 정산과 U3 등반 루프는 후속이다.
 
 ## Related
 
@@ -140,3 +142,4 @@ reflection 없이 주입한다.
 - [[ADR-017-Deterministic-Combat-Resolution]]
 - [[BS-001-Battle-Session]]
 - [[BS-002-Lobby-to-Battle-Entry-Integration]]
+- [[BS-003-Battle-Completion-Lobby-Return]]

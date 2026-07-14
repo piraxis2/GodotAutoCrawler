@@ -72,16 +72,23 @@ updated: 2026-07-13
   `workspace.tscn`으로 전환됨.) [[Open-Tasks]] 참고.
 ## Combat
 
-- **BS-002 Lobby-to-Battle Entry — Step 0~3 완료(코드/문서), GUI smoke 사인오프 대기**([[BS-002-Lobby-to-Battle-Entry-Integration]],
-  [[BS-002-Lobby-to-Battle-Entry-Integration-Completion-Review]] 판정: 코드/headless 완료 + GUI 표시 smoke 대기). workspace 로비(World hub)
+- **BS-003 Battle Completion and Lobby Return 전체 완료(Step 0~3, 오너 GUI smoke 사인오프)**([[BS-003-Battle-Completion-Lobby-Return]],
+  [[BS-003-Battle-Completion-Lobby-Return-Completion-Review]] 판정: 완료). BS-002 진입
+  뒤에 `BattleResult` 소비 → outgame/hub 복귀 → 같은 버튼 재전투 v0 왕복을 연결했다. `LobbyBattleEntry.OnBattleCompleted`
+  이 outcome 무관 순서(result 캡처 → cleanup → `BattleMount` 숨김 → outgame preset → 결과 라벨)로 로비 복귀하고,
+  `LastResult`(scene-free 마지막 완료)를 보존한다. `workspace.tscn`에 `HubPanels/ResultLabel` 추가·배선. 사실은
+  [[Workspace-Window-System]] "Lobby Battle Entry". 검증: `bs003_step1`(30)/`bs003_step2`(23) ALL PASS(2회 연속
+  재전투·정적/Node 격리·preset 실패 격리 포함), bs002/bs001/ws001/ws002 회귀 유지, `dotnet build` 0/0. 실제 결과
+  문구·hub 복귀·재전투 화면 전환은 오너 GUI smoke로 사인오프됨. 정산·이월·DungeonRun·스토리는 후속.
+- **BS-002 Lobby-to-Battle Entry 전체 완료(Step 0~3, 오너 GUI smoke 사인오프)**([[BS-002-Lobby-to-Battle-Entry-Integration]],
+  [[BS-002-Lobby-to-Battle-Entry-Integration-Completion-Review]] 판정: 완료). workspace 로비(World hub)
   `전투 시작` 버튼에서 고정 `BattleRequest`로 `BattleSession`을 시작해 World 창 `SubViewport`에 전투를 장착하는
   단방향 진입을 연결했다. `Assets/Script/UI/Window/LobbyBattleEntry.cs`(root 노드)가 `TryEnterBattle`
   (active latch·null/mount/preset fail-closed) + 완료 시 session Node cleanup만 소유하고, `workspace.tscn`에 버튼/
   `BattleMount`(SubViewportContainer)/`BattleViewport`/entry export를 배선했다. 사실은
   [[Workspace-Window-System]] "Lobby Battle Entry". 검증: `bs002_step1_entry_test`(29)/`bs002_step2_workspace_test`
-  (14) ALL PASS, ws001/ws002·bs001 회귀 유지, `dotnet build` 0/0. Step 3 문서/완료 리뷰 완료. **유일한 남은 것:
-  main scene GUI 수동 smoke**(실제 전투가 World client에 픽셀로 표시·자동 턴 진행 — SubViewport 렌더, headless 불가). 결과 표시·
-  정산·로비 복귀·재전투는 후속.
+  (14) ALL PASS, ws001/ws002·bs001 회귀 유지, `dotnet build` 0/0. 오너가 main scene에서 실제 전투 픽셀 표시와
+  자동 턴 진행까지 확인했다. 결과 표시·로비 복귀·재전투는 [[BS-003-Battle-Completion-Lobby-Return]] 후속이다.
 - **BS-001 BattleSession Runtime Boundary 전체 완료(Step 0~4)**([[BS-001-Battle-Session]],
   [[BS-001-Battle-Session-Completion-Review]] 판정: 완료, 결정 [[ADR-022-Battle-Session-Lifecycle]] accepted).
   사실은 [[Battle-Session-System]]이 보존한다.

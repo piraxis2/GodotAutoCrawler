@@ -1,14 +1,14 @@
 ---
 type: task-index
 project: AutoCrawler
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # Open Tasks
 
 ## Next
 
-- **BS-002 Lobby-to-Battle Entry Integration — Step 0~3 완료(코드/문서), GUI smoke 사인오프만 대기**([[BS-002-Lobby-to-Battle-Entry-Integration]], [[BS-002-Lobby-to-Battle-Entry-Integration-Completion-Review]]): World hub의 `전투 시작` 버튼에서 고정 `BattleRequest`로 `BattleSession`을 시작해 World 창 `SubViewport`에 전투를 장착하는 단방향 진입. Step 0 승인 + Step 1(entry controller seam, `bs002_step1` 29) + Step 2(workspace 버튼/mount 배선, `bs002_step2` 14) + Step 3(문서/완료 리뷰) 완료. **유일한 남은 것: main scene GUI 수동 smoke**(실제 전투가 World client에 픽셀로 보이고 자동 턴 진행 — SubViewport 렌더/카메라, headless 불가). 오너 확인 시 최종 완료. 결과 표시·정산·로비 복귀·재전투·창 UX 고도화는 후속.
+- **BT-002 Tactic Board Runtime Extension — proposed, Step 0 설계 리뷰 대기**([[BT-002-Tactic-Board-Runtime-Extension]]): 택틱보드 compiler/UI 전에 기존 BT에 엄격 행 우선순위, `Running` 행 고정, 조건 후보 교집합·문맥 대상, commit 후 fallback 금지, `Immediate`/`ApproachAllowed`, 최종 wait를 추가한다. 전역 `BtStatus`/commit seam/turn reset/path feasibility의 실제 코드 경계를 Step 0에서 먼저 확정하며, 승인 전 제품 코드는 수정하지 않는다.
 
 - **BS-001 후속 — U3 등반 루프 연결 + request/roster 확장**([[BS-001-Battle-Session]], [[Battle-Session-System]]): BS-001 본체는 완료됐다. BS-002가 로비→전투 단방향 entry만 먼저 고정한 뒤, `EncounterDefinition`/`EncounterModifier`/`PartySnapshot`으로 `BattleRequest` 확장(`PlayerPath`→안정 `unit_id`), 명시적 Faction/`BattleRoster`, `CombatContext`/`CombatRng` 이동 + `BattleRecorder` 추출, U3 DungeonRun의 `BattleResult` 소비·로비 복귀·층 순회·HP/마나/ammo 이월·보상/XP/주차 정산, 한계 턴/수동 후퇴, legacy seam 삭제와 GameLog live 배선을 처리한다.
 
@@ -95,6 +95,20 @@ updated: 2026-07-13
   schema/section version migration registry, Dialogue SaveEffect(저장 트리거는 game/event layer 우선).
 
 ## Recently Completed
+
+- **BS-003 Battle Completion and Lobby Return 전체 완료(Step 0~3, 오너 GUI smoke 사인오프)**
+  ([[BS-003-Battle-Completion-Lobby-Return]], [[BS-003-Battle-Completion-Lobby-Return-Completion-Review]] 판정: 완료).
+  BS-002 진입 뒤에 `BattleResult` 소비 → outgame/hub 복귀 → 같은 버튼 재전투 v0 왕복을 닫았다.
+  `LobbyBattleEntry.OnBattleCompleted`이 outcome 무관 순서(result 캡처 → cleanup → `BattleMount` 숨김 → outgame
+  preset → 결과 라벨)로 복귀하고 `LastResult`를 보존한다. `workspace.tscn`에 `HubPanels/ResultLabel` 배선. 검증:
+  `bs003_step1`(30)/`bs003_step2`(23, 2회 연속 재전투·정적/Node 격리) ALL PASS, bs002/bs001/ws 회귀 유지. 사실은
+  [[Workspace-Window-System]] "Lobby Battle Entry" / [[Battle-Session-System]] "Consumers". 후속: 정산·이월·
+  DS-001 DemoState·DL-001 U3 DungeonRun·스토리.
+
+- **BS-002 Lobby-to-Battle Entry Integration 전체 완료(Step 0~3, 오너 GUI smoke 사인오프)**
+  ([[BS-002-Lobby-to-Battle-Entry-Integration]], [[BS-002-Lobby-to-Battle-Entry-Integration-Completion-Review]]): World hub
+  `전투 시작` 버튼 → battle preset → World `SubViewport` 전투 표시 → `BattleSession.Running` 단방향 진입을 연결했다.
+  headless 계약과 실제 픽셀 표시/자동 턴 진행을 확인했다. 결과 표시·로비 복귀·재전투는 BS-003으로 분리했다.
 
 - **BS-001 BattleSession Runtime Boundary 전체 완료(Step 0~4)**([[BS-001-Battle-Session]], [[BS-001-Battle-Session-Completion-Review]] 판정: 완료, [[ADR-022-Battle-Session-Lifecycle]] accepted). `Assets/Script/Battle/`의 `BattleSession`이 `BattleRequest`로 전투 씬을 생성·소유·시작하고 승패를 판정해 scene-free `BattleResult`를 1회 반환한 뒤 정리·재실행한다(Victory/OpponentsEliminated, Defeat/PlayerDefeated, mutual kill=Defeat, Aborted/InvalidSetup). 완료는 event-identity + deferred teardown + `_ExitTree` 정적 정리 + 2회 연속 실행 격리. `TurnHelper`는 명시적 lifecycle seam으로 축소 + 현재 유닛 사망 커서 결함 수정. 사실은 [[Battle-Session-System]]. 후속은 위 Next의 BS-001 후속 항목으로 분리했다.
 

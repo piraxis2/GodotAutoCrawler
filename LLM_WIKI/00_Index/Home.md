@@ -1,7 +1,7 @@
 ---
 type: index
 project: AutoCrawler
-updated: 2026-07-13
+updated: 2026-07-14
 ---
 
 # AutoCrawler LLM Wiki
@@ -57,6 +57,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[SG-002-SaveFlow-Facade-Metadata-Provider]]
 - [[SG-003-SaveSlot-UI-Host-Integration]]
 - [[BT-001-BehaviorTree-Graph-Editor-Debugger]]
+- [[BT-002-Tactic-Board-Runtime-Extension]]
 - [[CB-001-Deterministic-Combat-Resolution]]
 - [[SK-001-Data-Driven-Skill-System]]
 - [[SK-002-Skill-Ammo-System]]
@@ -68,8 +69,11 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[GL-001-GameLog-Foundation]]
 - [[BS-001-Battle-Session]]
 - [[BS-002-Lobby-to-Battle-Entry-Integration]]
+- [[BS-003-Battle-Completion-Lobby-Return]]
 - [[BS-002-Lobby-to-Battle-Entry-Integration-Review]]
 - [[BS-002-Lobby-to-Battle-Entry-Integration-Completion-Review]]
+- [[BS-003-Battle-Completion-Lobby-Return-Review]]
+- [[BS-003-Battle-Completion-Lobby-Return-Completion-Review]]
 - [[BS-001-Battle-Session-Review]]
 - [[BS-001-Battle-Session-Completion-Review]]
 - [[GL-001-GameLog-Foundation-Review]]

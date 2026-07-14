@@ -123,6 +123,10 @@ layout_mode = 2
 text = "[거점 패널] 행동 카드 6계열
 1. Train  2. Rest  3. Scout  4. Craft  5. Talk  6. Expedition"
 
+[node name="ResultLabel" type="Label" parent="Windows/WorldWindow/Panels/HubPanels" unique_id=457209681]
+layout_mode = 2
+text = "최근 전투: 없음"
+
 [node name="EnterBattleButton" type="Button" parent="Windows/WorldWindow/Panels/HubPanels" unique_id=457209680]
 layout_mode = 2
 text = "전투 시작"
@@ -196,12 +200,13 @@ script = ExtResource("6_retro_vbox")
 layout_mode = 2
 text = "Report placeholder (analysis)"
 
-[node name="LobbyBattleEntry" type="Node" parent="." unique_id=457209700 node_paths=PackedStringArray("_enterBattleButton", "_battleMount", "_battleMountVisibility", "_windowManager")]
+[node name="LobbyBattleEntry" type="Node" parent="." unique_id=457209700 node_paths=PackedStringArray("_enterBattleButton", "_battleMount", "_battleMountVisibility", "_windowManager", "_resultLabel")]
 script = ExtResource("8_lobbyentry")
 _enterBattleButton = NodePath("../Windows/WorldWindow/Panels/HubPanels/EnterBattleButton")
 _battleMount = NodePath("../Windows/WorldWindow/BattleMount/BattleViewport")
 _battleMountVisibility = NodePath("../Windows/WorldWindow/BattleMount")
 _windowManager = NodePath("../WorkspaceWindowManager")
+_resultLabel = NodePath("../Windows/WorldWindow/Panels/HubPanels/ResultLabel")
 _battleScene = ExtResource("9_battlefield")
 _playerPath = "Articles/Ally/Character"
 _seed = 20260713

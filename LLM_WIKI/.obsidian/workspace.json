@@ -185,18 +185,20 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
+    "30_Tasks/BT-002-Tactic-Board-Runtime-Extension.md",
+    "30_Tasks/BS-003-Battle-Completion-Lobby-Return.md.tmp.46104.d96f2636c00a",
+    "30_Tasks/BS-003-Battle-Completion-Lobby-Return.md.tmp.46104.c49b306d6af8",
+    "30_Tasks/BS-003-Battle-Completion-Lobby-Return.md.tmp.46104.7b1fa40039ee",
+    "30_Tasks/BS-003-Battle-Completion-Lobby-Return.md.tmp.46104.aac310eefe5c",
+    "50_Reviews/BS-003-Battle-Completion-Lobby-Return-Review.md",
+    "50_Reviews/BS-003-Battle-Completion-Lobby-Return-Review.md.tmp.46104.59811616b6fe",
+    "30_Tasks/BS-003-Battle-Completion-Lobby-Return.md",
     "30_Tasks/BS-002-Lobby-to-Battle-Entry-Integration.md.tmp.42248.7c49203d2549",
     "00_Index/Current-State.md.tmp.42248.1461bc454bc9",
     "00_Index/Home.md.tmp.42248.8136a58d13d4",
     "30_Tasks/BS-002-Lobby-to-Battle-Entry-Integration.md.tmp.42248.acc497d0985a",
     "30_Tasks/BS-002-Lobby-to-Battle-Entry-Integration.md.tmp.42248.50e1ae65c12a",
     "50_Reviews/BS-002-Lobby-to-Battle-Entry-Integration-Completion-Review.md",
-    "00_Index/Current-State.md.tmp.42248.2a4d4dd92d24",
-    "20_Systems/Workspace-Window-System.md.tmp.42248.d78e419d9087",
-    "00_Index/Open-Tasks.md.tmp.42248.f618cba2057a",
-    "30_Tasks/BS-002-Lobby-to-Battle-Entry-Integration.md.tmp.42248.0d90a27fb007",
-    "30_Tasks/BS-002-Lobby-to-Battle-Entry-Integration.md.tmp.42248.7437ee6cdf92",
-    "30_Tasks/BS-002-Lobby-to-Battle-Entry-Integration.md.tmp.42248.23bfa0d1f41a",
     "50_Reviews/BS-002-Lobby-to-Battle-Entry-Integration-Review.md",
     "30_Tasks/BS-002-Lobby-to-Battle-Entry-Integration.md",
     "30_Tasks/BS-002-Workspace-Battle-Host-Integration.md",
@@ -218,8 +220,6 @@
     "Related Document.md",
     "90_Templates/Task.md",
     "90_Templates/Review.md",
-    "90_Templates/Implementation-Prompt.md",
-    "90_Templates/Design-Review-Prompt.md",
-    "90_Templates/ADR.md"
+    "90_Templates/Implementation-Prompt.md"
   ]
 }
