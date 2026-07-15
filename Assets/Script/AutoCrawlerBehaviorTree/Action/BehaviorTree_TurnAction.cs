@@ -8,7 +8,7 @@ using Godot;
 namespace AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Action;
 
 [GlobalClass, Tool]
-public partial class BehaviorTree_TurnAction : BehaviorTree_Action
+public partial class BehaviorTree_TurnAction : BehaviorTree_Action, ITurnActionProvider
 {
     [Export]
     public TurnActionBase TurnAction { get; private set; }

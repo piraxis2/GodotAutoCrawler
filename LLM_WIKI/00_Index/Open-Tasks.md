@@ -8,7 +8,9 @@ updated: 2026-07-14
 
 ## Next
 
-- **BT-002 Tactic Board Runtime Extension — proposed, Step 0 설계 리뷰 대기**([[BT-002-Tactic-Board-Runtime-Extension]]): 택틱보드 compiler/UI 전에 기존 BT에 엄격 행 우선순위, `Running` 행 고정, 조건 후보 교집합·문맥 대상, commit 후 fallback 금지, `Immediate`/`ApproachAllowed`, 최종 wait를 추가한다. 전역 `BtStatus`/commit seam/turn reset/path feasibility의 실제 코드 경계를 Step 0에서 먼저 확정하며, 승인 전 제품 코드는 수정하지 않는다.
+- **BT-003 — 택틱보드 Resource/Validation/Compiler**([[BT-003-Tactic-Board-Resource-Validation-Compiler]], [[ADR-024-Tactic-Board-Draft-Compile-Snapshot]]): **Step 0 설계 리뷰 완료**(2026-07-15, 판정 `Approved after design fixes`, [[BT-003-Tactic-Board-Resource-Validation-Compiler-Review]]). ADR-024 `accepted`, OD1~10 닫힘. 확정 seam: resolver가 유닛별 새 `TurnActionBase` 인스턴스 생성(`Resource` 상태 격리), `BehaviorTree`에 명시적 root installer public API, 접근 정책 정규 구조 매핑, `BehaviorTreeValidation`=컴파일러 버그 안전망(플레이어 규칙은 Step 2 draft validator). **다음은 Step 1**(versioned `TacticBoardDefinition` draft + `.tres` 왕복, 런타임 상태 미포함).
+
+- **BT-002 후속 — 편집 UI와 BattleSession 배선(BT-003 이후)**([[BT-002-Tactic-Board-Runtime-Extension]], [[ADR-023-Tactic-Board-Runtime-Execution-Contract]], [[BehaviorTree-System]]): BT-002 본체(택틱 runtime)는 **완료**됐다([[BT-002-Tactic-Board-Runtime-Completion-Review]]) — 엄격 행 우선순위, `Running` 행 고정, 조건 후보 교집합·문맥 대상, commit 후 fallback 금지, `Immediate`/`ApproachAllowed`, 최종 wait, 실제 전투 어댑터(`Mobility+1` 무변형 feasibility)와 제품 어휘, 수명 주기·debug RowId·구조 validation이 모두 배선됐다. Resource schema·validator·compiler는 BT-003이 소유한다(위). 그 뒤 후속은 전투 전 편집·검증·적용 UX(BT-004)와 BattleSession party snapshot 배선, H-4 전체 어휘와 행별 발동 통계, DungeonRun의 `Preparing → Tactic setup → Battle → Next floor` 연결이다.
 
 - **BS-001 후속 — U3 등반 루프 연결 + request/roster 확장**([[BS-001-Battle-Session]], [[Battle-Session-System]]): BS-001 본체는 완료됐다. BS-002가 로비→전투 단방향 entry만 먼저 고정한 뒤, `EncounterDefinition`/`EncounterModifier`/`PartySnapshot`으로 `BattleRequest` 확장(`PlayerPath`→안정 `unit_id`), 명시적 Faction/`BattleRoster`, `CombatContext`/`CombatRng` 이동 + `BattleRecorder` 추출, U3 DungeonRun의 `BattleResult` 소비·로비 복귀·층 순회·HP/마나/ammo 이월·보상/XP/주차 정산, 한계 턴/수동 후퇴, legacy seam 삭제와 GameLog live 배선을 처리한다.
 

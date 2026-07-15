@@ -186,20 +186,51 @@ public partial class BehaviorTree : Node
         }
     }
 
+    // 이번 tick에 선택된 택틱 행(BT-002 Step 4). 관전 HUD의 "현재 실행 행 하이라이트"와 행별 발동 통계가
+    // 같은 실행 자료를 쓰도록 tick payload에 실어 보낸다. DebugEnabled가 꺼져 있으면 _tickReports가 null이라
+    // 아무것도 쌓이지 않는다(debug-off 비용 계약 유지).
+    private string _tickRowId;
+    private int _tickRowResult = -1;
+
+    public void ReportTacticRow(string rowId, int rowResult)
+    {
+        if (_tickReports == null) return;
+        _tickRowId = rowId;
+        _tickRowResult = rowResult;
+    }
+
+    // 이번 tick의 최종 debug payload를 만든다. 전송과 분리해 두어 EngineDebugger 없이도(headless 테스트)
+    // 실제로 나가는 dictionary를 그대로 검증할 수 있다. 수집된 리포트가 없으면 null.
+    public Godot.Collections.Dictionary BuildTickPayload()
+    {
+        if (_tickReports == null) return null;
+
+        var payload = new Godot.Collections.Dictionary
+        {
+            { "tree_path", GetPath().ToString() },
+            { "physics_frame", (long)Engine.GetPhysicsFrames() },
+            { "nodes", _tickReports }
+        };
+
+        // 택틱 트리일 때만 실린다. 수제 BT는 이 키가 없어 기존 payload 계약이 그대로 유지된다.
+        if (_tickRowId != null)
+        {
+            payload["tactic_row_id"] = _tickRowId;
+            payload["tactic_row_result"] = _tickRowResult;
+        }
+
+        return payload;
+    }
+
     public void EndDebugTick()
     {
-        if (_tickReports != null)
-        {
-            var payload = new Godot.Collections.Dictionary
-            {
-                { "tree_path", GetPath().ToString() },
-                { "physics_frame", (long)Engine.GetPhysicsFrames() },
-                { "nodes", _tickReports }
-            };
+        Godot.Collections.Dictionary payload = BuildTickPayload();
+        if (payload == null) return;
 
-            EngineDebugger.SendMessage("behavior_tree:tick", new Godot.Collections.Array { payload });
-            _tickReports = null;
-        }
+        EngineDebugger.SendMessage("behavior_tree:tick", new Godot.Collections.Array { payload });
+        _tickReports = null;
+        _tickRowId = null;
+        _tickRowResult = -1;
     }
 
     public BtStatus Behave(double delta, Node owner)

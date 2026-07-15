@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "30_Tasks/SK-003-Skill-Based-Character-Scene.md",
+                "file": "00_Index/Current-State.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "SK-003-Skill-Based-Character-Scene"
+              "title": "Current-State"
             }
           }
         ]
@@ -185,19 +185,24 @@
   },
   "active": "541893579710ee26",
   "lastOpenFiles": [
+    "40_Decisions/ADR-023-Tactic-Board-Runtime-Execution-Contract.md",
+    "00_Index/sedU1Otvs",
+    "50_Reviews/sedlXavzy",
+    "50_Reviews/BT-002-Tactic-Board-Runtime-Completion-Review.md.tmp.46728.76d50f6c2e70",
+    "40_Decisions/ADR-022-Battle-Session-Lifecycle.md",
+    "50_Reviews/BT-002-Tactic-Board-Runtime-Completion-Review.md",
+    "20_Systems/BehaviorTree-System.md.tmp.46728.3f529763c3f9",
+    "30_Tasks/BT-002-Tactic-Board-Runtime-Extension.md.tmp.46728.eb67a59b8e70",
+    "00_Index/Open-Tasks.md.tmp.46728.595d66142459",
+    "30_Tasks/BT-002-Tactic-Board-Runtime-Extension.md.tmp.46728.5eb662a0e721",
+    "30_Tasks/BT-002-Tactic-Board-Runtime-Extension.md.tmp.20368.43b9f8ad88d4",
+    "30_Tasks/BT-002-Tactic-Board-Runtime-Extension.md.tmp.20368.891dec90c603",
+    "40_Decisions/ADR-023-Tactic-Board-Runtime-Execution-Contract.md.tmp.20368.575cac22d5d7",
+    "30_Tasks/SK-003-Skill-Based-Character-Scene.md",
+    "50_Reviews/BT-002-Tactic-Board-Runtime-Extension-Review.md",
     "30_Tasks/BT-002-Tactic-Board-Runtime-Extension.md",
-    "30_Tasks/BS-003-Battle-Completion-Lobby-Return.md.tmp.46104.d96f2636c00a",
-    "30_Tasks/BS-003-Battle-Completion-Lobby-Return.md.tmp.46104.c49b306d6af8",
-    "30_Tasks/BS-003-Battle-Completion-Lobby-Return.md.tmp.46104.7b1fa40039ee",
-    "30_Tasks/BS-003-Battle-Completion-Lobby-Return.md.tmp.46104.aac310eefe5c",
     "50_Reviews/BS-003-Battle-Completion-Lobby-Return-Review.md",
-    "50_Reviews/BS-003-Battle-Completion-Lobby-Return-Review.md.tmp.46104.59811616b6fe",
     "30_Tasks/BS-003-Battle-Completion-Lobby-Return.md",
-    "30_Tasks/BS-002-Lobby-to-Battle-Entry-Integration.md.tmp.42248.7c49203d2549",
-    "00_Index/Current-State.md.tmp.42248.1461bc454bc9",
-    "00_Index/Home.md.tmp.42248.8136a58d13d4",
-    "30_Tasks/BS-002-Lobby-to-Battle-Entry-Integration.md.tmp.42248.acc497d0985a",
-    "30_Tasks/BS-002-Lobby-to-Battle-Entry-Integration.md.tmp.42248.50e1ae65c12a",
     "50_Reviews/BS-002-Lobby-to-Battle-Entry-Integration-Completion-Review.md",
     "50_Reviews/BS-002-Lobby-to-Battle-Entry-Integration-Review.md",
     "30_Tasks/BS-002-Lobby-to-Battle-Entry-Integration.md",
@@ -205,21 +210,15 @@
     "50_Reviews/BS-001-Battle-Session-Completion-Review.md",
     "20_Systems/Battle-Session-System.md",
     "50_Reviews/BS-001-Battle-Session-Review.md",
-    "40_Decisions/ADR-022-Battle-Session-Lifecycle.md",
     "30_Tasks/BS-001-Battle-Session.md",
     "50_Reviews/WS-002-Embedded-MDI-Master-Window-Completion-Review.md",
     "50_Reviews/WS-002-Embedded-MDI-Master-Window-Review.md",
     "30_Tasks/WS-002-Embedded-MDI-Master-Window.md",
     "30_Tasks/SK-004-Usable-Attack-Gate.md",
     "00_Index/Current-State.md",
-    "30_Tasks/SK-003-Skill-Based-Character-Scene.md",
     "20_Systems/Workspace-Window-System.md",
     "20_Systems/World-State-System.md",
     "30_Tasks/BT-001-BehaviorTree-Graph-Editor-Debugger.md",
-    "STEP_REVIEW_WORKFLOW.md",
-    "Related Document.md",
-    "90_Templates/Task.md",
-    "90_Templates/Review.md",
-    "90_Templates/Implementation-Prompt.md"
+    "STEP_REVIEW_WORKFLOW.md"
   ]
 }

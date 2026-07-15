@@ -1,11 +1,14 @@
 using System.Threading.Tasks;
 using AutoCrawler.Assets.Script.Article.Interface;
 using AutoCrawler.Assets.Script.Article.Status;
+using AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Tactic;
 using Godot;
 
 namespace AutoCrawler.Assets.Script.Article;
 
-public abstract partial class ArticleBase : Node2D
+// ITacticTarget: 택틱 후보/확정 대상의 위치 seam(BT-002 Step 3.5). `TilePosition`이 그대로 계약을 만족하므로
+// 모든 Article이 택틱 대상이 될 수 있고, ADR-017 정규 동점 순서(거리→Y→X)에 참여한다.
+public abstract partial class ArticleBase : Node2D, ITacticTarget
 {
     [Export] public ArticleStatus ArticleStatus = new();
 

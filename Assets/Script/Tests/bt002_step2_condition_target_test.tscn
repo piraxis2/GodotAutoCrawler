@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Assets/Script/Tests/Bt002Step2ConditionTargetTest.cs" id="1_bt002s2"]
+
+[node name="Node" type="Node"]
+script = ExtResource("1_bt002s2")

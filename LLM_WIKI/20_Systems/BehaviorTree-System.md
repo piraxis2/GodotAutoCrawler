@@ -23,6 +23,28 @@ updated: 2026-07-10
 - Decorator: 상대 탐색, 복수 상대 조건 등
 - HasUsableAttack decorator: owner가 `CharacterArticle`이고 현재 시작 가능한 공격(`CharacterArticle.HasUsableAttack`)이 있으면 통과한다. `Invert`로 공격 불가 분기를 만들 수 있다([[SK-004-Usable-Attack-Gate]]).
 
+## Tactic Board Runtime
+
+플레이어 택틱보드를 실행하는 전용 노드 계층이 `Assets/Script/AutoCrawlerBehaviorTree/Tactic`에 있다([[BT-002-Tactic-Board-Runtime-Extension]], 계약은 [[ADR-023-Tactic-Board-Runtime-Execution-Contract]]). 기존 일반 BT의 의미는 바뀌지 않으며 두 계층이 공존한다.
+
+- `TacticPrioritySelector`: 행을 위에서 아래로 평가해 최초 성립 행 하나를 실행하고, `Running` 행을 latch해 상위 행이 preempt하지 못하게 한다. 자식은 택틱 행만 실행한다(fail-closed).
+- `TacticRow`: `[조건들..., 타깃 셀렉터, 행동]`. 조건은 행을 **선택할 때만** 평가하고, 실행 단계에 들어가면 재평가하지 않는다. 셀렉터는 행동 바로 앞에 하나만 올 수 있다(그래야 후보 교집합을 우회하지 않는다).
+- `TacticRowContext`: 유닛별 행 문맥 — 조건 후보 identity 교집합, 확정 대상, 접근 정책, 행동 spec. 전역 Blackboard를 쓰지 않으며 새 자기 턴에 폐기된다.
+- `TacticTargetSelector`: 조건 후보 → 접근 정책 가능 후보 → ADR-017 정규 순서(거리→Y→X)로 대상 하나를 확정한다. "가장 가까운 적"은 이 정규 순서로 표현된다.
+- `TacticApproach` / `TacticTurnAction` / `TacticWait` / `TacticActionSequence`: 접근 → 행동(또는 최종 대기). 행동은 `TurnActionBase`를 감싸 Failure/Running/Executed/End를 보존하고, 멀티턴은 `CurrentTurnAction`으로 다음 턴에 재개된다.
+- 어휘: `TacticConditionAlways`, `TacticConditionAnyEnemy`, `TacticConditionEnemyCasting`.
+
+핵심 계약:
+
+- **상태**: 전역 `BtStatus`는 3값 그대로다. 택틱 내부 결과(`Ineligible`/`Running`/`ActionCompleted`/`ApproachConsumed`/`CancelledAfterCommit`)를 selector 경계에서 변환한다.
+- **commit**: 첫 이동·지불 이후의 실패는 `CancelledAfterCommit`으로 턴을 끝내고 **다음 행으로 fallback하지 않는다**. 지불 전 실패만 다음 행을 허용한다.
+- **확정 대상 공유**: `TurnActionBase`의 명시적 대상 바인딩(`BindExplicitTarget`)으로 조건·접근·행동이 같은 대상을 친다. 바인딩 대상이 free/사망이면 다른 적으로 fallback하지 않는다.
+- **feasibility**: 성립 검사는 전장을 변형하지 않는다(`CharacterTacticAdapter`가 AStar 사본 사용). 이번 턴 이동량은 단일 소스 `Mobility+1`(경로 노드 예산)이며 실제 이동과 같은 규칙을 공유한다.
+- **수명 주기**: 새 자기 턴(`CharacterArticle.ApplyTurnStartEffects`)·사망·tree exit에서 latch/문맥/확정 대상/진행 중 이동이 초기화된다(`ResetTacticRuntime`).
+- **행동 수집**: `ITurnActionProvider`로 순회하므로 수제 BT의 `BehaviorTree_TurnAction`과 택틱의 `TacticTurnAction`이 ammo 충전·사용 가능 공격 조회에서 함께 발견된다.
+- **디버그**: debug tick payload에 `tactic_row_id`/`tactic_row_result`가 실린다(debug-off면 아무것도 쌓이지 않는다).
+- **validation**: 잘못된 택틱 구조(비택틱 자식, 행동 없음/비택틱 행동, 셀렉터 위치 오류)는 `BehaviorTreeValidation`이 실행 전에 오류로 표면화한다.
+
 ## Integration
 
 `CharacterArticle`이 자신의 `BehaviorTree`를 실행한다. 행동 노드는 `BattleFieldScene`과 `BattleFieldTileMapLayer`를 통해 대상과 이동 경로를 찾는다. SK-004 이후 이동 사거리 계산은 `TurnAction.CanStart(owner)`가 true인 행동만 사용하므로, ammo/mana가 소진된 스킬은 접근 판단에서 제외된다.

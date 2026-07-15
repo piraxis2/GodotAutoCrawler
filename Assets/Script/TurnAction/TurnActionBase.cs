@@ -58,8 +58,54 @@ public abstract partial class TurnActionBase : Resource
         OnFinish(owner);
     }
 
+    // --- 명시적 대상 바인딩(BT-002 R4) ---
+    // 택틱 행이 확정한 대상을 행동에 바인딩한다. 바인딩이 "활성"이면 행동은 상대를 다시 검색하지 않고 이 대상만
+    // 친다 — 조건·접근·행동이 같은 대상을 공유한다. 바인딩됐는데 대상이 무효(사망/free)면 다른 적으로
+    // **fallback하지 않는다**(null 반환 → 행동 실패). 바인딩 여부와 대상 유효성은 별개의 계약이다.
+    // 기존 수제 BT 경로는 바인딩하지 않으므로 검색 동작이 그대로 유지된다.
+    private ArticleBase _explicitTarget;
+    private bool _explicitTargetBound;
+
+    public bool IsExplicitTargetBound => _explicitTargetBound;
+
+    public void BindExplicitTarget(ArticleBase target)
+    {
+        _explicitTarget = target;
+        _explicitTargetBound = true;
+    }
+
+    public void ClearExplicitTarget()
+    {
+        _explicitTarget = null;
+        _explicitTargetBound = false;
+    }
+
+    // 바인딩된 대상(유효할 때만). 바인딩됐는데 무효면 null — fallback 금지의 근거다.
+    //
+    // 무효 판정은 두 가지다: (1) native instance가 free됨, (2) 살아 있지만 사망 상태.
+    // IsInstanceValid를 **먼저** 본다 — freed 객체에 IsAlive(ArticleStatus 접근)를 먼저 태우면 안 된다.
+    protected ArticleBase BoundTarget =>
+        _explicitTargetBound
+        && GodotObject.IsInstanceValid(_explicitTarget)
+        && _explicitTarget.IsAlive
+            ? _explicitTarget
+            : null;
+
     protected ArticleBase GetTarget(Node owner)
     {
+        // 바인딩이 활성이면 상대 검색을 하지 않는다. 이 경로는 Tree 배선에 의존하지 않는다.
+        if (_explicitTargetBound)
+        {
+            ArticleBase bound = BoundTarget;
+            if (bound != null
+                && owner is BehaviorTree_Action { Tree: not null } node
+                && node.Tree.GetParent() is ArticleBase boundCaster)
+            {
+                boundCaster.DecisionFlipH(bound.TilePosition);
+            }
+            return bound;
+        }
+
         ArticleBase ownerArticle = (ArticleBase)((BehaviorTree_Action)owner).Tree.GetParent();
         List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + ownerArticle.TilePosition).ToList();
         BattleFieldTileMapLayer tileMapLayer = BattleFieldScene.BattleField.BattleFieldTileMap;

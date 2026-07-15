@@ -119,6 +119,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[ADR-020-GameLog-Service-Lifetime]]
 - [[ADR-021-Skill-Ammo-System]]
 - [[ADR-022-Battle-Session-Lifecycle]]
+- [[ADR-023-Tactic-Board-Runtime-Execution-Contract]]
 
 ## 문서 역할
 

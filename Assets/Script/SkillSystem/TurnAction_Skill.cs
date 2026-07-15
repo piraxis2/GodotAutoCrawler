@@ -246,6 +246,11 @@ public partial class TurnAction_Skill : TurnActionBase
             return caster;
         }
 
+        // 택틱 행이 확정한 대상이 바인딩됐으면 그 대상만 락온한다(BT-002 R4). 조건이 지목한 적과 실제 피격
+        // 대상이 어긋나면 안 되므로, 스킬 기본 셀렉터로 다시 고르지 않는다. 바인딩 대상이 무효면 다른 적으로
+        // fallback하지 않고 null을 반환해 무소모 Failure로 끝낸다.
+        if (IsExplicitTargetBound) return BoundTarget;
+
         List<Vector2I> calculatedAttackRange = AttackRangePositions.Select(p => p + caster.TilePosition).ToList();
 
         var targets = context.TileMapLayer?.GetArticles(calculatedAttackRange)?

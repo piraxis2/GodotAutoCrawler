@@ -674,6 +674,15 @@ updated: 2026-07-13
 
 ## BehaviorTree
 
+- **BT-002 Tactic Board Runtime Extension 완료 (판정: 완료)** ([[BT-002-Tactic-Board-Runtime-Extension]], [[ADR-023-Tactic-Board-Runtime-Execution-Contract]], [[BT-002-Tactic-Board-Runtime-Completion-Review]])
+  - 플레이어 택틱보드를 실행하는 전용 노드 계층이 `Assets/Script/AutoCrawlerBehaviorTree/Tactic`에 있다. 기존 일반 BT의 의미는 바뀌지 않고 두 계층이 공존한다. 전역 `BtStatus`는 3값 그대로이며 택틱 내부 결과를 selector 경계에서 변환한다.
+  - 엄격 행 우선순위(최초 성립 행 하나), `Running` 행 latch(상위 행 preempt 금지, **접근 단계 포함**), 조건 후보 identity 교집합과 확정 대상 공유, commit 이후 fallback 금지(`CancelledAfterCommit`), `Immediate`/`ApproachAllowed` 접근 정책, 최종 `TacticWait`.
+  - 실제 전투 배선: `CharacterTacticAdapter`가 AStar 사본으로 **무변형 feasibility**를 계산하고 이번 턴 이동량은 단일 소스 `Mobility+1`이다(성립 검사와 실제 이동이 같은 규칙 공유). `TurnActionBase`의 명시적 대상 바인딩을 근접 `GetTarget`과 스킬 `SelectTarget`이 모두 소비해 조건이 지목한 적과 실제 피격 대상이 어긋나지 않으며, 무효 대상은 다른 적으로 fallback하지 않는다.
+  - `ITurnActionProvider`로 행동을 순회하므로 수제 BT와 택틱 보드의 행동이 ammo 충전·사용 가능 공격 조회에서 함께 발견된다. 멀티턴 스킬은 `CurrentTurnAction`으로 다음 턴 재개되며, 새 자기 턴·사망·tree exit에서 `CharacterArticle.ResetTacticRuntime()`이 latch/문맥/확정 대상/이동 연출을 폐기한다.
+  - debug tick payload에 `tactic_row_id`/`tactic_row_result`가 실리고(debug-off면 미수집), 잘못된 택틱 구조는 `BehaviorTreeValidation`이 실행 전 오류로 표면화한다.
+  - 검증: BT-002 전용 테스트 5종 231 단언 PASS, 회귀 17종 ALL PASS, `dotnet build` 0경고/0오류.
+  - 후속(별도 Task): 택틱보드 Resource/validator/compiler와 compiled snapshot, 편집 UI, H-4 전체 어휘, DungeonRun 연결.
+
 - **BT-001 Step 1: Read-only Graph Viewer 구현 완료 (판정: 완료)**
   - 에디터 내 Inspector에서 `🌵 Open Behavior Tree Editor` 버튼을 복구하여 BehaviorTree 및 BT node 선택 시 디버거 윈도우를 열 수 있는 진입점을 마련함.
   - 디버거 윈도우에 `HSplitContainer`를 배치하여 좌측에는 기존 `DebuggerTree`(Tree 위젯), 우측에는 새로 구현한 GraphEdit 기반 `BehaviorTreeGraphView`를 동시에 표시함.
