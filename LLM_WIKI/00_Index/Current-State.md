@@ -1,7 +1,7 @@
 ---
 type: status
 project: AutoCrawler
-updated: 2026-07-13
+updated: 2026-07-15
 ---
 
 # Current State
@@ -71,6 +71,8 @@ updated: 2026-07-13
   레트로 Theme 폰트/아이콘/컴포넌트 세트 정리, `battle_field.tscn` stretch 정책. (`run/main_scene`은 이미
   `workspace.tscn`으로 전환됨.) [[Open-Tasks]] 참고.
 ## Combat
+- **BT-003 Tactic Board Resource/Validation/Compiler 전체 완료(Step 0~4, 코드 리뷰 완료)**([[BT-003-Tactic-Board-Resource-Validation-Compiler]], [[BT-003-Tactic-Board-Resource-Validation-Compiler-Completion-Review]] 판정: 완료). Step 4에서 `BehaviorTree` explicit installer와 `CharacterArticle`의 per-unit applied snapshot state를 구현했다. apply는 동기 첫 tick, last-good `CompileInputSignature`, parented/foreign/sealed fail-closed, A→B→A 교체, death/tree exit teardown을 보장한다. 리뷰 결과 P0/P1/P2 발견 없음. `bt003_step4_apply_lifecycle_test` 51 assertions PASS; 리뷰 재검증으로 `dotnet build`와 BT-003 Step 1~4 headless fixture PASS. BattleSession/UI consumer 배선은 범위 밖이며 후속 BT-004/DungeonRun에서 처리한다.
+
 
 - **BS-003 Battle Completion and Lobby Return 전체 완료(Step 0~3, 오너 GUI smoke 사인오프)**([[BS-003-Battle-Completion-Lobby-Return]],
   [[BS-003-Battle-Completion-Lobby-Return-Completion-Review]] 판정: 완료). BS-002 진입

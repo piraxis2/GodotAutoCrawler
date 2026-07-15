@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using AutoCrawler.addons.behaviortree.node;
 using AutoCrawler.Assets.Script.Article;
+using AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Tactic;
 using Godot;
 using Godot.Collections;
 
@@ -26,6 +27,9 @@ public partial class BehaviorTree : Node
     
     public string ArticleName => GetParent()?.Name;
     private bool _isUpdateRequested = false;
+    // 명시적 root 교체 중에는 ChildOrderChanged의 deferred 갱신을 억제한다. InstallRoot가 Tree/child cache를
+    // 동기적으로 배선하므로, 첫 tick이 이 callback에 의존하지 않는다(BT-003 Step 4, ADR-024 §8).
+    private bool _isInstallingRoot;
 
     private static bool OnMessageCapture(string message, Godot.Collections.Array data)
     {
@@ -101,6 +105,7 @@ public partial class BehaviorTree : Node
 
     private void OnChildOrderChanged()
     {
+        if (_isInstallingRoot) return;
         OnUpdate();
     }
 
@@ -116,6 +121,95 @@ public partial class BehaviorTree : Node
                 SetTree(behaviorTreeNode);
             }
         }
+    }
+
+    /// <summary>
+    /// 이 컨테이너의 root를 동기적으로 교체한다. 새 root는 반드시 detached 상태여야 하며, 설치가 끝날 때까지
+    /// 기존 root를 보존한다. 성공 시에만 기존 root의 tactic runtime을 reset하고 free한다.
+    /// </summary>
+    public bool InstallRoot(BehaviorTree_Node newRoot)
+    {
+        if (!GodotObject.IsInstanceValid(newRoot) || newRoot.GetParent() != null)
+        {
+            GD.PushError($"BehaviorTree '{Name}': detached이고 유효한 root만 설치할 수 있습니다.");
+            return false;
+        }
+
+        BehaviorTree_Node oldRoot = Root;
+        if (ReferenceEquals(oldRoot, newRoot))
+        {
+            GD.PushError($"BehaviorTree '{Name}': 같은 root를 다시 설치할 수 없습니다.");
+            return false;
+        }
+
+        _isInstallingRoot = true;
+        try
+        {
+            AddChild(newRoot);
+            MoveChild(newRoot, 0);
+            // _Ready/ChildOrderChanged의 deferred 순서를 기다리지 않고 현재 subtree 전체를 즉시 연결한다.
+            SetTree(newRoot);
+        }
+        catch (Exception ex)
+        {
+            GD.PushError($"BehaviorTree '{Name}': root 설치 실패: {ex.Message}");
+            if (GodotObject.IsInstanceValid(newRoot) && newRoot.GetParent() == this) RemoveChild(newRoot);
+            return false;
+        }
+        finally
+        {
+            _isInstallingRoot = false;
+        }
+
+        // root 제거도 설치와 같은 update-suppression 구간에 둔다. 그렇지 않으면 ChildOrderChanged가
+        // NotifyInstalledStructureChanged와 별도로 OnUpdateTree를 한 번 더 발생시킨다.
+        _isInstallingRoot = true;
+        try
+        {
+            if (GodotObject.IsInstanceValid(oldRoot) && oldRoot.GetParent() == this)
+            {
+                if (oldRoot is ITacticNode tacticRoot) tacticRoot.ResetForNewTurn();
+                RemoveChild(oldRoot);
+                oldRoot.Free();
+            }
+        }
+        finally
+        {
+            _isInstallingRoot = false;
+        }
+
+        NotifyInstalledStructureChanged();
+        return true;
+    }
+
+    /// <summary>
+    /// apply owner가 자신이 설치한 root만 폐기하는 수명주기 API다. 수제 BT를 임의로 지우지 않도록 expectedRoot
+    /// identity가 현재 root와 일치할 때만 동작한다.
+    /// </summary>
+    public bool RemoveInstalledRoot(BehaviorTree_Node expectedRoot)
+    {
+        if (!GodotObject.IsInstanceValid(expectedRoot) || !ReferenceEquals(Root, expectedRoot)) return false;
+
+        _isInstallingRoot = true;
+        try
+        {
+            if (expectedRoot is ITacticNode tacticRoot) tacticRoot.ResetForNewTurn();
+            RemoveChild(expectedRoot);
+            expectedRoot.Free();
+        }
+        finally
+        {
+            _isInstallingRoot = false;
+        }
+
+        NotifyInstalledStructureChanged();
+        return true;
+    }
+
+    private void NotifyInstalledStructureChanged()
+    {
+        if (DebugEnabled) SendStructure();
+        EmitSignal("OnUpdateTree", this);
     }
 
     public void SendStructure()

@@ -6,6 +6,7 @@ using AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Tactic;
 using AutoCrawler.Assets.Script.Article.Interface;
 using AutoCrawler.Assets.Script.Article.Status;
 using AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Action;
+using AutoCrawler.Assets.Script.AutoCrawlerBehaviorTree.Tactic.Compile;
 using AutoCrawler.Assets.Script.SkillSystem;
 using AutoCrawler.Assets.Script.TurnAction;
 using AutoCrawler.Assets.Script.TurnAction.Skill;
@@ -19,6 +20,12 @@ public partial class CharacterArticle : ArticleBase, ITurnAffectedArticle<Articl
     // 이동 연출 상태가 유닛 간에 섞이지 않는다(R9).
     private CharacterTacticAdapter _tacticAdapter;
     public ITacticActionAdapter TacticAdapter => _tacticAdapter ??= new CharacterTacticAdapter();
+
+    // BT-003 Step 4: 유닛별 마지막 정상 compiled snapshot과 prepare/apply gate. draft/compile result는 보관하지
+    // 않아 편집 상태와 적용 상태를 섞지 않는다(ADR-024 §1/§9).
+    public TacticBoardApplyState TacticBoardApply { get; } = new();
+    private bool _tacticSnapshotTeardownQueued;
+
 
     public TurnActionBase CurrentTurnAction { get; set; }
     public ITurnActionState CurrentTurnActionState { get; set; }
@@ -38,6 +45,20 @@ public partial class CharacterArticle : ArticleBase, ITurnAffectedArticle<Articl
         CurrentTurnAction = null;
         CurrentTurnActionState = null;
     }
+    public TacticBoardApplyStatus TryApplyCompiledTacticBoard(TacticCompileResult compileResult)
+        => TacticBoardApply.TryApply(this, compileResult);
+
+    // 실제 준비 화면/세션 consumer가 전투 시작 직전에 닫는다. BattleSession 연결은 BT-003 Step 4 범위 밖이다.
+    public void BeginTacticBoardPreparation() => TacticBoardApply.BeginPreparation();
+    public void SealTacticBoardForBattle() => TacticBoardApply.SealForBattle();
+
+    public bool IsCurrentTacticBoardInputApplied(string compileInputSignature)
+        => TacticBoardApply.IsCurrentInputApplied(compileInputSignature);
+
+    public bool RequiresTacticBoardRecompile(string compileInputSignature)
+        => TacticBoardApply.RequiresRecompile(compileInputSignature);
+
+
 
     // 택틱 런타임 수명 주기(BT-002 Step 4). 사망·tree exit·session teardown에서 latch/문맥/확정 대상/진행 중
     // 이동 연출을 모두 폐기해 stale 참조가 다음 전투로 넘어가지 않게 한다(R9).
@@ -58,9 +79,22 @@ public partial class CharacterArticle : ArticleBase, ITurnAffectedArticle<Articl
     {
         OnDead -= OnCharacterDead;
         ResetTacticRuntime();
+        TacticBoardApply.ForgetOnOwnerTreeExit();
     }
 
-    private void OnCharacterDead(ArticleBase deadArticle) => ResetTacticRuntime();
+    private void OnCharacterDead(ArticleBase deadArticle)
+    {
+        ResetTacticRuntime();
+        // Health.Dead() callback은 턴/물리 실행 중일 수 있다. tree 변경(root remove/free)은 idle에 한 번만
+        // 수행해 현재 순회 중인 subtree를 동기 제거하지 않는다(BS-001 deferred teardown과 같은 원칙).
+        if (_tacticSnapshotTeardownQueued) return;
+        _tacticSnapshotTeardownQueued = true;
+        Callable.From(() =>
+        {
+            _tacticSnapshotTeardownQueued = false;
+            if (GodotObject.IsInstanceValid(this)) TacticBoardApply.Teardown(this);
+        }).CallDeferred();
+    }
     private BehaviorTree _behaviorTree;
     public BehaviorTree BehaviorTree => _behaviorTree ??= GetNode<BehaviorTree>("BehaviorTree");
     public int Priority { get; set; }

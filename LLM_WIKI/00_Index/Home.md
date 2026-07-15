@@ -1,7 +1,7 @@
 ---
 type: index
 project: AutoCrawler
-updated: 2026-07-14
+updated: 2026-07-15
 ---
 
 # AutoCrawler LLM Wiki
@@ -58,6 +58,9 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[SG-003-SaveSlot-UI-Host-Integration]]
 - [[BT-001-BehaviorTree-Graph-Editor-Debugger]]
 - [[BT-002-Tactic-Board-Runtime-Extension]]
+- [[BT-003-Tactic-Board-Resource-Validation-Compiler]]
+- [[BT-003-Tactic-Board-Resource-Validation-Compiler-Review]]
+- [[BT-003-Tactic-Board-Resource-Validation-Compiler-Completion-Review]] — BT-003 완료 판정
 - [[CB-001-Deterministic-Combat-Resolution]]
 - [[SK-001-Data-Driven-Skill-System]]
 - [[SK-002-Skill-Ammo-System]]
@@ -120,6 +123,7 @@ AutoCrawler 개발을 위한 Agent 지식 베이스다. 작업 기록은 과정�
 - [[ADR-021-Skill-Ammo-System]]
 - [[ADR-022-Battle-Session-Lifecycle]]
 - [[ADR-023-Tactic-Board-Runtime-Execution-Contract]]
+- [[ADR-024-Tactic-Board-Draft-Compile-Snapshot]]
 
 ## 문서 역할
 

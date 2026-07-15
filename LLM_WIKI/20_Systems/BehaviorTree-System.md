@@ -2,7 +2,7 @@
 type: system
 system: BehaviorTree
 status: active
-updated: 2026-07-10
+updated: 2026-07-15
 ---
 
 # BehaviorTree System
@@ -44,6 +44,16 @@ updated: 2026-07-10
 - **행동 수집**: `ITurnActionProvider`로 순회하므로 수제 BT의 `BehaviorTree_TurnAction`과 택틱의 `TacticTurnAction`이 ammo 충전·사용 가능 공격 조회에서 함께 발견된다.
 - **디버그**: debug tick payload에 `tactic_row_id`/`tactic_row_result`가 실린다(debug-off면 아무것도 쌓이지 않는다).
 - **validation**: 잘못된 택틱 구조(비택틱 자식, 행동 없음/비택틱 행동, 셀렉터 위치 오류)는 `BehaviorTreeValidation`이 실행 전에 오류로 표면화한다.
+
+## Compiled Board Apply (BT-003 Step 4)
+
+유효한 draft는 compiler를 거쳐 detached `CompiledBoardSnapshot`이 되고, `CharacterArticle.TryApplyCompiledTacticBoard`가 전투 전 preparation 상태에서만 설치한다.
+
+- `BehaviorTree.InstallRoot`는 새 root를 child-0에 동기 배선하고 old tactic root를 성공 뒤 reset/free한다. 설치·제거 중 child-order 갱신을 억제한 뒤 debugger structure update를 한 번 보낸다.
+- `TacticBoardApplyState`는 유닛별 last-good snapshot과 applied `CompileInputSignature`를 소유한다. null/실패 compile, parented/foreign snapshot, sealed state, 실행 중 action은 fail-closed이며 current root를 바꾸지 않는다.
+- `BeginTacticBoardPreparation`/`SealTacticBoardForBattle`는 후속 BT-004/BattleSession consumer seam이다. BT-003은 실제 UI·BattleSession 호출을 배선하지 않는다.
+- death는 deferred teardown으로 installed root/action binding을 제거하고, tree exit은 metadata/binding을 즉시 해제한다. 수제 BT는 apply API를 호출하지 않는 한 기존 경로를 유지한다.
+
 
 ## Integration
 
